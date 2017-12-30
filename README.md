@@ -14,4 +14,4 @@ BackBox is a low level binary protocol boilerplate multilanguage code generator.
 3. Compose your protocol description file (use UTF8 encoding).
 4. When you finish, ensure that description file can me compiled without any errors.
 5. Attach you description file to the email and send it to the address **OneBlackBoxPlease@outlook.com**
-6. Get your code in reply.
+6. Get your generated source code in reply.

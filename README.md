@@ -15,3 +15,4 @@ BackBox is a low level binary protocol boilerplate multilanguage code generator.
 4. When you finish, ensure that description file can me compiled without any errors.
 5. Attach you description file to the email and send it to the address **OneBlackBoxPlease@outlook.com**
 6. Get your generated source code in reply.
+7. For comfortable work with generated java code, please [download and install into you IDE SlimEnum.jar plugin.](https://github.com/cheblin/SlimEnum)   

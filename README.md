@@ -4,7 +4,7 @@ BackBox is a low level binary protocol boilerplate multilanguage code generator.
 
 # BlackBox parts relationship scheme
 
-![description scheme](http://www.unirail.org/wp-content/uploads/2017/12/Schem.png)
+![description scheme](http://www.unirail.org/wp-content/uploads/2017/12/Schem2.png)
 
 # How to get generated code
 

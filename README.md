@@ -8,7 +8,7 @@ BackBox is a low level binary protocol boilerplate multilanguage code generator.
 
 # How to get generated code
 
-1. Install **Intellij** [IDEA](https://www.jetbrains.com/idea/download/#section=windows) or if you are planning to deploy your code on Android devices, [Android Studio.](https://developer.android.com/studio/index.html)
+1. Install **Intellij** [IDEA](https://www.jetbrains.com/idea/download/#section=windows) or, if you are planning to deploy your code on Android devices, [Android Studio.](https://developer.android.com/studio/index.html)
 2. Download [BlackBox metadata annotations](https://github.com/cheblin/BlackBox/tree/master/org/unirail/BlackBox)
 3. Create new Project in the IDE and make reference to downloaded metadata annotations.
 3. Compose your protocol description file (use UTF8 encoding).

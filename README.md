@@ -6,3 +6,12 @@ BackBox is a low level binary protocol boilerplate multilanguage code generator.
 
 ![description scheme](http://www.unirail.org/wp-content/uploads/2017/12/Schem.png)
 
+# How to get generated code
+
+1. Install Intellij [IDEA](https://www.jetbrains.com/idea/download/#section=windows) or if you are planning tocompile your con on Android devices, [Android Studio](https://developer.android.com/studio/index.html)
+2. Download [BlackBox metadata annotations](https://github.com/cheblin/BlackBox/tree/master/org/unirail/BlackBox)
+3. Create new Project in the IDE and make reference to downloaded metadata annotations
+3. Compose your protocol description file (use UTF8 encoding).
+4. When you finish, ensure that description file can me compiled without any errors.
+5. Attach you description file to th email and send it to the address **OneBlackBoxPlease@outlook.com**
+6. Get your code in reply.

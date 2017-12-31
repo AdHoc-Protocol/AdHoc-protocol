@@ -12,7 +12,7 @@ BackBox is a low level binary protocol boilerplate multilanguage code generator.
 2. Download [BlackBox metadata annotations](https://github.com/cheblin/BlackBox/tree/master/org/unirail/BlackBox)
 3. Create new Project in your IDE and make reference to downloaded metadata annotations.
 3. Compose your protocol description file (it should be in UTF8 encoding).
-4. When you finish, ensure that description file can me compiled without any errors.
+4. Ensure that description file can me compiled without any errors.
 5. Attach you description file to the email and send it to the address **OneBlackBoxPlease@outlook.com**
 6. In a short time getting zipped archive of your generated, fully tested source code in reply. In addition it will contain Demo and Test file, examples of using generated API and one of the passsed test, respectively.
 7. For comfortable work with generated java code, please [download and install into you IDE SlimEnum.jar plugin.](https://github.com/cheblin/SlimEnum)   

@@ -15,4 +15,4 @@ BackBox is a low level binary protocol boilerplate multilanguage **( JAVA, C, C#
 4. Ensure that description file can me compiled without any errors.
 5. Attach you description file to the email and send it to the address **OneBlackBoxPlease@outlook.com**
 6. In a short time getting zipped archive of your generated, fully tested source code in reply. In addition it will contain Demo and Test file, examples of using generated API and one of the passsed test, respectively.
-7. For comfortable work with generated java code, please [download and install into you IDE SlimEnum.jar plugin.](https://github.com/cheblin/SlimEnum)   
+7. For comfortable work with generated java code, please install SlimEnum plugin from Intellij plugin repository or download and install  [SlimEnum.jar](https://github.com/cheblin/SlimEnum) directly.

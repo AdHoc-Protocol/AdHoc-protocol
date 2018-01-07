@@ -11,7 +11,7 @@ Basic documentation of the description file format can be found **[here](http://
 
 1. Install **Intellij** [IDEA](https://www.jetbrains.com/idea/download/#section=windows) or, if you are planning to deploy your code on Android devices, [Android Studio.](https://developer.android.com/studio/index.html)
 2. Download [BlackBox metadata annotations](https://github.com/cheblin/BlackBox/tree/master/org/unirail/BlackBox)
-3. Create new Project in your IDE and make reference to downloaded metadata annotations.
+3. Create a new java Project in your IDE and make reference to downloaded metadata annotations.
 3. Compose your protocol description file (it should be in UTF8 encoding).
 4. Ensure that description file can me compiled without any errors.
 5. Attach you description file to the email and send it to the address **OneBlackBoxPlease@outlook.com**

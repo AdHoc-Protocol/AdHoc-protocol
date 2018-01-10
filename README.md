@@ -1,4 +1,4 @@
-**BackBox** is a low level binary protocol boilerplate multilanguage **( JAVA, C, C#...SWIFT(upcoming))** code generator. According to your description, BlackBox generate source code, so you just need to insert your received packs handlers, and logic of creating a new package, populating, with data and sending it to the receiver.
+**BackBox** is a low level binary protocol boilerplate multilanguage **( JAVA, C, C#...SWIFT(upcoming))** code generator. BlackBox generates source code according to your description, so you just need to insert your received packs handlers, and logic of creating a new package, populating, with data and sending it to the receiver.
 # BlackBox description file
 Basic documentation of the description file format can be found **[here](http://www.unirail.org).** Let's take a look how [**LedBlinkProject** demo description file](https://github.com/cheblin/BlackBox_LEDBlink_Demo/blob/master/org/unirail/demo/LedBlinkProject.java) looks like
 ![descriptionscheme](http://www.unirail.org/wp-content/uploads/2017/12/Capture2.png)

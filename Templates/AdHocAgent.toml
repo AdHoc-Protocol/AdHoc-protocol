@@ -1,0 +1,23 @@
+#This file contains AdHoc agent common information
+
+#TCP binary protocol
+server    = "223.255.167.58:8691"
+
+#Path to 7zip binary
+7zip_exe = "C:/Program Files/7-Zip/7z.exe"
+
+#JetBrains Rider
+#https://www.jetbrains.com/help/rider/Opening_Files_from_Command_Line.html
+#rider64.exe [--line <number>] [--column <number>] <path ...>
+#show_code_exe="X:/Rider/bin/rider64.exe"
+#show_code_args="--line <line number> <path to file>"
+
+#VS Code
+# https://code.visualstudio.com/docs/editor/command-line#_launching-from-command-line
+#-g or --goto	When used with file:line{:character}, opens a file at a specific line and optional character position.
+#This argument is provided since some operating systems permit : in a file name.
+show_code_exe = "X:/VSCode/Code.exe"
+show_code_args = "--goto <path to file>:<line number>:<char number>"
+
+#AdHoc github application  id
+adhoc_id = "f6bf61726f6f89c1e24d"

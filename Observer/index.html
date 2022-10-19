@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+	<meta charset = "UTF-8">
+	<title>Title</title>
+	
+	<!--    never change  style order    -->
+	<style id = "host_packs-css">
+		
+		.channel {
+			text-outline-color: yellow;
+			text-outline-width: 2;
+			width: 5px;
+			font-weight: bold;
+		}
+		
+		.host_packs_host {
+			text-outline-color: greenyellow;
+			text-outline-width: 2;
+			
+			font-weight: bold;
+			text-valign: top;
+		}
+		
+		.host_packs_pack {
+			
+			border-style: solid;
+			border-color: black;
+		}
+		
+		.InCPP {
+			font-weight: bold;
+			text-outline-color: #004481;
+			text-wrap: wrap;
+		}
+		
+		.InRS {
+			font-weight: bold;
+			text-outline-color: #ee4d02;
+			text-wrap: wrap;
+			
+		}
+		
+		.InJAVA {
+			font-weight: bold;
+			background-color: #825d46;
+			color: white;
+			text-wrap: wrap;
+		}
+		
+		.InCS {
+			font-weight: bold;
+			background-color: #9163ca;
+			color: white;
+			text-wrap: wrap;
+		}
+		
+		.InGO {
+			font-weight: bold;
+			background-color: #00abd6;
+			color: white;
+			text-wrap: wrap;
+		}
+		
+		.InTS {
+			font-weight: bold;
+			background-color: #2f74bf;
+			color: white;
+			text-wrap: wrap;
+			
+		}
+	</style>
+	<style id = "pack_fields-css">
+		
+		.pack_fields_empty_pack {
+			font-weight: bold;
+		}
+		
+		.pack_fields_pack {
+			text-outline-color: lightgray;
+			text-outline-width: 2;
+			
+			font-weight: bold;
+			text-valign: top;
+		}
+		
+		.pack_fields_pack_field {
+			background-color: lightgray;
+			border-style: solid;
+			border-color: black;
+		}
+	</style>
+	<style>
+		:root {
+			--is-dark-theme: 1;
+		}
+		
+		html, body {
+			
+			height: 100%;
+			background: #414141;
+		}
+		
+		body {
+			overflow-y: hidden; /*hide scrolls*/
+		}
+		
+		
+		.FadeInAndOut {
+			animation: FadeInAndOutParams 4s linear 1 forwards;
+		}
+		
+		@keyframes FadeInAndOutParams {
+			0% {
+				visibility: visible;
+				opacity: 0;
+			}
+			50% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+				visibility: hidden;
+			}
+		}
+		
+		.FadeIn {
+			animation: FadeInParams 2s linear 1 forwards;
+		}
+		
+		@keyframes FadeInParams {
+			0% {
+				opacity: 0;
+				visibility: visible;
+			}
+			100% {
+				opacity: 1;
+				visibility: visible;
+			}
+		}
+		
+		.FadeOut {
+			animation: FadeOutParams 2s linear 1 forwards;
+		}
+		
+		@keyframes FadeOutParams {
+			0% {
+				opacity: 1;
+				visibility: visible;
+			}
+			100% {
+				opacity: 0;
+				visibility: hidden;
+			}
+		}
+	</style>
+
+</head>
+<body>
+
+<input id = "search_input"
+       onfocusout = "this.value=''; this.style.display = 'none';"
+       oninput = "this.style.width = 5 + this.value.length + 'ch';"
+       type = "search"
+       style = "font-size:20px; border:2px solid black; position: absolute; z-index: 1; display: none; "
+       list = "search_input_list"
+/>
+
+<datalist id = "search_input_list"></datalist>
+
+<div id = "project_info"
+     style = "display: none; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "project_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	<button id = "save_layout">Save layout</button>
+</div>
+
+<div id = "channel_info"
+     style = "display: none; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "channel_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	
+	<div id = "channel_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "channel_path"></div>
+
+</div>
+
+<div id = "host_info"
+     style = "display: none; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "host_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	
+	<div id = "host_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "host_path"></div>
+
+</div>
+
+<div id = "port_info"
+     style = "display: none; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "port_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+</div>
+
+
+<div id = "pack_info"
+     style = "display: none; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "pack_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	
+	<div id = "pack_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "pack_path"></div>
+
+</div>
+
+<div id = "lang_info"
+     style = "display: none; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; font-weight: bold; padding: 5px;align-content: center;"></div>
+	
+	<div id = "lang_doc"
+	     style = "white-space: pre;font-size: large"></div>
+	
+	<div id = "lang_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "lang_path"></div>
+
+</div>
+
+
+<div id = "field_info"
+     style = "display: none; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;">4
+	</div>
+	
+	<div id = "field_doc"
+	     style = "white-space: pre;font-family: monospace">
+		
+		<b>Full path:</b>
+		<div id = "field_path"></div>
+	</div>
+	<div id = "field_role"></div>
+
+</div>
+
+
+<div id = "host_packs"
+     style = "
+     left: 0;
+        top: 0;
+        height: 100%;
+        width: 50%;
+        position: absolute;"></div>
+<div id = "pack_fields"
+     style = "
+     top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        position: absolute;"></div>
+<div id = "splitter"
+     style = "
+     top: 0;
+        left: 50%;
+        width: 5px;
+        height: 100%;
+        position: absolute;
+        cursor: ew-resize;
+        background-color: gold;"></div>
+
+
+<div id = "error_banner"
+     class = "FadeOut"
+     style = "
+				position: fixed;
+                font-size: 1vw;
+				top: 50%;
+				left: 50%;
+				white-space: pre;
+				transform:  translate(-50%, -50%) rotate(-45deg);
+				color: red;
+				visibility: hidden;
+                opacity: 0;
+		"></div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		
+		document.getElementById('splitter')
+				.addEventListener('mousedown',
+						(mousedown) => {
+							const splitter = mousedown.target
+							const R = splitter.previousElementSibling;
+							const L = R.previousElementSibling;
+							const w = splitter.getBoundingClientRect().width * 2
+							
+							const W = splitter.parentElement.getBoundingClientRect().width
+							
+							function onMouseMove(mousemove) {
+								const L_width = (mousemove.clientX - w) * 100 / W
+								L.style.width = R.style.left = splitter.style.left = `${L_width}%`;
+								R.style.width = `${100 - L_width}%`;
+							}
+							
+							function onMouseUp(mouseup) {
+								document.removeEventListener('mousemove', onMouseMove);// Remove the handlers of `mousemove` and `mouseup`
+								document.removeEventListener('mouseup', onMouseUp);
+							}
+							
+							document.addEventListener('mousemove', onMouseMove);
+							document.addEventListener('mouseup', onMouseUp);
+						});
+		
+		
+		for (const div of document.getElementsByClassName('div_header')) {
+			
+			
+			div.onmousedown =
+					(e) => {
+						e.preventDefault();
+						let x = e.clientX;
+						let y = e.clientY;
+						
+						document.onmouseup =
+								() => {
+									document.onmouseup = null;
+									document.onmousemove = null;
+								};
+						
+						document.onmousemove =
+								(e) => {
+									e.preventDefault();
+									const dx = x - e.clientX;
+									const dy = y - e.clientY;
+									x = e.clientX;
+									y = e.clientY;
+									
+									const p = div.parentNode
+									p.style.top = (p.offsetTop - dy) + "px";
+									p.style.left = (p.offsetLeft - dx) + "px";
+								};
+					}
+		}
+		
+		
+	});
+</script>
+
+<script src = "observer.js"></script>
+</body>
+</html>

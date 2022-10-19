@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0-2.final" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00896" />
+      <PackageReference Include="Tommy" Version="3.1.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Observer\favicon.ico" />
+      <EmbeddedResource Include="Observer\favicon.ico">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Observer\index.html" />
+      <EmbeddedResource Include="Observer\index.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Observer\observer.js" />
+      <EmbeddedResource Include="Observer\observer.js">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Observer\observer.js.map" />
+      <EmbeddedResource Include="Observer\observer.js.map">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Templates\AdHocAgent.toml" />
+      <EmbeddedResource Include="Templates\AdHocAgent.toml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Templates\Deployment_instructions.md" />
+      <EmbeddedResource Include="Templates\Deployment_instructions.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <Compile Remove="Templates\ProtocolDescriptionTemplate.cs" />
+      <EmbeddedResource Include="Templates\ProtocolDescriptionTemplate.cs">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+</Project>

@@ -14,9 +14,9 @@ Some examples of this approach are available in the links listed below:
 [MAVLink ](https://github.com/mavlink/mavlink)  
 [Thrift](https://thrift.apache.org/docs/idl)
 
-Having studied these, and many other, I decided to ~~build my own Theme Park with...~~ create **AdHoc protocol** - the
-system that will implement and complement the merits,
+Having studied these, and many others, I decided to build my system that will implement and complement the merits,
 eliminating the discovered shortcomings.
+I named this project AdHoc protocol.
 
 The **AdHoc** is a multilingual **C#, Java, Typescript..( upcoming C++, Rust, GO)**, generator of code to handle its own
 binary protocol.

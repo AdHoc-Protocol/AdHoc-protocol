@@ -6,7 +6,7 @@ and then creates a utility that generates the source code based on this descript
 required programming languages.
 
 
-Some of the examples of this approach are available in the links listed below:  
+Some examples of this approach are available in the links listed below:  
 [Protocol Buffers ](https://developers.google.com/protocol-buffers/docs/overview)  
 [Cap’n Proto ](https://capnproto.org/language.html)  
 [FlatBuffers ](http://google.github.io/flatbuffers/flatbuffers_guide_writing_schema.html)  

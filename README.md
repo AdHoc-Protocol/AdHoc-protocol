@@ -32,7 +32,7 @@ to the recipient.
 - multidimensional fields with predefined and variable dimensions
 - nested packs, enums
 - ordinary and flags-like enums
-- fields with enum and other pack datatype
+- fields with enum and other pack datatypes
 - host and packet level constants
 - pack's fields inheritance
 - host's communication interfaces inheritance

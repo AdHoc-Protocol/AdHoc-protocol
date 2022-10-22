@@ -41,13 +41,13 @@ to the recipient.
 - generate ready-to-use network infrastructure
 
 Right now, the code generator is built as [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service). To
-generate (and test) source code, it is necessary to:
+generate (and test) the source code, it is necessary to:
 
 - install **.NET**.
 - install any **C#** IDE (**[Intellij IDEA](https://www.jetbrains.com/rider/) / [VSCode](https://code.visualstudio.com/) / [Visual Studio](https://visualstudio.microsoft.com/vs/community/)** )
 - download source code of [AdHoс protocol metadata attributes](https://github.com/cheblin/AdHoc-protocol/tree/master/org/unirail/AdHoc).
-  Or use embedded into AdHocAgent binary  
-  **AdHoc protocol** description projects need a reference to these  attributes
+  Or use embedded into AdHocAgent binary.  
+  **AdHoc protocol** description projects need a reference to a metafile with attributes
 - To upload your protocol description file to the server and receive the result, you will need the
   **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility. Please download
   the [prebuilt version](https://github.com/cheblin/AdHocAgent/tree/master/bin)  or download the source.

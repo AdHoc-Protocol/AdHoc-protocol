@@ -40,13 +40,13 @@ to the recipient.
 - [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) compression.
 - generate ready-to-use network infrastructure
 
-Right now, the code generator is built as [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service). To get the
-generated (and tested) source code, it is necessary:
+Right now, the code generator is built as [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service). To
+generate (and test) source code, it is necessary to:
 
 - install **.NET**.
 - install any **C#** IDE (**[Intellij IDEA](https://www.jetbrains.com/rider/) / [VSCode](https://code.visualstudio.com/) / [Visual Studio](https://visualstudio.microsoft.com/vs/community/)** )
 - download source code of [AdHoс protocol metadata attributes](https://github.com/cheblin/AdHoc-protocol/tree/master/org/unirail/AdHoc).
-  or use embedded into AdHocAgent binary  
+  Or use embedded into AdHocAgent binary  
   **AdHoc protocol** description projects need a reference to these  attributes
 - To upload your protocol description file to the server and receive the result, you will need the
   **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility. Please download

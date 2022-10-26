@@ -78,7 +78,7 @@ The first argument is the path to the task file, and  if provided path ends with
 Else if the first argument path ends with:
   - `.cs?` - this instruct utility to show graphically the information of the provided protocol description file in the viewer
   - `.proto` - is means provided `.proto` file is in [Protocol Buffers](https://developers.google.com/protocol-buffers) format and will send to the server to convert it into Adhoc protocol description format
-if the last argument is a path to a folder it's used as the intermediate result output folder. if not provided - the current working directory is used.
+if one of the argument is a path to a folder it's used as the intermediate result output folder. if it not provided - the current working directory is used.
 
 ⚠️Besides command-line arguments, the AdHocAgent utility needs:
 - `AdHocAgent.toml` - the file that contains
@@ -89,10 +89,6 @@ if the last argument is a path to a folder it's used as the intermediate result 
 
 AdHocAgent utility search `AdHocAgent.toml` file next to self.
 If the file does not exist, the utility generates this file template, so just needed to update the information in this file according to your configuration.
-
-By default, code, received from the code generator server, utility is downloaded in the temporary folder, inside the utility working folder, that name is taken from
-the protocol description file. Path to a different folder, instead of the working folder, may be passed as a command-line argument.
-
 
 # Overview
 

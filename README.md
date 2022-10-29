@@ -88,7 +88,7 @@ if one of the argument is a path to a folder it's used as the intermediate resul
   - [7zip compression](https://www.7-zip.org/download.html) utility(used for best compression)
 
 AdHocAgent utility search `AdHocAgent.toml` file next to self.
-If the file does not exist, the utility generates this file template, so just needed to update the information in this file according to your configuration.
+If the utility cannot find the file in this location, it generates the template of this file. Thus it is only necessary to update the information in this file according to your configuration.
 
 # Overview
 

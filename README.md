@@ -56,34 +56,34 @@ generate (and test) the source code, it is necessary to:
 
 AdHocAgent utility accepts the following command line input:
 
-The first argument is the path to the task file, and  if provided path ends with:
-  - `.cs`  - is means to upload the provided protocol description file to the server to generate source code
-  - `.cs!` - to upload the provided protocol description file to generate source code and test it   
+The first argument is the path to the task file, and which may end with a specific parameter that sets the task type:
+  - `.cs`  - upload the protocol description file to the server to generate the source code
+  - `.cs!` - upload the protocol description file to generate the source code and test it   
   
 >The rest arguments are:
-> - paths to source `.cs` and  project `.csproj` files imported and used in the root protocol description file
-> - path to a temporary folder to store files received from the server.
-> - path to a binary, that executes after deployment (⚠️ mentioned temporary folder - is the working dir, for this executable).
+> - paths to source files `.cs` and  project files `.csproj`that are imported and used in the root protocol description file
+> - the next argument is a path to a temporary folder to store files received from the server.
+> - a path to a binary file, that executes after deployment (⚠️ the mentioned temporary folder - is the working dir for this executable file).
 >
 > 
->In this case only ⚠️, additionally, the utility needs a received-source-code deployment instruction file.  
->The name of this file has to start with the protocol description file name plus `Deployment.md` at the end - `MyProtocol_file_nameDeployment.md`  
+>In this case only ⚠️, the utility additionally needs an instruction file for the deployment of a source code received from the server.  
+>The name of such a file has to start with the protocol description file name and text `Deployment.md` at the end - `MyProtocol_file_nameDeployment.md`  
 >
->AdHocAgent utility search this file in
->- description file folder and then
->- in `working directory`  
+>AdHocAgent utility searches this file in the following locations:
+>- Description file folder
+>- `Working directory`  
 >
->If cannot find, extract this file template in description file folder. Content of this file must be updated with correct deployment instructions
+>If the utility cannot find a file in those locations, it extracts the template of this file in description file folder. You shouls edit the content of this file with the correct deployment instructions accordingly.
 
-Else if the first argument path ends with:
-  - `.cs?` - this instruct utility to show graphically the information of the provided protocol description file in the viewer
-  - `.proto` - is means provided `.proto` file is in [Protocol Buffers](https://developers.google.com/protocol-buffers) format and will send to the server to convert it into Adhoc protocol description format
-if one of the argument is a path to a folder it's used as the intermediate result output folder. if it not provided - the current working directory is used.
+Otherwise if the first argument path ends with the parameters:
+  - `.cs?` - this parameter will instruct utility to show the information of the provided protocol description file in the viewer.
+  - `.proto` - it means the provided `.proto` file is in [Protocol Buffers](https://developers.google.com/protocol-buffers) format. The utility will send it to the server to convert into Adhoc protocol description format.
+If there is a path to a folder among the arguments the utility will use this folder as the intermediate result output folder. Otherwise -  the utility will use the current working directory.
 
-⚠️Besides command-line arguments, the AdHocAgent utility needs:
+⚠️Besides the command-line arguments, the AdHocAgent utility needs:
 - `AdHocAgent.toml` - the file that contains
-  - url to the server   
-    and, paths to local:
+  - URL to the code-generating server.   
+    And paths to local:
   - IDE,
   - [7zip compression](https://www.7-zip.org/download.html) utility(used for best compression)
 

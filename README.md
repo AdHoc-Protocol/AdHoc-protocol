@@ -123,7 +123,7 @@ namespace com.my.company // You company namespace. Required!
     }
 }
 ```
-if pass the path to this file, with `?` question char at the end to AdHocAgent utility `\AdHocAgent.exe /dir/minimal_descr_file.cs?` . It will show the following scheme
+If the path to this file, ends with `?` question mark char at the end `\AdHocAgent.exe /dir/minimal_descr_file.cs?` . The AdHocAgent utility will show the following scheme
 
 <details>
   <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>

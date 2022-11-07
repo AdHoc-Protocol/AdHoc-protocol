@@ -140,8 +140,8 @@ to upload file and get source code just pass the path to AdHocAgent utility `AdH
 >- The names should not start or end with `_` (underscore).
 >- The names should not match keywords defined by the programming languages that the code generator supports. **AdHocAgent** checks and warns about such conflicts before uploading.
 >
->- the generator is naming entities as close to the original as possible
-   >  generated collections are always public and accessible but if its identifier starts with `_` (underscore) it means that its value is stored in an internal format
+>- The generator suggests entities' names as close to the original as possible. 
+   >  Generated suggestions are always public and accessible.  However, if its identifier starts with `_` (underscore) it means that its value is stored in an internal format
 >- for visual separation and better IDE IntelliSense,  methods generated for serializer internal needs start with the 'ˉ' Unicode symbol
 
 
@@ -149,8 +149,8 @@ to upload file and get source code just pass the path to AdHocAgent utility `AdH
 
 ## Project
 
-As [`DSL`](https://en.wikipedia.org/wiki/Domain-specific_language), to describe **AdHoc protocol** C# language is used.
-In fact, the protocol description file is a plain C# source code file in a .Net project.
+We choose the C# language as [`DSL`](https://en.wikipedia.org/wiki/Domain-specific_language) to describe **AdHoc protocol**.
+Generally, the protocol description file is a plain C# source code in a .Net project.
 To start, just create **C#** project and add a reference to [AdHoc protocol metadata attributes.](https://github.com/cheblin/AdHoc-protocol/tree/master/src/org/unirail/AdHoc),
 create a new C# source file. The protocol description is declared by C# `interface` enclosed in your company's namespace.
 

@@ -135,10 +135,10 @@ to upload file and get source code just pass the path to AdHocAgent utility `AdH
 
 # Protocol description file format
 
->### Naming entities in your project have to obey rules.
+>### Naming entities in your project should obey following rules.
 >
->- Name cannot start/end with `_` (underscore).
->- Name cannot match to keywords of a programming languages generator supported. **AdHocAgent** is checking and warning used names before uploading.
+>- The names should not start or end with `_` (underscore).
+>- The names should not match keywords defined by the programming languages that the code generator supports. **AdHocAgent** checks and warns about such conflicts before uploading.
 >
 >- the generator is naming entities as close to the original as possible
    >  generated collections are always public and accessible but if its identifier starts with `_` (underscore) it means that its value is stored in an internal format

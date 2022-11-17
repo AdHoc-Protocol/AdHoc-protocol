@@ -218,7 +218,7 @@ namespace com.my.company
 
 ![image](https://user-images.githubusercontent.com/29354319/194736174-420beea6-9a54-49af-bd34-5378bca7c898.png)
 
-If you select a channel you may can see what packets involved exactly and where do they go
+If you select a channel you may see what packets involved exactly and where do they go
 
 ![image](https://user-images.githubusercontent.com/29354319/194736235-a35b2625-c358-483e-81b5-009ddd20e1c9.png)
 </details>

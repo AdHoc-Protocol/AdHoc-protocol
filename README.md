@@ -130,7 +130,7 @@ If the path to this file, ends with `?` question mark char at the end `\AdHocAge
 
 ![image](https://user-images.githubusercontent.com/29354319/194577494-11945417-1531-42a3-b426-f1c7e50d9ea2.png)
 </details>
-to upload file and get source code just pass the path to AdHocAgent utility `AdHocAgent.exe /dir/minimal_descr_file.cs`. this will require a deploy instructions file `minimal_descr_fileDeployment.md`
+to upload file and get source code just transfer the path to AdHocAgent utility `AdHocAgent.exe /dir/minimal_descr_file.cs`. This will require a deploy instructions file `minimal_descr_fileDeployment.md`
 
 
 # Protocol description file format
@@ -214,11 +214,11 @@ namespace com.my.company
 }
 ```
 <details>
- <summary><span style = "font-size:30px">👉</span><b><u>and if pass it to AdHocAgent utility viewer....</u></b></summary>
+ <summary><span style = "font-size:30px">👉</span><b><u>and if you observe it with AdHocAgent utility viewer you may see the following</u></b></summary>
 
 ![image](https://user-images.githubusercontent.com/29354319/194736174-420beea6-9a54-49af-bd34-5378bca7c898.png)
 
-if select a channel can see what packets exactly and in what direction is going
+If you select a channel you may can see what packets involved exactly and where do they go
 
 ![image](https://user-images.githubusercontent.com/29354319/194736235-a35b2625-c358-483e-81b5-009ddd20e1c9.png)
 </details>

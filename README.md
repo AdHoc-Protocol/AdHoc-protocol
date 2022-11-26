@@ -329,19 +329,19 @@ Channel's `interface` "extends" `org.unirail.Meta.Communication_Channel_Of`  int
 
 ## Packs
 
-Packs are, the minimal **transmittable** information unit, declared by `class` C# construction.
-Pack's declarations can be nested and may be declared anywhere inside a host scope.
+Packs are the minimal **transmittable** information unit declared by `class` C# construction.
+Pack declarations can be nested and declared anywhere inside a host scope.
 Pack's none constant fields - are a list of information this pack transmits. Constant fields produce pack scope constants.
-A packet can be empty(without any fields). In this case, the carried information is the fact, of packet transmission.
+A packet can be empty(without any fields). In this case, the carried information is the fact of packet transmission.
 
 It is possible to add/'inherit' **all fields** from other packs.
-With comment `<see cref="Full.Path.To.SourcePack"/>` on destination packet or with C# "inheritance" from other packet wrapped into `_<>` interface wrapper
+With comment `<see cref="Full.Path.To.SourcePack"/>` on destination packet or with C# "inheritance" from other packet wrapped into `_<>` interface wrapper.
 
-Particular fields can be inherited/embedded from another packet with `<see cref="Full.Path.To.OtherPack.Field"/>` comment on destination packet
+Particular fields can be inherited/embedded from another packet with `<see cref="Full.Path.To.OtherPack.Field"/>` comment on destination packet.
 
-Adding fields cannot override existing (with same name)
+Adding fields cannot override the existing fields (with the same name).
 
-`<see cref="Full.Path.To.OtherPack.Field"/>-` or `<see cref="Full.Path.To.Source.Pack"/>-` comments let delete individual or all imported fields respectively
+Comments `<see cref="Full.Path.To.OtherPack.Field"/>-` or `<see cref="Full.Path.To.Source.Pack"/>-` allow deleting individual or all imported fields, respectively.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>

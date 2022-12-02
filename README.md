@@ -403,14 +403,14 @@ When process this description file, generator embed in the source the packets as
 
 ## Empty packs
 
-Empty packets have no any fields. Implemented as singleton. Used as most efficient way to signal about something.
+Empty packets have no fields. Implemented as singleton. Used as most efficient way to signal about something.
 
 
 ## Value pack
 
-Packages that information is fit into 8 bytes are special - `Value` packs.
-This packets does not allocate on the heap, its data is store in primitive types.
-Code generator provides methods to pack and unpack pack's fields data.
+Packages with information that fits into 8 bytes are special - `Value` packs.
+These packets do not allocate on the heap, their data is stored in primitive types.
+Code generator provides methods to pack and unpack the pack's fields data.
 
 Packs with one primitive type field are `Value` by default.
 
@@ -421,12 +421,12 @@ If you need to propagate on hosts some constants, and they have the same integra
 `[Flags]` attributes Indicates that an [enumeration can be treated as a bit field; that is, a set of flags.](https://learn.microsoft.com/en-us/dotnet/api/system.flagsattribute)
 
 None-initialized enum fields are automatically assigned integer values. If enum has `[Flags]` attribute, generated value,
-respectively, is **bit flags** like.
+ is a **bit flags** like respectively
 
 
-If your constants have non primitive datatype, use static/const field of:
--  the pack which they logically related.
--  `constants set` declared with struct C# construction.
+If your constants have non primitive datatype, use static/const fields optionally:
+-  Of the pack, they are logically related with.
+-  Or the `constants set` declared with struct C# construction.
 
 enums and  `constants set` are copy on every host and never transfer.
 

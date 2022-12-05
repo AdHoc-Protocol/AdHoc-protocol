@@ -433,8 +433,8 @@ enums and  `constants set` are copied on every host and never transfered.
 Value of constants declared with `static` fields may be assigned as a number or as a result of a static expression.
 You can use any available C# functions. Values are calculated during the code generating time.
 
-The constants declared with `const` fields can be used as `attributes parameters`. It has a  value, but it's value should be the result of compile-time expression.
-Standard static C# functions to calculate cannot be used.
+The constants declared with `const` fields can be used as `attributes parameters`. It has a value, but its value should be the result of a compile-time expression.
+Due to language restrictions the standard static C# functions cannot be used to calculate the value.
 To overcomes this limitation, AdHoc protocol description syntax use `///<see cref="Pack.static_field_with_real_value"/>` construction.
 At code generation time system "copy" value and type from `static` based constant  to `const` based constant.
 

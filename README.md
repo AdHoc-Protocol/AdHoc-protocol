@@ -554,8 +554,8 @@ using com.other_company.OtherProtocolProject;
 ```
 
 Imported, none-root file's constants are propagating only if explicitly mentioned in  C# inheritance construction of the root project.
-Inheritance from other projects - propagate all **constants** they have.
-To propagate individual  items  - inherit from other projects particular `enum`/`constants set`.
+Inheritance from other projects - propagates all **constants** that they have.
+To propagate individual  items  - inherit from other projects in particular use `enum`/`constants set`.
 
 ```csharp
 using org.unirail.Meta;
@@ -568,7 +568,7 @@ namespace com.my.company
 }
 ```
 
-This propagate all **constants** from `Project_const_packs` and `Particular_const_pack` to all hosts in `MyProject` project.
+This propagates all **constants** from `Project_const_packs` and `Particular_const_pack` to all hosts in `MyProject` project.
 
 You can wrap `constants sets` to use them in place where C# only interface allowed. The real AdhocProtocol description file example
 ```csharp

@@ -570,7 +570,7 @@ namespace com.my.company
 
 This propagates all **constants** from `Project_const_packs` and `Particular_const_pack` to all hosts in `MyProject` project.
 
-You can wrap `constants sets` to use them in place where C# only interface allowed. The real AdhocProtocol description file example
+You can wrap `constants sets` to use them in C# where only interface allowed. The real AdhocProtocol description file example
 ```csharp
 using org.unirail.Meta;
 
@@ -590,8 +590,8 @@ namespace org.unirail
 
 A pack's field can be `optional` or `required`.
 
-* `required` fields are always allocated and transmitted, even if was not touched and filled with data.
-* `optional` fields, in turns, if was not touched, allocates just a few bits
+* `required` fields are always allocated and transmitted, even if hey were not modified and filled with data.
+* `optional` fields, if were not modiied, allocate just a few bits
 
 
 According to AdHoc protocol description rule, primitive data type ended with `?` (`int?`, `byte?`...), and non-primitive data types (`string`, `array`...) are `optional`.
@@ -621,10 +621,10 @@ All range of C# numeric primitive types are available
 | float  | ±1.5 x 10−45 to ±3.4 x 1038                              |
 | double | ±5.0 × 10−324 to ±1.7 × 10308                            |
 
-As a protocol creator, you know your data in advance, and better, than any code generator. **AdHoc** description provides attributes
+As a creator  of a protocol, you know your data in advance, and better, than any code generator. **AdHoc** description provides attributes
 that let you share your knowledge with the generator and help generate optimal code.
 
-f your field's data is fits in a range, express this with `MinMax` attribute. Code generator will try to find the best datatype and
+If your field's data is fits in a range, express this with `MinMax` attribute. Code generator will try to find the best datatype and
 generate range bounds information to control passing values.
 
 If value **range** less then 127, code generator will store the value in internal bits storage

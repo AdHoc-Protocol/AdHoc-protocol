@@ -621,13 +621,13 @@ All range of C# numeric primitive types are available
 | float  | ±1.5 x 10−45 to ±3.4 x 1038                              |
 | double | ±5.0 × 10−324 to ±1.7 × 10308                            |
 
-As a creator  of a protocol, you know your data in advance, and better, than any code generator. **AdHoc** description provides attributes
-that let you share your knowledge with the generator and help generate optimal code.
+As a creator  of a protocol, you know the scope of data in advance better than any code generator. **AdHoc** description provides attributes
+that let you share your knowledge with the generator and helps to generate optimal code.
 
-If your field's data is fits in a range, express this with `MinMax` attribute. Code generator will try to find the best datatype and
-generate range bounds information to control passing values.
+If your field's data fits in a particular range, it is better to declare it with the MinMax attribute. Code generator will try to find the best 
+datatype and generate range bounds information to control passing values.
 
-If value **range** less then 127, code generator will store the value in internal bits storage
+If value **range** is less than 127, the code generator will store the value in internal bits storage
 
 ```csharp
      [MinMax(1, 8)] int car_doors;     
@@ -635,12 +635,12 @@ If value **range** less then 127, code generator will store the value in interna
 
 for `car_doors` field code generator could allocate 3 bits in the bits storage
 
-If some field value in, range `200_005` to `200_078`,
+If some field value is in range `200_005` to `200_078`,
 
 ```csharp
      [MinMax(200_005, 200_078)] int field;     
 ```
-code generator generate code, that store field, in the bits storage and provide getter/setter to add/subtract `200 005` constant.
+The code generator generate code, that store field, in the bits storage and provide getter/setter to add/subtract `200 005` constant.
 
 ## Varint
 

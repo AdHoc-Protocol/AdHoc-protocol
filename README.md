@@ -627,38 +627,38 @@ that let you share your knowledge with the generator and helps to generate optim
 If your field's data fits in a particular range, it is better to declare it with the MinMax attribute. Code generator will try to find the best 
 datatype and generate range bounds information to control passing values.
 
-If value **range** is less than 127, the code generator will store the value in internal bits storage
+If value **range** is less than 127, the code generator will store the value in internal bits storage.
 
 ```csharp
      [MinMax(1, 8)] int car_doors;     
 ```
 
-for `car_doors` field code generator could allocate 3 bits in the bits storage
+for `car_doors` field code generator could allocate 3 bits in the bits storage.
 
 If some field value is in range `200_005` to `200_078`,
 
 ```csharp
      [MinMax(200_005, 200_078)] int field;     
 ```
-The code generator generate code, that store field, in the bits storage and provide getter/setter to add/subtract `200 005` constant.
+The code generator generates code, that store field in the bits storage and provide getter/setter to add/subtract `200 005` constant.
 
 ## Varint
 
-If the numeric field has random values, uniformly distributed in full it's numeric type range, as noise.
+If the numeric field has random values uniformly distributed in the whole numeric type range as noise, it may look like the following visual representation.
 
 ![image](https://user-images.githubusercontent.com/29354319/70127303-bdf40900-16b5-11ea-94c9-c0dcd045500f.png)
 
-Any compression of this kind of data type is wasting of computational resources.  
-But, if numeric fields have some dispersion/gradient pattern in its value changing...
+Any compression of this data type is a waste of computing resources.  
+But, if the numeric fields have some particular dispersion/gradient pattern in its value scope as it presented in following image:
 
 ![image](https://user-images.githubusercontent.com/29354319/70128574-0a404880-16b8-11ea-8a4d-efa8a7358dc1.png)
 
-It is possible to leverage this knowledge to minimize the amount of data transmission.  
+Then it is possible to use this knowledge to minimize the amount of data transmission.  
 In this case code generator can use [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding)
 compression
-[algorithm](https://en.wikipedia.org/wiki/Variable-length_quantity), on single fields and `Group Varint Encoding` on
-array or list
-which allows good and with small resource load, reduces the sending data amount.
+[algorithm](https://en.wikipedia.org/wiki/Variable-length_quantity) on single fields and `Group Varint Encoding` on
+array or list. 
+That would allow to reduces the sending data amount optimizing the resource load.
 This is achieved by skipping transmission of the higher bytes if they are zeros, and then restore them on the receiving.
 
 This graph shows the dependence of sending bytes on transferred value.

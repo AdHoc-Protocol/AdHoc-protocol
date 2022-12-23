@@ -2,15 +2,15 @@
 # *Achtung!!!*  
 ![image](https://user-images.githubusercontent.com/29354319/204679188-d5b0bdc7-4e47-4f32-87bb-2bfaf9d09d78.png)
 
-Manual writing of data serialization and deserialization code in different programming languages
-is a time-consuming and error-prone 
-especially intended for heterogeneous devices. The most efficient solution is to create a DSL – that first formally
-describes the protocol,
-and then creates a utility that generates the source code based on this description for various target platforms, in the
+Writing data serialization and deserialization code manually in different programming languages
+can be very time-consuming and prone to errors, 
+especially when working with heterogeneous devices. A more efficient solution is to use a Domain-Specific Language (DSL) that formally
+describes the protocol
+and then generates source code based on this description for various target platforms and programming languages.
 required programming languages.
 
 
-Some examples of this approach are available in the links listed below:  
+This approach can be seen in Protocol Buffers, Cap'n Proto and others which are available at the links provided. 
 [Protocol Buffers ](https://developers.google.com/protocol-buffers/docs/overview)  
 [Cap’n Proto ](https://capnproto.org/language.html)  
 [FlatBuffers ](http://google.github.io/flatbuffers/flatbuffers_guide_writing_schema.html)  
@@ -18,13 +18,13 @@ Some examples of this approach are available in the links listed below:
 [MAVLink ](https://github.com/mavlink/mavlink)  
 [Thrift](https://thrift.apache.org/docs/idl)
 
-Having studied these, and many others, I decided to build my system that will implement and complement the merits,
-eliminating the discovered shortcomings.
-I named this project AdHoc protocol.
+I have studied several approaches to handling binary protocols and decided to create my own system, 
+called AdHoc protocol,to address the weaknesses I found in these approaches.
 
-The **AdHoc** is a multilingual **C#, Java, Typescript ( upcoming C++, Rust, GO)** generator of code to handle its
-binary protocol.
-The AdHoc server generates code according to your protocol description file.
+
+AdHoc is a code generator that supports multiple programming languages, including C#, Java, and Typescript, with 
+plans to add support for C++, Rust, and GO in the future.
+The AdHoc server generates code based on a protocol description file,
 You must implement the received packet handlers and packet-producing logic, fill packs with data and send them
 to the recipient.
 
@@ -44,8 +44,8 @@ to the recipient.
 - [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) compression.
 - generate ready-to-use network infrastructure
 
-Right now, the code generator is built as [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service). To
-generate (and test) the source code, it is necessary to:
+The code generator is currently available as a SaaS (Software as a Service)[**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service). 
+To use it, you will need to:
 
 - install **.NET**.
 - install any **C#** IDE (**[Intellij IDEA](https://www.jetbrains.com/rider/) / [VSCode](https://code.visualstudio.com/) / [Visual Studio](https://visualstudio.microsoft.com/vs/community/)** )

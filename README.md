@@ -48,36 +48,34 @@ The code generator is currently available as a SaaS (Software as a Service)[**Sa
 To use it, you will need to:
 
 - install **.NET**.
-- install any **C#** IDE (**[Intellij IDEA](https://www.jetbrains.com/rider/) / [VSCode](https://code.visualstudio.com/) / [Visual Studio](https://visualstudio.microsoft.com/vs/community/)** )
-- download source code of [AdHoс protocol metadata attributes](https://github.com/cheblin/AdHoc-protocol/tree/master/org/unirail/AdHoc).
-  Or use embedded into AdHocAgent binary.  
-  **AdHoc protocol** description projects need a reference to a metafile with attributes
-- To upload your protocol description file to the server and receive the result, you will need the
-  **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility. Please download
-  the [prebuilt version](https://github.com/cheblin/AdHocAgent/tree/master/bin)  or download the source.
+- install a **C#** IDE such as (**[Intellij IDEA](https://www.jetbrains.com/rider/) / [VSCode](https://code.visualstudio.com/) / [Visual Studio](https://visualstudio.microsoft.com/vs/community/)** )
+- download the source code of the [AdHoс protocol metadata attributes](https://github.com/cheblin/AdHoc-protocol/tree/master/org/unirail/AdHoc).
+ - or use the version embedded in the AdHocAgent binary.  
+ Add a reference to the metafile with attributes in your **AdHoc protocol** description project.
+- Use the **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility to upload your protocol description file to the server and receive the generated code. You can either download a [prebuilt version](https://github.com/cheblin/AdHocAgent/tree/master/bin)  or download the source.
 
 # AdHocAgent utility
 
-AdHocAgent utility accepts the following command line input:
+The AdHocAgent utility is a command-line tool that processes the following input:
 
-The first argument is the path to the task file, and which may end with a specific parameter that sets the task type:
+The first argument is the path to the task file, which may include a parameter at the end to specify the task type:
   - `.cs`  - upload the protocol description file to the server to generate the source code
-  - `.cs!` - upload the protocol description file to generate the source code and test it   
+  - `.cs!` - upload the protocol description file to generate the source code and test the source code  
   
->The rest arguments are:
+>The remaining arguments are:
 > - paths to source files `.cs` and  project files `.csproj`that are imported and used in the root protocol description file
-> - the next argument is a path to a temporary folder to store files received from the server.
-> - a path to a binary file, that executes after deployment (⚠️ the mentioned temporary folder - is the working dir for this executable file).
+> - The path to a temporary folder to store files received from the server.
+> - a path to a binary file, that will be executed after deployment (⚠️ the temporary folder will be the working directory for this executable file).
 >
 > 
->In this case only ⚠️, the utility additionally needs an instruction file for the deployment of a source code received from the server.  
->The name of such a file has to start with the protocol description file name and text `Deployment.md` at the end - `MyProtocol_file_nameDeployment.md`  
+>In this case ⚠️, the utility will also need an instruction file for deploying the source code received from the server.  
+>The file should be named with the protocol description file name followed by  `Deployment.md` e.g. - `MyProtocol_file_nameDeployment.md`  
 >
->AdHocAgent utility searches this file in the following locations:
->- Description file folder
->- `Working directory`  
+>AdHocAgent utility will search for this file in the following locations:
+>- The description file folder
+>- The `Working directory`  
 >
->If the utility cannot find a file in those locations, it extracts the template of this file in description file folder. You shouls edit the content of this file with the correct deployment instructions accordingly.
+>If the utility cannot find the file in these locations, it will extract a template of the file in the description file folder, which you can then edit with the correct deployment instructions.
 
 Otherwise if the first argument path ends with the parameters:
   - `.cs?` - this parameter will instruct utility to show the information of the provided protocol description file in the viewer.

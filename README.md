@@ -82,15 +82,15 @@ Otherwise if the first argument path ends with the parameters:
   - `.proto` - it means the provided `.proto` file is in [Protocol Buffers](https://developers.google.com/protocol-buffers) format. The utility will send it to the server to convert into Adhoc protocol description format.
 If there is a path to a folder among the arguments the utility will use this folder as the intermediate result output folder. Otherwise -  the utility will use the current working directory.
 
-⚠️Besides the command-line arguments, the AdHocAgent utility needs:
-- `AdHocAgent.toml` - the file that contains
-  - URL to the code-generating server.   
-    And paths to local:
+⚠️In addition to the command-line arguments, the AdHocAgent utility needs the following:
+- An `AdHocAgent.toml` - the file that contains
+  - The URL of the code-generating server.   
+    And paths to the local IDE:
   - IDE,
   - [7zip compression](https://www.7-zip.org/download.html) utility(used for best compression)
 
-AdHocAgent utility search `AdHocAgent.toml` file next to self.
-If the utility cannot find the file in this location, it generates the template of this file. Thus it is only necessary to update the information in this file according to your configuration.
+AdHocAgent utility will search for the `AdHocAgent.toml` file next to self.
+If it cannot find the file in this location, it will generate a template that you can update with your configuration information. Thus it is only necessary to update the information in this file according to your configuration.
 
 # Overview
 
@@ -125,7 +125,7 @@ namespace com.my.company // You company namespace. Required!
     }
 }
 ```
-If the path to this file, ends with `?` question mark char at the end `\AdHocAgent.exe /dir/minimal_descr_file.cs?` . The AdHocAgent utility will show the following scheme
+If you want to view the structure of a protocol description file, you can use the AdHocAgent utility with the path to the file followed by a question mark e.g. `\AdHocAgent.exe /dir/minimal_descr_file.cs?` . The utility will display the following scheme
 
 <details>
   <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>

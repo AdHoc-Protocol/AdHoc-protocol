@@ -85,11 +85,11 @@ If there is a path to a folder among the arguments the utility will use this fol
 ⚠️In addition to the command-line arguments, the AdHocAgent utility needs the following:
 - An `AdHocAgent.toml` - the file that contains
   - The URL of the code-generating server.   
-    And paths to the local IDE:
-  - IDE,
+   
+  - And paths to the local IDE
   - [7zip compression](https://www.7-zip.org/download.html) utility(used for best compression)
 
-AdHocAgent utility will search for the `AdHocAgent.toml` file next to self.
+AdHocAgent utility will search for the `AdHocAgent.toml` file next to itself.
 If it cannot find the file in this location, it will generate a template that you can update with your configuration information. Thus it is only necessary to update the information in this file according to your configuration.
 
 # Overview
@@ -132,19 +132,19 @@ If you want to view the structure of a protocol description file, you can use th
 
 ![image](https://user-images.githubusercontent.com/29354319/194577494-11945417-1531-42a3-b426-f1c7e50d9ea2.png)
 </details>
-to upload file and get source code just transfer the path to AdHocAgent utility `AdHocAgent.exe /dir/minimal_descr_file.cs`. This will require a deploy instructions file `minimal_descr_fileDeployment.md`
+To upload a file and generate the source code, you can simply pass the path to the AdHocAgent utility `AdHocAgent.exe /dir/minimal_descr_file.cs`. This will require a deployment instructions file `minimal_descr_fileDeployment.md`
 
 
 # Protocol description file format
 
->### Naming entities in your project should obey following rules.
+>### The protocol description file follows a specific naming convention:
 >
->- The names should not start or end with `_` (underscore).
->- The names should not match keywords defined by the programming languages that the code generator supports. **AdHocAgent** checks and warns about such conflicts before uploading.
+>- Names should not start or end with an underscore `_`.
+>- Names should not match any keywords defined by the programming languages that the code generator supports. **AdHocAgent** will check for and warn about such conflicts before uploading.
 >
->- The generator suggests entities' names as close to the original as possible. 
-   >  Generated suggestions are always public and accessible.  However, if its identifier starts with `_` (underscore) it means that its value is stored in an internal format
->- for visual separation and better IDE IntelliSense,  methods generated for serializer internal needs start with the 'ˉ' Unicode symbol
+>- The generator will suggest names that are as close to the original as possible.  
+   >  Generated suggestions are always public and accessible.  But, if the identifier starts with an underscore `_`, it means that the value is stored in an internal format
+>- for visual separation and better IntelliSense support in IDEs, methods generated for serializer internal needs will start with the 'ˉ' Unicode symbol
 
 
 
@@ -153,8 +153,8 @@ to upload file and get source code just transfer the path to AdHocAgent utility 
 
 We choose the C# language as [`DSL`](https://en.wikipedia.org/wiki/Domain-specific_language) to describe **AdHoc protocol**.
 Generally, the protocol description file is a plain C# source code in a .Net project.
-To start, just create **C#** project and add a reference to [AdHoc protocol metadata attributes.](https://github.com/cheblin/AdHoc-protocol/tree/master/src/org/unirail/AdHoc),
-create a new C# source file. The protocol description is declared by C# `interface` enclosed in your company's namespace.
+To create a protocol description file, you can start by creating a **C#** project and adding a reference to the [AdHoc protocol metadata attributes.](https://github.com/cheblin/AdHoc-protocol/tree/master/src/org/unirail/AdHoc),
+Then, create a new C# source file and declare the protocol description using C# `interface` enclosed in your company's namespace.
 
 ```csharp
 using org.unirail.Meta;//        importing AdHoc protocol attributes. Required!

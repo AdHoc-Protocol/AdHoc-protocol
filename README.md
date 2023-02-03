@@ -229,14 +229,14 @@ If you select a channel you may see what packets are involved exactly and where 
 
 In the AdHoc protocol, hosts are represented as C# `struct` within a project `interface` scope. These hosts participate in the exchange of information and must implement the org.unirail.Meta.Host marker interface.   
 Host should implements 
-By means of C# code documentation XML tags [<see cref="member">](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
-of the host declaration it's possible to declare source code generating languages and options.
-Built-in marker interfaces `InCS`, `InJAVA`, `InTS` etc. let's declare the language configuration scope.
+Through XML tags  [<see cref="member">](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
+in the host declaration's code documentation, it is possible to specify the language in which the host's source code will be generated, as well as any relevant options.
+The built-in marker interfaces `InCS`, `InJAVA`, `InTS` etc. allow for the declaration of language configuration scopes.
 
-Items(packs or fields) mentioned in the rolling scope are getting the scope configuration.
-The latest language configuration scope becomes the default for the rest of the items in the host.
+Items (such as packs or fields) mentioned within the rolling scope will be given the configuration of that scope.
+The most recent language configuration scope becomes the default for the rest of the items within the host.
 
-The following language configuration for `Server` host in this file:
+In the following example, the language configuration for the 'Server' host in this file is:
 ```csharp
 using org.unirail.Meta;
 
@@ -300,9 +300,9 @@ namespace org.unirail
 ```
 
 
-The host's ports are can be joined to each other with communication channels.
-Packs, added to or declared inside of the host's port, the host can **create and send** to another host.
-A pack or packs declared in a port can be added to other by C# inheritance construction
+Hosts can connect to each other through communication channels, known as ports. 
+Packs that are added to or declared within a host's port can be **create and send** to another host by the host.
+A pack or packs declared in a port can also be added to other ports through C# inheritance.
 
 ```csharp
             ///<see cref="Full.Path.To.ThePack"/>           <<< add single pack `ThePack` as is
@@ -318,10 +318,10 @@ A pack or packs declared in a port can be added to other by C# inheritance const
 
 ## Channels
 
-To join host's ports, **AdHoc protocol** use channels entities.  
-Channels declare by means of `interface` C# construction, and like hosts, are located directly inside the project scope.
-Channel's `interface` "extends" `org.unirail.Meta.Communication_Channel_Of`  interface and its params list  enumerates two joined ports.
-
+The **AdHoc protocol** uses channels to connect the ports of hosts.  
+Channels are declared using a C# `interface` and, like hosts, are located directly within the project scope.
+The channel's `interface` "extends" the `org.unirail.Meta.Communication_Channel_Of`  interface and its parameter list soecifies the two ports being connected.
+For example:
 ```csharp
         interface TrialCommunicationChannel : Communication_Channel_Of<Server.SendToTrialClient, TrialClient.ToServer> { }
         interface CommunicationChannel : Communication_Channel_Of<Server.SendToClient, FullFeaturedClient.ToServer> { }

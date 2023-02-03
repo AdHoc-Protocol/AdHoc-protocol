@@ -167,9 +167,9 @@ namespace com.my.company// You company namespace. Required!
 }
 ```
 
-Besides describing the data format (packs, fields) **AdHoc protocol** provides facilities to describe full network topology: hosts, channels, and their relationships.
+The **AdHoc protocol** not only defines the data format, including packs and fields, but it also includes features for describing the full network topology. This includes details on hosts, channels, and the relationships between them. 
 
-Lets take a look at following protocol description file example
+For example, consider the following protocol description file:
 
 ```csharp
 
@@ -227,8 +227,8 @@ If you select a channel you may see what packets are involved exactly and where 
 
 ## Hosts
 
-A `struct` C# construction, inside a project `interface` scope, declare a host ( node/device/unit ) that participates in information exchange.  
-Host should implements org.unirail.Meta.Host marker interface.
+In the AdHoc protocol, hosts are represented as C# `struct` within a project `interface` scope. These hosts participate in the exchange of information and must implement the org.unirail.Meta.Host marker interface.   
+Host should implements 
 By means of C# code documentation XML tags [<see cref="member">](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
 of the host declaration it's possible to declare source code generating languages and options.
 Built-in marker interfaces `InCS`, `InJAVA`, `InTS` etc. let's declare the language configuration scope.

@@ -257,7 +257,7 @@ namespace com.my.company// You company namespace. Required!
     } 
 }
 ```
-AdHocAgent utility could be read the in this way..
+AdHocAgent utility could be read in this manner..
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
 
@@ -331,15 +331,15 @@ For example:
 
 ## Packs
 
-Packs are the minimal **transmittable** information unit declared by `class` C# construction.
-Pack declarations can be nested and declared anywhere inside a host scope.
-Pack's none constant fields - are a list of information this pack transmits. Constant fields produce pack scope constants.
-A packet can be empty(without any fields). In this case, the carried information is the fact of packet transmission.
+Packs are the smallest unit of transmittable information, declared using a C# `class` construction.
+Pack declarations can be nested and can be placed anywhere within a host's scope. 
+The pack's non-constant fields represent the information that the pack transmits. Constant fields create constants within the pack's scope.
+A pack can be empty, in which case the transmitted information is simply the fact of the packet's transmission.
 
-It is possible to add/'inherit' **all fields** from other packs.
-With comment `<see cref="Full.Path.To.SourcePack"/>` on destination packet or with C# "inheritance" from other packet wrapped into `_<>` interface wrapper.
+It is possible to add/'inherit' **all fields** from other packs through the use of the <see cref='Full.Path.To.SourcePack'/> comment
+on the destination pack or through C# "inheritance" from the other pack wrapped in the `_<>` interface wrapper.
 
-Particular fields can be inherited/embedded from another packet with `<see cref="Full.Path.To.OtherPack.Field"/>` comment on destination packet.
+Individual fields can also be inherited or embedded from another pack using the `<see cref="Full.Path.To.OtherPack.Field"/>` comment on the destination pack.
 
 Adding fields cannot override the existing fields (with the same name).
 

@@ -341,9 +341,9 @@ on the destination pack or through C# "inheritance" from the other pack wrapped 
 
 Individual fields can also be inherited or embedded from another pack using the `<see cref="Full.Path.To.OtherPack.Field"/>` comment on the destination pack.
 
-Adding fields cannot override the existing fields (with the same name).
+Fields cannot be overridden if they have the same name as an existing field. 
 
-Comments `<see cref="Full.Path.To.OtherPack.Field"/>-` or `<see cref="Full.Path.To.Source.Pack"/>-` allow deleting individual or all imported fields, respectively.
+The `<see cref="Full.Path.To.OtherPack.Field"/>-` or `<see cref="Full.Path.To.Source.Pack"/>-` comments can be used to delete individual or all imported fields, respectively.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -395,31 +395,31 @@ namespace com.my.company
 
 </details>
 
-When process this description file, generator embed in the source the packets assigned id information.
+When this description file is processed, the generator will include the assigned ID information in the source pack.
 
 ![image](https://user-images.githubusercontent.com/29354319/194849405-e65f0ef9-482d-43ec-8e13-f78a137caec2.png)
 
 ## Empty packs
 
-Empty packets have no fields. Implemented as singleton. Used as most efficient way to signal about something.
+Empty packs Empty packets have no fields and are implemented as singletons. They are used as the most efficient way to signal something.
 
 
 ## Value pack
 
-Packages with information that fits into 8 bytes are special - `Value` packs.
-These packets do not allocate on the heap, their data is stored in primitive types.
-Code generator provides methods to pack and unpack the pack's fields data.
+Packs with information that fits within 8 bytes are special - `Value` packs.
+These packs do not allocate on the heap, and their data is stored in primitive types. 
+The code generator provides methods for packing and unpacking the pack's field data.
 
-Packs with one primitive type field are `Value` by default.
+Packs with a single primitive type field are `Value` packs by default.
 
 ## Enums and constants
 
-If you need to propagate on hosts some constants, and they have the same integral type: use enums
+Enums and constants If you need to propagate constants across hosts and they have the same integral type, use enums. 
 
-`[Flags]` attributes Indicates that an [enumeration can be treated as a bit field; that is, a set of flags.](https://learn.microsoft.com/en-us/dotnet/api/system.flagsattribute)
+The `[Flags]` attribute Indicates that an [enumeration can be treated as a bit field, or a set of flags.](https://learn.microsoft.com/en-us/dotnet/api/system.flagsattribute)
 
-None-initialized enum fields are automatically assigned integer values. If enum has `[Flags]` attribute, generated value,
- is a **bit flags** like respectively
+Non-initialized enum fields are automatically assigned integer values. If enum has the `[Flags]` attribute, the generated value,
+ is a set of a **bit flags**
 
 
 If your constants have non primitive datatype, use static/const fields optionally:

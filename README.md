@@ -544,7 +544,7 @@ The root description file's constants are propagated to all hosts.
 
 ## Importing other descriptions
 
-C# `using` statement in the description file header, let use entities declared in other protocol description files.
+The C# `using` statement in the description file header allows you to use entities declared in other protocol description files.
 
 ```csharp
 using com.company.ProtocolProject;

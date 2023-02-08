@@ -422,19 +422,19 @@ Non-initialized enum fields are automatically assigned integer values. If enum h
  is a set of a **bit flags**
 
 
-If your constants have non primitive datatype, use static/const fields optionally:
--  Of the pack, they are logically related with.
--  Or the `constants set` declared with struct C# construction.
+If your constants have a non-primitive data type, you can use static or const fields, either
+-  within a pack that they are logically related to,
+-  or within a constants set declared using a C# struct construction.
 
-enums and  `constants set` are copied on every host and never transfered.
+Enums and  `constants sets` are copied on every host and are never transfered.
 
-Value of constants declared with `static` fields may be assigned as a number or as a result of a static expression.
-You can use any available C# functions. Values are calculated during the code generating time.
+The values of constants declared with `static` fields can be assigned as a number or as the result of a static expression.
+You can use any available C# functions. Values are calculated during the code generaton time.
 
-The constants declared with `const` fields can be used as `attributes parameters`. It has a value, but its value should be the result of a compile-time expression.
-Due to language restrictions the standard static C# functions cannot be used to calculate the value.
-To overcomes this limitation, AdHoc protocol description syntax use `///<see cref="Pack.static_field_with_real_value"/>` construction.
-At code generation time system "copy" value and type from `static` based constant  to `const` based constant.
+Constants declared with `const` fields can be used as `attributes parameters`. They have a value, but that value must be the result of a compile-time expression.
+Due to language restrictions, standard static C# functions cannot be used to calculate the value.
+To overcomes this limitation, the AdHoc protocol description syntax uses the `///<see cref="Pack.static_field_with_real_value"/>` construction.
+At code generation time the system "copies" the value and type from a `static` -based constant  to a `const` -based constant.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -539,7 +539,7 @@ namespace com.my.company
 
 </details>
 
-The root description file's constants are propagating to all hosts.
+The root description file's constants are propagated to all hosts.
 
 
 ## Importing other descriptions

@@ -551,9 +551,9 @@ using com.company.ProtocolProject;
 using com.other_company.OtherProtocolProject;
 ```
 
-Imported, none-root file's constants are propagating only if explicitly mentioned in  C# inheritance construction of the root project.
-Inheritance from other projects - propagates all **constants** that they have.
-To propagate individual  items  - inherit within the other projects use `enum`/`constants set`.
+Constants from imported, non-root files are only propagated if they are explicitly mentioned in the C# inheritance construction of the root project.
+Inheritance from other projects propagates all **constants** that they have.
+To propagate individual  items, inherit within the other projects use `enum`/`constants set`.
 
 ```csharp
 using org.unirail.Meta;
@@ -588,11 +588,11 @@ namespace org.unirail
 
 A pack's field can be `optional` or `required`.
 
-* `required` fields are always allocated and transmitted, even if hey were not modified and filled with data.
-* `optional` fields, if were not modiied, allocate just a few bits
+* `required` fields are always allocated and transmitted,even if they have not been modified or filled with data.
+* `optional` fields, on the other hand, only allocate a few bits if they have not been modified.
 
 
-According to AdHoc protocol description rule, primitive data type ended with `?` (`int?`, `byte?`...), and non-primitive data types (`string`, `array`...) are `optional`.
+According to the AdHoc protocol description rule, primitive data types that end with a `?` (such as `int?`, `byte?`, etc.) are 'optional', as are non-primitive data types such as `string` and `array`.
 ```csharp
 class Packet
 {

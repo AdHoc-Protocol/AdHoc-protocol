@@ -592,7 +592,7 @@ A pack's field can be `optional` or `required`.
 * `optional` fields, on the other hand, only allocate a few bits if they have not been modified.
 
 
-According to the AdHoc protocol description rule, primitive data types that end with a `?` (such as `int?`, `byte?`, etc.) are 'optional', as are non-primitive data types such as `string` and `array`.
+According to the AdHoc protocol description rule, primitive data types that end with a `?` (such as `int?`, `byte?`, etc.) are 'optional', as are non-primitive data types such as `string` and `array`. For example:
 ```csharp
 class Packet
 {
@@ -619,13 +619,13 @@ All range of C# numeric primitive types are available
 | float  | ±1.5 x 10−45 to ±3.4 x 1038                              |
 | double | ±5.0 × 10−324 to ±1.7 × 10308                            |
 
-As a creator  of a protocol, you know the scope of data in advance better than any code generator. **AdHoc** description provides attributes
-that let you share your knowledge with the generator and helps to generate optimal code.
+As the creator of a protocol, you likely have a better understanding of the scope of the data in advance than any code generator. 
+**AdHoc** description provides attributes that allow you to share this knowledge with the generator, which helps to generate optimal code.
 
-If your field's data fits in a particular range, it is better to declare it with the MinMax attribute. Code generator will try to find the best 
-datatype and generate range bounds information to control passing values.
+For example, if you know that the data for a particular field fits within a specific range, it is beneficial to declare it using the 'MinMax' attribute.  
+The code generator will then try to find the best data type and generate range bound information to control the passing of values.
 
-If value **range** is less than 127, the code generator will store the value in internal bits storage.
+If value **range** is less than 127, the code generator will store the value in an internal bits storage to save space. For example:
 
 ```csharp
      [MinMax(1, 8)] int car_doors;     

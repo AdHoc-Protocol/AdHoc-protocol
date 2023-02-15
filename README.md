@@ -742,13 +742,13 @@ The variable dimensions length are set at field initialization.
 ```
 ## Fields with binary array datatype
 
-With special attribute `org.unirail.Binary` possible to declare a field with binary data type. Content of this type transfer directly.
-This field type implementation depends on target platform. On JAVA it is signed `byte` on C# unsigned 'byte'
+It is possible to declare a field with a binary data type using the special attribute `org.unirail.Binary`. The content of this type is transferred directly.
+However, the implementation of this field type depends on the target platform. For instance, in Java, it is represented by a signed `byte`, while in C#, it is represented by an unsigned 'byte'
 
 
 ## Fields with Map/Set datatype
 
-description is simple and straightforward
+The description of fields with a Map/Set datatype is simple and straightforward. 
 
 ```csharp
             Set<uint>                 uint_set;

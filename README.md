@@ -638,34 +638,34 @@ If some field value is in range `200_005` to `200_078`,
 ```csharp
      [MinMax(200_005, 200_078)] int field;     
 ```
-The code generator generates code, that store field in the bits storage and provide getter/setter to add/subtract `200 005` constant.
+The code generator produces code that stores a field in the bits storage and provides getter/setter methods to add/subtract a constant value of  `200 005` constant.
 
 ## Varint
 
-If the numeric field has random values uniformly distributed in the whole numeric type range as noise, it may look like the following visual representation.
+If a numeric field has random values uniformly distributed throughout the entire range of the numeric type, such as noise, it may look like the following visual representation:
 
 ![image](https://user-images.githubusercontent.com/29354319/70127303-bdf40900-16b5-11ea-94c9-c0dcd045500f.png)
 
-Any compression of this data type is a waste of computing resources.  
-But, if the numeric fields have some particular dispersion/gradient pattern in its value scope as it presented in following image:
+Compressing this data type would be a waste of computing resources.  
+However, if the numeric field has a particular dispersion or gradient pattern in its value range, as shown in the following image:
 
 ![image](https://user-images.githubusercontent.com/29354319/70128574-0a404880-16b8-11ea-8a4d-efa8a7358dc1.png)
 
 Then it is possible to use this knowledge to minimize the amount of data transmission.  
-In this case code generator can use [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding)
+In this case, the code generator can use [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding)
 compression
 [algorithm](https://en.wikipedia.org/wiki/Variable-length_quantity) on single fields and `Group Varint Encoding` on
-array or list. 
-That would allow to reduces the sending data amount optimizing the resource load.
-This is achieved by skipping transmission of the higher bytes if they are zeros, and then restore them on the receiving.
+array or lists, which reduces the amount of data being sent and optimizes resource load. 
 
-This graph shows the dependence of sending bytes on transferred value.
+This is achieved by skipping the transmission of higher bytes if they are zeros and then restoring them on the receiving end.
+
+This graph shows the dependence of the number of bytes being sent on the transferred value.
 
 ![image](https://user-images.githubusercontent.com/29354319/70126207-84ba9980-16b3-11ea-9900-48251b545eef.png)
 
-It is becoming clear that `Varint Encoding`, for smaller value produce less bytes to transmit.
+It is clear that `Varint Encoding`produces fewer bytes to transmit for smaller values.
 
-Let highlight three basic types of numeric value changing patterns.
+There are three basic types of numeric value changing patterns:
 
 |                                                     pattern                                                     | description                                                                                                                                                               |
 |:---------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -687,7 +687,7 @@ Let highlight three basic types of numeric value changing patterns.
 
 ## String fields
 
-Strings in **AdHoc protocol** on all languages are encoded in UTF-8 byte array. All string fields are `optional`
+In the **AdHoc protocol**, strings in all languages are encoded as UTF-8 byte arrays. . Additionally, all string fields in the protocol are marked as `optional`
 
 ```csharp
 string  string_field;
@@ -695,8 +695,8 @@ string  string_field;
 
 ## Multidimensional fields
 
-Field can hold a multidimensional array of primitives, strings, maps, sets and packs.
-Dimensions can be constant and variable length.
+The field in question can hold a multidimensional array of various types, including primitives, strings, maps, sets, and packs.
+These dimensions can be of either a constant or variable length.
 
 `[Dims]` attribute is used to declare multidimensional field: `Dims(N, -N, N)]`
 

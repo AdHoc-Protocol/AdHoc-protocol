@@ -706,7 +706,7 @@ These dimensions can be of either a constant or variable length.
 
 ## Multidimensional array of arrays
 
-Multidimensional array also can hold other arrays. In this case the last dimension(argument) of `Dims` attribute denote contained array's parameter.
+A multidimensional array can also contain other arrays, where the last dimension (or argument) of the `Dims` attribute indicates the parameter of the contained array.
 
 <table>
   <tbody>
@@ -725,7 +725,7 @@ and cannot be changed.</td>
     </tr>
   </tbody>
 </table>
-The variable dimensions length are set at field initialization.
+The lengths of the variable dimensions are set during field initialization.
 
 ```cs
         class Pack {
@@ -742,8 +742,8 @@ The variable dimensions length are set at field initialization.
 ```
 ## Fields with binary array datatype
 
-It is possible to declare a field with a binary data type using the special attribute `org.unirail.Binary`. The content of this type is transferred directly.
-However, the implementation of this field type depends on the target platform. For instance, in Java, it is represented by a signed `byte`, while in C#, it is represented by an unsigned 'byte'
+You can declare a field with a binary data type by using the special attribute `org.unirail.Binary`. The content of this type is transferred directly.
+However, the implementation of this field type may depend on the target platform. For example, in Java, it is represented by a signed `byte`, whereas in C#, it is represented by an unsigned 'byte'
 
 
 ## Fields with Map/Set datatype
@@ -847,6 +847,6 @@ result
 ![image](https://user-images.githubusercontent.com/29354319/194811082-59f47c44-f580-4a85-97ff-e41895006206.png)
 </details>
 
-Packs through their fields data type can be nested and self-referenced.
-Empty packs or enums with less then two fields cannot be used as field datatype. Use boolean type instead of
-
+Packs can have nested data types and self-referential fields in their fields' data type.
+However, empty packs or enums with fewer than two fields cannot be used as a field data type. In such cases, a boolean type should be used instead if only a single binary value is required. 
+It's important to note that different programming languages may have their own rules regarding data types, so it's essential to refer to the language documentation for specific details.

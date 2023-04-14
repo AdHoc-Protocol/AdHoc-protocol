@@ -656,29 +656,29 @@ Typedef is declare with C# class construction that hase only one field with the 
 The type of this class is aliasing of the type of its `typedef` field.
 
 For example:
-By default, the `string` type in AdHoc protocol declares the string with a maximum length of 255 symbols.
-To declare a field with different maximum symbols length, the `MaxSymbols` attribute can be used
+By default, the `string` type in AdHoc protocol declares the string with a maximum length of 255 chars.
+To declare a field with different maximum chars length, the `MaxChars` attribute can be used
 ```csharp
 class Packet{
-    string                      string_field_with_max_255_symbols;
-    [MaxSymbols(6)] string      string_field_with_max_6_symbols;
-    [MaxSymbols(7000)] string   string_field_with_max_7000_symbols;
+    string                      string_field_with_max_255_chars;
+    [MaxChars(6)] string      string_field_with_max_6_chars;
+    [MaxChars(7000)] string   string_field_with_max_7000_chars;
 }
 ```
 But if you use these string types in many places, consider declaring the typedef: 
 ```csharp
-class max_6_symbols_string{         //typedef
-    [MaxSymbols(6)] string typedef;
+class max_6_chars_string{         //typedef
+    [MaxChars(6)] string typedef;
 }
 
-class max_7000_symbols_string{      //typedef
-    [MaxSymbols(7000)] string typedef;
+class max_7000_chars_string{      //typedef
+    [MaxChars(7000)] string typedef;
 }
 
 class Packet{
-    string                  string_field_with_max_255_symbols;
-    max_6_symbols_string    string_field_with_max_6_symbols;      //using typedef
-    max_7000_symbols_string string_field_with_max_7000_symbols;   //using typedef
+    string                  string_field_with_max_255_chars;
+    max_6_chars_string    string_field_with_max_6_chars;      //using typedef
+    max_7000_chars_string string_field_with_max_7000_chars;   //using typedef
 }
 ```
 you can redefine typedef
@@ -686,11 +686,11 @@ you can redefine typedef
 class my_int_type{                  //typedef
     int typedef;
 }
-class max_3_symbols_string{         //typedef
-    [MaxSymbols(3)] string typedef;
+class max_3_chars_string{         //typedef
+    [MaxChars(3)] string typedef;
 }
 class Packet_redefine_my_int_type{
-    [Dims(10)] max_3_symbols_string array_of_10_strings_field;  //redefine typedef
+    [Dims(10)] max_3_chars_string array_of_10_strings_field;  //redefine typedef
     [Dims(10)] my_int_type          array_of_10_ints_field;     //redefine typedef
     my_int_type                     int_field;                  //using typedef
     [X] my_int_type                 varint_int_field;           //redefine typedef
@@ -749,30 +749,30 @@ In the **AdHoc protocol**, strings in all languages are encoded as UTF-8 byte ar
 ```csharp
 string  string_field;
 ```
-By default, the `string` type in AdHoc protocol declares the string with a maximum length of 255 symbols.
+By default, the `string` type in AdHoc protocol declares the string with a maximum length of 255 chars.
 
-To declare a field with different maximum symbols length, the `MaxSymbols` attribute can be used
+To declare a field with different maximum chars length, the `MaxChars` attribute can be used
 ```csharp
 class Packet{
-    string                      string_field_with_max_255_symbols;
-    [MaxSymbols(6)] string      string_field_with_max_6_symbols;
-    [MaxSymbols(7000)] string   string_field_with_max_7000_symbols;
+    string                      string_field_with_max_255_chars;
+    [MaxChars(6)] string      string_field_with_max_6_chars;
+    [MaxChars(7000)] string   string_field_with_max_7000_chars;
 }
 ```
 But if you use these string types in many places, consider declaring the typedef:
 ```csharp
-class max_6_symbols_string{         //typedef
-    [MaxSymbols(6)] string typedef;
+class max_6_chars_string{         //typedef
+    [MaxChars(6)] string typedef;
 }
 
-class max_7000_symbols_string{      //typedef
-    [MaxSymbols(7000)] string typedef;
+class max_7000_chars_string{      //typedef
+    [MaxChars(7000)] string typedef;
 }
 
 class Packet{
-    string                  string_field_with_max_255_symbols;
-    max_6_symbols_string    string_field_with_max_6_symbols;      //using typedef
-    max_7000_symbols_string string_field_with_max_7000_symbols;   //using typedef
+    string                  string_field_with_max_255_chars;
+    max_6_chars_string    string_field_with_max_6_chars;      //using typedef
+    max_7000_chars_string string_field_with_max_7000_chars;   //using typedef
 }
 ```
 

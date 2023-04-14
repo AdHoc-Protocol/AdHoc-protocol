@@ -56,14 +56,16 @@ To use it, you will need to:
 
 # AdHocAgent utility
 
-The AdHocAgent utility is a command-line tool that processes the following input:
+The AdHocAgent utility is a command-line tool that helps to upload your project and download, deploy the generated result.
 
-The first argument is the path to the task file, which may include a parameter at the end to specify the task type:
+It processes the following input:
+
+The first argument is the path to the task file, which may include a parameter at the end, to specify the task type:
   - `.cs`  - upload the protocol description file to the server to generate the source code
   - `.cs!` - upload the protocol description file to generate the source code and test the source code  
   
 >The remaining arguments are:
-> - paths to source files `.cs` and  project files `.csproj`that are imported and used in the root protocol description file
+> - paths to source files `.cs` and/or `.csproj` project file that used in the mentioned protocol description file
 > - The path to a temporary folder to store files received from the server.
 > - a path to a binary file, that will be executed after deployment (⚠️ the temporary folder will be the working directory for this executable file).
 >
@@ -77,15 +79,20 @@ The first argument is the path to the task file, which may include a parameter a
 >
 >If the utility cannot find the file in these locations, it will extract a template of the file in the description file folder, which you can then edit with the correct deployment instructions.
 
+
+![image](https://user-images.githubusercontent.com/29354319/232009776-3b456c9a-74ae-4334-9b05-7a791b04e8d2.png)
+
+
 Otherwise if the first argument path ends with the parameters:
-  - `.cs?` - this parameter will instruct utility to show the information of the provided protocol description file in the viewer.
+  - `.cs?` - this parameter will instruct utility to show the structure of the provided protocol description file in the browser based viewer.
+    ![image](https://user-images.githubusercontent.com/29354319/232010215-ea6f4b1e-2251-4c3a-956d-017d222ab1e3.png) 
   - `.proto` - it means the provided `.proto` file is in [Protocol Buffers](https://developers.google.com/protocol-buffers) format. The utility will send it to the server to convert into Adhoc protocol description format.
 If there is a path to a folder among the arguments the utility will use this folder as the intermediate result output folder. Otherwise -  the utility will use the current working directory.
+    ![image](https://user-images.githubusercontent.com/29354319/232012276-03d497a7-b80c-4315-9547-ad8dd120f077.png)
 
-⚠️In addition to the command-line arguments, the AdHocAgent utility needs the following:
+⚠️In addition to the command-line arguments, the AdHocAgent utility needs:
 - An `AdHocAgent.toml` - the file that contains
   - The URL of the code-generating server.   
-   
   - And paths to the local IDE
   - [7zip compression](https://www.7-zip.org/download.html) utility(used for best compression)
 
@@ -602,7 +609,7 @@ class Packet
 ```
 
 
-## Numeric fields
+## Numeric type
 
 All range of C# numeric primitive types are available
 
@@ -640,7 +647,57 @@ If some field value is in range `200_005` to `200_078`,
 ```
 The code generator produces code that stores a field in the bits storage and provides getter/setter methods to add/subtract a constant value of  `200 005` constant.
 
-## Varint
+## typedef
+
+Typedef is used to create an additional name (alias) for another data type, but does not create a new type,
+If you want some fields to share the same type - declare and use typedef.
+By doing so, you can easily modify the data type of all related fields in one go.
+Typedef is declare with C# class construction that hase only one field with the name typedef.
+The type of this class is aliasing of the type of its `typedef` field.
+
+For example:
+By default, the `string` type in AdHoc protocol declares the string with a maximum length of 255 symbols.
+To declare a field with different maximum symbols length, the `MaxSymbols` attribute can be used
+```csharp
+class Packet{
+    string                      string_field_with_max_255_symbols;
+    [MaxSymbols(6)] string      string_field_with_max_6_symbols;
+    [MaxSymbols(7000)] string   string_field_with_max_7000_symbols;
+}
+```
+But if you use these string types in many places, consider declaring the typedef: 
+```csharp
+class max_6_symbols_string{         //typedef
+    [MaxSymbols(6)] string typedef;
+}
+
+class max_7000_symbols_string{      //typedef
+    [MaxSymbols(7000)] string typedef;
+}
+
+class Packet{
+    string                  string_field_with_max_255_symbols;
+    max_6_symbols_string    string_field_with_max_6_symbols;      //using typedef
+    max_7000_symbols_string string_field_with_max_7000_symbols;   //using typedef
+}
+```
+you can redefine typedef
+```csharp
+class my_int_type{                  //typedef
+    int typedef;
+}
+class max_3_symbols_string{         //typedef
+    [MaxSymbols(3)] string typedef;
+}
+class Packet_redefine_my_int_type{
+    [Dims(10)] max_3_symbols_string array_of_10_strings_field;  //redefine typedef
+    [Dims(10)] my_int_type          array_of_10_ints_field;     //redefine typedef
+    my_int_type                     int_field;                  //using typedef
+    [X] my_int_type                 varint_int_field;           //redefine typedef
+}
+```
+
+## Varint type
 
 If a numeric field has random values uniformly distributed throughout the entire range of the numeric type, such as noise, it may look like the following visual representation:
 
@@ -685,12 +742,38 @@ There are three basic types of numeric value changing patterns:
 ```
 
 
-## String fields
+## String type
 
-In the **AdHoc protocol**, strings in all languages are encoded as UTF-8 byte arrays. . Additionally, all string fields in the protocol are marked as `optional`
+In the **AdHoc protocol**, strings in all languages are encoded as UTF-8 byte arrays. . Additionally, all string fields are `optional`
 
 ```csharp
 string  string_field;
+```
+By default, the `string` type in AdHoc protocol declares the string with a maximum length of 255 symbols.
+
+To declare a field with different maximum symbols length, the `MaxSymbols` attribute can be used
+```csharp
+class Packet{
+    string                      string_field_with_max_255_symbols;
+    [MaxSymbols(6)] string      string_field_with_max_6_symbols;
+    [MaxSymbols(7000)] string   string_field_with_max_7000_symbols;
+}
+```
+But if you use these string types in many places, consider declaring the typedef:
+```csharp
+class max_6_symbols_string{         //typedef
+    [MaxSymbols(6)] string typedef;
+}
+
+class max_7000_symbols_string{      //typedef
+    [MaxSymbols(7000)] string typedef;
+}
+
+class Packet{
+    string                  string_field_with_max_255_symbols;
+    max_6_symbols_string    string_field_with_max_6_symbols;      //using typedef
+    max_7000_symbols_string string_field_with_max_7000_symbols;   //using typedef
+}
 ```
 
 ## Multidimensional fields

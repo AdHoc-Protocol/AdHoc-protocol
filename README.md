@@ -49,7 +49,7 @@ To use it, you will need to:
 
 - install **.NET**.
 - install a **C#** IDE such as (**[Intellij IDEA](https://www.jetbrains.com/rider/) / [VSCode](https://code.visualstudio.com/) / [Visual Studio](https://visualstudio.microsoft.com/vs/community/)** )
-- download the source code of the [AdHoс protocol metadata attributes](https://github.com/cheblin/AdHoc-protocol/tree/master/org/unirail/AdHoc).
+- download the source code of the [AdHoс protocol metadata attributes](https://github.com/cheblin/AdHoc-protocol/tree/master/xyz/unirail/AdHoc).
  - or use the version embedded in the AdHocAgent binary.  
  Add a reference to the metafile with attributes in your **AdHoc protocol** description project.
 - Use the **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility to upload your protocol description file to the server and receive the generated code. You can either download a [prebuilt version](https://github.com/cheblin/AdHocAgent/tree/master/bin)  or download the source.
@@ -104,7 +104,7 @@ If it cannot find the file in this location, it will generate a template that yo
 The minimal protocol description file may look like this:
 
 ```csharp
-using org.unirail.Meta; //        importing AdHoc protocol attributes. Required!
+using xyz.unirail.Meta; //        importing AdHoc protocol attributes. Required!
 
 namespace com.my.company // You company namespace. Required!
 {
@@ -164,7 +164,7 @@ To create a protocol description file, you can start by creating a **C#** projec
 Then, create a new C# source file and declare the protocol description using C# `interface` enclosed in your company's namespace.
 
 ```csharp
-using org.unirail.Meta;//        importing AdHoc protocol attributes. Required!
+using xyz.unirail.Meta;//        importing AdHoc protocol attributes. Required!
 
 namespace com.my.company// You company namespace. Required!
 {
@@ -234,7 +234,7 @@ If you select a channel you may see what packets are involved exactly and where 
 
 ## Hosts
 
-In the AdHoc protocol, hosts are represented as C# `struct` within a project `interface` scope. These hosts participate in the exchange of information and must implement the org.unirail.Meta.Host marker interface.   
+In the AdHoc protocol, hosts are represented as C# `struct` within a project `interface` scope. These hosts participate in the exchange of information and must implement the xyz.unirail.Meta.Host marker interface.   
 Host should implements 
 Through XML tags  [<see cref="member">](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
 in the host declaration's code documentation, it is possible to specify the language in which the host's source code will be generated, as well as any relevant options.
@@ -245,7 +245,7 @@ The most recent language configuration scope becomes the default for the rest of
 
 In the following example, the language configuration for the 'Server' host in this file is:
 ```csharp
-using org.unirail.Meta;
+using xyz.unirail.Meta;
 
 namespace com.my.company// You company namespace. Required!
 {
@@ -279,9 +279,9 @@ AdHocAgent utility could be read in this manner..
 Each host has ports. They are declared with C# `interface` construction.
 
 ```csharp
-using org.unirail.Meta;
+using xyz.unirail.Meta;
 
-namespace org.unirail
+namespace xyz.unirail
 {
     public interface AdhocProtocol : _<AdhocProtocol.Agent.Project.Host.Port.Pack.Field.DataType>//propagate DataType constants set to all hosts
     {
@@ -315,7 +315,7 @@ A pack or packs declared in a port can also be added to other ports through C# i
             ///<see cref="Full.Path.To.ThePack"/>           <<< add single pack `ThePack` as is
             ///<see cref="Full.Path.To.TheOtherPort"/>      <<< add all packs from `Full.Path.To.TheOtherPort` port as is
             ///<see cref="Full.Path.To.SkipPack"/>-         <<< delete single `SkipPack` pack
-            interface SomePort: _<Full.Path.To.SomePack>,   //<<< add single pack `SomePack` by inheritance (user _<> interface wrapper from org.unirail.Meta)
+            interface SomePort: _<Full.Path.To.SomePack>,   //<<< add single pack `SomePack` by inheritance (user _<> interface wrapper from xyz.unirail.Meta)
                                 Full.Path.To.TheOtherPort   //<<< add all packs from `Full.Path.To.TheOtherPort` port as is
             {
                 class Login{}
@@ -327,7 +327,7 @@ A pack or packs declared in a port can also be added to other ports through C# i
 
 The **AdHoc protocol** uses channels to connect the ports of hosts.  
 Channels are declared using a C# `interface` and, like hosts, are located directly within the project scope.
-The channel's `interface` "extends" the `org.unirail.Meta.Communication_Channel_Of`  interface and its parameter list soecifies the two ports being connected.
+The channel's `interface` "extends" the `xyz.unirail.Meta.Communication_Channel_Of`  interface and its parameter list soecifies the two ports being connected.
 For example:
 ```csharp
         interface TrialCommunicationChannel : Communication_Channel_Of<Server.SendToTrialClient, TrialClient.ToServer> { }
@@ -356,7 +356,7 @@ The `<see cref="Full.Path.To.OtherPack.Field"/>-` or `<see cref="Full.Path.To.So
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
 
 ```csharp
-using org.unirail.Meta;
+using xyz.unirail.Meta;
 
 namespace com.my.company
 {
@@ -447,7 +447,7 @@ At code generation time the system "copies" the value and type from a `static` -
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
 
 ```csharp
-using org.unirail.Meta;
+using xyz.unirail.Meta;
 
 namespace com.my.company
 {
@@ -563,7 +563,7 @@ Inheritance from other projects propagates all **constants** that they have.
 To propagate individual  items, inherit within the other projects use `enum`/`constants set`.
 
 ```csharp
-using org.unirail.Meta;
+using xyz.unirail.Meta;
 
 namespace com.my.company
 {
@@ -577,9 +577,9 @@ This code propagates all **constants** from `Project_const_packs` and `Particula
 
 `Constants sets` can be wrapped to be used in C# code where only interfaces are allowed. Here is a real AdhocProtocol description file example:
 ```csharp
-using org.unirail.Meta;
+using xyz.unirail.Meta;
 
-namespace org.unirail
+namespace xyz.unirail
 {
     public interface AdhocProtocol : _<AdhocProtocol.Agent.Project.Host.Port.Pack.Field.DataType>//propagate DataType constants set to all hosts
     {
@@ -599,12 +599,12 @@ A pack's field can be `optional` or `required`.
 * `optional` fields, on the other hand, only allocate a few bits if they have not been modified.
 
 
-According to the AdHoc protocol description rule, primitive data types that end with a `?` (such as `int?`, `byte?`, etc.) are 'optional', as are non-primitive data types such as `string` and `array`. For example:
+According to the AdHoc protocol description rule, primitive data types that end with a `?` (such as `int?`, `byte?`, etc.) are 'optional', as all non-primitive data types such as `string` and `array`.
 ```csharp
 class Packet
 {
     string user; //non-primitive data types are always optional
-    uint? optional_field; //optional primitive field
+    uint? optional_field; //optional uint field
 }     
 ```
 
@@ -777,8 +777,10 @@ class Packet{
 ```
 
 ## Binary type
-Use this type from `xyz.unirail.Meta` namespace to declare the type like a binary array. The code generator, for example, will use `byte` (signed) in Java, `byte` (unsigned) in C#, etc.
+Use this type, from `xyz.unirail.Meta` namespace, to declare the type like a binary array. The code generator, for example, will use `byte` (signed) in Java, `byte` (unsigned) in C#, etc.
 ```csharp
+using xyz.unirail.Meta;
+
 class Result
 {
     string                 task;
@@ -833,13 +835,8 @@ The lengths of the variable dimensions are set during field initialization.
             [Dims(2, -3, ~~4)] string array_field1; //multidimensional array of arays of strings. each array has its own length
         }
 ```
-## Fields with binary array datatype
 
-You can declare a field with a binary data type by using the special attribute `org.unirail.Binary`. The content of this type is transferred directly.
-However, the implementation of this field type may depend on the target platform. For example, in Java, it is represented by a signed `byte`, whereas in C#, it is represented by an unsigned 'byte'
-
-
-## Fields with Map/Set datatype
+## Map/Set type
 
 The description of fields with a Map/Set datatype is simple and straightforward. 
 
@@ -854,10 +851,10 @@ The description of fields with a Map/Set datatype is simple and straightforward.
             [MapValueParams, Dims(-5)] Map<uint, uint>    only_value_attribute_map;
             [V, MapValueParams, V]     Map<uint?, ulong?> map_with_key_value_attibutes;
 ```
-`MapValueParams` attribute is `Key`-`Value` attributes delimiter. Attributes after this delimiter apply to `value` type.
+`MapValueParams` attribute is a `Key attribute` and `Value attribute` delimiter, attributes after `MapValueParams` are applied to the Map `value` type.
 
 
-## Fields with other pack/enum as datatype
+## Pack/enum type
 
 Enums and pack can be a field's data type.
 
@@ -865,7 +862,7 @@ Enums and pack can be a field's data type.
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
 
 ```csharp
-using org.unirail.Meta;
+using xyz.unirail.Meta;
 
 namespace com.my.company
 {

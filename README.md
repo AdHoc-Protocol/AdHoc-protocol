@@ -755,8 +755,8 @@ To declare a field with different maximum chars length, the `MaxChars` attribute
 ```csharp
 class Packet{
     string                      string_field_with_max_255_chars;
-    [MaxChars(6)] string      string_field_with_max_6_chars;
-    [MaxChars(7000)] string   string_field_with_max_7000_chars;
+    [MaxChars(6)] string        string_field_with_max_6_chars;
+    [MaxChars(7000)] string     string_field_with_max_7000_chars;
 }
 ```
 But if you use these string types in many places, consider declaring the typedef:
@@ -771,11 +771,21 @@ class max_7000_chars_string{      //typedef
 
 class Packet{
     string                  string_field_with_max_255_chars;
-    max_6_chars_string    string_field_with_max_6_chars;      //using typedef
-    max_7000_chars_string string_field_with_max_7000_chars;   //using typedef
+    max_6_chars_string      string_field_with_max_6_chars;      //using typedef
+    max_7000_chars_string   string_field_with_max_7000_chars;   //using typedef
 }
 ```
 
+## Binary type
+Use this type from `xyz.unirail.Meta` namespace to declare the type like a binary array. The code generator, for example, will use `byte` (signed) in Java, `byte` (unsigned) in C#, etc.
+```csharp
+class Result
+{
+    string                 task;
+    [Dims(~650000)] Binary result;// binary array with max length 65000 items
+}
+
+```
 ## Multidimensional fields
 
 The field in question can hold a multidimensional array of various types, including primitives, strings, maps, sets, and packs.

@@ -1,18 +1,16 @@
-# *Achtung!!!*
+# *Attention!!!*
 
 ![image](https://user-images.githubusercontent.com/29354319/204679188-d5b0bdc7-4e47-4f32-87bb-2bfaf9d09d78.png)
 
-Writing manual data serialization and deserialization code in different
-programming languages can be time-consuming and error-prone, particularly when
-dealing with heterogeneous devices. To overcome these challenges, a more
-efficient approach is to utilize a Domain-Specific Language (DSL) that formally
-describes the protocol. This DSL can generate source code for various target
-platforms and programming languages based on the protocol description. By using
-code generation, the process becomes automated and reduces the risk of errors,
-resulting in faster development and improved compatibility across different
-devices and languages.
+Manually writing code for data serialization and deserialization across different programming languages can be a
+time-consuming and error-prone process, especially when working with heterogeneous hosts. To address these challenges, a
+more efficient approach is to use a Domain-Specific Language (DSL) that formally describes the protocol in a declarative
+style. Based on the protocol description, a code generator can produce source code for various target platforms and
+programming languages. This reduces the risk of errors, resulting in faster development and improved compatibility
+across different devices and languages.
 
-This approach is employed by frameworks like Protocol Buffers, Cap'n Proto, and others.
+This approach is used by frameworks such as:
+
 [Protocol Buffers ](https://developers.google.com/protocol-buffers/docs/overview)  
 [Cap’n Proto ](https://capnproto.org/language.html)  
 [FlatBuffers ](http://google.github.io/flatbuffers/flatbuffers_guide_writing_schema.html)  
@@ -20,47 +18,38 @@ This approach is employed by frameworks like Protocol Buffers, Cap'n Proto, and 
 [MAVLink ](https://github.com/mavlink/mavlink)  
 [Thrift](https://thrift.apache.org/docs/idl)
 
-After careful consideration and evaluation of different options, a decision was
-made to develop a code generator that specifically addresses the identified
-shortcomings. This led to the creation of AdHoc, a versatile code generator that
-supports multiple programming languages such as C\#, Java, and Typescript.
-Future plans include expanding support to additional languages like C++, Rust,
-and GO.
+After evaluating available options, a decision was made to develop a code generator that addresses the identified
+shortcomings.
+This led to the creation of AdHoc protocol, a versatile code generator that supports different programming languages,
+including C#, Java, and TypeScript. Future plans include support for additional languages such as C++, Rust, and Go.  
+The generated code for protocol handling translates an incoming binary stream into a stream of packages for your program
+and vice versa.
 
-AdHoc simplifies the code generation process by utilizing a protocol description
-file. The server component of AdHoc generates code based on this file. It
-provides the necessary infrastructure for implementing packet handlers,
-packet-producing logic, and handling data transmission. Developers can focus on
-filling the packs with data and sending them to the intended recipients, while
-AdHoc takes care of generating the underlying code structure.
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/a15016a6-ac05-4d66-8798-4a7188bf24c5)
 
-By leveraging AdHoc's code generation capabilities, developers can streamline
-the implementation of packet handling and communication logic, saving time and
-effort in the development process.
-
-**AdHoc** generator offers a range of features to facilitate protocol description and code generation:
+**AdHoc** generator offers a range of features:
 
 - Support for bitfields
 - Handling of ordinary and nullable primitive data types
-- Efficient handling of packs with fields that fit within 8 bytes, utilizing the 'long' primitive data type to reduce
-  the load on garbage collection
-- Support for strings, maps, and set data types
-- Ability to define multidimensional fields with predefined and fixed dimensions
+- Efficiently handle packs with fields that fit within 8 bytes by using the ‘long’ primitive data type to reduce the
+  load on garbage collection
+- Support for data types such as strings, maps, sets, and arrays.
+- A field in a package may have a type of multidimensional array with constant and fixed dimensions.
 - Nesting of packs and enums
 - Support for ordinary and flags-like enums
 - Fields that can have enum and other pack data types
 - Constants at the host and packet level
 - Inheritance of fields within packs
 - Inheritance of communication interfaces at the host level
-- Ability to import packs and communication interfaces from other AdHoc protocol descriptions
+- In an AdHoc protocol description project, entities can be inherited from other descriptions.
 - Compression using the [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding
   algorithm
-- Generation of ready-to-use network infrastructure
-- Efficient memory usage by operating with buffers of at least 64 bytes, eliminating the need for buffer allocation for
-  the entire packet
-- Network byte order (big-endian) for consistency in network communication
-
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/26a5a960-5e0f-411f-918b-de4be71c10a6)
+- Generating code for a ready-to-use network infrastructure.
+- The generated code can reuse and operate with buffers of lengths starting from 64 bytes and larger. There is no need
+  to allocate a buffer for the entire packet.
+- Network byte order (big-endian)
+- The system has built-in facilities that enable it to display diagrams of the network infrastructure topology, the
+  layout of the pack’s field, and the states of the data flow state machine.
 
 > <span style = "font-size:20px">❗️</span> The generated code from AdHoc generator can be used for network communication
 > between applications or microservices,  
@@ -821,7 +810,8 @@ It is possible for only one side to have the capability to send packets.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/f1cdc9e3-9e14-4781-af7b-ce46b3dc5234)
 
-> <span style = "font-size:30px">⚠️</span> A short `block comment` with some symbols `/*įĂ*/` represents auto-sets unique
+> <span style = "font-size:30px">⚠️</span> A short `block comment` with some symbols `/*įĂ*/` represents auto-sets
+> unique
 > identifiers.
 > These identifiers are utilized to identify entities. Therefore, you can relocate or rename entities, but the
 > identifier will remain unchanged.
@@ -1131,7 +1121,8 @@ By default, both `Map` and `Set` restricted to hold up to 255 items. However, yo
 the `[Dims]` attribute.
 
 The `[MapValueParams]` attribute serves as a delimiter between a Map type "Key attributes" and "Value attributes." Any
-attributes following the `MapValueParams` are applied to the Map's `value` type. This allows for more specific customization of the
+attributes following the `MapValueParams` are applied to the Map's `value` type. This allows for more specific
+customization of the
 `value` type in the `Map`.
 
 ```csharp
@@ -1156,7 +1147,8 @@ Map<string, byte?>                               max_255_items_string_2_byte_map
 ## Binary type
 
 To declare the type as a raw binary array, you can use the `Binary` type from the `xyz.unirail.Meta` namespace. This
-type will be recognized by the code generator, and it will handle the representation of the binary array appropriately in
+type will be recognized by the code generator, and it will handle the representation of the binary array appropriately
+in
 different target languages, such as using `byte` (signed) in **Java**, `byte` (unsigned) in **C#**, and `ArrayBuffer` in
 **TypeScrip**, etc.
 

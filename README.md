@@ -62,9 +62,9 @@ Service) and can be accessed online.
 To use the AdHoc code generator, follow these steps:
 
 -[x] Install .NET on your operating system.
--[x] Install a **C# IDE** such as *
- *[Intellij Rider](https://www.jetbrains.com/rider/),  [Visual Studio Code](https://code.visualstudio.com/),
- or [Visual Studio](https://visualstudio.microsoft.com/vs/community/)** ).
+-[x] Install a **C# IDE** such as 
+ **[Intellij Rider](https://www.jetbrains.com/rider/),  [Visual Studio Code](https://code.visualstudio.com/),
+ or [Visual Studio](https://visualstudio.microsoft.com/vs/community/)**.
 -[x] Install [7zip compression](https://www.7-zip.org/download.html) The 7zip compression utility is required for best
  compression when working with text file formats.  
  download it here:  
@@ -79,8 +79,7 @@ To use the AdHoc code generator, follow these steps:
  the server and obtain the generated code for deployment.
 
 -[x] You can either download a [prebuilt version of AdHocAgent](https://github.com/cheblin/AdHocAgent/tree/master/bin)
- or
- download the source code and build it yourself.
+ or download the source code and build it yourself.
 
 # AdHocAgent utility
 

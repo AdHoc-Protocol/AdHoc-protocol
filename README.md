@@ -59,29 +59,26 @@ data.**
 The code generator is available as a [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service) (Software as a
 Service) and can be accessed online.
 
-To use the AdHoc code generator, follow these steps:
+To start using the AdHoc code generator, follow these steps:
 
-- Install .NET on your operating system.
-- Install a **C# IDE** such as 
- **[Intellij Rider](https://www.jetbrains.com/rider/),  [Visual Studio Code](https://code.visualstudio.com/),
- or [Visual Studio](https://visualstudio.microsoft.com/vs/community/)**.
-- Install [7zip compression](https://www.7-zip.org/download.html) The 7zip compression utility is required for best
- compression when working with text file formats.  
- download it here:  
- [Windows](https://www.7-zip.org/a/7zr.exe)  
- [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
- [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
-- Download the source code of
- the [AdHoс protocol metadata attributes](https://github.com/cheblin/AdHoc-protocol/tree/master/xyz/unirail/AdHoc).
- Alternatively, you can use the version embedded in the AdHocAgent binary.
-- Add a reference to the Meta in your AdHoc protocol description project.
-- Use the **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility to upload your protocol description file to
- the server and obtain the generated code for deployment.
+1. Install .NET.
+2. Install a **C# IDE** such as **[Intellij Rider](https://www.jetbrains.com/rider/)**,
+   **[Visual Studio Code](https://code.visualstudio.com/)**, or *
+   *[Visual Studio](https://visualstudio.microsoft.com/vs/community/)**.
+3. Install [7zip compression](https://www.7-zip.org/download.html). This utility is required for the best compression
+   when working with text file formats.   
+   You can download it for   
+   [Windows](https://www.7-zip.org/a/7zr.exe)  
+   [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
+   [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz).
+4. Download the source code of
+   the [AdHoс protocol metadata attributes](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/master/src/Meta.cs).
+   Alternatively, you can use the version embedded in the AdHocAgent binary.
+5. Add a reference to the Meta in your AdHoc protocol description project.
+6. Use the **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility to upload your protocol description file to
+   the server and obtain the generated code for deployment.
 
-- You can either download a [prebuilt version of AdHocAgent](https://github.com/cheblin/AdHocAgent/tree/master/bin)
- or download the source code and build it yourself.
-
-# AdHocAgent utility
+# AdHocAgent Utility
 
 The AdHocAgent utility is a command-line tool that facilitates uploading your project, downloading the generated result,
 and deploying it.
@@ -91,30 +88,29 @@ It accepts the following input:
 The first argument is the path to the task file, which can optionally include a parameter at the end to specify the type
 of task:
 
-- `.cs`  - Upload the protocol description file to the server to generate the source code.
+- `.cs` - Upload the protocol description file to the server to generate the source code.
 - `.cs!` - Upload the protocol description file to generate the source code and test it.
 
 The remaining arguments are as follows:
 
-- paths to source files `.cs` and/or `.csproj` project file used in the mentioned protocol description file
+- Paths to source files `.cs` and/or `.csproj` project file used in the mentioned protocol description file.
 - The path to a temporary folder where files received from the server will be stored.
 - The last argument, if provided, is the path to your binary file, which will be executed after the embedded deployment
-  process.
-  (⚠️ Please note that the temporary folder will serve as the working directory for this executable file).
+  process. (⚠️ Please note that the temporary folder will serve as the working directory for this executable file).
 
 > For the embedded deployment system to function correctly, an instruction file is required to deploy the received
-> source code.
-> The instruction file should be named using the protocol description file name followed by `Deployment.md`
+> source code. The instruction file should be named using the protocol description file name followed
+> by `Deployment.md`.
 > For example, if the protocol description file is named `MyProtocol_file_name`, the instruction file should be
 > named `MyProtocol_file_nameDeployment.md`.
 >
 > The AdHocAgent utility will search for this instruction file in the following locations:
->- The folder containing the protocol description file.
->- The `Working directory`
+> - The folder containing the protocol description file.
+> - The `Working directory`.
 >
->If the utility cannot find the file in these locations, it will extract a template of the instruction file next to the
-> protocol description file.
-> In that case, you will need to edit the file and provide the correct deployment instructions.
+> If the utility cannot find the file in these locations, it will extract a template of the instruction file next to the
+> protocol description file. In that case, you will need to edit the file and provide the correct deployment
+> instructions.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -122,8 +118,6 @@ The remaining arguments are as follows:
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/7d5181a3-3642-4027-9c3d-aed3ad4b1f5d)
 
  </details>
-
-If the first argument's path ends with certain parameters, the utility behaves as follows:
 
 - `.cs?` - This parameter instructs the utility to render the structure of the provided protocol description file in a
   browser-based viewer.
@@ -278,7 +272,7 @@ namespace com.my.company // Your company namespace. Required!
             class PacketToServer{ } // An empty packet to send to the server.
         }
 
-        interface Channel : Communication_Channel_Of<Client, Server>{ } // The communication channel between the Client and the Server.
+        interface Channel : ChannelFor<Client, Server>{ } // The communication channel between the Client and the Server.
     }
 }
 ```
@@ -385,11 +379,11 @@ namespace com.my.company2 // Your company namespace. Required!
 
         // Define communication channels between hosts
 
-        interface TrialCommunicationChannel : Communication_Channel_Of<Server, TrialClient> { }
+        interface TrialCommunicationChannel : ChannelFor<Server, TrialClient> { }
 
-        interface CommunicationChannel : Communication_Channel_Of<Server, FullFeaturedClient> { }
+        interface CommunicationChannel : ChannelFor<Server, FullFeaturedClient> { }
 
-        interface TheChannel : Communication_Channel_Of<Server, FreeClient> { }
+        interface TheChannel : ChannelFor<Server, FreeClient> { }
     }
 }
 ```
@@ -464,22 +458,17 @@ namespace xyz.unirail
 
 ## Hosts
 
-In the AdHoc protocol, hosts are represented as C# `struct` within the scope of a project's `interface`.
-These hosts actively participate in the exchange of information and are required to implement
-the `xyz.unirail.Meta.Host` marker interface.
+In the AdHoc protocol, "hosts" refer to the entities that actively engage in the exchange of information. 
+These hosts are represented as C# `structs` within the context of a project's `interface` and they implement the `xyz.unirail.Meta.Host` marker interface.
 
-To specify the language and relevant options for the host's source code generation, XML tags can be used in the code
-documentation of the host declaration.
-The  [<see cref="member">](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
-tag is used for this purpose
 
-The built-in marker interfaces `InCS`, `InJAVA`, `InTS` etc. allow for the declaration of language configuration scopes.
+To specify the programming language and options for generating the host's source code, you can utilize XML [`<see cref = "entity">`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute) tag 
+within the code documentation of the host declaration.
 
-Items, such as `packs` or `fields` referenced within a particular language configuration scope will inherit the
-configuration specified by that scope.
-The latest language configuration scope becomes the default for the subsequent items within the host.
+The built-in marker interfaces such as `InCS`, `InJAVA`, `InTS` and others allow you to declare language configuration scopes.
 
-Based on the provided code snippet, the language configuration for the 'Server' host appears to be as follows:
+`Packs` and `Fields` type entities referenced within a particular language scope will inherit the configuration specified by that scope.
+The latest language configuration scope becomes the default for the subsequent `Packs` and `Fields` entities within the host.
 
 ```csharp
 using xyz.unirail.Meta;
@@ -504,13 +493,18 @@ namespace com.my.company // Your company namespace. Required!
 }
 ```
 
-AdHocAgent utility could be read in this manner..
+AdHocAgent utility could be read the `Server` configuration in this manner..
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/0cfa47f2-8b2e-4e49-9c7d-0fd908dbd7ce)
 
 </details>
+
+
+
+
+
 
 ## Packs
 
@@ -567,7 +561,7 @@ namespace com.my.company2 {
             }
         }
 
-        interface CommunicationChannel : Communication_Channel_Of<Server, Client> { }
+        interface CommunicationChannel : ChannelFor<Server, Client> { }
     }
 }
 ```
@@ -624,24 +618,24 @@ of a compile-time expression.
 Standard static C# functions cannot be used to calculate the value of a `const` field due to a limitation in the C#
 compiler.
 
-To work around this limitation, the AdHoc protocol description syntax introduces the `[ProxyFor(const_constant)]`
+To work around this limitation, the AdHoc protocol description syntax introduces the `[ValueFor(const_constant)]`
 attribute which is applied to a 'static' field
 During code generation, the generator assigns the value and type from the `static` field to a corresponding `const`
 constant. This allows the desired value to be used
 as an attribute parameter while preserving the benefits of compile-time constants.
 
-Here's an example utilizing the `[ProxyFor(ConstantField)]` attribute:
+Here's an example utilizing the `[ValueFor(ConstantField)]` attribute:
 
 ```csharp
-[ProxyFor(ConstantField)] static double static_proxy_field = Math.Sin(23);
+[ValueFor(ConstantField)] static double value_for = Math.Sin(23);
 
 const double ConstantField = 0; // Result: ConstantField = Math.Sin(23)
 ```
 
-In this example, the `static_proxy_field` is assigned the value of
-`Math.Sin(23)`, which is then proxied to the `ConstantField` constant. The
+In this example, the `value_for` is assigned the value of
+`Math.Sin(23)`, which is then copy to the `ConstantField` constant. The
 **ConstantField** will have the calculated value of **Math.Sin(23)** at
-compile-time due to the **[ProxyFor(ConstantField)]** attribute.
+compile-time due to the **[ValueFor(ConstantField)]** attribute.
 
 
 <details>
@@ -695,7 +689,7 @@ namespace com.my.company
                 static int      USE_ANY_FUNCTION = (int)Math.Sin(34) * 4 + 2;
                 static string[] STRINGS          = { "", "\0", "ere::22r" + "K\nK\n\"KK", STR };
 
-                [ProxyFor(DST_CONST_FIELD)] //SRC_STATIC_FIELD pushes the value and type to DST_CONST_FIELD
+                [ValueFor(DST_CONST_FIELD)] //SRC_STATIC_FIELD pushes the value and type to DST_CONST_FIELD
                 private static int SRC_STATIC_FIELD = 45 * (int)Server.MAV_BATTERY_FUNCTION.MAV_BATTERY_FUNCTION_ALL + 45 >> 2 + USE_ANY_FUNCTION;
                 const string STR = "KKKK";
                 
@@ -735,7 +729,7 @@ namespace com.my.company
             }
         }
 
-        interface CommunicationChannel : Communication_Channel_Of<Server, Client> { }
+        interface CommunicationChannel : ChannelFor<Server, Client> { }
     }
 }
 ```
@@ -748,15 +742,15 @@ The constants defined in the root description file are propagated to all hosts.
 
 Channels in the **AdHoc protocol** is a communication pathway and serve as the means to connect hosts. They are declared
 using a C# `interface` and, similar to hosts, reside directly within the project scope.
-The Channel's interface extends the `xyz.unirail.Meta.Communication_Channel_Of` interface and specifies the two hosts
+The Channel's interface extends the `xyz.unirail.Meta.ChannelFor` interface and specifies the two hosts
 that are being connected through its generic parameter.
 
 Here's an example:
 
 ```csharp
-        interface TrialCommunicationChannel : Communication_Channel_Of<Server, TrialClient> { }
-        interface CommunicationChannel : Communication_Channel_Of<Server, FullFeaturedClient> { }
-        interface TheChannel : Communication_Channel_Of<Server, FreeClient> { }
+        interface TrialCommunicationChannel : ChannelFor<Server, TrialClient> { }
+        interface CommunicationChannel : ChannelFor<Server, FullFeaturedClient> { }
+        interface TheChannel : ChannelFor<Server, FreeClient> { }
 ```
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/64b0caac-f850-4375-a035-f70eef6dc07d)
@@ -976,90 +970,108 @@ Useful to recognize three particular dispersion or gradient patterns within valu
     [MinMax(-11, 75)] short field6;   // Mandatory field with uniformly distributed values within the specified range.
 ```
 
-## Array type
+## Collection type
 
-The array can store and return various data types, such as primitives, `strings`, `maps`, `sets`, and other `packs`.
-Fields with the `Array type` are always 'optional'.
+Collections like `arrays`, `maps`, and `sets` can store various data types, such as `primitives`, `strings`, and even
+user-defined packs. Fields with the `Collection type` are always `optional`.
 
-When the type of the field in a collection such as `Map`, `Set`, `String`, or  `array`, it
-becomes crucial to have control over the individual length. Especially in network applications.
-By default, the maximum length of collections is restricted to 255 elements.
+Controlling the length of collections becomes critical, particularly for network applications receiving data. This control helps prevent overflow, thereby mitigating one of the
+tactics utilized in Distributed Denial of Service (DDoS) attacks.
 
-This restriction for collections, like `String`, `Set`, and `Map`, can be adjusted using the rightmost
-argument of the `[Dims(+N)]` attribute.
-> Note the `+` character. `N` is the maximum length of the entity.
+By default, all collections - including `strings` - have a maximum capacity of 255. This limit can be adjusted by explicitly
+defining an enum called _`DefaultCollectionsMaxLength` with the following fields:
+
+```csharp
+    enum _DefaultMaxLengthOf{
+        Strings = 255,
+        Arrays  = 255,
+        Maps    = 255,
+        Sets    = 255
+    }
+```
+
+Fields that do not change the default maximum capacity can be left out of the enum.
+
+The individual restriction for collections such as `maps`,  `sets`  and `strings` can be adjusted using the `[D(+N)]` attribute.
+> Note the `+` character. `N`  represents the maximum length of the entity.
+
+For example:
 
 ```csharp
 class Packet{
-    string                          string_with_max_255_chars;   
-    [Dims(+100)] string             string_with_max_100_chars;   
+    string                       string_with_max_255_chars;   
+    [D(+100)] string             string_with_max_100_chars;   
     
-    Map<int,string>                 map_with_max_255_items;   
-    [Dims(+1_000)] Map<int,string>  map_with_max_1_000_items;
+    Map<int,double>              map_with_max_255_items;   
+    [D(+1_000)] Map<int,double>  map_with_max_1_000_items;
 }
 ```
 
-A flat array of items is declare in a same way as C# array with the `[Dims]` attribute. The rightmost argument of
-the `[Dims]` attribute is the array params
+Flat arrays are declared using square brackets `[]`. There are three types of flat arrays:
 
-| +N | N is the maximum length an array with a variable size  (which is  a List).             |
-|---:|----------------------------------------------------------------------------------------|
-| -N | N is the maximum length of the array, with a fixed length set at field initialization. |
-|  N | N is the length of the constant length array                                           |
+| Declaration | Description                                                                                                                         |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `[]`        | The length of the array is constant and cannot be changed.                                                                          |
+| `[,]`       | The length of the array is fixed at initialization and cannot be changed afterwards, similar to `string`.                           |
+| `[,,]`      | The length of the array can vary up to a maximum and change over time, similar to a `Set` or `Map`. It is generated as a `List<T>`. |
+
+The individual restriction for arrays can be adjusted using the same `[D(N)]` attribute, without the `+` character.
+
+For example:
 
 ```cs
 using xyz.unirail.Meta;
 
 class Pack{
-    [Dims(4)]  Point[] field2; //constant length array of 4 Ponts.  
-    [Dims(+4)] short[] field1; //variable length array of maximum 4 shorts - List 
+    string[] array_of_255_string_with_max_256_chars; //A constant default length array of strings.  
+    [D(47)]  Point[,] array_fixed_max_47_points; //An array with a length fixed at field initialization can have up to 47 points.  
+    [D(47)]  Point[,,] list_max_47_points; //An array with a variable length can have up to 47 points. 
+    [D(10, +20)] Map<int,double>[]  array_of_10_maps_with_max_20_items; //A constant length array of 10 maps, each with a maximum of 20 items.
 }
 ```
 
 ### Multidimensional array
 
-In AdHoc, a field also can have a multidimensional array type with constant or fixed dimensions.
-The same `[Dims(N, -N, N)]`  attribute is used to declare a field as a multidimensional array.
+In AdHoc, a field can also have a multidimensional array type with constant or fixed dimensions. The `[D(-N, ~N)]` attribute is used to declare a field as a multidimensional array.
 
-|    |                                                                                              |
-|---:|:---------------------------------------------------------------------------------------------|
-|  N | N Represents the length of the constant length dimension.                                    |
-| -N | N Indicates the maximum length of a fixed length dimension, set during field initialization. |
+|    | Description                                                                                    |
+|---:|:-----------------------------------------------------------------------------------------------|
+| -N | `N` represents the length of the constant-length dimension.                                    |
+| ~N | `N` indicates the maximum length of a fixed-length dimension, set during field initialization. |
 
-The generated API allows you to access both individual items by index and arrays of items.
+> Note prepended chars
 
 ```cs
 using xyz.unirail.Meta;
 
 class Pack {
-    [Dims(2,  3,  4)] int    ints; 
-    [Dims(2, -3, -4)] Point  points; 
-    [Dims(2,  3,  4)] string strings_with_max_255_chars; 
+    [D(-2, -3, -4)] int    ints; 
+    [D(-2, ~3, ~4)] Point  points; 
+    [D(-2, -3, -4)] string strings_with_max_255_chars; 
 }
 ```
 
 > The lengths of all **fixed dimensions** in the multidimensional arrays are set during **field initialization**.
 
-### Multidimensional array of arrays
+### Multidimensional array of collections
 
 ```csharp
 class Packet{
     
-    [Dims(100)]  string            array_of_100_strings_with_max_255_chars;   
-    [Dims(+100)] string            string_with_max_100_chars;   
-    [Dims(+100)] string []         list_of_max_100_strings_with_max_255_chars;
+    [D(100)]  string []         array_of_100_strings_with_max_255_chars;   
+    [D(+100)] string            string_with_max_100_chars;   
+    [D(+100)] string [,,]       list_of_max_255_strings_with_max_255_chars;
        
-    [Dims(100, +100)] string       array_of_100_strings_with_max_100_chars;   
-    [Dims(100, +100)] string[]     array_of_100_lists_of_max_100_strings_with_max_255_chars;   
+    [D(100, +100)] string[]     array_of_100_strings_with_max_100_chars;   
+    [D(100, +100)] string[,]    array_fixed_max_100_strings_with_max_100_chars;   
+
+    [D(100, +100)] Map<int,byte>[]     array_of_100_maps_max_100_items;   
+    [D(100, +100)] Map<int,byte>[,]    array_fixed_max_100_maps_max_100_items;  
+
     
-    [Dims(+100, +1024)] string[]   list_of_upto_100_strings_with_max_1024_chars;   
-    [Dims(+100)] string []         list_of_upto_100_strings_with_max_255_chars;   
-    [Dims(-100)] string            array_of_100_strings_with_max_255_chars;   
-    
-    Map<int,string>                       map_with_max_255_items;   
-    [Dims(+100,-10)] Map<int,string>[]    array_fixed_upto_10_maps_with_max_100_items;
-       
-    [Dims(10, 10, 5, -100)] int []       multidimensional_array_of_arrays_of_100_ints;   
+    [D(-3, ~3, +100)] string              mult_dim_strings_with_max_100_chars   
+    [D(-3, ~3, +100)] Map<int,byte>[]     mult_dim_arrays_const_defaul_len_of_maps_max_100_items;   
+    [D(~3, -3,  100)] Map<int,byte>[,]    mult_dim_arrays_fixed_max_100_mapы_max_255_items;  
 }
 ```
 
@@ -1073,39 +1085,36 @@ string  string_field;
 
 By default, the `string` type in AdHoc protocol declares the `string` with a maximum length of 255 chars.
 
-To declare a field with a different maximum character length restrictions, use the `[Dims]` attribute.
+To declare a field with a different maximum character length restrictions, use the `[D(+N)]` attribute.
+> Note the use of the `+` sign before the maximum length value.
 
 ```csharp
 class Packet{
-    string                      string_field_with_max_255_chars;
-    [Dims(+6)] string           string_field_with_max_6_chars;
-    [Dims(+7000)] string        string_field_with_max_7000_chars;
+    string                   string_field_with_max_255_chars;
+    [D(+6)] string           string_field_with_max_6_chars;
+    [D(+7000)] string        string_field_with_max_7000_chars;
     
-    [Dims(100)]  string         array_of_100_strings_with_max_255_chars;   
-    [Dims(100, +7_000)]         array_of_100_strings_with_max_7000_chars;   
+    [D(100)]  string         array_of_100_strings_with_max_255_chars;   
+    [D(100, +7_000)]         array_of_100_strings_with_max_7000_chars;   
 }
 ```
 
-> Note the use of the `+` sign before the maximum length value.
-
-
-If you have certain `string` type restrictions that are used in multiple places, it's beneficial to declare and utilize
-the AdHoc `typedef` construction:
+If you have certain `string` type restrictions that are used in multiple places, it might be better to declare and use the AdHoc [`typedef`](#typedef) construction:
 
 ```csharp
 class max_6_chars_string{         // AdHoc typedef
-    [Dims(+6)] string typedef;
+    [D(+6)] string typedef;
 }
 
 class max_7000_chars_string{      // AdHoc typedef
-    [Dims(+7_000)] string typedef;
+    [D(+7_000)] string typedef;
 }
 
 class Packet{ //                         using typedef
-    string                  string_field_with_max_255_chars;
-    max_6_chars_string      string_field_with_max_6_chars;      
-    max_7000_chars_string   string_field_with_max_7000_chars;   
-    [Dims(100)] max_7000_chars_string   array_of_100_strings_with_max_7000_chars;   
+    string                             string_field_with_max_255_chars;
+    max_6_chars_string                 string_field_with_max_6_chars;      
+    max_7000_chars_string              string_field_with_max_7000_chars;   
+    [D(100)] max_7000_chars_string[]   array_of_100_strings_with_max_7000_chars;   
 }
 ```
 
@@ -1117,31 +1126,76 @@ class Packet{ //                         using typedef
 The description of fields with `Map`/`Set` datatype is straightforward.
 
 By default, both `Map` and `Set` restricted to hold up to 255 items. However, you can adjust this restriction by using
-the `[Dims]` attribute.
-
-The `[MapValueParams]` attribute serves as a delimiter between a Map type "Key attributes" and "Value attributes." Any
-attributes following the `MapValueParams` are applied to the Map's `value` type. This allows for more specific
-customization of the
-`value` type in the `Map`.
+the `[D(+N)]` attribute.
+> Note the use of the `+` sign before the maximum length value.
 
 ```csharp
 using xyz.unirail.Meta;
 
-[Dims(+20)]Set<uint>          max_20_uints_set; //The set is limited to a maximum of 20 items.
-[Dims(+20)]Set<uint>[]        array_of_max_20_sets_of_max_255_uints; 
-[Dims(+20,+20)]Set<uint>[]    array_of_max_20_sets_of_max_20_uints;
+[D(+20)]Set<uint>          max_20_uints_set; //The set is limited to a maximum of 20 items.
+[D(+20)]Set<uint>[]        array_of_255_sets_of_max_20_uints; 
+[D(10,+20)]Set<uint>[,,]   list_of_max_10_sets_of_max_20_uints;
+```
+
+To specify types with attributes for Key or Value generics, you need to declare a separate section of attributes with the target `K` for the Key type or `V` for the Value type.
+
+Example:
+
+```csharp
+        [D(   -3, ~7, 100, +200)]
+        [K: D(+30)]
+        [V: D(100), X]
+        Map<string, int[,,]>[,,] MAP;
+```
+
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/900cf85a-7375-45c8-8653-79fa3eeec286)
+
+If the declaration is overly complex, consider using [`typedef`](#typedef) for decomposition.
+
+```csharp
+        class string_max_30_chars{
+           [D(+30)] string typedef;
+        }
+
+        class list_of_max_100_ints{
+            [D(100), X]  int[,,] typedef;
+        }
+
+        [D(   -3, ~7, 100, +200)]
+        Map< string_max_30_chars, list_of_max_100_ints >[,,] MAP;
+```
+
+The `[D]` attribute for Key or Value generic types cannot have `Set` or `Map` types and may contain a maximum of two dimensions: one for the type length (`string`) and one for the array length.
+
+```csharp
+using xyz.unirail.Meta;
+
+[D(+20)][K:V(10)]Set<uint>          max_20_uints_set; //The set is limited to a maximum of 20 items.
+
+[  D(+20)]
+[K: D(50), X]
+Set<uint?[]>[] array_of_255_sets_of_max_20_arraysof_50_uints; 
+
+[D(10,+20)]Set<uint>[,,]   list_of_max_10_sets_of_max_20_uints;
+
+[D(+20)]
+[K:D(10)]
+Set<uint[,,]>   set_of_max_20_lists_of_max_10_uints;
  
 Set<float?>               max_255_floats_set;
 Set<City>                 max_255_Cities_set;
-[MinMax(4, 45)] Set<int>  max_255_ints_set_with_MinMax_attributes;
+[K:MinMax(4, 45)] Set<int>  set_of_max_255_ints_with_MinMax_attributes;
 
-Map<string, byte?>                               max_255_items_string_2_byte_map;
-[V, Dims(+100) ]            Map<uint?, ulong?>   max_100_items_only_key_attribute_map; // no more then 100 items
-[MapValueParams, Dims(-57)] Map<uint, string>    max_255_items_map_with_value_max_57_chars;
-[V, MapValueParams, V]      Map<uint?, ulong?>   max_255_items_map_with_key_value_attibutes;
+Map<string, byte?>                               max_255_items_string_byte_map;
+[D(100)]
+[V:D(200) ]            
+Map<uint?, ulong?[]>   map_max_100_items_value_200_longs_array; // no more then 100 items
+
+[V:D(+57)] Map<uint, string>    map_max_255_items_value_string_max_57_chars;
+[K:V]
+[V:V]      
+Map<uint?, ulong?>   max_255_items_map_with_key_value_attibutes;
 ```
-
-> Note the use of the `+` sign before the maximum length value.
 
 ## Binary type
 
@@ -1157,8 +1211,8 @@ using xyz.unirail.Meta;
 class Result
 {
     string                 task;
-    [Dims(+650_000)] Binary[] result;// binary array with variable,  length max 65000 bytes
-    [Dims(100)] Binary[] hash;       // binary array with constant length 100 bytes
+    [D(650_000)] Binary[,,] result;// binary array with variable,  length max 65000 bytes
+    [D(100)] Binary[] hash;       // binary array with constant length 100 bytes
 }
 
 ```
@@ -1172,14 +1226,14 @@ AdHoc `typedef` is declared with a C# class construction that contains declarati
 The **name** of the class becomes an alias for the type of its `typedef` field.
 
 Example:
-To modify the default 255-character restriction for the `string` type, you have to use `[Dims]` attribute. If
+To modify the default 255-character restriction for the `string` type, you have to use `[D]` attribute. If
 multiple fields have the same restriction, utilize `typedef` to share this meta information across all of them.
 
 ```csharp
 class Packet{
     string                  string_field_with_max_255_chars;
-    [Dims(+6)] string       string_field_with_max_6_chars;
-    [Dims(+7_000)] string   string_field_with_max_7000_chars;
+    [D(+6)] string       string_field_with_max_6_chars;
+    [D(+7_000)] string   string_field_with_max_7000_chars;
 }
 ```
 
@@ -1187,18 +1241,18 @@ But if you use these string types in many places, consider declaring the typedef
 
 ```csharp
 class max_6_chars_string{         // AdHoc typedef
-    [Dims(+6)] string typedef;
+    [D(+6)] string typedef;
 }
 
 class max_7000_chars_string{      // AdHoc typedef
-    [Dims(+7_000)] string typedef;
+    [D(+7_000)] string typedef;
 }
 
 class Packet{ //                         using typedef
     string                  string_field_with_max_255_chars;
     max_6_chars_string      string_field_with_max_6_chars;      
     max_7000_chars_string   string_field_with_max_7000_chars;   
-    [Dims(100)] max_7000_chars_string   field_array_of_100_strings_with_max_7000_chars;   
+    [D(100)] max_7000_chars_string   field_array_of_100_strings_with_max_7000_chars;   
 }
 ```
 
@@ -1281,7 +1335,7 @@ namespace com.my.company{
             }
         }
 
-        interface CommunicationChannel : Communication_Channel_Of<Server, Client>{ }
+        interface CommunicationChannel : ChannelFor<Server, Client>{ }
     }
 }
 ```

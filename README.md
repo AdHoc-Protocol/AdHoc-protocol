@@ -230,18 +230,18 @@ Feel free to modify the code in those insertion points according to your prefere
 > <span style = "font-size:20px">❗️</span> In addition to the command-line arguments, the AdHocAgent utility needs:
 
 - An `AdHocAgent.toml` - This file contains configuration settings for the AdHocAgent utility such as:
-    - The URL of the code-generating server.
-    - Path to the binary of local C# IDE: This path is used to enable the utility to interact with the local C#
-      Integrated Development Environment (IDE).
-      The utility may need to launch the IDE or open specific files in it, for example, to navigate to a particular code
-      line related to a generated code snippet.
-    - And path to the binary of [7zip compression](https://www.7-zip.org/download.html) The 7zip compression utility is
-      required for best compression when working with text file formats.
-      It used by the AdHocAgent utility to compress or decompress files efficiently.  
-      download:  
-      [Windows](https://www.7-zip.org/a/7zr.exe)  
-      [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
-      [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
+	- The URL of the code-generating server.
+	- Path to the binary of local C# IDE: This path is used to enable the utility to interact with the local C#
+	  Integrated Development Environment (IDE).
+	  The utility may need to launch the IDE or open specific files in it, for example, to navigate to a particular code
+	  line related to a generated code snippet.
+	- And path to the binary of [7zip compression](https://www.7-zip.org/download.html) The 7zip compression utility is
+	  required for best compression when working with text file formats.
+	  It used by the AdHocAgent utility to compress or decompress files efficiently.  
+	  download:  
+	  [Windows](https://www.7-zip.org/a/7zr.exe)  
+	  [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
+	  [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
 
 AdHocAgent utility will search for the `AdHocAgent.toml` file next to itself.
 If it cannot find the file in this location, it will generate a template that you can update with the actual
@@ -458,11 +458,10 @@ namespace xyz.unirail
 
 ## Hosts
 
-In the AdHoc protocol, "hosts" refer to the entities that actively engage in the exchange of information. 
+In the AdHoc protocol, "hosts" refer to the entities that actively engage in the exchange of information.
 These hosts are represented as C# `structs` within the context of a project's `interface` and they implement the `xyz.unirail.Meta.Host` marker interface.
 
-
-To specify the programming language and options for generating the host's source code, you can utilize XML [`<see cref = "entity">`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute) tag 
+To specify the programming language and options for generating the host's source code, you can utilize XML [`<see cref = "entity">`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute) tag
 within the code documentation of the host declaration.
 
 The built-in marker interfaces such as `InCS`, `InJAVA`, `InTS` and others allow you to declare language configuration scopes.
@@ -500,11 +499,6 @@ AdHocAgent utility could be read the `Server` configuration in this manner..
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/0cfa47f2-8b2e-4e49-9c7d-0fd908dbd7ce)
 
 </details>
-
-
-
-
-
 
 ## Packs
 
@@ -894,16 +888,22 @@ AdHoc protocol description supports the entire range of numeric primitive types 
 | `float`  | ±1.5 x 10−45 to ±3.4 x 1038                              |
 | `double` | ±5.0 × 10−324 to ±1.7 × 10308                            |
 
-As the protocol creator, you have the best understanding of your data and its specific requirements. The AdHoc protocol
-description provides attributes that allow you to share this knowledge with the code generator, enabling optimized code
-generation.
+As the protocol creator, you possess the most profound understanding of your data and its unique requisites. 
 
-Adding the `MinMax` attribute to a field declaration is recommended when you know the data falls within a specific
-range.
-It provides explicit information to the code generator, enabling it to optimize data type selection and generate
-range-bound information for efficient value handling.
+When dealing with a field whose values fall within the range of 400 000 000 to 400 000 093, it's common to use an 'int' data type. 
+However, it becomes evident that for efficient storage of this field, only one byte and a constant value of 400 000 000 are necessary. 
+This constant should be subtracted during the setting process and added during retrieval.
 
-For value **ranges** less than 127, the code generator utilizes internal bits storage to save memory.
+The AdHoc protocol description includes attributes that enable you to provide this knowledge to the code generator, allowing it to generate optimized code.
+
+In this scenario, the `MinMax` attribute can be applied to the field declaration.
+
+```csharp
+     [MinMax(400_000_000, 400_000_093)] int ranged_field;     
+```
+The code generator will then select the appropriate field type (`byte`) and generate helper getter and setter functions accordingly. 
+
+For fields with value **ranges** smaller than 127, the code generator employs internal `bits storage` to conserve memory.
 
 Example:
 
@@ -914,27 +914,43 @@ Example:
 In this case, the code generator can allocate 3 bits in the bits storage for the `car_doors` field, based on the
 specified range of 1 to 8.
 
-If a field's value falls within the range of `200 005` to `200 078`,
+The AdHoc generator utilizes a 3-layered approach for representing field values.
 
-```csharp
-     [MinMax(200_005, 200_078)] int field;     
-```
 
-The code generator will allocate the necessary storage for values within the specified
-range: `73`(`200 078` - `200 005` = `73`).
-Additionally, it will generate `getter` and `setter` methods that adding or subtracting a constant value of `200,005`
-to or from the field value.
+| layer | Description                                                                                                                                     |
+|-------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| exT   | External type. The representation required for external consumers.<br> Information Quanta: Matches the granularity of the language's data types |
+| inT   | Internal type. The representation optimized for storage.<br> Information Quanta: Matches the granularity of the language's data types           |
+| ioT   | IO wire type. The network transmission format. Information Quanta: None; transmitted as a byte stream.                                          |
+
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/180a331d-3d55-4878-8dfe-794ceb9297f3)
+
+However, when dealing with a field containing values ranging from 1 000 000 to 1 080 000, applying shifting on exT <==> inT transition will not result in memory savings in C#/Java.
+This limitation primarily stems from the type quantization inherent to the language.
+
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/0b8f90cc-aafc-4923-8c90-1fed53775bb3)
+
+Nevertheless, prior to transmitting data over the network (ioT), a simple optimization can be implemented by subtracting a constant 
+value of 1 000 000. This action effectively reduces the data to a mere 3 bytes. 
+Upon reception, reading these 3 bytes and subsequently adding 1 000 000 allows for the retrieval of the originally sent value.
+
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/a28e5b20-5c49-4b18-be98-e9bfb6387290)
+
+This example illustrates that data transformation on exT <==> inT can be redundant and only meaningful during the inT <==> ioT transition.
+
+This is a simple and effective technique, but it's not applicable in every scenario. When a field's data type is an `enclosed` array, repacking data into 
+different array types during exT <==> inT transitions can be costly and entirely impractical, especially when dealing with keys in a Map or Set
+(such as Map<int[], string> or Set<long[]>). 
+
 
 ## Varint type
 
-If a numeric field contains randomly distributed values that span the entire range of the numeric type, it can be
-visualized as follows:
+When a numeric field contains randomly distributed values that span the entire numeric type range, it can be represented as follows:
 
 ![image](https://user-images.githubusercontent.com/29354319/70127303-bdf40900-16b5-11ea-94c9-c0dcd045500f.png)
 
-Compressing this data type would be inefficient and wasteful in terms of computing resources.  
-However, if the numeric field exhibits a particular dispersion or gradient pattern within its value range, as shown in
-the following image:
+Efforts to compress this data type would be inefficient and wasteful. However, if the numeric field exhibits a specific dispersion or
+gradient pattern within its value range, as illustrated in the following image:
 
 ![image](https://user-images.githubusercontent.com/29354319/70128574-0a404880-16b8-11ea-8a4d-efa8a7358dc1.png)
 
@@ -972,28 +988,28 @@ Useful to recognize three particular dispersion or gradient patterns within valu
 
 ## Collection type
 
-Collections like `arrays`, `maps`, and `sets` can store various data types, such as `primitives`, `strings`, and even
-user-defined packs. Fields with the `Collection type` are always `optional`.
+Collections, such as `arrays`, `maps`, and `sets`, have the ability to store a variety of data types, including `primitives`, `strings`, and even user-defined structures.
+It's crucial to emphasize that fields with the `Collection type` are invariably `optional`.
 
-Controlling the length of collections becomes critical, particularly for network applications receiving data. This control helps prevent overflow, thereby mitigating one of the
-tactics utilized in Distributed Denial of Service (DDoS) attacks.
+Managing the length of collections is of utmost importance, especially in network applications handling incoming data. This control is essential for preventing overflow and
+thereby reducing vulnerability to one of the tactics employed in Distributed Denial of Service (DDoS) attacks.
 
-By default, all collections - including `strings` - have a maximum capacity of 255. This limit can be adjusted by explicitly
-defining an enum called _`DefaultCollectionsMaxLength` with the following fields:
+As a default setting, all collections, including `strings`, have a maximum capacity of 255. To modify this limit, you
+can explicitly define an enum called `_DefaultCollectionsMaxLength` with the following fields:
 
 ```csharp
     enum _DefaultMaxLengthOf{
-        Strings = 255,
         Arrays  = 255,
         Maps    = 255,
         Sets    = 255
+        Strings = 255,
     }
 ```
 
-Fields that do not change the default maximum capacity can be left out of the enum.
+Types omitted in the `_DefaultMaxLengthOf` enum have default maximum capacities of 255 elements.
 
-The individual restriction for collections such as `maps`,  `sets`  and `strings` can be adjusted using the `[D(+N)]` attribute.
-> Note the `+` character. `N`  represents the maximum length of the entity.
+To customize specific limitations for a particular field with collections like `map`, `set`, or `string`, use the `[D(+N)]` attribute.
+>  ❗️ Please note of the `+` character before N, where `N` represents the maximum length of the respective entity.
 
 For example:
 
@@ -1002,20 +1018,21 @@ class Packet{
     string                       string_with_max_255_chars;   
     [D(+100)] string             string_with_max_100_chars;   
     
-    Map<int,double>              map_with_max_255_items;   
-    [D(+1_000)] Map<int,double>  map_with_max_1_000_items;
+    Map<int,double>              map_of_max_255_items;   
+    [D(+1_000)] Map<int,double>  map_of_max_1_000_items;
 }
 ```
 
-Flat arrays are declared using square brackets `[]`. There are three types of flat arrays:
+Flat arrays are declared using square brackets `[]`, and the system supports three types of flat arrays:
 
-| Declaration | Description                                                                                                                         |
-|-------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `[]`        | The length of the array is constant and cannot be changed.                                                                          |
-| `[,]`       | The length of the array is fixed at initialization and cannot be changed afterwards, similar to `string`.                           |
-| `[,,]`      | The length of the array can vary up to a maximum and change over time, similar to a `Set` or `Map`. It is generated as a `List<T>`. |
+| Declaration | Description                                                                                               |
+|-------------|-----------------------------------------------------------------------------------------------------------|
+| `[]`        | The length of the array is constant and cannot be changed.                                                |
+| `[,]`       | The length of the array is fixed at initialization and cannot be changed afterwards, similar to `string`. |
+| `[,,]`      | The length of the array can vary up to a maximum and is generated as a `List<T>`.                         |
 
-The individual restriction for arrays can be adjusted using the same `[D(N)]` attribute, without the `+` character.
+To customize specific limitations for a particular field with an `array` collection, you can use the `[D(N)]` attribute. 
+>  ❗️ Please note that there should be no characters before `N`.  
 
 For example:
 
@@ -1032,12 +1049,12 @@ class Pack{
 
 ### Multidimensional array
 
-In AdHoc, a field can also have a multidimensional array type with constant or fixed dimensions. The `[D(-N, ~N)]` attribute is used to declare a field as a multidimensional array.
+In AdHoc, it's possible for a field to have a multidimensional array type with either constant or fixed dimensions. This is achieved by using the `[D(-N, ~N)]` attribute.
 
-|    | Description                                                                                    |
-|---:|:-----------------------------------------------------------------------------------------------|
-| -N | `N` represents the length of the constant-length dimension.                                    |
-| ~N | `N` indicates the maximum length of a fixed-length dimension, set during field initialization. |
+|    | Description                                                                                           |
+|---:|:------------------------------------------------------------------------------------------------------|
+| -N | `N` signifies the length of the constant-length dimension.                                            |
+| ~N | `N` denotes the maximum length of a fixed-length dimension, which is set during field initialization. |
 
 > Note prepended chars
 
@@ -1051,9 +1068,11 @@ class Pack {
 }
 ```
 
-> The lengths of all **fixed dimensions** in the multidimensional arrays are set during **field initialization**.
+> ❗️ The lengths of all **fixed dimensions** in multidimensional arrays are established during **field initialization**.
 
 ### Multidimensional array of collections
+
+Multidimensional arrays, in addition to primitive types, have the capability to store other collections such as `arrays`, `maps`, and `sets` as elements.
 
 ```csharp
 class Packet{
@@ -1070,23 +1089,49 @@ class Packet{
 
     
     [D(-3, ~3, +100)] string              mult_dim_strings_with_max_100_chars   
-    [D(-3, ~3, +100)] Map<int,byte>[]     mult_dim_arrays_const_defaul_len_of_maps_max_100_items;   
-    [D(~3, -3,  100)] Map<int,byte>[,]    mult_dim_arrays_fixed_max_100_mapы_max_255_items;  
+    [D(-3, ~3, +100)] Map<int[,,], byte[,]>     mult_dim_arrays_const_defaul_len_of_maps_max_100_items;   
+    [D(~3, -3,  100)] Map<int[],byte>    mult_dim_arrays_fixed_max_100_mapы_max_255_items;  
 }
 ```
 
-## String type
+### Flat array of collections
 
-A `string` is, in fact, an immutable array of characters. Fields with the `String` type are always 'optional'.
+Just like multidimensional arrays, `flat arrays` can also store other collections.
+
+```csharp
+class Packet{
+    
+    [D(+100)] string []  [,,]       array_of_100_strings_with_max_255_chars;   
+    [D(+100)] string []  []       string_with_max_100_chars;   
+    [D(+100)] string [,,][,]       list_of_max_255_strings_with_max_255_chars;
+       
+    [D(+100)] string[]  []   array_of_100_strings_with_max_100_chars;   
+    [D(+100)] string[,] [,,]   array_fixed_max_100_strings_with_max_100_chars;   
+
+    [D( +100)] Map<Point3, byte> [,,]   array_of_100_maps_max_100_items;   
+    [D( +100)] Map<int, string>  []   array_fixed_max_100_maps_max_100_items;  
+
+    
+    [D(+100)] string [,,]           [,,]       mult_dim_strings_with_max_100_chars   
+    [D(+100)] Map<object, byte[,]>  [,]   mult_dim_arrays_const_defaul_len_of_maps_max_100_items;   
+    [D( 100)] Map<int[,,], byte>    []   mult_dim_arrays_fixed_max_100_mapы_max_255_items;  
+}
+```
+
+> ❗️ Multidimensional array of flat arrays of collections are not supported.❗️
+
+## String Type
+
+A `string` is essentially an immutable array of characters. It's important to note that fields with the `String` type are always 'optional'.
 
 ```csharp
 string  string_field;
 ```
 
-By default, the `string` type in AdHoc protocol declares the `string` with a maximum length of 255 chars.
+By default, the `string` type in the AdHoc protocol has a maximum length of 255 characters.
 
-To declare a field with a different maximum character length restrictions, use the `[D(+N)]` attribute.
-> Note the use of the `+` sign before the maximum length value.
+To declare a specific field with different character length restrictions, you can use the `[D(+N)]` attribute.
+> Please take note of the `+` sign before the maximum length value.
 
 ```csharp
 class Packet{
@@ -1118,16 +1163,16 @@ class Packet{ //                         using typedef
 }
 ```
 
-> **When transmitting strings, they are encoded using the `Varint` algorithm rather than `UTF-8`.**
+> **When transmitting, strings are encoded using the `Varint` algorithm instead of `UTF-8`.**
 >
 
 ## Map/Set type
 
-The description of fields with `Map`/`Set` datatype is straightforward.
+The description of fields with `Map` or `Set` datatype is clear.
 
-By default, both `Map` and `Set` restricted to hold up to 255 items. However, you can adjust this restriction by using
-the `[D(+N)]` attribute.
-> Note the use of the `+` sign before the maximum length value.
+By default, both `Map` and `Set` are limited to holding up to 255 items.
+However, you have the flexibility to modify this restriction by utilizing the `[D(+N)]` attribute.
+> Please be aware of the `+` sign preceding the maximum length value.
 
 ```csharp
 using xyz.unirail.Meta;
@@ -1137,7 +1182,7 @@ using xyz.unirail.Meta;
 [D(10,+20)]Set<uint>[,,]   list_of_max_10_sets_of_max_20_uints;
 ```
 
-To specify types with attributes for Key or Value generics, you need to declare a separate section of attributes with the target `K` for the Key type or `V` for the Value type.
+To specify types with attributes for `Key` or `Value` generics, it's necessary to declare a separate section of attributes with the target `K` for the Key type or `V` for the Value type.
 
 Example:
 
@@ -1165,7 +1210,8 @@ If the declaration is overly complex, consider using [`typedef`](#typedef) for d
         Map< string_max_30_chars, list_of_max_100_ints >[,,] MAP;
 ```
 
-The `[D]` attribute for Key or Value generic types cannot have `Set` or `Map` types and may contain a maximum of two dimensions: one for the type length (`string`) and one for the array length.
+The `[D]` attribute for Key or Value generic types cannot include `Set` or `Map` types and is limited to a maximum of two dimensions:
+one for the type length (e.g., `string`) and one for the array length.
 
 ```csharp
 using xyz.unirail.Meta;
@@ -1219,15 +1265,15 @@ class Result
 
 ## typedef
 
-`Typedef` is used to create an alias (additional name) for a data type, not to create a new type.
-When you need multiple fields to share the same type, you can declare and use `typedef`.
-This approach allows you to modify the data type of all related fields at once easily.  
-AdHoc `typedef` is declared with a C# class construction that contains declaration of only one field named `typedef`.
+`Typedef` is employed to establish an alias (an additional name) for a data type, rather than creating a new type.
+When there's a need for multiple fields to share the same type, you can declare and use `typedef`.
+This approach simplifies the process of modifying the data type for all related fields simultaneously.
+
+In AdHoc, `typedef` is declared with a C# class construction containing the declaration of a single field named `typedef`.
 The **name** of the class becomes an alias for the type of its `typedef` field.
 
-Example:
-To modify the default 255-character restriction for the `string` type, you have to use `[D]` attribute. If
-multiple fields have the same restriction, utilize `typedef` to share this meta information across all of them.
+For example, to adjust the default 255-character restriction for the `string` type, you would use the `[D]` attribute.
+If multiple fields share this restriction, you can utilize `typedef` to efficiently propagate this metadata across all of them.
 
 ```csharp
 class Packet{
@@ -1256,22 +1302,21 @@ class Packet{ //                         using typedef
 }
 ```
 
-## Pack/enum type
+## Pack/Enum Type
 
-Both `enums` and `packs` can be used as data types for a field.
-`Enums` are used to represent a set of named constant values, while `packs` are user-defined data structures that can
-hold
-multiple fields with various data types. By using `enums` and `packs` as field data types, you can organize and manage
-different types of data effectively in your code.
+Both `enums` and `packs` can serve as data types for a field.
 
-In packs, you can have nested data types and self-referential fields within the fields' data type.
-This allows for building complex data structures with interconnected components.
+- `Enums` are used to represent a set of named constant values.
+- `Packs` are user-defined data structures capable of holding multiple fields with various data types.
 
-However, empty `packs` (with no fields) or `enums` with fewer than two fields are not suitable as field data types. In
-such
-cases, when only a single binary value is needed, it's recommended to use a `boolean` type instead. This ensures that
-the
-data type remains meaningful and avoids unnecessary complexity when dealing with single binary values.
+By utilizing `enums` and `packs` as field data types, you can effectively organize and manage diverse data types in your code.
+
+Within packs, you can incorporate nested data types and even include self-referential fields within the data type definition.
+This flexibility allows you to construct complex data structures with interconnected components.
+
+However, it's important to note that empty `packs` (those with no fields) or `enums` containing fewer than two fields are not
+suitable as field data types. In such situations where only a single binary value is required, it is recommended to use a `boolean` type instead.
+This ensures that the data type remains meaningful and avoids unnecessary complexity when dealing with single binary values.
 
 
 <details>

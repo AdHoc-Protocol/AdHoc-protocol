@@ -646,12 +646,6 @@ protocol** the C# language was chosen.
 The `protocol description file` is essentially a plain C# source code file within a .NET project.
 To create a `protocol description file`, follow these steps:
 
-As a DSL (Domain-Specific Language) to describe the AdHoc protocol, the C# language was chosen. The protocol description
-file is essentially a plain C# source
-code file within a .NET project.
-By using this approach, you can leverage the C# language and its features to define and describe the AdHoc protocol in a
-structured and readable manner.
-
 To create a `protocol description file`, follow these steps:
 
 - Start by creating a C# project.

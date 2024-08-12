@@ -644,7 +644,6 @@ This command will upload the file and initiate the process of generating the sou
 As a [`DSL`](https://en.wikipedia.org/wiki/Domain-specific_language) to describe **AdHoc
 protocol** the C# language was chosen.
 The `protocol description file` is essentially a plain C# source code file within a .NET project.
-To create a `protocol description file`, follow these steps:
 
 To create a `protocol description file`, follow these steps:
 

@@ -1,3 +1,36 @@
+//  MIT License
+//
+//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
+//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
+//  GitHub Repository: https://github.com/AdHoc-Protocol
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to use,
+//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+//  the Software, and to permit others to do so, under the following conditions:
+//
+//  1. The above copyright notice and this permission notice must be included in all
+//     copies or substantial portions of the Software.
+//
+//  2. Users of the Software must provide a clear acknowledgment in their user
+//     documentation or other materials that their solution includes or is based on
+//     this Software. This acknowledgment should be prominent and easily visible,
+//     and can be formatted as follows:
+//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
+//     (https://github.com/AdHoc-Protocol)."
+//
+//  3. If you modify the Software and distribute it, you must include a prominent notice
+//     stating that you have changed the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
+
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,56 +40,58 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using org.unirail.Agent;
-using org.unirail.Agent.ObserverToAgent;
+using Type = org.unirail.Agent.Entity.Type;
 
-namespace org.unirail
-{
-    public class ChannelToObserver : ObserverCommunication, ObserverCommunication.Receivable.Listener
-    {
-        private ProjectImpl? project;
+namespace org.unirail{
+    public interface ChannelToObserver{
+        static ObserverCommunication.Transmitter transmitter = new();
+        static ObserverCommunication.Receiver    receiver    = new();
 
-        void send_project()
+        private static ProjectImpl? project;
+
+        static void send_project()
         {
             try
             {
-                if (project == null) send(project = ProjectImpl.init());
+                if( project == null ) transmitter.send(project = ProjectImpl.init()); //first send
                 else
                 {
                     var prj = project.refresh();
-                    if (prj == null) send(new Up_to_date()); //nothing update notitication
-                    else send(project = prj);                // reply with updated information
+                    if( prj == null ) transmitter.send(new Up_to_date()); //nothing update notitication
+                    else transmitter.send(project = prj);                 // reply with updated information
                 }
             }
-            catch (Exception e)
+            catch( Exception e )
             {
                 project = null;
-                send(new Up_to_date { info = e.ToString() });
+                transmitter.send(new Up_to_date { info = e.ToString() });
             }
         }
 
-        private ChannelToObserver() { onReceiveListener = this; }
 
-        public void Received(ObserverCommunication via, Layout data) { }
+        public void Received(ObserverCommunication.Receiver via, Layout pack) { }
+
 
         //request to send updated Project pack or Up_to_date  if data is not changed
-        public void Received(ObserverCommunication via, Up_to_date pack) => send_project();
+        public void Received(ObserverCommunication.Receiver via, Up_to_date pack) => send_project();
 
-        public void Received(ObserverCommunication via, Show_Code entity)
+        public void Received(ObserverCommunication.Receiver via, Show_Code pack)
         {
             var file_path = "";
             var line      = 0;
             var char_pos  = 0;
             var src       = "";
-            HasDocs item = entity.Type switch
+            HasDocs item = pack.tYpe switch
                            {
-                               Agent.Entity.Type.Project => project,
-                               Agent.Entity.Type.Host    => project.hosts[(int)entity.uid],
-                               Agent.Entity.Type.Port    => project.ports[(int)entity.uid],
-                               Agent.Entity.Type.Pack    => project.packs[(int)entity.uid],
-                               Agent.Entity.Type.Field   => project.fields[(int)entity.uid],
-                               Agent.Entity.Type.Channel => project.channels[(int)entity.uid],
-                               _                         => throw new Exception("Unknown entity type")
+                               Type.Project => project,
+                               Type.Host    => project.hosts[pack.idx],
+                               Type.Pack    => project.packs[pack.idx],
+                               Type.Field   => project.fields[pack.idx],
+                               Type.Channel => project.channels[pack.idx],
+                               Type.Stage   => project.channels[pack.idx],
+                               _            => throw new Exception("Unknown entity type")
                            };
+
 
             file_path = item.project.file_path;
             char_pos  = item.char_in_source_code;
@@ -84,85 +119,53 @@ namespace org.unirail
                           });
         }
 
-
-        private static async Task process(HttpListenerContext ctx)
+        private static async Task StartWebSocketAsync(HttpListenerContext ctx)
         {
-            var sendBuffer    = new byte[1024];
-            var receiveBuffer = new byte[1024];
-            var ws_ctx        = await ctx.AcceptWebSocketAsync(null);
+            var ws = (await ctx.AcceptWebSocketAsync(null)).WebSocket;
+            if( ws.State != WebSocketState.Open ) AdHocAgent.exit("Observer Connection Issue");
 
-            var channel = new ChannelToObserver();
+            AdHocAgent.LOG.Information("Observer connected");
 
-
-            while (true)
+            if( File.Exists(AdHocAgent.raw_files_dir_path + ".layout") )
             {
-                switch (ws_ctx.WebSocket.State)
-                {
-                    case WebSocketState.Open:
+                AdHocAgent.LOG.Information("Found and send {RawFilesDirPath}.layout to the observer", AdHocAgent.raw_files_dir_path);
+                var mem = new MemoryStream();
 
-#region very begining, transmitter is not binded to websocket
-                        if (channel.ext_src.token() != ws_ctx) //just opened connection
-                        {
-                            async void sending(AdHoc.EXT.BytesSrc src)
-                            {
-                                for (int len; 0 < (len = src.Read(sendBuffer, 0, sendBuffer.Length));)
-                                    await ws_ctx.WebSocket.SendAsync(sendBuffer[..len], WebSocketMessageType.Binary, true, CancellationToken.None);
-                            }
+                await using( var fs = File.OpenRead(AdHocAgent.raw_files_dir_path + ".layout") ) await fs.CopyToAsync(mem); // read layout binary from file
 
-                            channel.ext_src.subscribe(sending, ws_ctx); //bind transmitter >>> websocket
-
-                            AdHocAgent.LOG.Information("Using {RawFilesDirPath}.layout", AdHocAgent.raw_files_dir_path);
-                            if (File.Exists(AdHocAgent.raw_files_dir_path + ".layout")) //present layout file
-                            {
-                                var mem = new MemoryStream();
-
-                                await using (var fs = File.OpenRead(AdHocAgent.raw_files_dir_path + ".layout")) await fs.CopyToAsync(mem); // read layout binary from file
-
-                                await ws_ctx.WebSocket.SendAsync(mem.ToArray(), WebSocketMessageType.Binary, true, CancellationToken.None); //write layout to observer
-                            }
-
-                            channel.send_project();
-                        }
-#endregion
-                        var ret = await ws_ctx.WebSocket.ReceiveAsync(receiveBuffer, CancellationToken.None); //block
-
-                        if (ret.MessageType == WebSocketMessageType.Close)
-                        {
-                            await ws_ctx.WebSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
-                            await ws_ctx.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
-                            return;
-                        }
-
-                        channel.ext_dst.Write(receiveBuffer, 0, ret.Count);
-                        break;
-                    case WebSocketState.None:
-                        AdHocAgent.LOG.Information("WebSocketState.None");
-                        continue;
-                    case WebSocketState.Connecting:
-                        AdHocAgent.LOG.Information("WebSocketState.Connecting");
-                        continue;
-                    case WebSocketState.CloseSent:
-                        AdHocAgent.LOG.Information("WebSocketState.CloseSent");
-                        return;
-                    case WebSocketState.CloseReceived:
-                        AdHocAgent.LOG.Information("WebSocketState.None");
-                        return;
-                    case WebSocketState.Closed:
-                        AdHocAgent.LOG.Information("WebSocketState.CloseReceived");
-                        return;
-                    case WebSocketState.Aborted:
-                        AdHocAgent.LOG.Information("WebSocketState.Aborted");
-                        return;
-                    default:
-                        return;
-                }
+                await ws.SendAsync(mem.ToArray(), WebSocketMessageType.Binary, true, CancellationToken.None); //write layout to observer
             }
+
+            var snd_buff = new byte[1024];
+            transmitter.subscribeOnNewBytesToTransmitArrive(async src =>
+                                                            {
+                                                                for( int len; 0 < (len = src.Read(snd_buff, 0, snd_buff.Length)); )
+                                                                    await ws.SendAsync(snd_buff[..len], WebSocketMessageType.Binary, true, CancellationToken.None);
+                                                            });
+            send_project();
+
+            for( var rsv_buff = new byte[1024];; )
+            {
+                var ret = await ws.ReceiveAsync(rsv_buff, CancellationToken.None); //block here
+
+                if( ret.MessageType == WebSocketMessageType.Close ) break;
+
+                receiver.Write(rsv_buff, 0, ret.Count);
+            }
+
+            await ws.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+            await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+
+            transmitter.Close();
+            receiver.Close();
+
+            project = null;
         }
 
 
-        public static async Task start(ushort port = 4321)
+        public static async Task Start(ushort port = 4321)
         {
-            ProjectImpl.init();//for preliminary testing purpose
+            ProjectImpl.init(); //for preliminary testing purposes
             var listener = new HttpListener();
             var url      = $"http://localhost:{port}/";
             listener.Prefixes.Add(url);
@@ -173,24 +176,23 @@ namespace org.unirail
                 //run browser
                 //Process.Start(new ProcessStartInfo() { FileName = url, UseShellExecute = true });
             }
-            catch (Exception ex) { AdHocAgent.exit($"Tried to open link {url} to Visualizer user interface but got an error {ex}."); }
+            catch( Exception ex ) { AdHocAgent.exit($"Tried to open link {url} to Visualizer user interface but got an error {ex}."); }
 
             AdHocAgent.LOG.Information("Waiting for browser connection on {Url}...", url);
 
 
-            while (true)
+            while( true )
             {
                 var ctx = await listener.GetContextAsync(); //block
 
 
-                if (ctx != null && ctx.Request.IsWebSocketRequest) process(ctx);
-
+                if( ctx.Request.IsWebSocketRequest ) StartWebSocketAsync(ctx);
                 else
                 {
-                    var filename = ctx.Request.Url.AbsolutePath;
+                    var filename = ctx.Request.Url!.AbsolutePath;
                     Debug.Print(filename);
 
-                    switch (filename)
+                    switch( filename )
                     {
                         case "/":
                             filename = "index.html";
@@ -198,17 +200,17 @@ namespace org.unirail
 
                         case "/crash_layout":
 
-                            if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
+                            if( ctx.Request.ContentLength64 == 0 ) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
-                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".crash_layout", FileMode.Create, FileAccess.Write))
+                                await using( var fs = File.Open(AdHocAgent.raw_files_dir_path + ".crash_layout", FileMode.Create, FileAccess.Write) )
                                     await ctx.Request.InputStream.CopyToAsync(fs);
 
                             continue;
                         case "/confirmed_layout":
 
-                            if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
+                            if( ctx.Request.ContentLength64 == 0 ) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
-                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".layout", FileMode.Create, FileAccess.Write))
+                                await using( var fs = File.Open(AdHocAgent.raw_files_dir_path + ".layout", FileMode.Create, FileAccess.Write) )
                                     await ctx.Request.InputStream.CopyToAsync(fs);
 
                             continue;
@@ -219,13 +221,13 @@ namespace org.unirail
                     //  using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
 
                     filename = Path.Join("D:/AdHoc/Observer/Observer", filename);
-                    if (!File.Exists(filename))
+                    if( !File.Exists(filename) )
                     {
-                        AdHocAgent.LOG.Error($"File {filename} in resource is not found.");
+                        AdHocAgent.LOG.Error("The file {filename} in embedded in an assembly resource is not found.", filename);
                         ctx.Response.StatusCode = (int)HttpStatusCode.NotFound;
                     }
                     else
-                        using (var stream = File.Open(filename, FileMode.Open)) //Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
+                        using( var stream = File.Open(filename, FileMode.Open) ) //Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
                         {
                             ctx.Response.ContentType = Path.GetExtension(filename) switch
                                                        {
@@ -252,7 +254,7 @@ namespace org.unirail
                             {
                                 await stream.CopyToAsync(ctx.Response.OutputStream);
                             }
-                            catch (Exception e) { continue; }
+                            catch( Exception e ) { continue; }
 
                             stream.Close();
                             ctx.Response.OutputStream.Flush();

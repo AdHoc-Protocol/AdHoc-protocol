@@ -2,44 +2,46 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+        <ApplicationIcon>..\Observer\Observer\favicon.ico</ApplicationIcon>
+	<DebugType>Full</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0-2.final" />
-      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00896" />
-      <PackageReference Include="Tommy" Version="3.1.2" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0-1.final" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Tommy" Version="3.1.2" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Observer\favicon.ico" />
-      <EmbeddedResource Include="Observer\favicon.ico">
+      <EmbeddedResource Include="..\Observer\Observer\index.html">
+        <Link>Observer\index.html</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
-      <None Remove="Observer\index.html" />
-      <EmbeddedResource Include="Observer\index.html">
+      <EmbeddedResource Include="..\Observer\Observer\observer.js">
+        <Link>Observer\observer.js</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
-      <None Remove="Observer\observer.js" />
-      <EmbeddedResource Include="Observer\observer.js">
+      <EmbeddedResource Include="..\Observer\Observer\observer.js.map">
+        <Link>Observer\observer.js.map</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
-      <None Remove="Observer\observer.js.map" />
-      <EmbeddedResource Include="Observer\observer.js.map">
+      <None Remove="templ\DescriptionFile.md" />
+     
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="..\Observer\Observer\favicon.ico">
+        <Link>Observer\favicon.ico</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
       <None Remove="Templates\AdHocAgent.toml" />
       <EmbeddedResource Include="Templates\AdHocAgent.toml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <None Remove="Templates\Deployment_instructions.md" />
-      <EmbeddedResource Include="Templates\Deployment_instructions.md">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <Compile Remove="Templates\ProtocolDescriptionTemplate.cs" />
-      <EmbeddedResource Include="Templates\ProtocolDescriptionTemplate.cs">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
     </ItemGroup>

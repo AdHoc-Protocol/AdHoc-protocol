@@ -173,21 +173,26 @@ This feature is particularly useful for debugging deployments.
  </details> 
 
 > [!NOTE]  
-> In addition to the command-line arguments, the `AdHocAgent` utility requires:
+> In addition to command-line arguments, the `AdHocAgent` utility requires the following configuration file:
+- **`AdHocAgent.toml`:** This file includes essential settings for the `AdHocAgent` utility, such as:
+	- The URL of the code-generating server.
+	- The path to the local C# IDE binary. This allows the utility to open the IDE directly to specific source files at a specified line
+	- The path to the [7-Zip](https://www.7-zip.org/download.html) binary. `AdHocAgent` utilizes its PPMd compression capability.
+		- Download links:  
+		  [Windows](https://www.7-zip.org/a/7zr.exe)  
+		  [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
+		  [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
+	- The path to your preferred source code formatter binaries, including:  
+		- Download links  
+	      [clang-format](https://releases.llvm.org/download.html)  
+		  [prettier](https://prettier.io/docs/en/install.html)  
+		  [astyle](https://sourceforge.net/projects/astyle/files/)
 
-- `AdHocAgent.toml`: This file contains configuration settings for the `AdHocAgent` utility, including:
-  > - The URL of the code-generating server.
-  > - The path to the binary of the local C# IDE. This path enables the utility to interact with the local C# Integrated Development Environment (IDE), such as launching the IDE or opening specific files. For example, it allows navigation to a particular code line related to a generated code snippet.
-  > - The path to the binary of [7-Zip](https://www.7-zip.org/download.html). The 7-Zip compression utility is used for optimal compression when working with text file formats. `AdHocAgent` uses it to compress or decompress files efficiently.  
-      >   Download:
-      >   [Windows](https://www.7-zip.org/a/7zr.exe)  
-      >   [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
-      >   [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
 
 The `AdHocAgent` utility will search for the `AdHocAgent.toml` file in its directory.
 If the file is not found, the utility will generate a template that you can update with the required information.
 
-## Continuous deployment
+## Continuous deployment (CD)
 
 The embedded [Continuous deployment](https://en.wikipedia.org/wiki/Continuous_deployment) system relies on a `deployment instructions file` to deploy the received source code into the target project folders.  
 A typical layout for received files might resemble the following:
@@ -1392,15 +1397,15 @@ class Packet{
 ```
 
 If you have a specific `string` format that is used in multiple places,
-it may be more convenient to declare and utilize the AdHoc [`typedef`](#typedef) construction:
+it may be more convenient to declare and utilize the AdHoc [`TYPEDEF`](#typedef) construction:
 
 ```csharp
 class max_6_chars_string{         // AdHoc typedef
-    [D(+6)] string typedef;
+    [D(+6)] string TYPEDEF;
 }
 
 class max_7000_chars_string{      // AdHoc typedef
-    [D(+7_000)] string typedef;
+    [D(+7_000)] string TYPEDEF;
 }
 
 class Packet{ //                         using typedef
@@ -1441,15 +1446,15 @@ Example:
         Set<double[,,]> SET;
 ```
 
-If the declaration becomes overly complex and is used in many fields, consider utilizing [`typedef`](#typedef) for decomposition.
+If the declaration becomes overly complex and is used in many fields, consider utilizing [`TYPEDEF`](#typedef) for decomposition.
 
 ```csharp
         class string_max_30_chars{
-           [D(+30)] string typedef;
+           [D(+30)] string TYPEDEF;
         }
 
         class list_of_max_100_ints{
-            [D(100), X]  int[,,] typedef;
+            [D(100), X]  int[,,] TYPEDEF;
         }
        
         Map< string_max_30_chars, list_of_max_100_ints >[,,] MAP;
@@ -1526,14 +1531,14 @@ class Result
 }
 ```
 
-## typedef
+## TYPEDEF
 
 `Typedef` is employed to establish an alias for a data type, rather than creating a new type.
-When multiple fields require the same (complex) type, consider declaring and using `typedef`.
+When multiple fields require the same (complex) type, consider declaring and using `TYPEDEF`.
 This simplifies the process of modifying the data type for all related fields simultaneously.
 
-In AdHoc, `typedef` is declared with a C# class construction containing the declaration of a **single** field named `typedef`.
-The **name** of the class becomes an alias for the type of its `typedef` field.
+In AdHoc, `TYPEDEF` is declared with a C# class construction containing the declaration of a **single** field named `TYPEDEF`.
+The **name** of the class becomes an alias for the type of its `TYPEDEF` field.
 
 For example, to adjust the default 255-character restriction for the `string` type, you would use the `[D]` attribute.
 
@@ -1548,11 +1553,11 @@ If multiple fields have the same type restriction, follow these...
 
 ```csharp
 class max_6_chars_string{         // AdHoc typedef
-    [D(+6)] string typedef;
+    [D(+6)] string TYPEDEF;
 }
 
 class max_7000_chars_string{      // AdHoc typedef
-    [D(+7_000)] string typedef;
+    [D(+7_000)] string TYPEDEF;
 }
 
 class Packet{ //                         using typedef

@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdHocAgent", "AdHocAgent.csproj", "{D2B6CB6C-B972-4490-A600-7C15106D6DB6}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdHocAgent", "AdHocAgent.csproj", "{5C4A5CC4-1DE6-4DD9-BA2A-C63A17416F08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D2B6CB6C-B972-4490-A600-7C15106D6DB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D2B6CB6C-B972-4490-A600-7C15106D6DB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D2B6CB6C-B972-4490-A600-7C15106D6DB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D2B6CB6C-B972-4490-A600-7C15106D6DB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C4A5CC4-1DE6-4DD9-BA2A-C63A17416F08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C4A5CC4-1DE6-4DD9-BA2A-C63A17416F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C4A5CC4-1DE6-4DD9-BA2A-C63A17416F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C4A5CC4-1DE6-4DD9-BA2A-C63A17416F08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C698319E-4F7C-4839-BDEC-EB96BA181B31}
 	EndGlobalSection
 EndGlobal

@@ -1,85 +1,80 @@
-﻿using System;
+﻿//  MIT License
+//
+//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
+//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
+//  GitHub Repository: https://github.com/AdHoc-Protocol
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to use,
+//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+//  the Software, and to permit others to do so, under the following conditions:
+//
+//  1. The above copyright notice and this permission notice must be included in all
+//     copies or substantial portions of the Software.
+//
+//  2. Users of the Software must provide a clear acknowledgment in their user
+//     documentation or other materials that their solution includes or is based on
+//     this Software. This acknowledgment should be prominent and easily visible,
+//     and can be formatted as follows:
+//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
+//     (https://github.com/AdHoc-Protocol)."
+//
+//  3. If you modify the Software and distribute it, you must include a prominent notice
+//     stating that you have changed the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
+
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Xml.Linq;
 using Serilog;
-using Tommy; //https://github.com/dezhidki/Tommy
+using Serilog.Core;
+using Tommy;
+using org.unirail.Agent;
+using Serilog.Events;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
-namespace org.unirail
-{
+//https://github.com/dezhidki/Tommy
+
+namespace org.unirail{
     // https: //docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/get-started/semantic-analysis
-    class AdHocAgent
-    {
-        public static readonly Serilog.Core.Logger LOG = new LoggerConfiguration() // >> https://github.com/serilog/serilog/wiki/Getting-Started <<
-                                                         .MinimumLevel.Debug()
-                                                         .WriteTo.Console().CreateLogger();
+    class AdHocAgent{
+        class CallerEnricher : ILogEventEnricher{
+            StringBuilder sb = new StringBuilder();
 
-
-#region refresh GitHUB Code
-        public static async Task updateMyPersonalSecretGitHubAuthorizationCode()
-        {
-            //https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps#1-request-a-users-github-identity
-            var url = $"https://github.com/login/oauth/authorize?client_id={app_props["adhoc_id"]}&scope={HttpUtility.UrlEncode("read:user user:email", Encoding.UTF8)}";
-
-            Process.Start(new ProcessStartInfo() { FileName = url, UseShellExecute = true });
-            LOG.Information("Authorization. Open browser {0} and accept security request... Waiting for GITHUB reply...", url);
-
-            await HandleIncomingConnections();
-        }
-
-
-        private static async Task HandleIncomingConnections()
-        {
-            var MyPersonalSecretGitHubAuthorizationCode = "";
-            try
+            public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
             {
-                var listener = new HttpListener();
-                listener.Prefixes.Add("http://localhost:4321/");
-                listener.IgnoreWriteExceptions = true; //ignore "The specified network name is no longer available" 
-                listener.Start();
+                var stackTrace = new StackTrace(true); // true to capture file information
+                var stack      = stackTrace.GetFrame(6);
 
-                var ctx = listener.GetContext(); //block
-
-                Console.Out.WriteLine("listener.GetContext()");
-
-                MyPersonalSecretGitHubAuthorizationCode = ctx.Request.QueryString["code"];
-                AuthorizationCodeOK                     = true;
-                var resp = ctx.Response;
-                resp.ContentType     = "text/html";
-                resp.ContentEncoding = Encoding.ASCII;
-                resp.ContentLength64 = close_browser_bytes.LongLength;
-
-                resp.OutputStream.Write(close_browser_bytes);
-                resp.OutputStream.Close();
-            }
-            catch (Exception e)
-            {
-                LOG.Error(e.ToString());
-                throw;
-            }
-
-
-            if (MyPersonalSecretGitHubAuthorizationCode == null) LOG.Error("Authorization failure");
-            else
-            {
-                if (app_props.HasKey("MyPersonalSecretGitHubAuthorizationCode")) app_props["MyPersonalSecretGitHubAuthorizationCode"] = MyPersonalSecretGitHubAuthorizationCode;
-                else app_props.Add("MyPersonalSecretGitHubAuthorizationCode", new TomlString() { Value = MyPersonalSecretGitHubAuthorizationCode });
-
-                await using var writer = File.CreateText(app_props_file);
-                app_props.WriteTo(writer);
-                await writer.FlushAsync();
+                logEvent.AddPropertyIfAbsent(new LogEventProperty("FileLine", new ScalarValue(sb.Clear()
+                                                                                                .Append(stack.GetFileName())
+                                                                                                .Append(":line ")
+                                                                                                .Append(stack.GetFileLineNumber())
+                                                                                                .ToString())));
             }
         }
-#endregion
+
+        public static readonly Logger LOG = new LoggerConfiguration() // >> https://github.com/serilog/serilog/wiki/Getting-Started <<
+                                            .Enrich.With<CallerEnricher>()
+                                            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message} in {FileLine}\n")
+                                            .CreateLogger();
+
 
         public static async void update_app_props_file()
         {
@@ -93,10 +88,10 @@ namespace org.unirail
             get
             {
                 var file = Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "AdHocAgent.toml");
-                if (File.Exists(file)) return file;
+                if( File.Exists(file) ) return file;
                 var toml = File.OpenWrite(file);
                 Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Templates.AdHocAgent.toml")!.CopyToAsync(toml);
-                LOG.Warning("Application configuration file {0} is extracted from template, its content maybe outdated.", file);
+                LOG.Warning("The application configuration file {file} has been extracted from the template. Please note that its content may be outdated.", file);
                 toml.Flush();
                 toml.Close();
                 return file;
@@ -105,22 +100,21 @@ namespace org.unirail
 
         public static TomlTable app_props = TOML.Parse(File.OpenText(app_props_file)); //load application 'toml file'   https://www.ryansouthgate.com/2016/03/23/iconfiguration-in-netcore/
 
-        public static bool AuthorizationCodeOK = app_props.HasKey("MyPersonalSecretGitHubAuthorizationCode");
 
         static string zip_exe
         {
             get
             {
                 var zip_exe = app_props["7zip_exe"].AsString.Value;
-                if (!File.Exists(zip_exe))
-                    exit($" The value of 7zip_exe in {Path.Join(app_props_file, "AdHocAgent.toml")} point to none exiting 7zip binary file {zip_exe}. Please install 7zip (https://www.7-zip.org/download.html) and edit path.");
+                if( !File.Exists(zip_exe) )
+                    exit($"The value of 7zip_exe in {Path.Join(app_props_file, "AdHocAgent.toml")} point to none exiting file {zip_exe}. Please install 7zip (https://www.7-zip.org/download.html) and set path to the 7zip binary.");
                 return zip_exe;
             }
         }
 
         public static void unzip(Stream src, string dst_folder)
         {
-            var tmp_src = File.OpenWrite(tmp);
+            var tmp_src = File.OpenWrite(new_random_tmp_path);
             src.CopyTo(tmp_src);
             tmp_src.Flush();
             tmp_src.Close();
@@ -128,7 +122,7 @@ namespace org.unirail
             File.Delete(tmp_src.Name);
         }
 
-        public static void unzip(string src_file, string dst_folder) => Process.Start(new ProcessStartInfo()
+        public static void unzip(string src_file, string dst_folder) => Process.Start(new ProcessStartInfo
                                                                                       {
                                                                                           FileName               = zip_exe,
                                                                                           RedirectStandardOutput = true,
@@ -136,57 +130,58 @@ namespace org.unirail
                                                                                           WindowStyle            = ProcessWindowStyle.Hidden
                                                                                       })!.WaitForExit();
 
-        private static string tmp => Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
+        private static string new_random_tmp_path => Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
 
-        public static byte[] zip(Stream src)
+
+        public static byte[] zip(byte[] src, string name)
         {
-            var tmp_src = File.OpenWrite(tmp);
-            src.CopyTo(tmp_src);
-            tmp_src.Flush();
-            tmp_src.Close();
-            var tmp_dst = tmp;
-            zip(tmp_src.Name, tmp_dst);
+            name = Path.Join(Path.GetTempPath(), name);
+            File.WriteAllBytes(name, src);
 
-            using var ret = new MemoryStream();
-            using (var file = File.OpenRead(tmp_dst))
-                file.CopyTo(ret);
-
-            File.Delete(tmp_src.Name);
-            File.Delete(tmp_dst);
-            return ret.ToArray();
+            var ret = zip(new[] { name });
+            File.Delete(name);
+            return ret;
         }
 
-        public static void zip(string src, string dst_file)
+
+        public static byte[] zip(IEnumerable<string> files_paths)
         {
-            Process.Start(new ProcessStartInfo()
+            var tmp_zip = new_random_tmp_path;
+
+            Process.Start(new ProcessStartInfo
                           {
-                              FileName               = zip_exe,
-                              Arguments              = $" a -t7z -mx=9 -mfb=64  -m0=lzma  \"{dst_file}\" \"{src}\"",
+                              FileName               = zip_exe, //Use the PPMd compression, the compression level to the maximum
+                              Arguments              = $" a -t7z -m0=PPMd -mx=9 -mmem=256m  \"{tmp_zip}.\" {string.Join(' ', files_paths.Select(path => "\"" + path + "\""))}",
                               RedirectStandardOutput = true,
-                              WindowStyle            = ProcessWindowStyle.Hidden
+                              CreateNoWindow         = true
                           })!.WaitForExit();
 
-            if (!File.Exists(dst_file))                //7 zip append `.7z` extension to the name. cut it
-                File.Move(dst_file + ".7z", dst_file); //cut .7z extension
+            using var ret = new MemoryStream();
+            using( var file = File.OpenRead(tmp_zip) )
+                file.CopyTo(ret);
+
+
+            File.Delete(tmp_zip);
+            return ret.ToArray();
         }
 
         public static bool is_testing;
 
 
         /**
-	     first - required full path to the description_file.cs 
-	             or
-	             file.proto file 
-	             or
+         first - required full path to the description_file.cs
+                 or
+                 file.proto file
+                 or
                  folder.proto directory to translate into Adhoc format
-            
-	            if description_file.cs has references to other files, next arguments should be paths to:
-	            the .csproj project files, that conains references information, and/or paths to referensed files 
-	      
-	     last - optional: full path to the folder where generated code will be temporary deployed
-	            if not provided, current (working) directory path will be used
-	           
-	       |                                    state                               |             action               |
+
+                if description_file.cs has references to other files, next arguments should be paths to:
+                the .csproj project files, that conains references information, and/or paths to referensed files
+
+         last - optional: full path to the folder where generated code will be temporary deployed
+                if not provided, current (working) directory path will be used
+
+           |                                    state                               |             action               |
            |--------------------------|---------------------------------------------|----------------------------------|
            | provided_path.IsReadOnly | Exists( destination_dir_path/project_name ) |                                  |
            |--------------------------|---------------------------------------------|----------------------------------|
@@ -198,78 +193,91 @@ namespace org.unirail
         */
         public static async Task Main(string[] paths)
         {
-            if (paths.Length == 0)
+            Console.OutputEncoding = Encoding.UTF8; // !!!!!!!!!!!!!!!!!!!! damn, every .NET console application must start with that !!!!!!!!!!!
+
+            if( paths.Length == 0 )
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("AdHocAgent utility");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" accept following commandline input:");
+                Console.WriteLine(" accepts the following command-line input:");
+
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("  the first argument is the path to the task file,");
+                Console.WriteLine("  The first argument is the path to the task file:");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("\tif provided path ends with:");
+                Console.WriteLine("\tIf the provided path ends with:");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("\t\t.cs   ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(" - is means to upload the provided protocol description file to the server to generate source code");
+                Console.WriteLine("- Uploads the protocol description file to the server to generate source code.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("\t\t.cs!  ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(" - to upload the provided protocol description file to generate source code and test it");
+                Console.WriteLine("- Uploads the protocol description file to generate and test source code.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("\t\t.cs?  ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(" - to show of the information of the provided protocol description file in the viewer");
+                Console.WriteLine("- Displays information about the protocol description file in the viewer.");
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("\t\t.md  ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("- Repeats the deployment process according to the instructions in the .md file, using source files already in the working directory.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("\t\t.proto");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(" - is means provided file is in Protocol Buffers format and will send to the server to convert it into Adhoc protocol description format");
-                Console.Write("\tthe rest arguments are paths to source ");
+                Console.WriteLine("- Indicates that the file is in Protocol Buffers format and will be sent to the server for conversion to Adhoc protocol description format.");
+
+                Console.Write("\tThe remaining arguments are paths to source ");
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write(".cs ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("and  project ");
+                Console.Write("and project ");
+
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write(".csproj ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("files imported and used with the root protocol description file.");
-                Console.WriteLine("  if the last argument is a path to a folder it's used as the intermediate result output folder. if not provided - the current working directory is used.");
+                Console.WriteLine("files that are imported and used with the root protocol description file.");
+
+                Console.WriteLine("  If the last argument is a path to a folder, it is used as the output folder for intermediate results. If not provided, the current working directory is used.");
+
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("Besides command-line arguments, the ");
+                Console.Write("In addition to command-line arguments, the ");
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("AdHocAgent utility");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" needs:");
-                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(" requires the following:");
+
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("  AdHocAgent.toml ");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("- the file that contains ");
+                Console.WriteLine("- A file that contains:");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\t\turl to the server ");
+                Console.WriteLine("\t\tThe server URL.");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\tand, paths to local:  ");
+                Console.WriteLine("\tAnd paths to local resources such as:");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("\t\tIDE");
-                Console.WriteLine("\t\t7zip compression utility(used for best compression)");
+                Console.WriteLine("\t\t7-Zip compression utility (used for optimal compression).");
+
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("\tAdHocAgent utility");
+                Console.Write("\tThe AdHocAgent utility");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write(" search ");
+                Console.Write(" searches for the ");
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("AdHocAgent.toml");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine(" file next to self.");
-                Console.WriteLine("\tIf the file does not exist, the utility generates this file template, so just needed to update the information in this file according to your configuration.");
+                Console.WriteLine(" file in its own directory.");
+                Console.WriteLine("\tIf the file does not exist, the utility generates a template for this file. You only need to update the information in this file to match your configuration.");
+
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("  Deployment_instructions.md");
-                Console.ForegroundColor = ConsoleColor.Red;
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine(" - only for code generation task. The file with received result deployment instructions.");
+                Console.WriteLine(" - Required only for code generation tasks. This file contains deployment instructions for the generated results.");
 
 
                 Console.ForegroundColor = ConsoleColor.White;
@@ -277,25 +285,32 @@ namespace org.unirail
                 return;
             }
 
-            if (paths[0].EndsWith(".cs?")) // run provided protocol description file viewer
+            if( paths[0].EndsWith(".md") ) //  repeat only the deployment process according to instructions in the .md file, already received source files in the `working directory`
+            {
+                provided_path = paths[0];
+                Deployment.redeploy(provided_path = paths[0]);
+                return;
+            }
+
+            if( paths[0].EndsWith(".cs?") ) // run provided protocol description file viewer
             {
                 provided_path = paths[0][..^1]; //cut '?'
                 paths_parser(paths);
-                await ChannelToObserver.start();
+                await ChannelToObserver.Start();
                 return;
             }
 
 
             is_testing = paths[0].EndsWith("!");
 
-            provided_path = is_testing
-                                ? paths[0][..^1]
-                                : paths[0];
+            provided_path = is_testing ?
+                                paths[0][..^1] :
+                                paths[0];
 
             var result_output_folder = Path.Join(destination_dir_path, Path.GetFileName(provided_path)[..^Path.GetExtension(provided_path).Length]);
 
             /*
-            if (new FileInfo(provided_path).IsReadOnly)     //since last time content is not changed 
+            if (new FileInfo(provided_path).IsReadOnly)     //since last time content is not changed
                 if (Directory.Exists(result_output_folder)) //generated result from server exists
                 {
                     Deployment.deploy(result_output_folder); //just re-deploy
@@ -308,9 +323,10 @@ namespace org.unirail
                 }
                 */
 
+
             _ = zip_exe; //ensure check
 #region .cs files - protocol description file processing
-            if (provided_path.EndsWith(".cs"))
+            if( provided_path.EndsWith(".cs") )
             {
                 paths_parser(paths);
                 ChannelToServer.Start(ProjectImpl.init());
@@ -318,121 +334,203 @@ namespace org.unirail
             }
 #endregion
 #region .proto files processing
-            if (1 < paths.Length) //if destination_dir_path explicitly provided instead of Directory.GetCurrentDirectory()  
-                if (!Directory.Exists(destination_dir_path = paths[1]))
+            if( 1 < paths.Length && !paths[^1].EndsWith(".proto") ) //if destination_dir_path explicitly provided instead of Directory.GetCurrentDirectory()
+                if( !Directory.Exists(destination_dir_path = paths[^1]) )
                     Directory.CreateDirectory(destination_dir_path);
 
 
-            var str           = "";
-            var proto_package = "";
+            var all_files = new Dictionary<string, List<string>>();
 
-            IEnumerable<string>? files = null;
-            if (File.Exists(provided_path)) files = new[] { provided_path };
-            else if (Directory.Exists(provided_path))
+            foreach( var file in (File.Exists(provided_path) ?
+                                      new[] { provided_path } :
+                                      Directory.EnumerateFiles(provided_path, "*.proto", SearchOption.AllDirectories))
+                    .Concat(
+                            1 < paths.Length && paths[1].EndsWith(".proto") ?
+                                Directory.EnumerateFiles(paths[1], "*.proto", SearchOption.AllDirectories) :
+                                new string[] { }
+                           ) )
             {
-                files = Directory.EnumerateFiles(provided_path, "*.proto").ToArray();
-
-                if (!files.Any()) exit($"No any *.proto files found on provided paths:\n {provided_path}.", 12);
-            }
-            else exit($"Provided path {provided_path} does not exists.", 2);
-
-            var imported = new HashSet<string>();
-
-            foreach (var proto_file in files)
-            {
-                if (imported.Contains(proto_file)) continue;
-                imported.Add(proto_file);
-
-                var proto = File.ReadAllText(proto_file);
-                var ret   = "";
-                var top   = 0;
-
-                foreach (var match in package.Matches(proto).OrderBy(Match => -Match.Index))
-                {
-                    if (proto_package.Length == 0)
-                        proto_package = match.Groups[match.Groups[1].Success
-                                                         ? 1
-                                                         : 2].Value;
-                    if (ret.Length == 0) ret =  proto[(match.Index + match.Length)..];
-                    else ret                 += proto[(match.Index + match.Length)..top];
-                    top = match.Index;
-                }
-
-                if (0 < ret.Length) proto = proto[..top] + ret;
-                top = 0;
-                ret = "";
-
-                foreach (var match in syntax.Matches(proto).OrderBy(Match => -Match.Index))
-                {
-                    if (ret.Length == 0) ret =  proto[(match.Index + match.Length)..];
-                    else ret                 += proto[(match.Index + match.Length)..top];
-                    top = match.Index;
-                }
-
-                if (0 < ret.Length) proto = proto[..top] + ret;
-                top = 0;
-                ret = "";
-
-                foreach (var match in imports.Matches(proto).OrderBy(Match => -Match.Index))
-                {
-                    if (ret.Length == 0) ret =  proto[(match.Index + match.Length)..];
-                    else ret                 += proto[(match.Index + match.Length)..top];
-                    top = match.Index;
-
-
-                    var import = match.Groups[match.Groups[1].Success
-                                                  ? 1
-                                                  : 2].Value;
-
-                    var file = search_import(proto_file, import);
-
-                    if (imported.Add(file)) ret = process_proto_file(file, imported) + ret;
-                }
-
-                str += $"\n\n//======================={Path.GetFileName(proto_file)}================\n\n" + (0 < ret.Length
-                                                                                                                 ? proto[..top] + ret
-                                                                                                                 : proto);
+                var key = Path.GetFileName(file);
+                if( all_files.TryGetValue(key, out var val) )
+                    val.Add(file);
+                else all_files[key] = new List<string>(new[] { file });
             }
 
-            if (0 < proto_package.Length) str = $"package {proto_package};\n\n" + str;
+            var   syntax   = new Regex(@"^\s*syntax\s*=\s*.*;", RegexOptions.Multiline);
+            var   imported = new HashSet<string>();
+            Regex imports  = new(@"^\s*import\s+(?:public\s+)?""([^""]+)""\s*;", RegexOptions.Multiline); //  import "myproject/other_protos.proto"; /  import public "new.proto";
+            Regex package  = new(@"^\s*package\s+[""']?([^""';\s]+)[""']?\s*;", RegexOptions.Multiline);  // package foo.bar;
+            Regex dot      = new(@"(?<=\s)\.(?=[^\.\s])", RegexOptions.Multiline);                        // package foo.bar;
+            Regex asterisk = new(@"(?<=^\s*//.*)\*(?=\*/|\/*)", RegexOptions.Multiline);
 
-            str = "syntax = \"proto3\";\n\n" + str;
 
-            ChannelToServer.Start(new Agent.AgentToServer.Proto()
+            var package_proto = new Dictionary<string, string>();
+
+            string process_proto_files(IEnumerable<string> files)
+            {
+                void process_proto_file(string proto_file_path)
+                {
+                    if( !imported.Add(proto_file_path) ) return;
+                    var proto = File.ReadAllText(proto_file_path);
+
+                    var pack = package.Matches(proto).Select(m => m.Groups[1].Value).FirstOrDefault() ?? "";
+
+                    proto = $"\n//@@#region {HasDocs.brush(Path.GetFileName(proto_file_path))}\n" +
+                            proto                                                                 +
+                            $"\n//@@#endregion {HasDocs.brush(Path.GetFileName(proto_file_path))}\n";
+
+                    proto = package.Replace(syntax.Replace(proto, ""), "");
+
+                    if( package_proto.ContainsKey(pack) ) package_proto[pack] = package_proto[pack] + proto;
+                    else package_proto.Add(pack, proto);
+
+
+                    foreach( var match in imports.Matches(proto).OrderBy(Match => -Match.Index) ) //bottom ==> up
+                    {
+                        var import = match.Groups[1].Value;
+
+                        var import_file = "";
+                        if( all_files.TryGetValue(Path.GetFileName(import), out var paths) )
+                            if( paths.Count == 1 )
+                                import_file = paths[0];
+                            else
+                            {
+                                while( !paths.Any(p => p.Replace('\\', '/').EndsWith(import)) )
+                                    import = import[(import.IndexOf('/', 1) + 1)..];
+
+                                import_file = paths.First(p => p.Replace('\\', '/').EndsWith(import));
+                            }
+                        else
+                            exit($"The .proto file `{import}` does not exist and cannot be imported into .proto file `{proto_file_path}`.");
+
+                        process_proto_file(import_file);
+                    }
+                }
+
+                imported.Clear();
+                package_proto.Clear();
+                foreach( var file in files ) process_proto_file(file);
+                var result_proto = "";
+
+                repeat:
+                while( 0 < package_proto.Count )
+                    foreach( var (key, value) in package_proto.OrderBy(p => -p.Key.Count(ch => ch == '.')) )
+                    {
+                        var path = key.Split('.');
+                        var code = $$"""
+                                     //@@public struct {{(path[^1] == "" ? "MyPack" : HasDocs.brush(path[^1]))}} {
+                                       {{value}}
+                                     //@@}
+                                     """;
+                        package_proto.Remove(key);
+
+                        if( 1 < path.Length )
+                        {
+                            var key2 = string.Join('.', path, 0, path.Length - 1);
+                            package_proto[key2] = code + (package_proto.TryGetValue(key2, out var val) ?
+                                                              val :
+                                                              "");
+                            goto repeat;
+                        }
+
+                        result_proto += code;
+                    }
+
+                result_proto = dot.Replace(result_proto, ""); //removing the dot at the beginning of types
+                //				                          .tensorflow.DataType  [] dtype;
+                //                               repeated .tensorflow.TensorProto tensor = 1;
+
+                result_proto = asterisk.Replace(result_proto, "⁕"); // replace '*' with '⁕' in comments like
+                //  // */ <- This should not close the generated doc comment
+
+                return result_proto.Length == 0 ?
+                           "" :
+                           $"""
+                            syntax = "proto3";
+                            {result_proto}
+                            """;
+            }
+
+
+            if( File.Exists(provided_path) )
+            {
+                var str   = process_proto_files(new[] { provided_path });
+                var bytes = new byte[AdHoc.varint_bytes(str)];
+                AdHoc.varint(str.AsSpan(), new Span<byte>(bytes));
+
+                ChannelToServer.Start(new Proto
+                                      {
+                                          task   = task,
+                                          name   = Path.GetFileName(provided_path),
+                                          _proto = zip(bytes, Path.GetFileName(provided_path)[0..^6])
+                                      });
+            }
+            else if( !Directory.Exists(provided_path) )
+                exit($"Provided path {provided_path} does not exists.", 2);
+
+
+            var tmp = Directory.CreateDirectory(new_random_tmp_path).FullName;
+            var cut = Path.GetDirectoryName(provided_path)!.Length + 1;
+
+            var files = new List<string>();
+            var buf   = new byte[1000];
+
+            Span<byte> span(int size) => new(buf.Length < size ?
+                                                 buf = new byte[size] :
+                                                 buf, 0, size);
+
+            void proto_file(string path)
+            {
+                var dst_path = Path.Combine(tmp, path[cut..].Replace('\\', '_').Replace('/', '_'));
+                var str      = process_proto_files(Directory.EnumerateFiles(path, "*.proto"));
+                if( str.Length == 0 ) return;
+
+                files.Add(dst_path);
+
+
+                var bytes = span(AdHoc.varint_bytes(str));
+                AdHoc.varint(str.AsSpan(), bytes);
+                using( var dst = new FileStream(dst_path, FileMode.Create, FileAccess.Write) ) dst.Write(bytes);
+            }
+
+            proto_file(provided_path);
+
+            foreach( var dir in Directory.EnumerateDirectories(provided_path, "*", SearchOption.AllDirectories).ToArray() )
+                proto_file(dir);
+
+            if( files.Count == 0 )
+                exit($"No useful information found at the path: {provided_path}");
+
+            ChannelToServer.Start(new Proto
                                   {
-                                      task  = task,
-                                      name  = Path.GetFileName(provided_path),
-                                      proto = zip(new MemoryStream(Encoding.UTF8.GetBytes(str)))
+                                      task   = task,
+                                      name   = Path.GetFileName(provided_path),
+                                      _proto = zip(files)
                                   });
 #endregion
         }
 
         private static void paths_parser(string[] paths)
         {
-            if (paths.Length == 1) return;
+            if( paths.Length == 1 ) return;
 
             var collect = new HashSet<string>();
 
-            foreach (var path in paths)
-                if (path.EndsWith(".csproj"))
+            foreach( var path in paths )
+                if( path.EndsWith(".csproj") )
                 {
                     var csproj = paths[1];
 
                     var dir = Path.GetDirectoryName(csproj)!;
 
-                    foreach (var xml_path in XElement.Load(csproj)
+                    foreach( var xml_path in XElement.Load(csproj)
                                                      .Descendants()
                                                      .Where(n => n.Name.ToString().Equals("Compile"))
-                                                     .Select(n => Path.GetFullPath(n.Attribute("Include")!.Value, dir)))
+                                                     .Select(n => Path.GetFullPath(n.Attribute("Include")!.Value, dir)) )
                         collect.Add(xml_path);
                 }
-                else if (path.EndsWith(".cs")) collect.Add(path);
-                else if (File.Exists(path)) //                   can be only after_deployment_exec file
-                    if (Deployment.after_deployment_exec.Length == 0)
-                        Deployment.after_deployment_exec = path; //the path to after deployment executable file
-                    else
-                        exit($"In the command line the second path to after-deployment-executable-binary {path} detected. The first path was {Deployment.after_deployment_exec}. Can accept only one.", -222);
-                else if (!Directory.Exists(destination_dir_path = path))
+                else if( path.EndsWith(".cs") ) collect.Add(path);
+                else if( !Directory.Exists(destination_dir_path = path) )
                     Directory.CreateDirectory(destination_dir_path);
 
             collect.Remove(provided_path);
@@ -441,25 +539,22 @@ namespace org.unirail
         }
 
 
-        private static readonly Regex strings_regex_escaper = new(@"【([\u0000-\uFFFF]*?)】", RegexOptions.Multiline);
-
-
-        //folder for downloaded files before their processing and deployment ( working(current) directory by default)
+        //folder for downloading files before their processing and deployment ( working(current) directory by default)
         public static string destination_dir_path = Directory.GetCurrentDirectory();
 
         public static string raw_files_dir_path => Path.Combine(destination_dir_path, Path.GetFileName(provided_path)[..^3]);
 
         public static int exit(string banner, int code = 1)
         {
-            if (0 < banner.Length)
-                if (code == 0)
+            if( 0 < banner.Length )
+                if( code == 0 )
                     LOG.Information(banner);
                 else
                     LOG.Error(banner);
 
             LOG.Information("Press ENTER to exit");
             try { Console.In.ReadLine(); }
-            catch (IOException ignored) { }
+            catch( IOException ignored ) { }
 
             Environment.Exit(code);
             return code;
@@ -473,7 +568,7 @@ namespace org.unirail
         static ulong HashFor(string str)
         {
             var ret = 3074457345618258791ul;
-            foreach (var ch in str)
+            foreach( var ch in str )
             {
                 ret += ch;
                 ret *= 3074457345618258799ul;
@@ -482,108 +577,148 @@ namespace org.unirail
             return ret;
         }
 
-        static readonly byte[] close_browser_bytes = Encoding.ASCII.GetBytes("<script>window.close();</script>");
+
+        public class Deployment{
+            static string deployment_instructions_txt;
+            static string raw_files_dir_path;
 
 
-#region process proto file
-        private static string process_proto_file(string proto_file, HashSet<string>? imported)
-        {
-            var proto = File.ReadAllText(proto_file);
+            static StringBuilder sb = new StringBuilder();
 
-            if (imported == null) imported = new HashSet<string>();
-            else
-            {
-                proto = syntax.Replace(proto, "", 1);
-                proto = package.Replace(proto, "", 1);
-            }
-
-            var ret = "";
-            var top = 0;
+            class LineInfo{
+                public LineInfo(string path, string icon, string indent, string key)
+                {
+                    this.path   = path;
+                    this.icon   = icon;
+                    this.indent = indent;
+                    receiver_files_lines.Add(key, this);
+                }
 
 
-            foreach (var match in imports.Matches(proto).OrderBy(Match => -Match.Index))
-            {
-                if (ret.Length == 0) ret =  proto[(match.Index + match.Length)..];
-                else ret                 += proto[(match.Index + match.Length)..top];
+                public bool                 skipped = false;
+                public (Regex, string[])[]? targets;
 
-                top = match.Index;
-                var import = match.Groups[match.Groups[1].Success
-                                              ? 1
-                                              : 2].Value;
+                public List<string>? report;
 
-                var import_file = search_import(proto_file, import);
+                public void add_report(string report) => (this.report == null ?
+                                                              this.report = new List<string>(2) :
+                                                              this.report).Add(report);
 
-                if (imported.Add(import_file)) ret = process_proto_file(import_file, imported) + ret;
-            }
+                public string indent;
+                public string path;
+                public string icon;
+                public string customization = "";
 
-            return ret.Length == 0
-                       ? proto
-                       : proto[..top] + ret;
-        }
+                public StringBuilder append_md_line()
+                {
+                    sb.Append(indent)
+                      .Append("- ")
+                      .Append(icon)
+                      .Append('[')
+                      .Append(Path.GetFileName(path))
+                      .Append("](");
 
-        private static string search_import(string dst_proto_file, string seek_import)
-        {
-            var file = Path.Join(Path.GetDirectoryName(dst_proto_file)!, seek_import); //serch next to dst
-
-            if (File.Exists(file)) return file;
-
-            var search_from_CurrentDirectory = Path.Join(Directory.GetCurrentDirectory(), seek_import);
-
-            if (File.Exists(search_from_CurrentDirectory)) return search_from_CurrentDirectory;
-
-            var search_in_CurrentDirectory = Path.Join(Directory.GetCurrentDirectory(), Path.GetFileName(seek_import));
-            if (File.Exists(search_in_CurrentDirectory)) return search_in_CurrentDirectory;
-
-            var search_in_dst_Directory = Path.Join(Path.GetDirectoryName(dst_proto_file)!, Path.GetFileName(seek_import));
-            if (File.Exists(search_in_dst_Directory)) return search_in_dst_Directory;
-
-            LOG.Error("Imported into file {dst} proto file {import} does not exist.\n Searched on paths: \n{File}\n{SearchFromCurrentDirectory}\n{SearchInCurrentDirectory}\n{search_in_dst_Directory}",
-                      dst_proto_file, Path.GetFileName(file), file, search_from_CurrentDirectory, search_in_CurrentDirectory, search_in_dst_Directory);
-            exit("", 44);
-
-            return file;
-        }
-
-        private static readonly Regex imports = new(@"^\s*import\s+public\s+\042(.+)\042\s*;|^\s*import\s+\042(.+)\042\s*;", RegexOptions.Multiline);    //  import "myproject/other_protos.proto"; /  import public "new.proto";
-        private static readonly Regex package = new(@"^\s*option\s+java_package\s+=\s+\042(.+)\042\s*;|^\s*package\s+(.+)\s*;", RegexOptions.Multiline); // package foo.bar;
-        private static readonly Regex syntax  = new(@"^\s*syntax\s.+;", RegexOptions.Multiline);
-#endregion
-
-
-        public class Deployment
-        {
-            public abstract class Pointer
-            {
-                public Match match;
-
-                public abstract void     execute();
-                public          Pointer? next;
-            }
-
-            public static string after_deployment_exec = ""; //binary execute after deployment 
-
-            private static string deployment_instructions_txt;
-            private static string raw_files_dir_path;
-
-            static int index2line(int index)
-            {
-                var line = 0;
-                for (var i = 0; i < index; i++)
-                    switch (deployment_instructions_txt[i])
+                    if( path.Contains(' ') )
                     {
-                        case '\r':
-                            line++;
-                            if (i + 1 < deployment_instructions_txt.Length && deployment_instructions_txt[i + 1] == '\n') i++;
-                            continue;
-                        case '\n':
-                            line++;
-                            continue;
+                        sb.Append('<');
+                        if( path[1] == ':' ) sb.Append('/');
+                        sb.Append(path).Append(">) ");
+                    }
+                    else
+                    {
+                        if( path[1] == ':' ) sb.Append('/');
+                        sb.Append(path);
+                        sb.Append(") ");
                     }
 
-                return line++;
+                    sb.Replace('\\', '/');
+                    return sb;
+                }
+
+                public void append_report_line()
+                {
+                    sb.Append(indent)
+                      .Append(icon)
+                      .Append(Path.GetFileName(path));
+
+                    if( File.Exists(path) )
+                        if( skipped || report == null )
+                            sb.Append(" ⛔ ");
+                        else
+                        {
+                            sb.Append(' ');
+                            var chars = sb.Length;
+                            sb.Append(report[0]);
+                            for( var r = 1; r < report.Count; r++ )
+                            {
+                                sb.Append('\n');
+                                for( var i = 0; i < chars; i++ ) sb.Append(' ');
+                                sb.Append(report[r]);
+                            }
+                        }
+
+                    sb.Replace('\\', '/').Append('\n');
+                }
             }
 
-            public static void deploy(string raw_files_dir_path) //protocol description case only
+            // the keys
+            //      InCS/Agent/lib/collections/BitList.cs
+            //      InJAVA/Server/collections/org/unirail/collections/BitList.java
+            static Dictionary<string, LineInfo> receiver_files_lines = new();
+
+            public static int build_receiver_files_lines()
+            {
+                var root_path_len = raw_files_dir_path.Length + (raw_files_dir_path.EndsWith('/') || raw_files_dir_path.EndsWith('\\') ?
+                                                                     0 :
+                                                                     1);
+
+                void add(string icon, string path, int level)
+                {
+                    sb.Clear();
+                    for( var i = 0; i < level; i++ ) sb.Append("  ");
+                    new LineInfo(path, icon, sb.ToString(), path[root_path_len..].Replace('\\', '/'));
+                }
+
+                void scan(string dir, int level)
+                {
+                    if( -1 < level ) add("📁", dir, level);
+
+                    level++;
+                    foreach( var dir_ in Directory.GetDirectories(dir) ) scan(dir_, level);
+                    foreach( var file in Directory.GetFiles(dir) )
+                        add(Path.GetExtension(file) switch
+                            {
+                                ".cs"    => "＃",
+                                ".cpp"   => "🧩",
+                                ".h"     => "🧾",
+                                ".java"  => "☕",
+                                ".ts"    => "🌀",
+                                ".js"    => "📜",
+                                ".html"  => "🌐",
+                                ".css"   => "🎨",
+                                ".go"    => "🐹",
+                                ".rs"    => "⚙️",
+                                ".kt"    => "🟪",
+                                ".swift" => "🐦",
+                                ".json"  => "{}",
+                                _        => "📄"
+                            }, file, level);
+                }
+
+                scan(raw_files_dir_path, -1);
+                return root_path_len;
+            }
+
+            public static void redeploy(string deployment_instructions_file)
+            {
+                raw_files_dir_path = provided_path[..^("Deployment.md".Length)]; //cut 'Deployment.md'  and get directory with source files
+                if( !Directory.Exists(raw_files_dir_path) && !Directory.Exists(raw_files_dir_path = Path.Join(Directory.GetCurrentDirectory(), Path.GetFileName(raw_files_dir_path))) )
+                    exit($"Cannot find source folder {Path.GetFileName(raw_files_dir_path)} at {Path.GetDirectoryName(provided_path)} and at working directory {Directory.GetCurrentDirectory()} redeploy process canceled");
+
+                process(deployment_instructions_file);
+            }
+
+            public static void deploy(string raw_files_dir_path)
             {
                 Deployment.raw_files_dir_path = raw_files_dir_path;
 
@@ -591,227 +726,618 @@ namespace org.unirail
 
                 //looking for deployment instructions file
 
-                //take a look next to provided file
-                var deployment_instructions_file_path = Path.Join(Path.GetDirectoryName(provided_path)!, deployment_instructions_file_name);
-                if (File.Exists(deployment_instructions_file_path)) goto deploy;
+                //1) take a look at working dir
+                var deployment_instructions_file_path = Path.Join(Path.GetDirectoryName(raw_files_dir_path)!, deployment_instructions_file_name);
+                if( File.Exists(deployment_instructions_file_path) ) goto deploy; //prefer working directory to extract template
 
-                //take a look at working dir
+                //2)take a look next to provided file
+                deployment_instructions_file_path = Path.Join(Path.GetDirectoryName(provided_path)!, deployment_instructions_file_name);
+                if( File.Exists(deployment_instructions_file_path) ) goto deploy;
+
                 deployment_instructions_file_path = Path.Join(Path.GetDirectoryName(raw_files_dir_path)!, deployment_instructions_file_name);
-                if (File.Exists(deployment_instructions_file_path)) goto deploy; //prefer working directory to extract template 
+
+                var deployment_instructions_file = File.OpenWrite(deployment_instructions_file_path);
+
+                deployment_instructions_file.Write(Encoding.UTF8.GetBytes(@"**Autogenerated Deployment Instructions File**
+
+This file is crucial for managing the deployment process. ✅⛔✔️ ✖️ ❌ ❎ 🟢 🔴 🟩 🟥 🟡 🔵 ⚠️ 🚫 🔺 🔻 ❓❗👀📅🕒
+
+**Important:**
+- **Do not rename this file.**
+- If you need to move it, ensure it remains in the correct folder layout.
+- Refer to the manual for further guidance if needed.
 
 
-                //extract template
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Templates.Deployment_instructions.md"))
-                {
-                    var file = File.OpenWrite(deployment_instructions_file_path);
-                    stream!.CopyTo(file);
-                    file.Flush();
-                    file.Close();
-                }
+"));
 
-                LOG.Warning(@"Cannot find deployment instructions file {deploy_file_path}. 
-Search the file in the following directories:
-    {provided_path}
-    {raw_files_dir_path}    with no luck. Extract default template deployment instruction. 
-Edit {deployment_instructions_file_path} according to your deployment needs",
+
+                build_receiver_files_lines();
+                sb.Clear();
+
+                foreach( var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value) )
+                    info.append_md_line().Append('\n');
+
+                var tree = sb.ToString();
+                deployment_instructions_file.Write(Encoding.UTF8.GetBytes(tree));
+
+                deployment_instructions_file.Write(Encoding.UTF8.GetBytes(@$" 
+
+
+**Rerun Deployment Process:**
+   - Execute the following command in your terminal or command prompt:
+     ```shell
+     AdHocAgent ""{deployment_instructions_file_path}""
+     ```
+Formatting:
+  
+```regexp
+\.(java|cs|cpp|h|)$
+```
+
+```shell
+clang-format -i -style=""{{ColumnLimit: 0,IndentWidth: 4, 
+                        TabWidth: 4, 
+                        UseTab: Never, 
+                        BreakBeforeBraces: Allman, 
+                        IndentCaseLabels: true, 
+                        AllowShortBlocksOnASingleLine: false,
+                        SpacesInLineCommentPrefix: {{Minimum: 0, Maximum: 0}}}}"" FILE_PATH 
+```
+
+```other option is
+
+Formatting using [Artistic Style (AStyle)](https://sourceforge.net/projects/astyle/files/astyle/):
+
+astyle  --style=allman
+        --indent-switches
+        --indent-cases
+        --indent-namespaces
+        --break-closing-braces
+        --remove-braces
+        --keep-one-line-blocks
+        --attach-return-type
+        --attach-return-type-decl
+        --attach-return-type
+        --delete-empty-lines
+        --unpad-paren
+        --pad-oper
+        --pad-comma
+        --suffix=none
+        --quiet
+  FILE_PATH 
+```
+
+```regexp
+\.ts$
+```
+
+```shell
+prettier --write FILE_PATH --print-width  999
+```
+
+```regexp
+\.rs$
+```
+
+```shell
+rustfmt FILE_PATH
+```
+
+```regexp
+\.go$
+```
+
+```shell
+gofmt -w FILE_PATH
+```
+
+Removing whitespace before region directives in all files.
+
+```regexp
+.*
+```
+
+```csharp
+""System.Linq.Enumerable""
+""System.Text.RegularExpressions""
+
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.IO;
+
+public class Program
+{{
+    // Define the regex pattern
+    static string pattern = @""^\s+(?=//#region|//#endregion|#region|#endregion|//region|//endregion|// region|// endregion)"";
+    
+    public static void Main(string[] args)
+    {{
+        // Read the file content with UTF-8 encoding
+        var content = File.ReadAllText( args[0], System.Text.Encoding.UTF8);
+
+        // Perform the replacement
+        var updatedContent = Regex.Replace(content, pattern,"""", RegexOptions.Multiline);
+
+        // Write the updated content back to the file with UTF-8 encoding
+        //According to the Unicode standard, the BOM for UTF-8 files is not recommended !!!
+        File.WriteAllText( args[0], updatedContent,  new System.Text.UTF8Encoding()); 
+    }}
+}}
+```
+
+**For reference: **
+markdown file / folder link syntax examples:
+
+`[A relative link](../../some/dir/filename.ext)  `  
+`[Link to file in another dir on same drive](/another/dir/filename.ext)  `  
+`[Link to file in another dir on a different drive](/D:/dir/filename.ext)  `  
+`[If you have spaces in the filename](</C:/Program Files (x86)>)`  
+
+"));
+
+                deployment_instructions_file.Flush();
+                deployment_instructions_file.Close();
+
+                LOG.Warning(@"{deployment_file_name} not found in searched directories:
+{raw_files_dir_path}
+{protocol_description_dir_path}
+Default {deployment_instructions} file generated at {deployment_instructions_file_path}.
+Please update the {target_locations} and {copy_instructions} in the file according your projects layout. 
+After making the necessary modifications, you can rerun the deployment process by executing the following command in the context of the {working_dir} directory: 
+        AdHocAgent {deployment_instructions_file_path}",
                             deployment_instructions_file_name,
                             Path.GetDirectoryName(provided_path),
                             Path.GetDirectoryName(raw_files_dir_path),
-                            deployment_instructions_file_path);
+                            "`deployment instructions`",
+                            deployment_instructions_file_path,
+                            "`target locations`",
+                            "`copy instructions`",
+                            Path.GetDirectoryName(deployment_instructions_file_path),
+                            deployment_instructions_file_path
+                           );
                 return;
 
                 deploy:
+                process(deployment_instructions_file_path);
+            }
 
-                deployment_instructions_txt = strings_regex_escaper.Replace(File.ReadAllText(deployment_instructions_file_path, Encoding.UTF8), m => Regex.Escape(m.Groups[1].Value));
-                var root = new Section.Pointer();
 
-                LOG.Information("Starting deployment process according to the instructions in the `{deployment_instructions_file_path}`", deployment_instructions_file_path);
+            private static void process(string deployment_instructions_file)
+            {
+                build_receiver_files_lines();
 
-                while (true)
+                deployment_instructions_txt = File.ReadAllText(deployment_instructions_file, Encoding.UTF8);
+
+                LOG.Information("Starting the redeployment process of received source files in \"{src_dir}\", according to the {md} instructions file", raw_files_dir_path, provided_path);
+
+                var    obsoletes_targets   = new List<string>(); //Items listed in the deployment instructions but not present among the receiver files
+                var    Key_path_segment    = new Regex(@"(?<=\/|\\)(CPP|InCS|InGO|InJAVA|InRS|InTS)[\\/]*.*");
+                var    start               = -1;
+                Match? end                 = null;
+                var    targets_lines_count = 0; //lines count
+                var    any                 = new Regex(".*");
+                var    has_some_targets    = false;
+
+                foreach( Match match in new Regex(@"- (?:📁|＃|🧩|🧾|☕|🌀|📜|🌐|🎨|🐹|⚙️|🟪|🐦|📄|\{\})(?:\s*\[([^\]]*)\]\(([^)]*)\)[^\[\n\r]*)*(?:\s*⛔)?", RegexOptions.Multiline).Matches(deployment_instructions_txt) )
                 {
-                    Pointer? p = root, selected = null;
+                    targets_lines_count++;
 
-                    do
-                        if (p.match.Success && (selected == null || p.match.Index < selected.match.Index))
-                            selected = p;
-                    while ((p = p.next) != null);
+                    end = match;
+                    if( start == -1 ) start = match.Index;
+                    // the link
+                    //      InCS/Agent/lib/collections/BitList.cs
+                    //      InJAVA/Server/collections/org/unirail/collections/BitList.java
+                    var key = Key_path_segment.Match(match.Groups[2].Captures[0].Value).Groups[0].Value.Replace('\\', '/').Replace(">", "").Trim(); //Paths with whitespaces must be enclosed in <>
+                    if( receiver_files_lines.TryGetValue(key, out var info) )
+                    {
+                        //- 📁[InCS](/AdHocTMP/AdhocProtocol/InCS) ✅ copy full structure [](/AdHoc/Protocol/Generated/InCS)
+                        //           <--------- head ------------> <------------------- customization --------------------->
+                        var head = match.Groups[2].Captures[0];
+                        info.customization = match.ToString()[(head.Index + head.Length + 1 - match.Index)..]; //backup line customization
+                        if( targets_lines_count == 1 &&
+                            !string.Equals((match.Groups[2].Captures[0].Value).Trim(' ', '<', '>', '\\', '/'),
+                                           Path.GetFullPath(info.path).Replace('\\', '/').Trim(' ', '\\', '/'),
+                                           StringComparison.InvariantCultureIgnoreCase) )
+                            targets_lines_count = int.MinValue; //need tree lines fully update mark
 
-                    if (selected == null) break;
-                    selected.execute();
+
+                        info.skipped = match.Value.Contains('⛔');
+
+                        info.targets = match.Groups[1].Captures.Skip(1).Select(s => s.Value)
+                                            .Zip(match.Groups[2].Captures.Skip(1).Select(t => t.Value[0] == '/' && t.Value[2] == ':' ?
+                                                                                                  t.Value[1..].Replace('/', '\\') : //in the instruction, the path in the windows format
+                                                                                                  t.Value))
+                                            .GroupBy(_i_ =>
+                                                     {
+                                                         if( _i_.First == "" && _i_.Second == "" ) info.skipped = true; // []() case
+                                                         return _i_.First;
+                                                     })
+                                            .Select(group => (group.Key.Equals("") ?
+                                                                  any :
+                                                                  new Regex(group.Key), group.Select(pair => pair.Second).ToArray())).ToArray();
+                        if( 0 < info.targets.Length ) has_some_targets = true;
+
+                        continue;
+                    }
+
+                    obsoletes_targets.Add(match.ToString()); //The line contains target information that is not applicable to the newly received code. Add it to the list of obsolete items.
                 }
 
-
-                LOG.Information($"Deployment process finish.");
-                if (0 < after_deployment_exec.Length)
+                if( end == null ) //Deployment instructions not found. Autogenerating default instructions.
                 {
-                    LOG.Information($"Execute after deploy process after_deployment_exec.");
+                    sb.Clear();
 
-                    Process.Start(new ProcessStartInfo { FileName = after_deployment_exec, WorkingDirectory = raw_files_dir_path })!.WaitForExit();
+                    foreach( var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value) )
+                        info.append_md_line().Append('\n');
+
+                    sb.Append("\n\n");
+                    using( var deployment_instructions_file_ = File.OpenWrite(deployment_instructions_file) )
+                    {
+                        deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(sb.ToString()));
+                        deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(deployment_instructions_txt));
+                    }
+
+                    exit($"Deployment instructions not fount and have been regenerated. Please update {deployment_instructions_file} with actual `deployment targets`");
                 }
 
+                if( !has_some_targets ) // Deployment instructions found, but no `target locations` detected.
+                    exit($"No `target locations` detected. Ensure they are added, and verify that the provided deployment instructions file path `{deployment_instructions_file}` is correct.");
+
+
+                //======================== binaries execute before deployment
+                foreach( var before_deployment in new Regex(@"\[before deployment\]\((.+)\)").Matches(deployment_instructions_txt).Select(m => m.Groups[1].Value) )
+                    Start_and_wait(before_deployment, "", raw_files_dir_path);
+
+
+                var shell_tasks = new Regex(@"^([^\s].+?)(?:\r?\n(?=\s)|\r?\n?$)(?:\s+(.+?)(?:\r?\n(?=\s)|\r?\n?$))*", RegexOptions.Multiline);
+
+                //======================== Execute custom code (shell or C#) on received files for formatting and other processing
+
+                foreach( var (type, match) in new Regex(@"```regexp\s+(.+?)\s*```\s*```shell\s*([\s\S]*?)\s*```")
+                                              .Matches(deployment_instructions_txt).Select(m => (0, m))
+                                              .Concat(new Regex(@"```regexp\s+(.+?)\s*```\s*```csharp\s*([\s\S]*?)\s*```", RegexOptions.Multiline).Matches(deployment_instructions_txt).Select(m => (1, m)))
+                                              .OrderBy(m => m.m.Index) ) //Ordered execution instructions
+                {
+                    var selector = string.IsNullOrEmpty(match.Groups[1].Value) ?
+                                       null :
+                                       new Regex(match.Groups[1].Value);
+                    var target = match.Groups[2].Value;
+                    int i;
+                    switch( type )
+                    {
+                        case 0: //shell
+                            foreach( var m in shell_tasks.Matches(target).Select(m => m) )
+                                foreach( var info in receiver_files_lines.Values.Where(info => selector == null || selector.Match(info.path).Success) )
+
+                                    Start_and_wait(m.Groups[1].Value[..(i = m.Groups[1].Value[0] == '"' ?
+                                                                                m.Groups[1].Value.IndexOf('"', 1) + 1 :
+                                                                                m.Groups[1].Value.IndexOf(' '))],
+                                                   (m.Groups[1].Value[i..] + " " + string.Join(" ", m.Groups[2].Captures)).Replace("FILE_PATH", info.path.Contains(' ') ?
+                                                                                                                                                    $"\"{info.path}\"" :
+                                                                                                                                                    info.path), raw_files_dir_path);
+                            continue;
+                        case 1: //C#
+                            var cut = -1;
+
+                            var obj = Path.GetDirectoryName(typeof(object).Assembly.Location);
+                            var refs = new[]
+                                {
+                                    "mscorlib.dll",
+                                    "System.dll",
+                                    "System.Core.dll",
+                                    "System.Runtime.dll"
+                                }.Select(s => Path.Combine(obj, s))
+                                 .Concat(new[]
+                                         {
+                                             typeof(object).Assembly.Location,
+                                             typeof(Console).Assembly.Location,
+                                             Assembly.Load("System.Runtime").Location,
+                                             Assembly.Load("System.Collections").Location,
+                                             Assembly.Load("System.Linq").Location,
+                                             Assembly.Load("System.Text.RegularExpressions").Location
+                                         }).Select(p => MetadataReference.CreateFromFile(p))
+                                 .Concat(
+                                         new Regex(@"^(?:\""([^\""]+)\""\r?\n)*")
+                                             .Matches(target)
+                                             .SelectMany(m =>
+                                                         {
+                                                             cut = m.Index + m.Length;
+                                                             return m.Groups[1].Captures;
+                                                         })
+                                             .SelectMany(c => AppDomain.CurrentDomain.GetAssemblies()
+                                                                       .Where(a => a.GetTypes().Any(t => t.FullName.StartsWith(c.Value))))
+                                             .Distinct()
+                                             .Select(assembly => MetadataReference.CreateFromFile(assembly.Location)).ToArray()
+                                        );
+
+
+                            if( 0 < cut ) target = target[cut..];
+
+
+                            var compilation = CSharpCompilation.Create(
+                                                                       Path.GetRandomFileName(),
+                                                                       syntaxTrees: new[] { CSharpSyntaxTree.ParseText(target) },
+                                                                       references: refs,
+                                                                       options: new CSharpCompilationOptions(OutputKind.ConsoleApplication));
+
+                            var ms     = new MemoryStream();
+                            var result = compilation.Emit(ms);
+
+                            if( !result.Success )
+                            {
+                                foreach( var diagnostic in result.Diagnostics ) { Console.Error.WriteLine($"{diagnostic.Id}: {diagnostic.GetMessage()}"); }
+
+                                exit("");
+                            }
+
+                            ms.Seek(0, SeekOrigin.Begin);
+                            var compiledAssembly = Assembly.Load(ms.ToArray());
+
+
+                            var args = new string [1];
+                            var objs = new object[] { args };
+                            var main = compiledAssembly.GetType("Program")!.GetMethod("Main", BindingFlags.Public | BindingFlags.Static)!;
+
+                            foreach( var info in receiver_files_lines.Values.Where(info => File.Exists(info.path) && (selector == null || selector.Match(info.path).Success)) )
+                                try
+                                {
+                                    args[0] = info.path;
+                                    main.Invoke(null, objs);
+                                }
+                                catch( Exception e )
+                                {
+                                    LOG.Error("Error: " + e.Message);
+                                    exit("");
+                                }
+
+                            continue;
+                    }
+                }
+
+                //==============================  Copy custom injected code from current files to newly received files, then overwrite current files
+                var infos = receiver_files_lines.Values.GetEnumerator();
+
+                var ancestors = new List<LineInfo>();
+                while( infos.MoveNext() )
+                {
+                    start:
+                    var info = infos.Current;
+                    if( info.skipped )
+                    {
+                        if( Directory.Exists(info.path) )
+                            while( infos.MoveNext() && infos.Current.path.StartsWith(info.path) )
+                                ;
+                        else infos.MoveNext();
+                        goto start;
+                    }
+
+                    while( 0 < ancestors.Count && !Path.GetDirectoryName(info.path)!.Equals(ancestors[^1].path) )
+                        ancestors.RemoveAt(ancestors.Count - 1);
+
+                    if( Directory.Exists(info.path) )
+                    {
+                        ancestors.Add(info);
+                        continue;
+                    }
+
+                    var received_src_file = info.path;
+
+                    //The deployment process will process `custom code injection point` and copy according instructions with matched selectors of a file's parent folders .
+                    foreach( var parent_folder in ancestors.Where(i => i.targets is { Length: > 0 }) )
+                        foreach( var target_path in parent_folder.targets!.Where(t => t.Item1.Match(received_src_file).Success).SelectMany(t => t.Item2) )
+                            info.add_report(copy_custom_code_from_current_files_to_the_newly_received_files(received_src_file, Path.Combine(target_path[^1] == '/' || target_path[^1] == '\\' ? //If the link ends with '/', the received item will be copied into the specified path.
+                                                                                                                                                Path.Combine(target_path, Path.GetFileName(parent_folder.path)) :
+                                                                                                                                                target_path,
+                                                                                                                                            received_src_file[(parent_folder.path.Length + 1)..])));
+                    //self file instructions
+                    if( info.targets == null ) continue;
+                    foreach( var target_path in info.targets.SelectMany(t => t.Item2) )
+                        info.add_report(copy_custom_code_from_current_files_to_the_newly_received_files(received_src_file, target_path[^1] == '/' || target_path[^1] == '\\' ? //If the link ends with '/', the received item will be copied into the specified path.
+                                                                                                                               Path.Combine(target_path, Path.GetFileName(received_src_file)) :
+                                                                                                                               target_path));
+                }
+
+                foreach( var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value) )
+                {
+                    sb.Clear();
+                    info.append_report_line();
+                    Console.Out.Write(sb.ToString());
+                }
+
+                //binaries execute after deployment
+                foreach( var after_deployment in new Regex(@"\[after deployment\]\((.+)\)").Matches(deployment_instructions_txt).Select(m => m.Groups[1].Value) )
+                    Start_and_wait(after_deployment, "", raw_files_dir_path);
+
+                if( 0 < obsoletes_targets.Count || targets_lines_count != receiver_files_lines.Count ) // Fully update tree lines needed
+                {
+                    if( 0 < obsoletes_targets.Count )
+                    {
+                        LOG.Information("Items listed in the deployment instructions but not present among the receiver files.");
+                        foreach( var useless in obsoletes_targets )
+                            Console.Out.WriteLine(useless);
+                    }
+
+                    using var deployment_instructions_file_ = File.OpenWrite(deployment_instructions_file);
+                    deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(deployment_instructions_txt[..start]));
+
+                    foreach( var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value) ) //Re-render tree
+                    {
+                        sb.Clear();
+                        info.append_md_line().Append(info.customization).Append('\n'); //Preserve customization
+                        deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(sb.ToString()));
+                    }
+
+                    sb.Clear();
+                    sb.Append("\n\n");
+                    deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(sb.ToString()));
+
+                    deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(deployment_instructions_txt[(end.Index + end.Length) ..]));
+                }
+
+                LOG.Information("Deployment process completed.");
                 exit("", 0);
             }
 
-            private static readonly List<Section> sections = new();
-            private static          Section       section;
+            private static readonly Dictionary<string, string> uid2custom_code = new();
+            private static readonly string[]                   rn              = { "\r\n", "\r", "\n" };
 
-            private static void deploy(string src_file_path, string dst_file_path)
+            private static readonly Regex  JAVA                 = new(@"//#region\s*>.*?$\s*([\s\S]*?)\s*//#endregion\s*>\s+?(.*?)\s*?$", RegexOptions.Multiline);
+            private static readonly Regex  CS                   = new(@"#region\s*>.*?$\s*([\s\S]*?)\s*#endregion\s*>\s+?(.*?)\s*?$", RegexOptions.Multiline);
+            private static          string result_code_tmp_file = Path.GetTempFileName();
+
+            private static string copy_custom_code_from_current_files_to_the_newly_received_files(string raw_file_path, string target_file_path)
             {
-                var src                = File.ReadAllText(src_file_path);
-                var path_matching_part = src_file_path[raw_files_dir_path.Length ..];
-
-                if (!Directory.Exists(Path.GetDirectoryName(dst_file_path))) Directory.CreateDirectory(Path.GetDirectoryName(dst_file_path));
-                File.WriteAllText(dst_file_path, sections.Where(s => s.files_selector.Match(path_matching_part).Success).SelectMany(s => s.modification_commands).Aggregate(src, (current, modifier) => modifier.modify(current)));
-            }
-
-            public class Section
-            {
-                public readonly Regex files_selector;
-                public Section(string files_selector) { this.files_selector = new Regex(files_selector); }
-
-                public List<SourceCodeModificationCommand> modification_commands = new();
-
-
-                public class Pointer : AdHocAgent.Deployment.Pointer
+                if( !Directory.Exists(Path.GetDirectoryName(target_file_path)) )
                 {
-                    private static readonly Regex files_selector_extractor = new(@"^\#{3,}\s*(.*?)\s*$", RegexOptions.Multiline);
+                    Directory.CreateDirectory(Path.GetDirectoryName(target_file_path)!);
+                    goto just_copy;
+                }
 
-                    public Pointer()
+                if( !File.Exists(target_file_path) ) goto just_copy;
+
+                uid2custom_code.Clear();
+
+                var regex = raw_file_path.EndsWith(".java") || raw_file_path.EndsWith(".ts") ?
+                                JAVA :
+                                CS;
+
+                //collect custom code
+                foreach( var injection_point in regex.Matches(File.ReadAllText(target_file_path)).Where(m => 0 < m.Groups[1].Value.Length) )
+                {
+                    var uid = injection_point.Groups[2].Value.Trim();
+
+                    if( injection_point.Groups[1].Value.Split(rn, StringSplitOptions.RemoveEmptyEntries).All(line => line.Trim().EndsWith("//")) ) continue;
+
+                    uid2custom_code.Add(uid, injection_point.Groups[1].Value + "\r\n");
+                }
+
+                if( uid2custom_code.Count == 0 ) goto just_copy;
+
+                var result_code = File.OpenWrite(result_code_tmp_file);
+                var raw_code    = File.ReadAllText(raw_file_path);
+                var last_index  = 0;
+                //copy custom code to the newly received files
+                foreach( var injection_point in regex.Matches(raw_code).Select(m => m) )
+                {
+                    var uid = injection_point.Groups[2].Value;
+
+                    if( !uid2custom_code.TryGetValue(uid, out var custom_code) ) continue;
+
+                    var code_area = injection_point.Groups[1];
+                    result_code.Write(Encoding.UTF8.GetBytes(raw_code[last_index..code_area.Index]));
+                    result_code.Write(Encoding.UTF8.GetBytes(custom_code));
+                    last_index = code_area.Index + code_area.Length; //skip generated code
+                    uid2custom_code.Remove(uid);
+                }
+
+                result_code.Write(Encoding.UTF8.GetBytes(raw_code[last_index..raw_code.Length]));
+                result_code.Flush();
+                result_code.Close();
+
+                if( 0 < uid2custom_code.Count ) //orphaned custom code has been detected
+                {
+                    LOG.Error("Orphaned custom code");
+                    foreach( var (id, code) in uid2custom_code )
                     {
-                        match = files_selector_extractor.Match(deployment_instructions_txt);
-                        next  = new SourceCodeModificationCommand.Pointer();
+                        LOG.Error("{id}", id);
+                        Console.WriteLine(code);
                     }
 
-                    public override void execute()
+                    LOG.Error("In the file {target_file_path}, orphaned custom code has been detected. Would you like to continue anyway? Enter 'N' if you want to stop.", raw_file_path.Replace('\\', '/'));
+
+                    if( Console.Read() is 'N' or 'n' )
                     {
-                        sections.Add(section = new Section(match.Groups[1].Value));
-                        match = match.NextMatch();
+                        exit("Bye", -1);
+                        return "";
                     }
                 }
 
-                public class SourceCodeModificationCommand
-                {
-                    private readonly Regex  source_code_selector;
-                    public readonly  string source_code_modification;
+                File.Move(result_code_tmp_file, target_file_path, true);
+                return "✅  " + target_file_path;
 
-                    public SourceCodeModificationCommand(string source_code_selector, string source_code_modification)
-                    {
-                        this.source_code_selector     = new Regex(source_code_selector);
-                        this.source_code_modification = source_code_modification;
-                    }
+                just_copy:
+                File.Copy(raw_file_path, target_file_path, true);
+                return "👉 " + target_file_path;
+            }
+        }
 
-                    public string modify(string src) => source_code_selector.Replace(src, source_code_modification);
-
-                    public class Pointer : AdHocAgent.Deployment.Pointer
-                    {
-                        private static readonly Regex regex_commands = new(@"^```.*$([\u0000-\uFFFF]*?)```", RegexOptions.Multiline);
-
-                        public Pointer()
-                        {
-                            match = regex_commands.Match(deployment_instructions_txt);
-
-                            next = new ExecuteAndDeploy();
-                        }
-
-                        public override void execute()
-                        {
-                            var p = match!.Groups[1].Value.Split("➤"); // regex-select-source_code ➤ regex_replace
-                            if (p.Length == 2)
-                                section.modification_commands.Add(new SourceCodeModificationCommand(p[0].Trim(), p[1]));
-                            else
-                                LOG.Warning("Command `{Value}` is malformed. It should contain '➤' symbol", match!.Groups[1].Value);
-
-                            match = match.NextMatch();
-                        }
-                    }
-
-                    class ExecuteAndDeploy : AdHocAgent.Deployment.Pointer //commands lists
-                    {
-                        private Match src_column;
-                        private Match src_filter;
-                        private Match dst_column;
-
-                        public ExecuteAndDeploy()
-                        {
-                            src_column = new Regex(@"\|\s+\[.+?\]\(\s*(.+?)\s*\).*\|.*\|\s*\n").Match(deployment_instructions_txt);
-                            src_filter = new Regex(@"\|.+\[.+\]\(.+\)\s*""(.+)"".*?\|").Match(deployment_instructions_txt);
-                            dst_column = new Regex(@"\[.+?\]\(\s*(.+?)\s*\)").Match(deployment_instructions_txt);
-                            match      = new Regex(@"\|\s+src\s+\|\s+dst\s+\|\s*\|-+\|-+\|\s*\n", RegexOptions.Multiline).Match(deployment_instructions_txt); // 'execute and deploy table' first row end finder
-
-                            next = null;
-                        }
-
-                        private int line_end_index;
-
-                        int next_line_end()
-                        {
-                            for (; line_end_index < deployment_instructions_txt.Length; line_end_index++)
-                                if (deployment_instructions_txt[line_end_index] == '\n')
-                                    return line_end_index++;
-
-                            return int.MaxValue;
-                        }
-
-                        static string cleanup_md_path(string path)
-                        {
-                            path = path.Trim();
-                            if (path[0] == '<') path = path[1..^1]; //             [If you have spaces in the filename](</C:/Program Files (x86)>)
-                            if (path[2] == ':') path = path[1..];   //             [Link to file in another dir on a different drive](/D:/AdHoc/) 
-
-                            return path;
-                        }
-
-                        public override void execute()
-                        {
-                            line_end_index = match.Index + match.Length; //execute and deploy table first row end
-
-                            while (src_column.Success && src_column.Index < line_end_index) src_column = src_column.NextMatch(); //search `src_path` in the src column of the first row
-                            next_line_end();
-
-                            while (true) // execute modify instructions and deploy result
+        public static string Start_and_wait(string exe, string args, string WorkingDirectory)
+        {
+            var startInfo = new ProcessStartInfo
                             {
-                                while (src_filter.Success && src_filter.Index < line_end_index) src_filter = src_filter.NextMatch();
+                                FileName               = exe,
+                                Arguments              = args,
+                                WorkingDirectory       = WorkingDirectory,
+                                RedirectStandardOutput = true,
+                                RedirectStandardError  = true,
+                                UseShellExecute        = true,
+                                CreateNoWindow         = true
+                            };
+            var error = "";
+            // Attempt to execute the process twice with different configurations
+            for( var i = 0;
+                 i < 3;
+                 i++, startInfo.FileName = exe + (OperatingSystem.IsWindows() ?
+                                                      i == 1 ?
+                                                          ".exe" :
+                                                          ".cmd" :
+                                                      i == 1 ?
+                                                          ".sh" :
+                                                          ".bash"), startInfo.UseShellExecute = true )
+            {
+                try
+                {
+                    // First attempt: Execute the process
+                    using( var process = Process.Start(startInfo) )
+                    {
+                        // Read the entire output of the process
+                        var output = process.StandardOutput.ReadToEnd();
+                        error += process.StandardError.ReadToEnd();
+                        // Wait for the process to complete
+                        process.WaitForExit();
+                        // Return the output if successful
+                        return output;
+                    }
+                }
+                catch( Exception e )
+                {
+                    // If the first attempt fails, modify the start info for the second attempt
+                    startInfo.UseShellExecute = false;
+                    try
+                    {
+                        // Second attempt: Execute the process with modified start info
+                        using( var process = Process.Start(startInfo) )
+                        {
+                            var output = process.StandardOutput.ReadToEnd();
+                            error += process.StandardError.ReadToEnd();
+                            process.WaitForExit();
+                            if( 0 < error.Length )
+                            {
+                                LOG.Error("An error {error} occurred while executing {command_line}. Would you like to continue? Enter 'N' to stop.", error, (exe + " " + startInfo.Arguments).Replace('\\', '/'));
 
-                                while (dst_column.Success && dst_column.Index < src_column.Index + 3) dst_column = dst_column.NextMatch(); //search first `dst_path` in the dst column of the first row
-                                if (!dst_column.Success || line_end_index <= dst_column.Index)
-                                    exit($"The `dst` column contains no path at line: {index2line(line_end_index)}");
-
-                                var src_path = Path.GetFullPath(Path.Join(destination_dir_path, cleanup_md_path(src_column.Groups[1].Value)));
-
-                                if (File.Exists(src_path)) // src_path is a file
-                                    for (; dst_column.Index < line_end_index; dst_column = dst_column.NextMatch())
-                                    {
-                                        var dst_path = cleanup_md_path(dst_column.Groups[1].Value);
-                                        deploy(src_path, dst_path.EndsWith(Path.GetExtension(src_path))
-                                                             ? dst_path                                        //src_path is a file copy to  dst_path a file 
-                                                             : Path.Join(dst_path, Path.GetFileName(src_path)) //src_path is a file copy to  dst_path a folder 
-                                              );
-                                    }
-                                else if (Directory.Exists(src_path)) // src_path is a folder
-                                    for (; dst_column.Index < line_end_index; dst_column = dst_column.NextMatch())
-                                    {
-                                        var filter = src_filter.Success && src_filter.Index == src_column.Index
-                                                         ? src_filter.Groups[1].Value
-                                                         : "*.*";
-
-                                        var dst_dir_path = cleanup_md_path(dst_column.Groups[1].Value); //folder can be copy to folder only
-
-                                        foreach (var src_file_path in Directory.GetFiles(src_path, filter, SearchOption.AllDirectories)) //deploiment  
-                                            deploy(src_file_path, Path.Join(dst_dir_path, src_file_path[src_path.Length..]));
-
-                                        dst_column = dst_column.NextMatch();
-                                    }
-                                else LOG.Warning("Path {SrcPath} at line: {Index2Line} in `src` column does not exists. Skipped", src_path, index2line(line_end_index));
-
-                                if (!(src_column = src_column.NextMatch()).Success || next_line_end() < src_column.Index) break;
+                                if( Console.Read() is 'N' or 'n' )
+                                {
+                                    exit("Bye", -1);
+                                    return "";
+                                }
                             }
 
-                            sections.Clear();
-                            match = match.NextMatch(); //to next execute and deploy table
+                            return output;
                         }
+                    }
+                    catch( Exception ee )
+                    {
+                        // If both attempts fail on the second iteration, exit the application
+                        if( 1 < i ) { exit($"Error executing {exe} {args}. Exception details:\n{ee}", -1); }
+                        // If it's the first iteration, the loop will continue to the second attempt
                     }
                 }
             }
+
+            // Note: If execution reaches here, it means both attempts failed on the first iteration
+            // and succeeded on the second iteration. This case is not explicitly handled.
+            return exe + " " + args;
         }
     }
 }

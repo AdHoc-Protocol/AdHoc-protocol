@@ -36,37 +36,41 @@ using Agent = org.unirail.Agent;
 using Entity = org.unirail.Agent.Entity;
 using org.unirail.collections;
 
-namespace org.unirail{
-    public interface Context{
+namespace org.unirail
+{
+    public interface Context
+    {
         const int VALUE_OF_NULL_KEY = int.MaxValue - 100;
 
-        class Transmitter : AdHoc{
+        class Transmitter : AdHoc
+        {
             public byte[]? _byte_arrayN;
 
             public void clear()
             {
                 _byte_arrayN = null;
-#region> Clear custom code
-#endregion> Context.Transmitter.Clear.Code
+                #region> Clear custom code
+                #endregion> Context.Transmitter.Clear.Code
             }
 
-#region> Custom code
-#endregion> Context.Transmitter.Code
+            #region> Custom code
+            #endregion> Context.Transmitter.Code
 
-            public class Slot{
+            public class Slot
+            {
                 public void clear()
                 {
-#region> Clear custom code
-#endregion> Context.Transmitter.Slot.Clear.Code
+                    #region> Clear custom code
+                    #endregion> Context.Transmitter.Slot.Clear.Code
                 }
 
-#region> Custom code
-#endregion> Context.Transmitter.Slot.Code
+                #region> Custom code
+                #endregion> Context.Transmitter.Slot.Code
 
-                public           uint              state;
+                public uint state;
                 private readonly AdHoc.Transmitter dst;
                 public Slot(AdHoc.Transmitter dst) { this.dst = dst; }
-#region 0
+                #region 0
                 public int index0;
                 public int index_fix0;
                 public int index_max0;
@@ -80,8 +84,8 @@ namespace org.unirail{
                 public bool next_index0() => ++index0 < index_max0;
 
                 public bool next_index_fix0() => ++index0 < index_fix0;
-#endregion
-#region 1
+                #endregion
+                #region 1
                 public int index1;
                 public int index_fix1;
                 public int index_max1;
@@ -95,8 +99,8 @@ namespace org.unirail{
                 public bool next_index1() => ++index1 < index_max1;
 
                 public bool next_index_fix1() => ++index1 < index_fix1;
-#endregion
-#region 2
+                #endregion
+                #region 2
                 public int index2;
                 public int index_fix2;
                 public int index_max2;
@@ -110,7 +114,7 @@ namespace org.unirail{
                 public bool next_index2() => ++index2 < index_max2;
 
                 public bool next_index_fix2() => ++index2 < index_fix2;
-#endregion
+                #endregion
 
                 int tmp;
 
@@ -124,7 +128,7 @@ namespace org.unirail{
 
                 public bool no_null_values()
                 {
-                    if( tmp == 0 )
+                    if (tmp == 0)
                         return true;
                     index_max_1(tmp);
                     return false;
@@ -132,13 +136,13 @@ namespace org.unirail{
 
                 public bool no_items(int items, int items_max)
                 {
-                    if( items == 0 )
+                    if (items == 0)
                     {
                         dst.put((byte)0);
                         return true;
                     }
 
-                    if( items_max < items )
+                    if (items_max < items)
                     {
                         AdHoc.Receiver.error_handler_.error(dst, AdHoc.Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In no_items(uint items, uint items_max, uint next_field_case)     items_max < items : " + items_max + " < " + items));
                         index_max_1(items_max);
@@ -149,10 +153,10 @@ namespace org.unirail{
                     return false;
                 }
 
-#region Key does not contain null
+                #region Key does not contain null
                 public void put_info()
                 {
-                    var items       = index_max1;
+                    var items = index_max1;
                     var items_bytes = bytes4value(items);
                     dst.put((byte)items_bytes);
                     dst.put_val((uint)items, items_bytes);
@@ -162,7 +166,7 @@ namespace org.unirail{
                 public bool put_info(int null_V_count)
                 {
                     var KV_count = index_max1;
-                    if( null_V_count == 0 )
+                    if (null_V_count == 0)
                     {
                         var KV_count_bytes = bytes4value(KV_count);
 
@@ -176,12 +180,12 @@ namespace org.unirail{
 
                     var null_V_count_bytes = bytes4value(null_V_count);
 
-                    if( 0 < (KV_count -= null_V_count) )
+                    if (0 < (KV_count -= null_V_count))
                     { //has KV items
 
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_V_count_bytes << 3 | KV_count_bytes));
-                        dst.put_val((uint)KV_count,     KV_count_bytes);
+                        dst.put_val((uint)KV_count, KV_count_bytes);
                         dst.put_val((uint)null_V_count, null_V_count_bytes);
                         tmp = null_V_count; //preserve
                         index_max_1(KV_count);
@@ -194,17 +198,17 @@ namespace org.unirail{
                     index_max_1(null_V_count);
                     return true;
                 }
-#endregion
-#region Key contains null
+                #endregion
+                #region Key contains null
                 //Return `true` if leap to the new state is necessary.
                 public bool put_info(bool null_K_exists)
                 {
-                    var items         = index_max1;
+                    var items = index_max1;
                     var null_key_bits = 0;
-                    if( null_K_exists )
+                    if (null_K_exists)
                     {
                         null_key_bits = 0b1000_0000;
-                        if( --items == 0 )
+                        if (--items == 0)
                         {
                             dst.put((byte)null_key_bits);
                             return true;
@@ -220,9 +224,9 @@ namespace org.unirail{
 
                 public bool put_info__(uint KV_case, uint next_field_case)
                 {
-                    var items         = index_max1;
+                    var items = index_max1;
                     var null_key_bits = 0b1100_0000;
-                    if( --items == 0 )
+                    if (--items == 0)
                     {
                         state = next_field_case;
                         dst.put((byte)null_key_bits);
@@ -240,9 +244,9 @@ namespace org.unirail{
                 //Return `true` if leap to the new state is necessary.
                 public void put_info__()
                 {
-                    var KV_count      = index_max1;
+                    var KV_count = index_max1;
                     var null_key_bits = 0b1100_0000;
-                    if( --KV_count == 0 )
+                    if (--KV_count == 0)
                     {
                         dst.put((byte)null_key_bits);
                         index_max_1(0);
@@ -261,10 +265,10 @@ namespace org.unirail{
                 //Return `true` if leap to the new state is necessary.
                 public bool put_info_(int null_V_count, uint V_array_case)
                 {
-                    var KV_count      = index_max1;
+                    var KV_count = index_max1;
                     var null_key_bits = 0b1100_0000;
 
-                    if( --KV_count == 0 )
+                    if (--KV_count == 0)
                     {
                         dst.put((byte)null_key_bits);
                         index_max_1(0);
@@ -272,7 +276,7 @@ namespace org.unirail{
                         goto to_V_case;
                     }
 
-                    if( null_V_count == 0 )
+                    if (null_V_count == 0)
                     {
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_key_bits | KV_count_bytes));
@@ -283,11 +287,11 @@ namespace org.unirail{
                     }
 
                     var null_V_count_bytes = bytes4value(null_V_count);
-                    if( 0 < (KV_count -= null_V_count) ) //has KV items
+                    if (0 < (KV_count -= null_V_count)) //has KV items
                     {
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_key_bits | null_V_count_bytes << 3 | KV_count_bytes));
-                        dst.put_val((uint)KV_count,     KV_count_bytes);
+                        dst.put_val((uint)KV_count, KV_count_bytes);
                         dst.put_val((uint)null_V_count, null_V_count_bytes);
                         tmp = null_V_count; //keys with null values count preserve
                         index_max_1(KV_count);
@@ -298,19 +302,19 @@ namespace org.unirail{
                     dst.put_val((uint)null_V_count, null_V_count_bytes);
                     tmp = null_V_count; //preserve
                     index_max_1(0);     //zero KV items
-                    to_V_case:
-                    state  = V_array_case;
+                to_V_case:
+                    state = V_array_case;
                     index1 = VALUE_OF_NULL_KEY;
                     return true;
                 }
 
                 //Return `true` if leap to the new state is necessary.
-                public bool put_info(int  null_V_count,
+                public bool put_info(int null_V_count,
                                      uint null_V_case,
                                      uint next_field_case) => put_info(null_V_count, null_V_case, next_field_case, 0b1000_0000);
 
                 //Return `true` if leap to the new state is necessary.
-                public bool put_info_(int  null_V_count,
+                public bool put_info_(int null_V_count,
                                       uint KV_case,
                                       uint null_V_case,
                                       uint next_field_case)
@@ -320,21 +324,21 @@ namespace org.unirail{
                 }
 
                 //Return `true` if leap to the new state is necessary.
-                private bool put_info(int  null_V_count,
+                private bool put_info(int null_V_count,
                                       uint null_V_case,
                                       uint next_field_case,
                                       uint null_key_bits)
                 {
                     var KV_count = index_max1;
-                    if( --KV_count == 0 )
+                    if (--KV_count == 0)
                     {
                         dst.put((byte)null_key_bits);
                         state = next_field_case;
-                        tmp   = 0;
+                        tmp = 0;
                         return true;
                     }
 
-                    if( null_V_count == 0 )
+                    if (null_V_count == 0)
                     {
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_key_bits | KV_count_bytes));
@@ -345,11 +349,11 @@ namespace org.unirail{
                     }
 
                     var null_V_count_bytes = bytes4value(null_V_count);
-                    if( 0 < (KV_count -= null_V_count) ) //has KV items
+                    if (0 < (KV_count -= null_V_count)) //has KV items
                     {
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_key_bits | null_V_count_bytes << 3 | KV_count_bytes));
-                        dst.put_val((uint)KV_count,     KV_count_bytes);
+                        dst.put_val((uint)KV_count, KV_count_bytes);
                         dst.put_val((uint)null_V_count, null_V_count_bytes);
                         tmp = null_V_count; //keys with null values count preserve
                         index_max_1(KV_count);
@@ -365,63 +369,65 @@ namespace org.unirail{
 
                 public bool leap_KV()
                 {
-                    if( index1 < VALUE_OF_NULL_KEY || index_max1 == 0 )
+                    if (index1 < VALUE_OF_NULL_KEY || index_max1 == 0)
                         return false;
                     index1 = 0;
                     return true;
                 }
-#endregion
+                #endregion
             }
         }
 
-        class Receiver : AdHoc{
+        class Receiver : AdHoc
+        {
             public ulong _ulong;
 
             public void clear()
             {
-#region> Clear custom code
-#endregion> Context.Receiver.Clear.Code
+                #region> Clear custom code
+                #endregion> Context.Receiver.Clear.Code
             }
 
-#region> Custom code
-#endregion> Context.Receiver.Code
+            #region> Custom code
+            #endregion> Context.Receiver.Code
 
-            public class Slot{
+            public class Slot
+            {
                 public ulong _ulong;
 
                 public void clear()
                 {
-#region> Clear custom code
-#endregion> Context.Receiver.Slot.Clear.Code
+                    #region> Clear custom code
+                    #endregion> Context.Receiver.Slot.Clear.Code
                 }
 
-#region> Custom code
-#endregion> Context.Receiver.Slot.Code
+                #region> Custom code
+                #endregion> Context.Receiver.Slot.Code
 
                 private static int trailing8Zeros(uint i)
                 {
                     var n = 7;
                     i <<= 24;
                     var y = i << 4;
-                    if( y != 0 )
+                    if (y != 0)
                     {
                         n -= 4;
-                        i =  y;
+                        i = y;
                     }
 
                     y = i << 2;
                     return (int)(y == 0 ?
-                                     n - (i     << 1 >> 31) :
+                                     n - (i << 1 >> 31) :
                                      n - 2 - (y << 1 >> 31));
                 }
 
-                public           uint           state;
+                public uint state;
                 private readonly AdHoc.Receiver src;
                 public Slot(AdHoc.Receiver src) { this.src = src; }
-#region 0
-                public int  index0;
-                public int  _index0; //Used to store the index of the most recent non-null value
-                public int  index_max0;
+                #region 0
+                public int index0;
+                public int _index0; //Used to store the index of the most recent non-null value
+                public int index_max0;
                 public uint nulls0;
 
                 public int index_max_0(int max0)
@@ -434,7 +440,7 @@ namespace org.unirail{
 
                 public bool next_index0(uint next_ok_case)
                 {
-                    if( ++index0 < index_max0 )
+                    if (++index0 < index_max0)
                     {
                         state = next_ok_case;
                         return true;
@@ -448,12 +454,12 @@ namespace org.unirail{
                 public void nulls_0(uint nulls, int index0)
                 {
                     this.index0 = index0 + trailing8Zeros(nulls);
-                    nulls0      = nulls;
+                    nulls0 = nulls;
                 }
 
                 public bool no_index0(uint no_index_case, int no_index_index0)
                 {
-                    if( 0 < src.remaining )
+                    if (0 < src.remaining)
                         return false;
                     src.retry_at(no_index_case);
                     index0 = no_index_index0;
@@ -463,23 +469,23 @@ namespace org.unirail{
                 public bool find_exist0(int index0)
                 {
                     var nulls = src.get_byte();
-                    if( nulls == 0 )
+                    if (nulls == 0)
                         return false;
                     this.index0 = index0 + trailing8Zeros(nulls);
-                    nulls0      = nulls;
+                    nulls0 = nulls;
                     return true;
                 }
 
                 public bool get_len0(int max_items, int bytes, uint next_case)
                 {
-                    if( bytes == 0 )
+                    if (bytes == 0)
                     {
                         index_max_0(0);
                         return true;
                     }
 
                     this.max_items = max_items;
-                    if( src.remaining < bytes )
+                    if (src.remaining < bytes)
                     {
                         src.retry_get4(bytes, next_case);
                         src.mode = LEN0;
@@ -492,14 +498,14 @@ namespace org.unirail{
 
                 public void check_len0(int len)
                 {
-                    if( max_items < index_max_0(len) )
+                    if (max_items < index_max_0(len))
                         Receiver.error_handler.error(src, Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In get_len0  (uint max_items, uint bytes, uint next_case){}   max_items < index_max0 : " + max_items + " < " + index_max0));
                 }
-#endregion
-#region 1
-                public int  index1;
-                public int  _index1; //Used to store the index of the most recent non-null value
-                public int  index_max1;
+                #endregion
+                #region 1
+                public int index1;
+                public int _index1; //Used to store the index of the most recent non-null value
+                public int index_max1;
                 public uint nulls1;
 
                 public int index_max_1(int max1)
@@ -512,7 +518,7 @@ namespace org.unirail{
 
                 public bool next_index1(uint next_ok_case)
                 {
-                    if( ++index1 < index_max1 )
+                    if (++index1 < index_max1)
                     {
                         state = next_ok_case;
                         return true;
@@ -526,12 +532,12 @@ namespace org.unirail{
                 public void nulls_1(uint nulls, int index1)
                 {
                     this.index1 = index1 + trailing8Zeros(nulls);
-                    nulls1      = nulls;
+                    nulls1 = nulls;
                 }
 
                 public bool no_index1(uint no_index_case, int no_index_index1)
                 {
-                    if( 0 < src.remaining )
+                    if (0 < src.remaining)
                         return false;
                     src.retry_at(no_index_case);
                     index1 = no_index_index1;
@@ -541,23 +547,23 @@ namespace org.unirail{
                 public bool find_exist1(int index1)
                 {
                     var nulls = src.get_byte();
-                    if( nulls == 0 )
+                    if (nulls == 0)
                         return false;
                     this.index1 = index1 + trailing8Zeros(nulls);
-                    nulls1      = nulls;
+                    nulls1 = nulls;
                     return true;
                 }
 
                 public bool get_len1(int max_items, int bytes, uint next_case)
                 {
-                    if( bytes == 0 )
+                    if (bytes == 0)
                     {
                         index_max_1(0);
                         return true;
                     }
 
                     this.max_items = max_items;
-                    if( src.remaining < bytes )
+                    if (src.remaining < bytes)
                     {
                         src.retry_get4(bytes, next_case);
                         src.mode = LEN1;
@@ -570,14 +576,14 @@ namespace org.unirail{
 
                 public void check_len1(int len)
                 {
-                    if( max_items < index_max_1(len) )
+                    if (max_items < index_max_1(len))
                         Receiver.error_handler.error(src, Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In get_len1  (uint max_items, uint bytes, uint next_case){}   max_items < index_max1 : " + max_items + " < " + index_max1));
                 }
-#endregion
-#region 2
-                public int  index2;
-                public int  _index2; //Used to store the index of the most recent non-null value
-                public int  index_max2;
+                #endregion
+                #region 2
+                public int index2;
+                public int _index2; //Used to store the index of the most recent non-null value
+                public int index_max2;
                 public uint nulls2;
 
                 public int index_max_2(int max2)
@@ -590,7 +596,7 @@ namespace org.unirail{
 
                 public bool next_index2(uint next_ok_case)
                 {
-                    if( ++index2 < index_max2 )
+                    if (++index2 < index_max2)
                     {
                         state = next_ok_case;
                         return true;
@@ -604,12 +610,12 @@ namespace org.unirail{
                 public void nulls_2(uint nulls, int index2)
                 {
                     this.index2 = index2 + trailing8Zeros(nulls);
-                    nulls2      = nulls;
+                    nulls2 = nulls;
                 }
 
                 public bool no_index2(uint no_index_case, int no_index_index2)
                 {
-                    if( 0 < src.remaining )
+                    if (0 < src.remaining)
                         return false;
                     src.retry_at(no_index_case);
                     index2 = no_index_index2;
@@ -619,23 +625,23 @@ namespace org.unirail{
                 public bool find_exist2(int index2)
                 {
                     var nulls = src.get_byte();
-                    if( nulls == 0 )
+                    if (nulls == 0)
                         return false;
                     this.index2 = index2 + trailing8Zeros(nulls);
-                    nulls2      = nulls;
+                    nulls2 = nulls;
                     return true;
                 }
 
                 public bool get_len2(int max_items, int bytes, uint next_case)
                 {
-                    if( bytes == 0 )
+                    if (bytes == 0)
                     {
                         index_max_2(0);
                         return true;
                     }
 
                     this.max_items = max_items;
-                    if( src.remaining < bytes )
+                    if (src.remaining < bytes)
                     {
                         src.retry_get4(bytes, next_case);
                         src.mode = LEN2;
@@ -648,10 +654,10 @@ namespace org.unirail{
 
                 public void check_len2(int len)
                 {
-                    if( max_items < index_max_2(len) )
+                    if (max_items < index_max_2(len))
                         Receiver.error_handler.error(src, Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In get_len2  (uint max_items, uint bytes, uint next_case){}   max_items < index_max2 : " + max_items + " < " + index_max2));
                 }
-#endregion
+                #endregion
 
                 int max_items;
                 int tmp = 0;
@@ -659,7 +665,7 @@ namespace org.unirail{
                 public bool try_get_info(uint the_case)
                 {
                     tmp = 0;
-                    if( 0 < src.remaining )
+                    if (0 < src.remaining)
                     {
                         src.u8 = src.get_byte();
                         return true;
@@ -677,14 +683,14 @@ namespace org.unirail{
                     return get_len1(max_items, (int)(src.u8 >> 3 & 7), next_case);
                 }
 
-#region Key contains null
+                #region Key contains null
                 public bool hasNullKey() => 0x7F < src.u8;
 
                 public bool nullKeyHasValue() => 0xBF < src.u8;
 
                 public bool nullKey_Value()
                 {
-                    if( index1 < VALUE_OF_NULL_KEY )
+                    if (index1 < VALUE_OF_NULL_KEY)
                         return false;
                     index1 = 0;
                     return true;
@@ -692,33 +698,33 @@ namespace org.unirail{
 
                 public void receiving_value_of_null_key()
                 {
-                    index1     = VALUE_OF_NULL_KEY;
+                    index1 = VALUE_OF_NULL_KEY;
                     index_max2 = 0;
                 }
 
                 public void receiving_value_of_null_key_()
                 {
-                    var KV_items     = tmp;
+                    var KV_items = tmp;
                     var null_V_items = index_max1;
                     tmp = null_V_items;
                     index_max_1(KV_items);
                     index1 = VALUE_OF_NULL_KEY;
                 }
-#endregion
+                #endregion
 
                 public bool leap()
                 {
                     var KV_items = index_max1;
-                    if( 0 < KV_items )
+                    if (0 < KV_items)
                         return false;
                     return true;
                 }
 
                 public bool leap(uint null_V_case, uint next_field_case)
                 {
-                    var KV_items     = tmp;
+                    var KV_items = tmp;
                     var null_V_items = index_max1;
-                    if( KV_items == 0 )
+                    if (KV_items == 0)
                     {
                         state = null_V_items == 0 ?
                                     next_field_case :
@@ -736,7 +742,7 @@ namespace org.unirail{
                     var items = tmp + index_max1 + (hasNullKey() ?
                                                         1 :
                                                         0);
-                    if( max_items < items )
+                    if (max_items < items)
                     {
                         AdHoc.Receiver.error_handler.error(src, AdHoc.Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In items_count  (uint max_items){}   max_items < items : " + max_items + " < " + items));
                         return 0;
@@ -747,7 +753,7 @@ namespace org.unirail{
 
                 public bool no_null_values()
                 {
-                    if( tmp == 0 )
+                    if (tmp == 0)
                         return true;
                     index_max_1(tmp);
                     return false;

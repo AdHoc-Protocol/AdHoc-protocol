@@ -39,7 +39,8 @@ using System.Text;
 namespace org.unirail.collections;
 
 public interface BitsList<T>
-    where T : struct{
+    where T : struct
+{
     public static ulong mask(int bits) => (1UL << bits) - 1;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -69,41 +70,42 @@ public interface BitsList<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T value(ulong prev, ulong next, int bit, int bits, ulong mask) => from_byte(((next & BitsList<T>.mask(bit + bits - BITS)) << BITS - bit | prev >> bit) & mask);
 
-    public const int  LEN  = 6;
-    public const int  BITS = 1 << LEN;
+    public const int LEN = 6;
+    public const int BITS = 1 << LEN;
     public const uint MASK = BITS - 1;
 
     static int len4bits(uint bits) => (int)((bits + BITS) >> LEN);
 
-    abstract class R : ICloneable, IEquatable<R>{
+    abstract class R : ICloneable, IEquatable<R>
+    {
         protected ulong[] values = Array.Empty<ulong>();
-        public    int     Count { get; protected set; }
+        public int Count { get; protected set; }
 
-        protected       ulong mask;
-        public readonly int   bits;
-        public readonly T     default_value;
+        protected ulong mask;
+        public readonly int bits;
+        public readonly T default_value;
 
         protected R(int bits_per_item)
         {
-            mask          = mask(bits = bits_per_item);
+            mask = mask(bits = bits_per_item);
             default_value = default;
         }
 
         protected R(int bits_per_item, int length)
         {
-            mask          = mask(bits = bits_per_item);
-            values        = new ulong[len4bits((uint)(length * bits))];
+            mask = mask(bits = bits_per_item);
+            values = new ulong[len4bits((uint)(length * bits))];
             default_value = default;
         }
 
         protected R(int bits_per_item, T default_value, int Count)
         {
-            mask       = mask(bits = bits_per_item);
+            mask = mask(bits = bits_per_item);
             this.Count = Math.Abs(Count);
-            values     = new ulong[len4bits((uint)(this.Count * bits))];
-            if( to_byte(this.default_value = default_value) == 0 )
+            values = new ulong[len4bits((uint)(this.Count * bits))];
+            if (to_byte(this.default_value = default_value) == 0)
                 return;
-            for( var i = 0; i < Count; i++ )
+            for (var i = 0; i < Count; i++)
                 append(this, i, default_value);
         }
 
@@ -114,9 +116,9 @@ public interface BitsList<T>
         //If items < 0, it cleans up and allocates -items space.
         protected void Capacity(int items)
         {
-            if( 0 < items ) //If positive, adjust the array size to fit the specified number of items.
+            if (0 < items) //If positive, adjust the array size to fit the specified number of items.
             {
-                if( items < Count )
+                if (items < Count)
                     Count = items; //Adjust the size if items are less than the current size.
 
                 Array.Resize(ref values, len4bits((uint)(items * bits)));
@@ -126,7 +128,7 @@ public interface BitsList<T>
             //If negative, clear the array and allocate space for the absolute value of items.
             var new_values_length = len4bits((uint)(-items * bits));
 
-            if( values.Length != new_values_length )
+            if (values.Length != new_values_length)
             {
                 //Allocate new space or set it to an empty array if new length is 0.
                 values = new_values_length == 0 ?
@@ -151,9 +153,9 @@ public interface BitsList<T>
         public override int GetHashCode()
         {
             var hash = HashCode.Combine(149989999, Count);
-            var i    = index((uint)Count);
+            var i = index((uint)Count);
             hash = HashCode.Combine(hash, values[i] & (1UL << bit((uint)Count)) - 1);
-            while( -1 < --i )
+            while (-1 < --i)
                 hash = HashCode.Combine(hash, values[i]);
             return hash;
         }
@@ -162,10 +164,10 @@ public interface BitsList<T>
 
         public bool Equals(R? other)
         {
-            if( other == null || other.Count != Count )
+            if (other == null || other.Count != Count)
                 return false;
 
-            var i    = index((uint)Count);
+            var i = index((uint)Count);
             var mask = (1UL << bit((uint)Count)) - 1;
             return (values[i] & mask) == (other.values[i] & mask) &&
                    new Span<ulong>(values, 0, i).SequenceEqual(new Span<ulong>(other.values, 0, i));
@@ -178,10 +180,10 @@ public interface BitsList<T>
             get
             {
                 var _index = (uint)index((uint)(item *= bits));
-                var _bit   = bit((uint)item);
+                var _bit = bit((uint)item);
                 return BITS < _bit + bits ?
                            value(values[_index], values[_index + 1], _bit, bits, mask) :
-                           value(values[_index], _bit,               mask);
+                           value(values[_index], _bit, mask);
             }
             set => throw new NotImplementedException();
         }
@@ -192,13 +194,13 @@ public interface BitsList<T>
 
         protected static void add(R dst, int item, T value)
         {
-            if( dst.Count == item )
+            if (dst.Count == item)
             {
                 append(dst, item, value);
                 return;
             }
 
-            if( dst.Count < item )
+            if (dst.Count < item)
             {
                 set1(dst, item, value);
                 return;
@@ -206,36 +208,36 @@ public interface BitsList<T>
 
             var p = (uint)(item * dst.bits);
             item = index(p);
-            var src  = dst.values;
+            var src = dst.values;
             var dst_ = dst.values;
-            if( dst.Capacity() * BITS < p )
+            if (dst.Capacity() * BITS < p)
                 dst.Capacity(-Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits(p)));
-            var v    = to_byte(value) & dst.mask;
+            var v = to_byte(value) & dst.mask;
             var _bit = bit(p);
-            if( 0 < _bit )
+            if (0 < _bit)
             {
                 var i = src[item];
                 var k = BITS - _bit;
-                if( k < dst.bits )
+                if (k < dst.bits)
                 {
-                    dst_[item] = i << k >> k | v         << _bit;
-                    v          = v      >> k | i >> _bit << dst.bits - k;
+                    dst_[item] = i << k >> k | v << _bit;
+                    v = v >> k | i >> _bit << dst.bits - k;
                 }
                 else
                 {
                     dst_[item] = i << k >> k | v << _bit | i >> _bit << _bit + dst.bits;
-                    v          = i      >> _bit                              + dst.bits | src[item + 1] << k - dst.bits & dst.mask;
+                    v = i >> _bit + dst.bits | src[item + 1] << k - dst.bits & dst.mask;
                 }
 
                 item++;
             }
 
             dst.Count++;
-            for( var max = len4bits((uint)(dst.Count * dst.bits));; )
+            for (var max = len4bits((uint)(dst.Count * dst.bits)); ;)
             {
                 var i = src[item];
                 dst_[item] = i << dst.bits | v;
-                if( max < ++item )
+                if (max < ++item)
                     break;
                 v = i >> BITS - dst.bits;
             }
@@ -243,73 +245,73 @@ public interface BitsList<T>
 
         protected static void set(R dst, int from, params T[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, src[i]);
         }
 
         protected static void set(R dst, int from, params byte[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params sbyte[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params ushort[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params short[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params int[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params uint[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params long[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params ulong[] src)
         {
-            for( var i = src.Length; -1 < --i; )
+            for (var i = src.Length; -1 < --i;)
                 set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set1(R dst, int item, T src)
         {
             var total_bits = (uint)(item * dst.bits);
-            if( item < dst.Count )
+            if (item < dst.Count)
             {
                 var _index = index(total_bits);
-                var _bit   = bit(total_bits);
-                var k      = BITS - _bit;
+                var _bit = bit(total_bits);
+                var k = BITS - _bit;
 
                 var v = to_byte(src) & dst.mask;
                 var i = dst.values[_index];
 
-                if( k < dst.bits )
+                if (k < dst.bits)
                 {
-                    dst.values[_index]     = i                      << k            >> k            | v << _bit;
+                    dst.values[_index] = i << k >> k | v << _bit;
                     dst.values[_index + 1] = dst.values[_index + 1] >> dst.bits - k << dst.bits - k | v >> k;
                 }
                 else
@@ -318,10 +320,10 @@ public interface BitsList<T>
                 return;
             }
 
-            if( dst.Capacity() <= item )
+            if (dst.Capacity() <= item)
                 dst.Capacity(Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits((uint)(total_bits + dst.bits))));
-            if( to_byte(dst.default_value) != 0 )
-                for( var t = dst.Count; t < item; t++ )
+            if (to_byte(dst.default_value) != 0)
+                for (var t = dst.Count; t < item; t++)
                     append(dst, item, dst.default_value);
             append(dst, item, src);
             dst.Count = item + 1;
@@ -333,14 +335,14 @@ public interface BitsList<T>
 
             var p = (uint)(item * dst.bits);
             int index = BitsList<T>.index(p),
-                bit   = BitsList<T>.bit(p);
+                bit = BitsList<T>.bit(p);
 
             var k = BITS - bit;
             var i = dst.values[index];
 
-            if( k < dst.bits )
+            if (k < dst.bits)
             {
-                dst.values[index]     = i << k >> k | v << bit;
+                dst.values[index] = i << k >> k | v << bit;
                 dst.values[index + 1] = v >> k;
             }
             else
@@ -349,43 +351,43 @@ public interface BitsList<T>
 
         protected static void removeAt(R dst, int item)
         {
-            if( item + 1 == dst.Count )
+            if (item + 1 == dst.Count)
             {
-                if( to_byte(dst.default_value) == 0 )
+                if (to_byte(dst.default_value) == 0)
                     append(dst, item, default); //zeroed place
                 dst.Count--;
                 return;
             }
 
             var _index = index((uint)(item *= dst.bits));
-            var _bit   = bit((uint)item);
+            var _bit = bit((uint)item);
 
             var k = BITS - _bit;
             var i = dst.values[_index];
 
-            if( _index + 1 == dst.Capacity() )
+            if (_index + 1 == dst.Capacity())
             {
-                if( _bit == 0 )
+                if (_bit == 0)
                     dst.values[_index] = i >> dst.bits;
-                else if( k < dst.bits )
+                else if (k < dst.bits)
                     dst.values[_index] = i << k >> k;
-                else if( dst.bits < k )
+                else if (dst.bits < k)
                     dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit;
 
                 dst.Count--;
                 return;
             }
 
-            if( _bit == 0 )
+            if (_bit == 0)
                 dst.values[_index] = i >>= dst.bits;
-            else if( k < dst.bits )
+            else if (k < dst.bits)
             {
                 var ii = dst.values[_index + 1];
-                dst.values[_index]   = i << k >> k | ii >> _bit + dst.bits - BITS << _bit;
+                dst.values[_index] = i << k >> k | ii >> _bit + dst.bits - BITS << _bit;
                 dst.values[++_index] = i = ii >> dst.bits;
             }
-            else if( dst.bits < k )
-                if( _index + 1 == dst.values.Length )
+            else if (dst.bits < k)
+                if (_index + 1 == dst.values.Length)
                 {
                     dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit;
                     dst.Count--;
@@ -395,15 +397,15 @@ public interface BitsList<T>
                 {
                     var ii = dst.values[_index + 1];
 
-                    dst.values[_index]   = i << k >> k | i >> _bit + dst.bits << _bit | ii << BITS - dst.bits;
+                    dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit | ii << BITS - dst.bits;
                     dst.values[++_index] = i = ii >> dst.bits;
                 }
 
-            for( var max = dst.Count * dst.bits >> LEN; _index < max; )
+            for (var max = dst.Count * dst.bits >> LEN; _index < max;)
             {
                 var ii = dst.values[_index + 1];
-                dst.values[_index]   = i << dst.bits >> dst.bits | ii << BITS - dst.bits;
-                dst.values[++_index] = i = ii        >> dst.bits;
+                dst.values[_index] = i << dst.bits >> dst.bits | ii << BITS - dst.bits;
+                dst.values[++_index] = i = ii >> dst.bits;
             }
 
             dst.Count--;
@@ -420,20 +422,20 @@ public interface BitsList<T>
 
         public StringBuilder ToString(StringBuilder? dst)
         {
-            if( dst == null )
+            if (dst == null)
                 dst = new StringBuilder(Count * 4);
             else
                 dst.EnsureCapacity(dst.Length + Count * 4);
             var src = values[(uint)0];
-            for( int bp = 0, max = Count * bits, i = 1; bp < max; bp += bits, i++ )
+            for (int bp = 0, max = Count * bits, i = 1; bp < max; bp += bits, i++)
             {
-                var _bit   = bit((uint)bp);
+                var _bit = bit((uint)bp);
                 var index1 = (uint)(index((uint)bp) + 1);
                 var _value = BITS < _bit + bits ?
                                  value(src, src = values[index1], _bit, bits, mask) :
-                                 value(src, _bit,                 mask);
+                                 value(src, _bit, mask);
                 dst.Append(_value).Append('\t');
-                if( i % 10 == 0 )
+                if (i % 10 == 0)
                     dst.Append('\t').Append(i / 10 * 10).Append('\n');
             }
 
@@ -442,8 +444,8 @@ public interface BitsList<T>
 
         public int indexOf(T value)
         {
-            for( int item = 0, max = Count * bits; item < max; item += bits )
-                if( value.Equals(this[item]) )
+            for (int item = 0, max = Count * bits; item < max; item += bits)
+                if (value.Equals(this[item]))
                     return item / bits;
             return -1;
         }
@@ -452,8 +454,8 @@ public interface BitsList<T>
 
         public int lastIndexOf(int from, T value)
         {
-            for( var i = Math.Min(from, Count); -1 < --i; )
-                if( value.Equals(this[i]) )
+            for (var i = Math.Min(from, Count); -1 < --i;)
+                if (value.Equals(this[i]))
                     return i;
             return -1;
         }
@@ -461,7 +463,7 @@ public interface BitsList<T>
         protected static bool remove(R dst, T value)
         {
             var ret = false;
-            for( var i = dst.Count; -1 < (i = dst.lastIndexOf(i, value)); )
+            for (var i = dst.Count; -1 < (i = dst.lastIndexOf(i, value));)
             {
                 ret = true;
                 removeAt(dst, i);
@@ -472,11 +474,11 @@ public interface BitsList<T>
 
         public T[] ToArray(T[]? dst)
         {
-            if( Count == 0 )
+            if (Count == 0)
                 return null;
-            if( dst == null || dst.Length < Count )
+            if (dst == null || dst.Length < Count)
                 dst = new T[Count];
-            for( int item = 0, max = Count * bits; item < max; item += bits )
+            for (int item = 0, max = Count * bits; item < max; item += bits)
                 dst[item / bits] = this[item];
             return dst;
         }
@@ -488,16 +490,17 @@ public interface BitsList<T>
         public Enumerator GetEnumerator() => new Enumerator(this);
     }
 
-    public struct Enumerator : IEnumerator<T>, IEnumerator{
-        private readonly R   _list;
-        private          int _index;
+    public struct Enumerator : IEnumerator<T>, IEnumerator
+    {
+        private readonly R _list;
+        private int _index;
 
         private T _current;
 
         internal Enumerator(R list)
         {
-            _list    = list;
-            _index   = 0;
+            _list = list;
+            _index = 0;
             _current = default;
         }
 
@@ -516,12 +519,13 @@ public interface BitsList<T>
 
         void IEnumerator.Reset()
         {
-            _index   = 0;
+            _index = 0;
             _current = default;
         }
     }
 
-    class RW : R{
+    class RW : R
+    {
         public RW(int bitsPerItem) : base(bitsPerItem) { }
 
         public RW(int bitsPerItem, int length) : base(bitsPerItem, length) { }
@@ -536,7 +540,7 @@ public interface BitsList<T>
 
         public RW Add(params T[] values)
         {
-            foreach( var value in values )
+            foreach (var value in values)
                 Set(Count, value);
             return this;
         }
@@ -618,9 +622,9 @@ public interface BitsList<T>
         public bool retainAll(R chk)
         {
             var fix = base.Count;
-            T   v;
-            for( var item = 0; item < base.Count; item++ )
-                if( !chk.Contains(v = this[item]) )
+            T v;
+            for (var item = 0; item < base.Count; item++)
+                if (!chk.Contains(v = this[item]))
                     remove(this, v);
             return fix != base.Count;
         }
@@ -635,9 +639,9 @@ public interface BitsList<T>
 
         public new RW Capacity(int value)
         {
-            if( value < 1 )
+            if (value < 1)
             {
-                values     = Array.Empty<ulong>();
+                values = Array.Empty<ulong>();
                 base.Count = 0;
             }
             else base.Capacity(value);
@@ -650,9 +654,9 @@ public interface BitsList<T>
             get => base.Count;
             set
             {
-                if( value < 1 )
+                if (value < 1)
                     Clear();
-                else if( base.Count < value )
+                else if (base.Count < value)
                     set1(this, value - 1, default_value);
                 else
                     base.Count = value;

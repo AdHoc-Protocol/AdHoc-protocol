@@ -36,7 +36,8 @@ using System.Collections.Generic;
 namespace org.unirail.collections;
 
 //Class to implement a pool of objects of type T
-public class Pool<T>{
+public class Pool<T>
+{
     //WeakReference to a Stack of items of type T
     //WeakReference allows the Garbage Collector to collect the object if there are no strong references to it
     private WeakReference<Stack<T>> items = new(new Stack<T>(5));
@@ -63,7 +64,7 @@ public class Pool<T>{
     {
         //Try to get the target Stack from the WeakReference
         //If unsuccessful, create a new Stack and update the WeakReference
-        if( !items.TryGetTarget(out var s) )
+        if (!items.TryGetTarget(out var s))
             items = new WeakReference<Stack<T>>(s = new Stack<T>(5));
 
         //Push the item back into the Stack

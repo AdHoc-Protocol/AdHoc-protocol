@@ -45,14 +45,15 @@ using System.Collections.Generic;
 ///</summary>
 ///<typeparam name="T">The type of elements in the set. Must be a value type.</typeparam>
 public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<T>>
-    where T : struct{
-    public NullableValueSet(ISet<T>               set) => _set = new HashSet<T>(set);
-    public NullableValueSet(ISet<T>               set, IEqualityComparer<T>? comparer) => _set = new HashSet<T>(set, comparer);
-    public NullableValueSet(IEnumerable<T>        collection) => _set = new HashSet<T>(collection);
-    public NullableValueSet(IEnumerable<T>        collection, IEqualityComparer<T>? comparer) => _set = new HashSet<T>(collection, comparer);
+    where T : struct
+{
+    public NullableValueSet(ISet<T> set) => _set = new HashSet<T>(set);
+    public NullableValueSet(ISet<T> set, IEqualityComparer<T>? comparer) => _set = new HashSet<T>(set, comparer);
+    public NullableValueSet(IEnumerable<T> collection) => _set = new HashSet<T>(collection);
+    public NullableValueSet(IEnumerable<T> collection, IEqualityComparer<T>? comparer) => _set = new HashSet<T>(collection, comparer);
     public NullableValueSet(IEqualityComparer<T>? comparer) => _set = new HashSet<T>(comparer);
-    public NullableValueSet(int                   capacity) => _set = new HashSet<T>(capacity);
-    public NullableValueSet(int                   capacity, IEqualityComparer<T>? comparer) => _set = new HashSet<T>(capacity, comparer);
+    public NullableValueSet(int capacity) => _set = new HashSet<T>(capacity);
+    public NullableValueSet(int capacity, IEqualityComparer<T>? comparer) => _set = new HashSet<T>(capacity, comparer);
 
     private int _version;
 
@@ -66,10 +67,10 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
     public bool Add(T? item)
     {
         _version++;
-        if( item.HasValue )
+        if (item.HasValue)
             return _set.Add(item.Value); //Add non-null element
 
-        if( _nullValueExists )
+        if (_nullValueExists)
             return false; //Return false if null value already exists
 
         _nullValueExists = true;
@@ -79,8 +80,8 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
     //Removes an element from the set
     public bool Remove(T? item)
     {
-        if( item.HasValue ) //Remove non-null element
-            if( _set.Remove(item.Value) )
+        if (item.HasValue) //Remove non-null element
+            if (_set.Remove(item.Value))
             {
                 _version++;
                 return true;
@@ -88,7 +89,7 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
             else
                 return false;
 
-        if( !_nullValueExists )
+        if (!_nullValueExists)
             return false; //Return false if null value does not exist
 
         _nullValueExists = false;
@@ -120,12 +121,12 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
     //Checks if the set equals another set
     public bool Equals(NullableValueSet<T>? other)
     {
-        if( other            == null                   ||
+        if (other == null ||
             _nullValueExists != other._nullValueExists ||
-            _set.Count       != other._set.Count )
+            _set.Count != other._set.Count)
             return false;
 
-        if( _nullValueExists && !_set.SetEquals(other._set) )
+        if (_nullValueExists && !_set.SetEquals(other._set))
             return false;
 
         return true;
@@ -150,23 +151,24 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
     //Enumerator for nullable values
     public Enumerator GetEnumerator_() => new Enumerator(this);
 
-    public struct Enumerator : IEnumerator<T?>{
-        private readonly NullableValueSet<T>   _src;
-        private readonly int                   _version;
-        private          HashSet<T>.Enumerator _srcEnum;
-        private          bool                  _onSrcEnum;
+    public struct Enumerator : IEnumerator<T?>
+    {
+        private readonly NullableValueSet<T> _src;
+        private readonly int _version;
+        private HashSet<T>.Enumerator _srcEnum;
+        private bool _onSrcEnum;
 
         internal Enumerator(NullableValueSet<T> set)
         {
-            _src       = set;
-            _srcEnum   = set._set.GetEnumerator();
-            _version   = set._version;
+            _src = set;
+            _srcEnum = set._set.GetEnumerator();
+            _version = set._version;
             _onSrcEnum = true;
         }
 
         public bool MoveNext()
         {
-            if( _version != _src._version )
+            if (_version != _src._version)
                 throw new InvalidOperationException();
 
             return _onSrcEnum && ((_onSrcEnum = _srcEnum.MoveNext()) || _src._nullValueExists);
@@ -176,11 +178,11 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
 
         void IEnumerator.Reset()
         {
-            if( _version != _src._version )
+            if (_version != _src._version)
                 throw new InvalidOperationException();
 
             _onSrcEnum = true;
-            _srcEnum   = _src._set.GetEnumerator();
+            _srcEnum = _src._set.GetEnumerator();
         }
 
         object? IEnumerator.Current => Current;
@@ -189,7 +191,7 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
         {
             get
             {
-                if( _version != _src._version )
+                if (_version != _src._version)
                     throw new InvalidOperationException();
 
                 return _onSrcEnum ?

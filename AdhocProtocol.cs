@@ -33,7 +33,8 @@
 using System;
 using org.unirail.Meta;
 
-namespace org.unirail{
+namespace org.unirail
+{
     /**
      * AdHoc agent protocol description
      */
@@ -55,19 +56,23 @@ namespace org.unirail{
         _<
             AdhocProtocol.Agent.Project.Host.Pack.Field.DataType, //propagate DataType constants set to all hosts
             AdhocProtocol.Agent.Project.Channel.Stage.Type
-        >{
-        class max_65_000_chars{
+        >
+    {
+        class max_65_000_chars
+        {
             [D(+65_000)] string TYPEDEF; // Maximum 65,000 characters
         }
 
-        class max_1_000_chars{
+        class max_1_000_chars
+        {
             [D(+1_000)] string TYPEDEF; // Maximum 1,000 characters
         }
 
-        class Root{
-            string           name;
+        class Root
+        {
+            string name;
             max_65_000_chars doc; // Documentation with a maximum of 65,000 characters
-            string           inline_doc;
+            string inline_doc;
         }
 
 
@@ -82,20 +87,24 @@ namespace org.unirail{
         <see cref = 'Agent.Project.Channel.Stage.Branch'/>
         <see cref = 'InJAVA'/>-- by default rest of the packs in JAVA generate abstracted (without implementation)
         */
-        struct Server /*ā*/ : Host{
-            public class Invitation /*Ā*/{
+        struct Server /*ā*/ : Host
+        {
+            public class Invitation /*Ā*/
+            {
                 public ulong uid; // Unique identifier for the invitation
             }
 
-            public class Info /*ā*/{
-                string           task;
+            public class Info /*ā*/
+            {
+                string task;
                 max_65_000_chars info; // Information with a maximum of 65,000 characters
             }
 
-            public class Result /*ć*/{
-                string                    task;
+            public class Result /*ć*/
+            {
+                string task;
                 [D(3_000_0000)] Binary[,] result; //3 megabytes compressed binary
-                max_65_000_chars          info;   // Information with a maximum of 65,000 characters
+                max_65_000_chars info;   // Information with a maximum of 65,000 characters
             }
         }
 
@@ -113,23 +122,26 @@ namespace org.unirail{
             <see cref = 'Observer.Show_Code'/>
             <see cref = 'InCS'/>-- by default rest of the packs in C#  generate abstracted (without implementation)
          */
-        struct Agent /*ÿ*/ : Host{
-            public class Project /*ą*/ : Root{
-                string                  task; // Unique ID
-                string                  namespacE;
-                long                    time;
+        struct Agent /*ÿ*/ : Host
+        {
+            public class Project /*ą*/ : Root
+            {
+                string task; // Unique ID
+                string namespacE;
+                long time;
                 [D(0x1_FFFF)] Binary[,] source; // Max 130k zipped sources
 
-#region FIXED ORDER
+                #region FIXED ORDER
                 [D(0xFFFF)] Host.Pack.Field[,] fields;
-                [D(0xFFFF)] Host.Pack[,]       packs;
-                [D(0x1FF)]  Host[,]            hosts;    //512 max
-                [D(0xFF)]   Channel[,]         channels; // 512/2 = 256 max
-#endregion
+                [D(0xFFFF)] Host.Pack[,] packs;
+                [D(0x1FF)] Host[,] hosts;    //512 max
+                [D(0xFF)] Channel[,] channels; // 512/2 = 256 max
+                #endregion
 
-                public class Host : Root{
+                public class Host : Root
+                {
                     ushort uid;   // Layout ID
-                    Langs  langs; // Languages set to generate source code. A bit-per language.
+                    Langs langs; // Languages set to generate source code. A bit-per language.
 
                     /**
                         Value:  16 Least Significant Bits - hash_equal info
@@ -148,7 +160,8 @@ namespace org.unirail{
                     [D(65_000)] ushort[,] packs; // Local constants or enums, referred to as packs, are declared within the scope of the current host.
 
                     [Flags]
-                    public enum Langs : ushort{
+                    public enum Langs : ushort
+                    {
                         InCPP,
                         InRS,
                         InCS,
@@ -158,93 +171,97 @@ namespace org.unirail{
                         All = 0xFFFF
                     }
 
-                    public class Pack : Root{
-                        ushort  id;     // Pack's identifier
+                    public class Pack : Root
+                    {
+                        ushort id;     // Pack's identifier
                         ushort? parent; // Identifier of the parent pack
-                        ushort  uid;    // Layout identifier
+                        ushort uid;    // Layout identifier
 
                         ushort? nested_max; // Maximum cyclic depth
-                        bool    referred;   // Indicator of being referred
+                        bool referred;   // Indicator of being referred
 
                         [D(65_000)] int[,] fields;
                         [D(65_000)] int[,] static_fields;
 
-                        public class Field : Root{
+                        public class Field : Root
+                        {
                             [D(32)] int[,] dims; // Dimensions
 
                             uint? map_set_len;
                             uint? map_set_array;
 
                             ushort exT;
-                            uint?  exT_len;
-                            uint?  exT_array;
+                            uint? exT_len;
+                            uint? exT_array;
 
                             ushort? inT;
 
-                            long?                  min_value;
-                            long?                  max_value;
+                            long? min_value;
+                            long? max_value;
                             [MinMax(-1, 1)] sbyte? dir;
 
                             double? min_valueD;
                             double? max_valueD;
 
                             [MinMax(1, 7)] byte? bits;       // Can store/transfer a value in less than 7 bits
-                            byte?                null_value; // Value that substitutes NULL for bits-field or 255 if field is nullable primitive
-#region Map V params
+                            byte? null_value; // Value that substitutes NULL for bits-field or 255 if field is nullable primitive
+                            #region Map V params
                             ushort? exTV;
-                            uint?   exTV_len; // If exTV is string - max chars
-                            uint?   exTV_array;
+                            uint? exTV_len; // If exTV is string - max chars
+                            uint? exTV_array;
 
-                            ushort?                inTV;
-                            long?                  min_valueV;
-                            long?                  max_valueV;
+                            ushort? inTV;
+                            long? min_valueV;
+                            long? max_valueV;
                             [MinMax(-1, 1)] sbyte? dirV;
 
                             double? min_valueDV;
                             double? max_valueDV;
 
                             [MinMax(1, 7)] byte? bitsV;       // Can store/transfer a value in less than 7 bits
-                            byte?                null_valueV; // Value that substitutes NULL for bits-field or 255 if nullable primitive
-#endregion
+                            byte? null_valueV; // Value that substitutes NULL for bits-field or 255 if nullable primitive
+                            #endregion
 
-                            long?                       value_int;    // Constant value
-                            double?                     value_double; // Constant value
-                            max_1_000_chars             value_string; // Constant value
+                            long? value_int;    // Constant value
+                            double? value_double; // Constant value
+                            max_1_000_chars value_string; // Constant value
                             [D(255)] max_1_000_chars[,] array;        // Constant array values
 
-                            public enum DataType{
+                            public enum DataType
+                            {
                                 t_constants = 65535,
-                                t_enum_sw   = 65534,
-                                t_enum_exp  = 65533,
-                                t_flags     = 65532,
-                                t_bool      = 65531,
-                                t_int8      = 65530,
-                                t_binary    = 65529,
-                                t_uint8     = 65528,
-                                t_int16     = 65527,
-                                t_uint16    = 65526,
-                                t_char      = 65525,
-                                t_int32     = 65524,
-                                t_uint32    = 65523,
-                                t_int64     = 65522,
-                                t_uint64    = 65521,
-                                t_float     = 65520,
-                                t_double    = 65519,
-                                t_string    = 65518,
-                                t_map       = 65517,
-                                t_set       = 65516,
-                                t_subpack   = 65514,
+                                t_enum_sw = 65534,
+                                t_enum_exp = 65533,
+                                t_flags = 65532,
+                                t_bool = 65531,
+                                t_int8 = 65530,
+                                t_binary = 65529,
+                                t_uint8 = 65528,
+                                t_int16 = 65527,
+                                t_uint16 = 65526,
+                                t_char = 65525,
+                                t_int32 = 65524,
+                                t_uint32 = 65523,
+                                t_int64 = 65522,
+                                t_uint64 = 65521,
+                                t_float = 65520,
+                                t_double = 65519,
+                                t_string = 65518,
+                                t_map = 65517,
+                                t_set = 65516,
+                                t_subpack = 65514,
                             }
                         }
                     }
                 }
 
-                public class Channel : Root{
-                    ushort                hostL;
+                public class Channel : Root
+                {
+                    ushort hostL;
                     [D(0xFFFF)] ushort[,] hostL_transmitting_packs;
                     [D(0xFFFF)] ushort[,] hostL_related_packs;
 
-                    ushort                hostR;
+                    ushort hostR;
                     [D(0xFFFF)] ushort[,] hostR_transmitting_packs;
                     [D(0xFFFF)] ushort[,] hostR_related_packs;
 
@@ -252,14 +269,16 @@ namespace org.unirail{
 
                     ushort uid; // Layout ID
 
-                    public class Stage : Root{
+                    public class Stage : Root
+                    {
                         ushort timeout;
                         ushort uid; // Layout ID
 
                         [D(0xFFF)] Branch[,] branchesL;
                         [D(0xFFF)] Branch[,] branchesR;
 
-                        public class Branch{
+                        public class Branch
+                        {
                             ushort uid; // Layout ID
                             string doc;
                             ushort goto_stage; // Target stage
@@ -267,9 +286,10 @@ namespace org.unirail{
                             [D(0xFFFF)] ushort[,] packs;
                         }
 
-                        public enum Type : ushort{
-                            Exit      = ushort.MaxValue,
-                            None      = ushort.MaxValue - 1,
+                        public enum Type : ushort
+                        {
+                            Exit = ushort.MaxValue,
+                            None = ushort.MaxValue - 1,
                             Remaining = ushort.MaxValue - 2,
                         }
                     }
@@ -281,33 +301,39 @@ namespace org.unirail{
                 string task;
             }
 
-            public class Signup /*ă*/{
+            public class Signup /*ă*/
+            {
                 [D(50)] Binary[,] oauth; // OAuth token with a maximum of 50 characters
             }
 
-            public class Login /*Ă*/{
+            public class Login /*Ă*/
+            {
                 public ulong uid; // Unique identifier for the login
             }
 
             /*
              The first pack negotiates versions
             */
-            public class Version /*ÿ*/{
+            public class Version /*ÿ*/
+            {
                 public uint uid; // Unique identifier for the version
             }
 
 
-            public class Proto /*Ć*/{
-                string                 task; // Unique ID
-                string                 name;
+            public class Proto /*Ć*/
+            {
+                string task; // Unique ID
+                string name;
                 [D(512_000)] Binary[,] proto; // Max 65k zipped
             }
         }
 
-        class Entity{
+        class Entity
+        {
             Type tYpe;
 
-            public enum Type : byte{
+            public enum Type : byte
+            {
                 Project,
                 Host,
                 Pack,
@@ -322,21 +348,25 @@ namespace org.unirail{
         /**
         <see cref = 'InTS'/>
         */
-        struct Observer /*Ā*/ : Host{
-            public class Layout /*Ĉ*/{
+        struct Observer /*Ā*/ : Host
+        {
+            public class Layout /*Ĉ*/
+            {
                 byte split;
                 View host_packs;
                 View pack_fields;
 
-                class View{
-                    int   X; // Viewer parameters
-                    int   Y;
+                class View
+                {
+                    int X; // Viewer parameters
+                    int Y;
                     float zoom;
 
                     Map<uint, XY> id2xy; // Fast access to info by ID
                 }
 
-                public class XY{
+                public class XY
+                {
                     int x;
                     int y;
                 }
@@ -356,22 +386,25 @@ namespace org.unirail{
             // https://code.visualstudio.com/docs/editor/command-line#_launching-from-command-line
             //-g or --goto	When used with file:line{:character}, opens a file at a specific line and optional character position.
             //This argument is provided since some operating systems permit : in a file name.
-            public class Show_Code /*ĉ*/ : Entity{ } // Request to show entity in editor
+            public class Show_Code /*ĉ*/ : Entity { } // Request to show entity in editor
         }
 
-        interface Communication /*ÿ*/ : ChannelFor<Agent, Server>{
+        interface Communication /*ÿ*/ : ChannelFor<Agent, Server>
+        {
             interface Info_Result : // Packs set
                 _<
                     Server.Info,
                     Server.Result
-                >{ }
+                >
+            { }
 
             [Timeout(12)]
             interface Start /*ÿ*/ : L,
                                     _< /*ÿ*/
                                         Agent.Version,
                                         VersionMatching
-                                    >{ }
+                                    >
+            { }
 
             interface VersionMatching /*Ā*/ : R,
                                               _<                     /*Ā*/
@@ -381,14 +414,16 @@ namespace org.unirail{
                                               _<               /*ā*/
                                                   Server.Info, // Version not match. Replay the problem info
                                                   Exit
-                                              >{ }
+                                              >
+            { }
 
             interface Login /*ā*/ : L,
                                     _< /*Ă*/
                                         Agent.Login,
                                         Agent.Signup,
                                         LoginResponse
-                                    >{ }
+                                    >
+            { }
 
             [Timeout(12)]
             interface LoginResponse /*Ă*/ : R,
@@ -399,7 +434,8 @@ namespace org.unirail{
                                             _<               /*Ą*/
                                                 Server.Info, // Login expire/wrong ...etc.
                                                 Exit
-                                            >{ }
+                                            >
+            { }
 
             [Timeout(12)]
             interface TodoJobRequest /*ă*/ : L,
@@ -411,22 +447,26 @@ namespace org.unirail{
                                              _< /*Ć*/
                                                  Agent.Proto,
                                                  Proto
-                                             >{ }
+                                             >
+            { }
 
             interface Project /*Ą*/ : R,
                                       _< /*ć*/
                                           Info_Result,
                                           Exit
-                                      >{ }
+                                      >
+            { }
 
             interface Proto /*ą*/ : R,
                                     _< /*Ĉ*/
                                         Info_Result,
                                         Exit
-                                    >{ }
+                                    >
+            { }
         }
 
-        interface ObserverCommunication /*Ā*/ : ChannelFor<Agent, Observer>{
+        interface ObserverCommunication /*Ā*/ : ChannelFor<Agent, Observer>
+        {
             interface Start /*Ć*/ : L,
                                     _< /*ÿ*/
                                         Observer.Layout,
@@ -434,13 +474,15 @@ namespace org.unirail{
                                     >, _< /*Ā*/
                                         Agent.Project,
                                         Operate
-                                    >{ }
+                                    >
+            { }
 
             interface Layout /*ć*/ : L,
                                      _< /*ā*/
                                          Agent.Project,
                                          Operate
-                                     >{ }
+                                     >
+            { }
 
             interface Operate /*Ĉ*/ : R,
                                       _< /*Ă*/
@@ -450,14 +492,16 @@ namespace org.unirail{
                                       _< /*ă*/
                                           Observer.Up_to_date,
                                           RefreshProject
-                                      >{ }
+                                      >
+            { }
 
             interface RefreshProject /*ĉ*/ : L,
                                              _< /*Ą*/
                                                  Agent.Project,
                                                  Observer.Up_to_date,
                                                  Operate
-                                             >{ }
+                                             >
+            { }
         }
     }
 }

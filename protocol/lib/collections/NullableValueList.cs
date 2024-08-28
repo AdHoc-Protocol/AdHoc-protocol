@@ -44,9 +44,11 @@ namespace org.unirail.collections;
 ///</summary>
 ///<typeparam name="T">The type of elements in the list. Must be a value type.</typeparam>
 public interface NullableValueList<T>
-    where T : struct{
+    where T : struct
+{
     //Abstract class representing a read-only list of nullable values
-    abstract class R : ICloneable, IReadOnlyList<T?>, IEquatable<R>{
+    abstract class R : ICloneable, IReadOnlyList<T?>, IEquatable<R>
+    {
         //Enumerator implementation
         IEnumerator IEnumerable.GetEnumerator() => (this as IEnumerable<T?>).GetEnumerator();
 
@@ -57,13 +59,14 @@ public interface NullableValueList<T>
         public Enumerator GetEnumerator_() => new Enumerator(this);
 
         //Enumerator struct for nullable values
-        public struct Enumerator : IEnumerator<T?>{
-            private readonly R   _list;
-            private          int _index;
+        public struct Enumerator : IEnumerator<T?>
+        {
+            private readonly R _list;
+            private int _index;
 
             public Enumerator(R list)
             {
-                _list  = list;
+                _list = list;
                 _index = -1;
             }
 
@@ -122,7 +125,7 @@ public interface NullableValueList<T>
         //Gets the index of the specified value
         public int IndexOf(T? value)
         {
-            if( value == null )
+            if (value == null)
                 return nextNullIndex(0);
 
             var i = values.IndexOf(value.Value);
@@ -144,9 +147,9 @@ public interface NullableValueList<T>
         public object Clone()
         {
             var dst = (R)MemberwiseClone();
-            dst.nulls  = (BitList<bool>.RW)nulls.Clone();
+            dst.nulls = (BitList<bool>.RW)nulls.Clone();
             dst.values = new List<T>();
-            foreach( var item in values )
+            foreach (var item in values)
                 dst.values.Add(item);
 
             return dst;
@@ -163,7 +166,8 @@ public interface NullableValueList<T>
     }
 
     //Read-write implementation of the nullable list
-    class RW : R, IList<T?>{
+    class RW : R, IList<T?>
+    {
         //Gets or sets the value at the specified index
         public override T? this[int index]
         {
@@ -172,21 +176,21 @@ public interface NullableValueList<T>
                        null;
             set
             {
-                if( value.HasValue )
-                    if( nulls.get(index) )
+                if (value.HasValue)
+                    if (nulls.get(index))
                         values[nulls.rank(index) - 1] = value.Value;
                     else
                     {
                         nulls.Set1(index);
                         index = nulls.rank(index) - 1;
-                        if( index < Count )
+                        if (index < Count)
                             values.Insert(index, value.Value);
                         else
                             values.Add(value.Value);
                     }
-                else if( Count <= index )
+                else if (Count <= index)
                     nulls.Set0(index); //resize
-                else if( nulls.get(index) )
+                else if (nulls.get(index))
                 {
                     values.RemoveAt(nulls.rank(index) - 1);
                     nulls.Set0(index);
@@ -200,12 +204,12 @@ public interface NullableValueList<T>
             get => base.Count;
             set
             {
-                if( value < 1 )
+                if (value < 1)
                     Clear();
                 else
                 {
                     nulls.Count = value;
-                    if( nulls.cardinality() < values.Count )
+                    if (nulls.cardinality() < values.Count)
                         values.RemoveRange(nulls.cardinality(), values.Count - nulls.cardinality());
                 }
             }
@@ -221,7 +225,7 @@ public interface NullableValueList<T>
         //Adds an item to the list
         public void Add(T? item)
         {
-            if( item == null )
+            if (item == null)
                 nulls.Add(false);
             else
             {
@@ -233,7 +237,7 @@ public interface NullableValueList<T>
         //Adds an item at the specified index
         public RW Add(int index, T? item)
         {
-            if( index < Count )
+            if (index < Count)
                 Insert(index, item);
             else
                 this[index] = item;
@@ -254,7 +258,7 @@ public interface NullableValueList<T>
         //Copies the list items to an array starting at the specified array index
         public void CopyTo(T?[] array, int arrayIndex)
         {
-            for( var i = 0; i++ < Count; )
+            for (var i = 0; i++ < Count;)
                 array[i + arrayIndex] = this[i];
         }
 
@@ -262,7 +266,7 @@ public interface NullableValueList<T>
         public bool Remove(T? item)
         {
             var i = IndexOf(item);
-            if( i < 0 )
+            if (i < 0)
                 return false;
             RemoveAt(i);
             return true;
@@ -274,7 +278,7 @@ public interface NullableValueList<T>
         //Inserts an item at the specified index
         public void Insert(int index, T? item)
         {
-            if( item == null )
+            if (item == null)
                 nulls.Add(false);
             else
             {
@@ -286,10 +290,10 @@ public interface NullableValueList<T>
         //Removes the item at the specified index
         public void RemoveAt(int index)
         {
-            if( Count < 1 || Count <= index )
+            if (Count < 1 || Count <= index)
                 return;
 
-            if( nulls.get(index) )
+            if (nulls.get(index))
                 values.RemoveAt(nulls.rank(index) - 1);
             nulls.remove(index);
         }
@@ -300,7 +304,7 @@ public interface NullableValueList<T>
         //Constructor with specified length
         public RW(int length)
         {
-            nulls  = new BitList<bool>.RW(length);
+            nulls = new BitList<bool>.RW(length);
             values = new List<T>(length);
         }
 
@@ -313,7 +317,7 @@ public interface NullableValueList<T>
 
             nulls = new BitList<bool>.RW(false, count);
 
-            if( count < 1 )
+            if (count < 1)
             {
                 values = new List<T>(-count);
                 return;
@@ -321,9 +325,9 @@ public interface NullableValueList<T>
 
             values = new List<T>(count);
 
-            if( default_value == null )
+            if (default_value == null)
                 return;
-            while( 0 < --count )
+            while (0 < --count)
                 values.Add(default_value.Value);
         }
 
@@ -331,12 +335,12 @@ public interface NullableValueList<T>
         public RW(IEnumerator<T?> src, T? default_value, int count)
         {
             this.default_value = default_value;
-            nulls              = new BitList<bool>.RW(count);
-            values             = new List<T>(count);
+            nulls = new BitList<bool>.RW(count);
+            values = new List<T>(count);
 
-            while( src.MoveNext() && Count < count )
+            while (src.MoveNext() && Count < count)
                 Add(src.Current);
-            while( Count < count )
+            while (Count < count)
                 Add(default_value);
         }
 
@@ -350,7 +354,7 @@ public interface NullableValueList<T>
         //Sets values starting from the specified index
         public RW Set(int index, T?[] values)
         {
-            for( var i = values.Length; --i >= 0; )
+            for (var i = values.Length; --i >= 0;)
                 this[index + i] = values[i];
             return this;
         }
@@ -358,7 +362,7 @@ public interface NullableValueList<T>
         //Sets values starting from the specified index with source index and length
         public RW Set(int index, T?[] values, int src_index, int len)
         {
-            for( var i = len; --i >= 0; )
+            for (var i = len; --i >= 0;)
                 this[index + i] = values[src_index + i];
             return this;
         }
@@ -366,7 +370,7 @@ public interface NullableValueList<T>
         //Adds an array of items to the list
         public RW Add(T?[] items)
         {
-            if( items.Length == 0 )
+            if (items.Length == 0)
                 return this;
             var c = Count;
             this[Count + items.Length - 1] = default_value;
@@ -378,7 +382,7 @@ public interface NullableValueList<T>
         public RW AddAll(R src)
         {
             this[Count + src.Count - 1] = default_value;
-            for( int i = 0, s = src.Count; i < s; i++ )
+            for (int i = 0, s = src.Count; i < s; i++)
                 this[i] = src[i];
 
             return this;
@@ -387,7 +391,7 @@ public interface NullableValueList<T>
         //Adds all items from an enumerator
         public RW AddAll(IEnumerator<T?> src)
         {
-            while( src.MoveNext() )
+            while (src.MoveNext())
                 Add(src.Current);
             return this;
         }
@@ -409,7 +413,7 @@ public interface NullableValueList<T>
             nulls.Capacity(length);
             values.Capacity = length;
             var c = nulls.cardinality();
-            if( c < values.Count )
+            if (c < values.Count)
                 values.RemoveRange(c, values.Count - c);
             return this;
         }
@@ -418,9 +422,9 @@ public interface NullableValueList<T>
         public RW Swap(int index1, int index2)
         {
             int exist, empty;
-            if( nulls.get(index1) )
+            if (nulls.get(index1))
             {
-                if( nulls.get(index2) )
+                if (nulls.get(index2))
                 {
                     var a = nulls.rank(index1) - 1;
                     var b = nulls.rank(index2) - 1;
@@ -435,7 +439,7 @@ public interface NullableValueList<T>
                 nulls.Set0(index1);
                 nulls.Set1(index2);
             }
-            else if( nulls.get(index2) )
+            else if (nulls.get(index2))
             {
                 exist = nulls.rank(index2) - 1;
                 empty = nulls.rank(index1);

@@ -38,9 +38,11 @@ using System.Text;
 namespace org.unirail.collections;
 
 public interface BitsNullList<T>
-    where T : struct{
+    where T : struct
+{
     //Abstract class representing a read-only list of bits with nullable values
-    abstract class R : BitsList<T>.R{
+    abstract class R : BitsList<T>.R
+    {
         public T null_val { get; protected set; } //The value representing null
 
         //Constructor with bits per item and null value
@@ -85,24 +87,24 @@ public interface BitsNullList<T>
         //Converts the list to a string representation
         StringBuilder ToString(StringBuilder? dst)
         {
-            if( dst == null )
+            if (dst == null)
                 dst = new StringBuilder(Count * 4);
             else
                 dst.EnsureCapacity(dst.Length + Count * 4);
             var src = values[(uint)0];
-            for( int bp = 0, max = Count * bits, i = 1; bp < max; bp += bits, i++ )
+            for (int bp = 0, max = Count * bits, i = 1; bp < max; bp += bits, i++)
             {
-                var _bit  = BitsList<T>.bit((uint)bp);
+                var _bit = BitsList<T>.bit((uint)bp);
                 var index = (uint)(BitsList<T>.index((uint)bp) + 1);
                 var _value = (long)(ValueType)(BitsList<T>.BITS < _bit + bits ?
                                                    BitsList<T>.value(src, src = values[index], _bit, bits, mask) :
-                                                   BitsList<T>.value(src, _bit,                mask));
-                if( _value.Equals(null_val) )
+                                                   BitsList<T>.value(src, _bit, mask));
+                if (_value.Equals(null_val))
                     dst.Append("null");
                 else
                     dst.Append(_value);
                 dst.Append('\t');
-                if( i % 10 == 0 )
+                if (i % 10 == 0)
                     dst.Append('\t').Append(i / 10 * 10).Append('\n');
             }
 
@@ -114,17 +116,18 @@ public interface BitsNullList<T>
     }
 
     //Enumerator for iterating through the list
-    public struct Enumerator : IEnumerator<T?>, IEnumerator{
-        private readonly R   _list;
-        private          int _index;
+    public struct Enumerator : IEnumerator<T?>, IEnumerator
+    {
+        private readonly R _list;
+        private int _index;
 
         private T? _current;
 
         //Constructor initializing the enumerator with the list
         internal Enumerator(R list)
         {
-            _list    = list;
-            _index   = 0;
+            _list = list;
+            _index = 0;
             _current = default;
         }
 
@@ -145,13 +148,14 @@ public interface BitsNullList<T>
         //Resets the enumerator
         void IEnumerator.Reset()
         {
-            _index   = 0;
+            _index = 0;
             _current = default;
         }
     }
 
     //Read-write implementation of the list
-    class RW : R{
+    class RW : R
+    {
         //Constructor with bits per item and null value
         public RW(int bits_per_item, T null_val) : base(bits_per_item, null_val) { }
 
@@ -161,7 +165,8 @@ public interface BitsNullList<T>
         //Constructor with bits per item, null value, default value, and count
         public RW(int bits_per_item, T null_val, T? default_value, int Count) : base(bits_per_item, null_val, default_value == null ?
                                                                                                                   null_val :
-                                                                                                                  default_value.Value, Count) { }
+                                                                                                                  default_value.Value, Count)
+        { }
 
         //Sets the value at the specified index
         public void Set(int item, int value) => set(this, item, value);
@@ -170,7 +175,7 @@ public interface BitsNullList<T>
         public bool Remove(T? item)
         {
             var i = IndexOf(item);
-            if( i < 0 )
+            if (i < 0)
                 return false;
             removeAt(i);
             return true;
@@ -189,14 +194,14 @@ public interface BitsNullList<T>
 
         //Adds an item to the list
         public void Add1(T? value) => Add1(Count, value);
-        public void Add1(T  value) => Add1(Count, value);
+        public void Add1(T value) => Add1(Count, value);
 
         //Adds an item at the specified index
         public void Add1(int index, T? value) => Add1(index, value ?? null_val);
 
         public void Add1(int index, T src)
         {
-            if( index < Count )
+            if (index < Count)
                 add(this, index, src);
             else
                 Set(index, src);
@@ -204,7 +209,7 @@ public interface BitsNullList<T>
 
         //Removes the specified value from the list
         public void remove(T? value) => remove(this, value ?? null_val);
-        public void remove(T  value) => remove(this, value);
+        public void remove(T value) => remove(this, value);
 
         //Removes the item at the specified index
         public void removeAt(int item) => removeAt(this, item);
@@ -218,7 +223,7 @@ public interface BitsNullList<T>
         //Sets multiple values starting from the specified index
         public RW Set(int item, params T?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)values[i]!.Value);
@@ -228,7 +233,7 @@ public interface BitsNullList<T>
         //Sets multiple sbyte values starting from the specified index
         public RW Set(int item, params sbyte?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)(ValueType)values[i]!.Value);
@@ -238,7 +243,7 @@ public interface BitsNullList<T>
         //Sets multiple short values starting from the specified index
         public RW Set(int item, params short?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)(ValueType)values[i]!.Value);
@@ -248,7 +253,7 @@ public interface BitsNullList<T>
         //Sets multiple ushort values starting from the specified index
         public RW Set(int item, params ushort?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)(ValueType)values[i]!.Value);
@@ -258,7 +263,7 @@ public interface BitsNullList<T>
         //Sets multiple int values starting from the specified index
         public RW Set(int item, params int?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)(ValueType)values[i]!.Value);
@@ -268,7 +273,7 @@ public interface BitsNullList<T>
         //Sets multiple uint values starting from the specified index
         public RW Set(int item, params uint?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)(ValueType)values[i]!.Value);
@@ -278,7 +283,7 @@ public interface BitsNullList<T>
         //Sets multiple long values starting from the specified index
         public RW Set(int item, params long?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)(ValueType)values[i]!.Value);
@@ -288,7 +293,7 @@ public interface BitsNullList<T>
         //Sets multiple ulong values starting from the specified index
         public RW Set(int item, params ulong?[] values)
         {
-            for( var i = values.Length; -1 < --i; )
+            for (var i = values.Length; -1 < --i;)
                 set1(this, item + i, values[i] == null ?
                                          null_val :
                                          (T)(ValueType)values[i]!.Value);
@@ -374,10 +379,10 @@ public interface BitsNullList<T>
             get => base.Capacity();
             set
             {
-                if( value < 1 )
+                if (value < 1)
                 {
                     values = Array.Empty<ulong>();
-                    Count  = 0;
+                    Count = 0;
                 }
                 else
                     Capacity(value);
@@ -390,9 +395,9 @@ public interface BitsNullList<T>
             get => base.Count;
             set
             {
-                if( value < 1 )
+                if (value < 1)
                     Clear();
-                else if( base.Count < value )
+                else if (base.Count < value)
                     Set1(value - 1, default_value);
                 else
                     base.Count = value;

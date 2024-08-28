@@ -34,7 +34,8 @@ using System.Threading;
 
 namespace org.unirail.collections;
 
-public class RingBuffer<T>{
+public class RingBuffer<T>
+{
     //Buffer to hold the data
     private readonly T[] buffer;
 
@@ -66,7 +67,7 @@ public class RingBuffer<T>{
     public bool GetMultiThreaded(ref T value)
     {
         //Spin wait until the lock is free
-        while( Interlocked.Exchange(ref lockState, 1) == 1 )
+        while (Interlocked.Exchange(ref lockState, 1) == 1)
             Thread.SpinWait(SpinWaitDelay);
         //Get the data from the buffer
         var result = Get(ref value);
@@ -79,7 +80,7 @@ public class RingBuffer<T>{
     public bool Get(ref T value)
     {
         //If the read and write indices are the same, the buffer is empty
-        if( readIndex == writeIndex )
+        if (readIndex == writeIndex)
             return false;
         //Get the data from the buffer and increment the read index
         value = buffer[(int)readIndex++ & mask];
@@ -90,10 +91,10 @@ public class RingBuffer<T>{
     public bool PutMultiThreaded(T value)
     {
         //If the buffer is full, return false
-        if( buffer.Length <= Count )
+        if (buffer.Length <= Count)
             return false;
         //Spin wait until the lock is free
-        while( Interlocked.Exchange(ref lockState, 1) == 1 )
+        while (Interlocked.Exchange(ref lockState, 1) == 1)
             Thread.SpinWait(SpinWaitDelay);
         //Put the data into the buffer
         var result = Put(value);
@@ -106,7 +107,7 @@ public class RingBuffer<T>{
     public bool Put(T value)
     {
         //If the buffer is full, return false
-        if( buffer.Length <= Count )
+        if (buffer.Length <= Count)
             return false;
         //Put the data into the buffer and increment the write index
         buffer[(int)writeIndex++ & mask] = value;
@@ -117,7 +118,7 @@ public class RingBuffer<T>{
     public void Clear()
     {
         //Reset the read and write indices
-        readIndex  = 0;
+        readIndex = 0;
         writeIndex = 0;
     }
 }

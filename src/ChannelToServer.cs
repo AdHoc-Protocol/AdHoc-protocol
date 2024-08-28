@@ -44,8 +44,10 @@ using Tommy;
 using org.unirail.Agent;
 using Version = org.unirail.Agent.Version;
 
-namespace org.unirail{
-    public class ChannelToServer : Communication.Receiver.Receivable.Handler{
+namespace org.unirail
+{
+    public class ChannelToServer : Communication.Receiver.Receivable.Handler
+    {
         private static ProjectImpl? project;
 
         public static void Start(ProjectImpl project)
@@ -63,18 +65,18 @@ namespace org.unirail{
         }
 
 
-#region refresh Authorization Code
+        #region refresh Authorization Code
         public static ulong? AuthorizationCode()
         {
-            if( !AdHocAgent.app_props.HasKey("PersonalAdHocSecretAuthorizationCode") ) return null;
+            if (!AdHocAgent.app_props.HasKey("PersonalAdHocSecretAuthorizationCode")) return null;
             var current = AdHocAgent.app_props["PersonalAdHocSecretAuthorizationCode"].AsString;
 
 
             try { return ulong.Parse(current, NumberStyles.HexNumber); }
-            catch( Exception ex )
+            catch (Exception ex)
             {
                 AdHocAgent.LOG.Error("The file {app_props_file}  contains wrong `PersonalAdHocSecretAuthorizationCode` do you want update it? Enter 'N' - if no and exit.", AdHocAgent.app_props_file);
-                switch( Console.Read() )
+                switch (Console.Read())
                 {
                     case 'N':
                     case 'n':
@@ -110,30 +112,30 @@ namespace org.unirail{
 
                 oauth = ctx.Request.QueryString["code"];
                 var resp = ctx.Response;
-                resp.ContentType     = "text/html";
+                resp.ContentType = "text/html";
                 resp.ContentEncoding = Encoding.ASCII;
                 resp.ContentLength64 = close_browser_bytes.LongLength;
 
                 resp.OutputStream.Write(close_browser_bytes);
                 resp.OutputStream.Close();
             }
-            catch( Exception e )
+            catch (Exception e)
             {
                 AdHocAgent.LOG.Error(e, "Error while updatePersonalAdHocSecretAuthorizationCode");
                 throw;
             }
 
-            if( oauth == null ) AdHocAgent.LOG.Error("Authorization failure");
+            if (oauth == null) AdHocAgent.LOG.Error("Authorization failure");
             return oauth;
         }
-#endregion
+        #endregion
 
-        static ulong?  login;
+        static ulong? login;
         static string? oauth;
 
         private static void Start()
         {
-            if( (login = AuthorizationCode()) == null && (oauth = updatePersonalAdHocSecretAuthorizationCode()) == null ) return;
+            if ((login = AuthorizationCode()) == null && (oauth = updatePersonalAdHocSecretAuthorizationCode()) == null) return;
 
             Start(() => to_server!.send(new Version(VER))); //inform server about client version
         }
@@ -141,7 +143,7 @@ namespace org.unirail{
 
         private static void Start(Action onConnect)
         {
-            if( to_server == null ) try_to_connect(0, AdHocAgent.app_props["server"].AsArray.RawArray, onConnect);
+            if (to_server == null) try_to_connect(0, AdHocAgent.app_props["server"].AsArray.RawArray, onConnect);
             else onConnect();
         }
 
@@ -151,14 +153,14 @@ namespace org.unirail{
             var connection = connections![i].AsString.Value;
             AdHocAgent.LOG.Information("Connecting to the {connection}", connection);
 
-            if( connection.StartsWith("ws:", StringComparison.CurrentCultureIgnoreCase) || connection.StartsWith("wss:", StringComparison.CurrentCultureIgnoreCase) )
+            if (connection.StartsWith("ws:", StringComparison.CurrentCultureIgnoreCase) || connection.StartsWith("wss:", StringComparison.CurrentCultureIgnoreCase))
                 http_client.Connect(new Uri(connection),
                                     dst =>
                                     {
                                         to_server = dst;
                                         http_client.onEvent = (ch, ev) =>
                                                               {
-                                                                  switch( ev )
+                                                                  switch (ev)
                                                                   {
                                                                       case (int)Network.Channel.Event.EXT_INT_DISCONNECT:
                                                                           AdHocAgent.LOG.Warning("Peer {connection} dropped connection", connection);
@@ -176,17 +178,17 @@ namespace org.unirail{
                                     ex =>
                                     {
                                         AdHocAgent.LOG.Warning("The connection to {connection} has failed.", connection);
-                                        if( ++i < connections.Count ) try_to_connect(i, connections, onConnect);
+                                        if (++i < connections.Count) try_to_connect(i, connections, onConnect);
                                         else AdHocAgent.exit("There are no servers available.");
                                     },
                                     TimeSpan.FromSeconds(10));
             else
             {
-                var uri       = new Uri("http://" + connection);
+                var uri = new Uri("http://" + connection);
                 var ipAddress = IPAddress.Loopback;
 
-                if( !uri.Host.ToLower().Equals("localhost") )
-                    if( !IPAddress.TryParse(uri.Host, out ipAddress) )
+                if (!uri.Host.ToLower().Equals("localhost"))
+                    if (!IPAddress.TryParse(uri.Host, out ipAddress))
                     {
                         var adrrs = Dns.GetHostEntry(uri.Host).AddressList;
                         ipAddress = adrrs[new Random().Next(0, adrrs.Length - 1)];
@@ -198,7 +200,7 @@ namespace org.unirail{
                                        to_server = dst;
                                        tcp_client.onEvent = (ch, ev) =>
                                                             {
-                                                                switch( ev )
+                                                                switch (ev)
                                                                 {
                                                                     case (int)Network.Channel.Event.EXT_INT_DISCONNECT:
                                                                         AdHocAgent.LOG.Warning("Peer {connection} has dropped the connection.", connection);
@@ -215,7 +217,7 @@ namespace org.unirail{
                                    ex =>
                                    {
                                        AdHocAgent.LOG.Warning("The connection to {connection} has failed.", connection);
-                                       if( ++i < connections.Count ) try_to_connect(i, connections, onConnect);
+                                       if (++i < connections.Count) try_to_connect(i, connections, onConnect);
                                        else AdHocAgent.exit("There are no servers available.");
                                    },
                                    TimeSpan.FromSeconds(10));
@@ -228,7 +230,7 @@ namespace org.unirail{
 
 
         private static readonly Network.TCP<Communication.Transmitter, Communication.Receiver>.WebSocket.Client http_client = new("http_client", Communication.new_WebSocket_channel, 1024, TimeSpan.FromMinutes(10));
-        private static readonly Network.TCP<Communication.Transmitter, Communication.Receiver>.Client           tcp_client  = new("tcp_client", Communication.new_TCP_channel, 1024, TimeSpan.FromMinutes(10));
+        private static readonly Network.TCP<Communication.Transmitter, Communication.Receiver>.Client tcp_client = new("tcp_client", Communication.new_TCP_channel, 1024, TimeSpan.FromMinutes(10));
 
 
         public static Communication.Transmitter? to_server;
@@ -238,9 +240,9 @@ namespace org.unirail{
 
         public void Received(Communication.Receiver via, Invitation invitation) //server invite agent to upload client task
         {
-            if( via.curr_stage == Communication.Stages.Login ) //the server and client protocol versions are matching
+            if (via.curr_stage == Communication.Stages.Login) //the server and client protocol versions are matching
             {
-                if( login == null )
+                if (login == null)
                     Start(() => to_server!.send(new Signup { _oauth = Encoding.ASCII.GetBytes(oauth!) }));
                 else
                     Start(() => to_server!.send(new Login { uid = login.Value }));
@@ -248,13 +250,13 @@ namespace org.unirail{
                 return;
             }
 
-            if( via.curr_stage == Communication.Stages.TodoJobRequest )
+            if (via.curr_stage == Communication.Stages.TodoJobRequest)
             {
                 //invitation may contains new user id
-                if( AdHocAgent.app_props.HasKey("PersonalAdHocSecretAuthorizationCode") )
+                if (AdHocAgent.app_props.HasKey("PersonalAdHocSecretAuthorizationCode"))
                 {
                     var current = AuthorizationCode();
-                    if( current != null && current.Value == invitation.uid ) goto code_ok;
+                    if (current != null && current.Value == invitation.uid) goto code_ok;
                     AdHocAgent.app_props["PersonalAdHocSecretAuthorizationCode"].AsString.Value = invitation.uid.ToString("X");
                 }
                 else AdHocAgent.app_props.Add("PersonalAdHocSecretAuthorizationCode", new TomlString { Value = invitation.uid.ToString("X") });
@@ -264,10 +266,10 @@ namespace org.unirail{
                 writer.Flush();
                 writer.Close();
 
-                code_ok:
+            code_ok:
 
-                if( proto == null )
-                    if( AdHocAgent.provided_path.EndsWith(".cs") )
+                if (proto == null)
+                    if (AdHocAgent.provided_path.EndsWith(".cs"))
                         /*if (new FileInfo(AdHocAgent.provided_path).IsReadOnly) //task was uploaded, requesting result
                             Channel.send(new RequestResult() { task = AdHocAgent.task });
                         else*/
@@ -283,22 +285,22 @@ namespace org.unirail{
 
             using var zipped_bytes = new MemoryStream(pack._result!);
 
-            if( pack.task!.EndsWith(".cs") )
+            if (pack.task!.EndsWith(".cs"))
             {
                 AdHocAgent.LOG.Information("Obtaining the generated code");
                 try
                 {
-                    if( Directory.Exists(AdHocAgent.raw_files_dir_path) ) Directory.Delete(AdHocAgent.raw_files_dir_path, true);
+                    if (Directory.Exists(AdHocAgent.raw_files_dir_path)) Directory.Delete(AdHocAgent.raw_files_dir_path, true);
 
                     AdHocAgent.unzip(zipped_bytes, AdHocAgent.raw_files_dir_path); // extract into the destination_dir_path/project_name
                     new FileInfo(AdHocAgent.provided_path).IsReadOnly = false;     // remove `file uploaded` mark
 
                     AdHocAgent.LOG.Information("Received result of the task {task} into the {folder}", pack.task!, AdHocAgent.raw_files_dir_path);
-                    if( pack.info != null ) AdHocAgent.LOG.Information("Information:\n{info}", pack.info); //output info into console
+                    if (pack.info != null) AdHocAgent.LOG.Information("Information:\n{info}", pack.info); //output info into console
 
                     AdHocAgent.Deployment.deploy(AdHocAgent.raw_files_dir_path); //code deployment is starting
                 }
-                catch( Exception e )
+                catch (Exception e)
                 {
                     Console.WriteLine(e);
                     throw;
@@ -310,29 +312,29 @@ namespace org.unirail{
             AdHocAgent.LOG.Information("Receiving result of .proto format conversion");
             AdHocAgent.unzip(zipped_bytes, AdHocAgent.destination_dir_path);
 
-            if( !string.IsNullOrEmpty(pack.info) ) Console.Out.WriteLine($"Information \n {pack.info}:\n"); //output info into console
+            if (!string.IsNullOrEmpty(pack.info)) Console.Out.WriteLine($"Information \n {pack.info}:\n"); //output info into console
             AdHocAgent.exit("Here is the result of the .proto format conversion: " + AdHocAgent.destination_dir_path, 0);
         }
 
 
         public void Received(Communication.Receiver via, Info pack)
         {
-            if( via.curr_stage == Communication.Stages.VersionMatching ) //the agent and server have incompatible protocol versions
+            if (via.curr_stage == Communication.Stages.VersionMatching) //the agent and server have incompatible protocol versions
             {
                 AdHocAgent.LOG.Error("{}", pack.info);
                 AdHocAgent.exit("Resolve the issue and try again.");
             }
-            else if( via.curr_stage == Communication.Stages.Login )
+            else if (via.curr_stage == Communication.Stages.Login)
             {
                 via.channel.Close();
 
                 AdHocAgent.LOG.Error("{}", pack.info);
-                if( !pack.info.Contains("PersonalAdHocSecretAuthorizationCode") ) return;
+                if (!pack.info.Contains("PersonalAdHocSecretAuthorizationCode")) return;
 
                 Task.Run(() => //===================== NEVER BLOCK IN HANDLERS !!!!
                          {
                              AdHocAgent.LOG.Error("Do you want to try re-authorization? Enter 'N' - if no and exit");
-                             switch( Console.Read() )
+                             switch (Console.Read())
                              {
                                  case 'N':
                                  case 'n':

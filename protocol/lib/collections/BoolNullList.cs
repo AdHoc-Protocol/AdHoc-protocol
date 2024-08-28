@@ -34,18 +34,20 @@ using System;
 
 namespace org.unirail.collections;
 
-public interface BoolNullList{
+public interface BoolNullList
+{
     //Abstract class representing a read-only list of nullable bool values
-    abstract class R : BitsList<byte>.R{
+    abstract class R : BitsList<byte>.R
+    {
         //Indexer to get nullable bool values
         public new virtual bool? this[int index]
         {
             get => base[index] switch
-                   {
-                       1 => true,
-                       0 => false,
-                       _ => null
-                   };
+            {
+                1 => true,
+                0 => false,
+                _ => null
+            };
             set => throw new NotImplementedException();
         }
 
@@ -59,21 +61,23 @@ public interface BoolNullList{
         protected R(bool? default_value, int Count) : base(2, (byte)(default_value == null ? 2
                                                                      : default_value.Value ? 1
                                                                                              : 0),
-                                                           Count) { }
+                                                           Count)
+        { }
 
         //Clones the current object
         public new R Clone() => (R)base.Clone();
     }
 
     //Read-write implementation of the nullable bool list
-    class RW : R{
+    class RW : R
+    {
         //Removes the specified nullable bool value
         public bool Remove(bool? item)
         {
-            var i = IndexOf((byte)(item == null  ? 2
+            var i = IndexOf((byte)(item == null ? 2
                                    : item!.Value ? 1
                                                    : 0));
-            if( i < 0 )
+            if (i < 0)
                 return false;
             removeAt(i);
             return true;
@@ -169,7 +173,7 @@ public interface BoolNullList{
         //Sets the item at the specified index to the specified nullable bool value
         public RW Set1(int item, bool? value)
         {
-            set1(this, item, (byte)(value == null  ? 2
+            set1(this, item, (byte)(value == null ? 2
                                     : value!.Value ? 1
                                                      : 0));
             return this;
@@ -178,7 +182,7 @@ public interface BoolNullList{
         //Sets values starting from the specified index with an array of non-nullable bool values
         public RW set(int index, params bool[] values)
         {
-            for( int i = 0, max = values.Length; i < max; i++ )
+            for (int i = 0, max = values.Length; i < max; i++)
                 Set1(index + i, values[i]);
             return this;
         }
@@ -186,7 +190,7 @@ public interface BoolNullList{
         //Sets values starting from the specified index with an array of nullable bool values
         public RW set(int index, params bool?[] values)
         {
-            for( int i = 0, max = values.Length; i < max; i++ )
+            for (int i = 0, max = values.Length; i < max; i++)
                 Set1(index + i, values[i]);
             return this;
         }
@@ -211,10 +215,10 @@ public interface BoolNullList{
             get => Capacity();
             set
             {
-                if( value < 1 )
+                if (value < 1)
                 {
                     values = Array.Empty<ulong>();
-                    Count  = 0;
+                    Count = 0;
                 }
                 else
                     Capacity(value);
@@ -227,9 +231,9 @@ public interface BoolNullList{
             get => base.Count;
             set
             {
-                if( value < 1 )
+                if (value < 1)
                     Clear();
-                else if( base.Count < value )
+                else if (base.Count < value)
                     set1(this, value - 1, default_value);
                 else
                     base.Count = value;

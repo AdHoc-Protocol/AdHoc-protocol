@@ -209,7 +209,7 @@ namespace org.unirail
                                                               Console.WriteLine(channel.host + ":Received connection from " + channel.peer_ip);
                                                               return;
                                                           case (int)Network.Channel.Event.INT_EXT_CONNECT:
-                                                              Console.WriteLine(channel.host + ":Connected  to " + channel.peer_ip);
+                                                              Console.WriteLine(channel.host + ":Connected to " + channel.peer_ip);
                                                               return;
                                                           case (int)Network.Channel.Event.EXT_INT_DISCONNECT:
                                                               Console.WriteLine(channel.host + ":Remote peer " + channel.peer_ip + " has dropped the connection.");
@@ -1262,14 +1262,18 @@ namespace org.unirail
 
                 private readonly Thread maintenance_thread;
 
-                public void maintain() { maintenance_thread.Interrupt(); } //kick maintenance
+                // Async forces the maintenance thread to wake up and perform maintenance immediately,
+                // regardless of the current schedule or timeout.
+                public void maintain() => maintenance_thread.Interrupt(); //kick maintenance
 
-                public long minimal_maintain_timeout = 5000L;
+                public long maintenance_duty_cycle = 5000L;
 
-                //return timeout of next maintenance in milliseconds
-                public TimeSpan maintenance(long time)
+                // This method iterates through all active channels to determine the time
+                // for the next maintenance operation. It can be overridden if a different
+                // maintenance calculation logic is required
+                protected virtual TimeSpan maintenance(long time)
                 {
-                    var timeout = minimal_maintain_timeout;
+                    var timeout = maintenance_duty_cycle;
                     for (var channel = channels; channel != null; channel = channel.next)
                         if (channel.is_active)
                             timeout = Math.Min(timeout, channel.maintenance(time));

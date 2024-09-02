@@ -91,7 +91,13 @@ namespace org.unirail
             get
             {
                 var file = Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "AdHocAgent.toml");
-                if (File.Exists(file)) return file;
+
+                if (File.Exists(file))
+                {
+                    LOG.Information("Using the AdHocAgent Configuration File {file}", file);
+                    return file;
+                }
+
                 var toml = File.OpenWrite(file);
                 Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Templates.AdHocAgent.toml")!.CopyToAsync(toml);
                 LOG.Warning("The application configuration file {file} has been extracted from the template. Please note that its content may be outdated.", file);

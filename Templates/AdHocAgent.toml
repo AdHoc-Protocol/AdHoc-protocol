@@ -2,7 +2,7 @@
 
 # =============================== Attempting to establish connections to the server in sequential order. ==============================
 
-server = ["wss://unirail.org:8691", "223.255.167.58:8691"]
+server = ["wss://unirail.org"]
 
 
 #===============================Path to the 7-Zip console executable.  https://7-zip.org/download.html set latest version!

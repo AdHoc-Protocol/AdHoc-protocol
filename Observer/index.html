@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+	<meta charset = "UTF-8">
+	<title>AdHoc protocol diagram</title>
+	<!--    never change  style order    -->
+	<style id = "shared-css">
+		
+		.InCPP {
+			font-weight: bold;
+			background-color: #004481;
+			color: white;
+			text-wrap: wrap;
+		}
+		
+		.InRS {
+			font-weight: bold;
+			background-color: #ee4d02;
+			color: white;
+			/*https://js.cytoscape.org/#style/labels*/
+			text-wrap: wrap;
+			
+		}
+		
+		.InJAVA {
+			font-weight: bold;
+			background-color: #007698;
+			color: #f68f1e;
+			text-wrap: wrap;
+		}
+		
+		.InCS {
+			font-weight: bold;
+			background-color: #652772;
+			color: white;
+			text-wrap: wrap;
+		}
+		
+		.InGO {
+			font-weight: bold;
+			background-color: #28b7a9;
+			color: white;
+			text-wrap: wrap;
+		}
+		
+		.InTS {
+			font-weight: bold;
+			background-color: #2f74bf;
+			color: white;
+			text-wrap: wrap;
+			
+		}
+	
+	</style>
+	
+	<style id = "channels-css">
+		/*probably take a look at https://github.com/saadeghi/daisyui/blob/master/src/theming/themes.js*/
+		.channel {
+			/*https://js.cytoscape.org/#style/node-body*/
+			width: 5px;
+			/*https://js.cytoscape.org/#style/labels*/
+			text-outline-color: yellow;
+			text-outline-width: 1;
+			font-weight: bold;
+			background-color: steelblue;
+		}
+		
+		.packA {
+			border-color: black;
+			background-color: lightsalmon;
+		}
+		
+		.packB {
+			
+			border-color: black;
+			background-color: lightblue;
+		}
+		
+		.init_stage {
+			/*https://js.cytoscape.org/#style/node-body*/
+			border-width: 0;
+			background-opacity: 0;
+			/*https://js.cytoscape.org/#style/labels*/
+			color: black;
+			text-outline-color: white;
+			
+			text-outline-width: 3;
+			font-weight: bold;
+		}
+		
+		.stage {
+			/*https://js.cytoscape.org/#style/node-body*/
+			border-width: 0;
+			background-opacity: 0;
+			/*https://js.cytoscape.org/#style/labels*/
+			font-weight: bold;
+		}
+		
+		.stage_body {
+			/*https://js.cytoscape.org/#style/node-body*/
+			border-width: 1;
+			background-color: #00abd6
+		}
+		
+		.branch_body {
+			/*https://js.cytoscape.org/#style/node-body*/
+			border-width: 1;
+			background-color: #525ff3
+		}
+		
+		.pack {
+			
+			border-style: solid;
+			border-color: black;
+		}
+	
+	</style>
+	
+	<style id = "host_packs-css">
+		.host {
+			text-outline-color: greenyellow;
+			text-outline-width: 2;
+			
+			font-weight: bold;
+		}
+		
+		.channel {
+			text-outline-color: yellow;
+			text-outline-width: 2;
+			width: 5px;
+			font-weight: bold;
+		}
+	</style>
+	<style id = "pack_fields-css">
+		
+		
+		.pack {
+			font-weight: bold;
+		}
+		
+		.pack_top_container {
+			text-outline-color: lightgray;
+			text-outline-width: 2;
+		}
+		
+		.empty_pack {
+			font-weight: bold;
+			text-outline-width: 0;
+		}
+		
+		
+		.field {
+			border-color: black;
+		}
+	</style>
+	
+	<style>
+		
+		html, body {
+			
+			height: 100%;
+			background: #414141; /*background color of the observer*/
+		}
+		
+		body {
+			overflow-y: hidden;
+		}
+	
+	</style>
+
+</head>
+<body>
+
+<input id = "search_input"
+       onfocusout = "this.value=''; this.style.display = 'none';"
+       oninput = "this.style.width = 5 + this.value.length + 'ch';"
+       type = "search"
+       style = "font-size:20px; border:2px solid black; position: absolute; z-index: 1; visibility: hidden;
+     display: block; "
+       list = "search_input_list"/>
+
+<datalist id = "search_input_list"></datalist>
+
+<div id = "project_info"
+     style = "visibility: hidden;
+     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "project_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	<button id = "save_layout">Save layout</button>
+</div>
+
+<div id = "channel_info"
+     style = "visibility: hidden;
+     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "channel_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	
+	<div id = "channel_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "channel_path"></div>
+
+</div>
+
+<div id = "host_info"
+     style = "visibility: hidden;
+     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "host_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	
+	<div id = "host_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "host_path"></div>
+
+</div>
+
+
+<div id = "pack_info"
+     style = "visibility: hidden;
+     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
+	
+	<div id = "pack_doc"
+	     style = "white-space: pre;font-family: monospace"></div>
+	
+	<div id = "pack_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "pack_path"></div>
+
+</div>
+
+<div id = "lang_info"
+     style = "visibility: hidden;
+     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; font-weight: bold; padding: 5px;align-content: center;"></div>
+	
+	<div id = "lang_doc"
+	     style = "white-space: pre;font-size: large"></div>
+	
+	<div id = "lang_role"
+	     style = "white-space: pre;"></div>
+	
+	<div id = "lang_path"></div>
+
+</div>
+
+
+<div id = "field_info"
+     style = "visibility: hidden;
+     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
+	
+	<div class = "div_header"
+	     style = "cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;">4
+	</div>
+	
+	<div id = "field_doc"
+	     style = "white-space: pre;font-family: monospace">
+		
+		<b>Full path:</b>
+		<div id = "field_path"></div>
+	</div>
+	<div id = "field_role"></div>
+
+</div>
+
+<div id = "channels"
+     style = "
+     visibility: hidden;
+     padding: 5px;
+     background: #06d6a0;
+     overflow:hidden;
+     resize: both;
+     display: flex;
+     flex-direction: column;
+	">
+	<div class = "div_header"
+	     style = "
+         cursor: move;
+         padding: 5px;
+         align-content: center;
+         background-color: #2196F3;
+         color: #fff;
+         flex: 0 0 auto;
+        ">Channel's internal dataflow
+	</div>
+	
+	<div id = "div_body"
+	     style = "flex: 1 1 auto; height: 100% "></div>
+</div>
+
+<div id = "host_packs"
+     style = "
+     left: 0;
+        top: 0;
+        height: 100%;
+        width: 50%;
+        position: absolute;"></div>
+<div id = "pack_fields"
+     style = "
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        position: absolute;"></div>
+<div id = "splitter"
+     style = "
+        top: 0;
+        left: 50%;
+        width: 5px;
+        height: 100%;
+        position: absolute;
+        cursor: ew-resize;
+        background-color: gold;"></div>
+
+
+<div id = "error_banner"
+     class = "FadeOut"
+     style = "
+            position: fixed;
+            font-size: 1vw;
+            top: 50%;
+            left: 50%;
+            white-space: pre;
+            transform:  translate(-50%, -50%) rotate(-45deg);
+            color: red;
+            visibility: hidden;
+     display: block;
+                opacity: 0;
+		"></div>
+
+<script type = "text/javascript">
+	document.addEventListener('DOMContentLoaded', () => {
+		
+		document.getElementById('splitter')
+				.addEventListener('mousedown',
+						mousedown => {
+							const splitter = mousedown.target
+							const R = splitter.previousElementSibling;
+							const L = R.previousElementSibling;
+							const w = splitter.getBoundingClientRect().width * 2
+							
+							const W = splitter.parentElement.getBoundingClientRect().width
+							
+							function splitterDragging(mousemove) {
+								const L_width = (mousemove.clientX - w) * 100 / W
+								L.style.width = R.style.left = splitter.style.left = `${L_width}%`;
+								R.style.width = `${100 - L_width}%`;
+							}
+							
+							function stopSplitterDragging(mouseup) {
+								document.removeEventListener('mousemove', splitterDragging);// Remove the handlers of `mousemove` and `mouseup`
+								document.removeEventListener('mouseup', stopSplitterDragging);
+							}
+							
+							document.addEventListener('mousemove', splitterDragging);
+							document.addEventListener('mouseup', stopSplitterDragging);
+						});
+		
+		
+		for (const div of document.getElementsByClassName('div_header'))  //draggable headers
+			div.addEventListener('mousedown',
+					mousedown => {
+						mousedown.preventDefault();
+						let x = mousedown.clientX;
+						let y = mousedown.clientY;
+						
+						function dragDIV(e) {
+							e.preventDefault();
+							const dx = x - e.clientX;
+							const dy = y - e.clientY;
+							x = e.clientX;
+							y = e.clientY;
+							
+							const p = div.parentNode
+							p.style.top = (p.offsetTop - dy) + "px";
+							p.style.left = (p.offsetLeft - dx) + "px";
+							const onshift = p['onshift']
+							if (onshift) onshift(dx, dy)
+						}
+						
+						function stopDragDIV() {
+							document.removeEventListener('mousemove', dragDIV);
+							document.removeEventListener('mouseup', stopDragDIV);
+						}
+						
+						document.addEventListener('mousemove', dragDIV);
+						document.addEventListener('mouseup', stopDragDIV);
+					});
+	});
+</script>
+
+<script src = "observer.js"></script>
+</body>
+</html>

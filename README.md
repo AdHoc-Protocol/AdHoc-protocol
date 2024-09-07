@@ -1652,3 +1652,16 @@ result
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/4c485e72-fea2-4886-b1aa-28444657fe71)
 </details>
+
+* Ask questions you’re wondering about.
+* Share ideas.💡
+* Engage with other community members.
+
+[AdHoc Agent and general forum](https://github.com/AdHoc-Protocol/AdHoc-protocol/discussions)  
+[TypeScript generator forum](https://github.com/AdHoc-Protocol/InTS/discussions)  
+[Java generator forum](https://github.com/AdHoc-Protocol/InJAVA/discussions)   
+[C# generator forum](https://github.com/AdHoc-Protocol/InCS/discussions)  
+C++ generator forum   
+RUST generator forum  
+Swift generator forum  
+GO generator forum  

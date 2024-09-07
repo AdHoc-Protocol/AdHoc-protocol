@@ -16,32 +16,32 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="..\Observer\Observer\index.html">
-        <Link>Observer\index.html</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <EmbeddedResource Include="..\Observer\Observer\observer.js">
-        <Link>Observer\observer.js</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <EmbeddedResource Include="..\Observer\Observer\observer.js.map">
-        <Link>Observer\observer.js.map</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
       <None Remove="templ\DescriptionFile.md" />
      
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="..\Observer\Observer\favicon.ico">
-        <Link>Observer\favicon.ico</Link>
+      <None Remove="Templates\AdHocAgent.toml" />
+      <EmbeddedResource Include="Templates\AdHocAgent.toml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Templates\AdHocAgent.toml" />
-      <EmbeddedResource Include="Templates\AdHocAgent.toml">
+      <_DeploymentManifestIconFile Remove="..\Observer\Observer\favicon.ico" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Observer\observer.js" />
+      <EmbeddedResource Include="Observer\observer.js">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Observer\index.html" />
+      <EmbeddedResource Include="Observer\index.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Observer\favicon.ico" />
+      <EmbeddedResource Include="Observer\favicon.ico">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
     </ItemGroup>

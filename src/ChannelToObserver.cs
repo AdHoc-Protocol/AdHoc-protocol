@@ -36,6 +36,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.WebSockets;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -171,7 +172,7 @@ namespace org.unirail
             var listener = new HttpListener();
             var url = $"http://localhost:{port}/";
             listener.Prefixes.Add(url);
-            listener.IgnoreWriteExceptions = true; //ignore "The specified network name is no longer available" 
+            listener.IgnoreWriteExceptions = true; //ignore "The specified network name is no longer available"
             listener.Start();
             try
             {
@@ -191,16 +192,15 @@ namespace org.unirail
                 if (ctx.Request.IsWebSocketRequest) StartWebSocketAsync(ctx);
                 else
                 {
-                    var filename = ctx.Request.Url!.AbsolutePath;
-                    Debug.Print(filename);
+                    var filename = ctx.Request.Url!.AbsolutePath[1..];
 
                     switch (filename)
                     {
-                        case "/":
+                        case "":
                             filename = "index.html";
                             break;
 
-                        case "/crash_layout":
+                        case "crash_layout":
 
                             if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
@@ -208,7 +208,7 @@ namespace org.unirail
                                     await ctx.Request.InputStream.CopyToAsync(fs);
 
                             continue;
-                        case "/confirmed_layout":
+                        case "confirmed_layout":
 
                             if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
@@ -219,50 +219,50 @@ namespace org.unirail
                     }
 
 
-                    // filename = "AdHocAgent.Observer." + filename;
-                    //  using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
+                    filename = "AdHocAgent.Observer." + filename;
 
-                    filename = Path.Join("D:/AdHoc/Observer/Observer", filename);
-                    if (!File.Exists(filename))
+
+                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
                     {
-                        AdHocAgent.LOG.Error("The file {filename} in embedded in an assembly resource is not found.", filename);
-                        ctx.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    }
-                    else
-                        using (var stream = File.Open(filename, FileMode.Open)) //Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
+                        if (stream == null)
                         {
-                            ctx.Response.ContentType = Path.GetExtension(filename) switch
-                            {
-                                ".css" => "text/css",
-                                ".htm" => "text/html",
-                                ".html" => "text/html",
-                                ".gif" => "image/gif",
-                                ".ico" => "image/x-icon",
-                                ".jpeg" => "image/jpeg",
-                                ".jpg" => "image/jpeg",
-                                ".png" => "image/png",
-                                ".wbmp" => "image/vnd.wap.wbmp",
-                                ".js" => "application/x-javascript",
-                                ".xml" => "text/xml",
-                                ".zip" => "application/zip",
-                                ".jar" => "application/java-archive",
-                                _ => "application/octet-stream"
-                            };
-                            ctx.Response.ContentLength64 = stream.Length;
-                            ctx.Response.AddHeader("Date", DateTime.Now.ToString("r"));
-                            ctx.Response.AddHeader("Last-Modified", File.GetLastWriteTime(filename).ToString("r"));
-
-                            try //The specified network name is no longer available.
-                            {
-                                await stream.CopyToAsync(ctx.Response.OutputStream);
-                            }
-                            catch (Exception e) { continue; }
-
-                            stream.Close();
-                            ctx.Response.OutputStream.Flush();
-
-                            ctx.Response.StatusCode = (int)HttpStatusCode.OK;
+                            AdHocAgent.LOG.Error("The file {filename} embedded as an assembly resource could not be found.", filename);
+                            ctx.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                            return;
                         }
+
+                        ctx.Response.ContentType = Path.GetExtension(filename) switch
+                        {
+                            ".css" => "text/css",
+                            ".htm" => "text/html",
+                            ".html" => "text/html",
+                            ".gif" => "image/gif",
+                            ".ico" => "image/x-icon",
+                            ".jpeg" => "image/jpeg",
+                            ".jpg" => "image/jpeg",
+                            ".png" => "image/png",
+                            ".wbmp" => "image/vnd.wap.wbmp",
+                            ".js" => "application/x-javascript",
+                            ".xml" => "text/xml",
+                            ".zip" => "application/zip",
+                            ".jar" => "application/java-archive",
+                            _ => "application/octet-stream"
+                        };
+                        ctx.Response.ContentLength64 = stream.Length;
+                        ctx.Response.AddHeader("Date", DateTime.Now.ToString("r"));
+                        ctx.Response.AddHeader("Last-Modified", File.GetLastWriteTime(filename).ToString("r"));
+
+                        try //The specified network name is no longer available.
+                        {
+                            await stream.CopyToAsync(ctx.Response.OutputStream);
+                        }
+                        catch (Exception e) { continue; }
+
+                        stream.Close();
+                        ctx.Response.OutputStream.Flush();
+
+                        ctx.Response.StatusCode = (int)HttpStatusCode.OK;
+                    }
 
                     ctx.Response.OutputStream.Close();
                 }

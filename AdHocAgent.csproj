@@ -5,7 +5,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
-        <ApplicationIcon>..\Observer\Observer\favicon.ico</ApplicationIcon>
+        <ApplicationIcon>Observer\favicon.ico</ApplicationIcon>
 	<DebugType>Full</DebugType>
     </PropertyGroup>
 

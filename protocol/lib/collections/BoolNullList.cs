@@ -55,14 +55,16 @@ public interface BoolNullList
         public int get(int index) => base[index];
 
         //Constructor with specified length
-        protected R(int length) : base(2, length) { }
+        protected R(int length) : base(2, length)
+        {
+        }
 
         //Constructor with default value and count
-        protected R(bool? default_value, int Count) : base(2, (byte)(default_value == null ? 2
-                                                                     : default_value.Value ? 1
-                                                                                             : 0),
+        protected R(bool? default_value, int Count) : base(2, (byte)(default_value == null ? 2 : default_value.Value ? 1
+                                                                                                                     : 0),
                                                            Count)
-        { }
+        {
+        }
 
         //Clones the current object
         public new R Clone() => (R)base.Clone();
@@ -74,9 +76,8 @@ public interface BoolNullList
         //Removes the specified nullable bool value
         public bool Remove(bool? item)
         {
-            var i = IndexOf((byte)(item == null ? 2
-                                   : item!.Value ? 1
-                                                   : 0));
+            var i = IndexOf((byte)(item == null ? 2 : item!.Value ? 1
+                                                                  : 0));
             if (i < 0)
                 return false;
             removeAt(i);
@@ -84,55 +85,56 @@ public interface BoolNullList
         }
 
         //Inserts a nullable bool value at the specified index
-        public void Insert(int index, bool? item) => add(this, index, (byte)(item == null ? 2
-                                                                             : item.Value ? 1
-                                                                                            : 0));
+        public void Insert(int index, bool? item) => add(this, index, (byte)(item == null ? 2 : item.Value ? 1
+                                                                                                           : 0));
 
         //Indexer to get or set nullable bool values
-        public override bool? this[int index] { get => base[index]; set => set(index, value); }
+        public override bool? this[int index]
+        {
+            get => base[index];
+            set => set(index, value);
+        }
 
         //Removes the value at the specified index
         public void RemoveAt(int index) => removeAt(index);
 
         //Constructor with specified length
-        public RW(int length) : base(length) { }
+        public RW(int length) : base(length)
+        {
+        }
 
         //Constructor with default value and count
-        public RW(bool? default_value, int Count) : base(default_value, Count) { }
+        public RW(bool? default_value, int Count) : base(default_value, Count)
+        {
+        }
 
         //Adds a non-nullable bool value to the list
         public RW Add(bool value)
         {
-            add(this, value ?
-                          1 :
-                          0);
+            add(this, value ? 1 : 0);
             return this;
         }
 
         //Adds a nullable bool value to the list
         public RW Add(bool? value)
         {
-            add(this, value == null ? 2
-                      : value.Value ? 1
-                                      : 0);
+            add(this, value == null ? 2 : value.Value ? 1
+                                                      : 0);
             return this;
         }
 
         //Removes the specified nullable bool value from the list
         public RW remove(bool? value)
         {
-            remove(this, (byte)(value == null ? 2
-                                : value.Value ? 1
-                                                : 0));
+            remove(this, (byte)(value == null ? 2 : value.Value ? 1
+                                                                : 0));
             return this;
         }
 
         //Removes the specified non-nullable bool value from the list
         public RW remove(bool value)
         {
-            remove(this, (byte)(value ?
-                                    1 :
-                                    0));
+            remove(this, (byte)(value ? 1 : 0));
             return this;
         }
 
@@ -146,36 +148,30 @@ public interface BoolNullList
         //Sets the last item to the specified non-nullable bool value
         public RW Set1(bool value)
         {
-            set1(this, Count, (byte)(value ?
-                                         1 :
-                                         0));
+            set1(this, Count, (byte)(value ? 1 : 0));
             return this;
         }
 
         //Sets the last item to the specified nullable bool value
         public RW Set1(bool? value)
         {
-            set1(this, Count, (byte)(value == null ? 2
-                                     : value.Value ? 1
-                                                     : 0));
+            set1(this, Count, (byte)(value == null ? 2 : value.Value ? 1
+                                                                     : 0));
             return this;
         }
 
         //Sets the item at the specified index to the specified non-nullable bool value
         public RW Set1(int item, bool value)
         {
-            set1(this, item, (byte)(value ?
-                                        1 :
-                                        0));
+            set1(this, item, (byte)(value ? 1 : 0));
             return this;
         }
 
         //Sets the item at the specified index to the specified nullable bool value
         public RW Set1(int item, bool? value)
         {
-            set1(this, item, (byte)(value == null ? 2
-                                    : value!.Value ? 1
-                                                     : 0));
+            set1(this, item, (byte)(value == null ? 2 : value!.Value ? 1
+                                                                     : 0));
             return this;
         }
 

@@ -29,28 +29,21 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
 //OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-
 using System.Threading;
 
 namespace org.unirail.collections;
-
 public class RingBuffer<T>
 {
     //Buffer to hold the data
     private readonly T[] buffer;
-
     //Mask for wrapping around the buffer
     private readonly uint mask;
-
     //Constant for the delay in spin wait
     private const int SpinWaitDelay = 10;
-
     //Lock state for synchronization
     private volatile int lockState;
-
     //Read index for the buffer
     private volatile uint readIndex;
-
     //Write index for the buffer
     private volatile uint writeIndex;
 

@@ -54,9 +54,7 @@ public class Pool<T>
         //Try to get the target Stack from the WeakReference
         //If successful, try to pop an item from the Stack
         //If unsuccessful, create a new item using the factory method
-        return items.TryGetTarget(out var i) && i.TryPop(out var item) ?
-                   item :
-                   factory();
+        return items.TryGetTarget(out var i) && i.TryPop(out var item) ? item : factory();
     }
 
     //Method to put an item back into the pool

@@ -70,9 +70,7 @@ public interface NullableValueList<T>
                 _index = -1;
             }
 
-            public T? Current => -1 < _index && _index < _list.Count ?
-                                     _list[_index] :
-                                     null;
+            public T? Current => -1 < _index && _index < _list.Count ? _list[_index] : null;
 
             object? IEnumerator.Current => Current;
 
@@ -80,7 +78,9 @@ public interface NullableValueList<T>
 
             public void Reset() => _index = -1;
 
-            public void Dispose() { }
+            public void Dispose()
+            {
+            }
         }
 
         //BitList to track null values
@@ -102,23 +102,33 @@ public interface NullableValueList<T>
         public bool hasValue(int index) => nulls.get(index);
 
         //Gets the next index with a value after the specified index
-        public int nextValueIndex(int index) { return nulls.next1(index); }
+        public int nextValueIndex(int index)
+        {
+            return nulls.next1(index);
+        }
 
         //Gets the previous index with a value before the specified index
-        public int prevValueIndex(int index) { return nulls.prev1(index); }
+        public int prevValueIndex(int index)
+        {
+            return nulls.prev1(index);
+        }
 
         //Gets the next index with a null after the specified index
-        public int nextNullIndex(int index) { return nulls.next0(index); }
+        public int nextNullIndex(int index)
+        {
+            return nulls.next0(index);
+        }
 
         //Gets the previous index with a null before the specified index
-        public int prevNullIndex(int index) { return nulls.prev0(index); }
+        public int prevNullIndex(int index)
+        {
+            return nulls.prev0(index);
+        }
 
         //Gets or sets the value at the specified index
         public virtual T? this[int index]
         {
-            get => hasValue(index) ?
-                       values[nulls.rank(index) - 1] :
-                       null;
+            get => hasValue(index) ? values[nulls.rank(index) - 1] : null;
             set => throw new NotImplementedException();
         }
 
@@ -129,18 +139,14 @@ public interface NullableValueList<T>
                 return nextNullIndex(0);
 
             var i = values.IndexOf(value.Value);
-            return i < 0 ?
-                       i :
-                       nulls.bit(i);
+            return i < 0 ? i : nulls.bit(i);
         }
 
         //Gets the last index of the specified value
         public int LastIndexOf(T value)
         {
             var i = values.LastIndexOf(value);
-            return i < 0 ?
-                       i :
-                       nulls.bit(i);
+            return i < 0 ? i : nulls.bit(i);
         }
 
         //Clones the current object
@@ -171,9 +177,7 @@ public interface NullableValueList<T>
         //Gets or sets the value at the specified index
         public override T? this[int index]
         {
-            get => hasValue(index) ?
-                       values[nulls.rank(index) - 1] :
-                       null;
+            get => hasValue(index) ? values[nulls.rank(index) - 1] : null;
             set
             {
                 if (value.HasValue)

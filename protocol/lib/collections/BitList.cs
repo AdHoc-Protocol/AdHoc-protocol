@@ -56,15 +56,17 @@ public interface BitList<T>
         {
             get => _count;
             protected
-            set { }
+                set
+            {
+            }
         }
 
         protected internal ulong[] values = Array.Empty<ulong>();
 
         protected static int len4bits(int bits) => 1 + (bits >> LEN);
 
-        public const int LEN = 6;        //long has 64 bits. 6 bits in mask = 63.
-        public const int BITS = 1 << LEN; //64
+        public const int LEN = 6;          //long has 64 bits. 6 bits in mask = 63.
+        public const int BITS = 1 << LEN;  //64
         public const uint MASK = BITS - 1; //63
 
         protected static uint index(uint item_X_bits) => item_X_bits >> LEN;
@@ -108,9 +110,7 @@ public interface BitList<T>
         public T get(int bit, T FALSE, T TRUE)
         {
             var index = bit >> LEN;
-            return index < used() && (values[index] & 1UL << bit) != 0 ?
-                       TRUE :
-                       FALSE;
+            return index < used() && (values[index] & 1UL << bit) != 0 ? TRUE : FALSE;
         }
 
         public T get(ulong[] dst, int from_bit, int to_bit)
@@ -124,9 +124,7 @@ public interface BitList<T>
                     dst[i] = values[index] >> from_bit | values[index + 1] << -from_bit;
             var mask = ~0UL >> -to_bit;
             dst[ret - 1] =
-                (to_bit - 1 & MASK) < (from_bit & MASK) ?
-                    values[index] >> from_bit | (values[index + 1] & mask) << -from_bit :
-                    (values[index] & mask) >> from_bit;
+                (to_bit - 1 & MASK) < (from_bit & MASK) ? values[index] >> from_bit | (values[index + 1] & mask) << -from_bit : (values[index] & mask) >> from_bit;
             return from(ret != 0);
         }
 
@@ -188,9 +186,7 @@ public interface BitList<T>
 
         public int last1()
         {
-            return used() == 0 ?
-                       0 :
-                       BITS * (_used - 1) + BITS - BitOperations.LeadingZeroCount(values[_used - 1]);
+            return used() == 0 ? 0 : BITS * (_used - 1) + BITS - BitOperations.LeadingZeroCount(values[_used - 1]);
         }
 
         public bool isEmpty() => _used == 0;
@@ -251,7 +247,10 @@ public interface BitList<T>
 
         public bool Equals(R? other) => other != null && new Span<ulong>(values, 0, used()).SequenceEqual(new Span<ulong>(other.values, 0, used()));
 
-        public override string ToString() { return ToString(null).ToString(); }
+        public override string ToString()
+        {
+            return ToString(null).ToString();
+        }
 
         public StringBuilder ToString(StringBuilder? dst)
         {
@@ -269,9 +268,7 @@ public interface BitList<T>
             {
                 var v = values[i];
                 for (var s = 0; s < BITS; s++)
-                    dst.Append((v & 1UL << s) == 0 ?
-                                   '.' :
-                                   '*');
+                    dst.Append((v & 1UL << s) == 0 ? '.' : '*');
                 dst.Append(i * BITS);
                 dst.Append('\n');
             }
@@ -280,15 +277,17 @@ public interface BitList<T>
             {
                 var v = values[max];
                 for (var s = 0; s < _size; s++)
-                    dst.Append((v & 1UL << s) == 0 ?
-                                   '.' :
-                                   '*');
+                    dst.Append((v & 1UL << s) == 0 ? '.' : '*');
             }
 
             return dst;
         }
 
-        public virtual T this[int index] { get => get(index); set => throw new NotImplementedException(); }
+        public virtual T this[int index]
+        {
+            get => get(index);
+            set => throw new NotImplementedException();
+        }
 
         public Enumerator GetEnumerator() => new Enumerator(this);
     }
@@ -307,7 +306,9 @@ public interface BitList<T>
             _current = default;
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
 
         public bool MoveNext()
         {
@@ -350,17 +351,13 @@ public interface BitList<T>
             if (src.Count <= from_bit)
                 return;
             _count = Math.Min(to_bit, src.Count - 1) - from_bit;
-            var i2 = to(src.get(to_bit)) != 0 ?
-                         to_bit :
-                         src.prev1(to_bit);
+            var i2 = to(src.get(to_bit)) != 0 ? to_bit : src.prev1(to_bit);
             if (i2 == -1)
                 return;
             values = new ulong[(i2 - 1 >> LEN) + 1];
             _used = values.Length | IO;
             int
-                i1 = to(src.get(from_bit)) != 0 ?
-                         from_bit :
-                         src.next1(from_bit),
+                i1 = to(src.get(from_bit)) != 0 ? from_bit : src.next1(from_bit),
                 index = i1 >> LEN,
                 max = (i2 >> LEN) + 1,
                 i = 0;
@@ -501,7 +498,11 @@ public interface BitList<T>
             return this;
         }
 
-        public override T this[int index] { get => get(index); set => Set(index, value); }
+        public override T this[int index]
+        {
+            get => get(index);
+            set => Set(index, value);
+        }
 
         public RW Set(int bit, T value)
         {
@@ -697,7 +698,10 @@ public interface BitList<T>
             return this;
         }
 
-        public RW fit() { return Capacity(Count); }
+        public RW fit()
+        {
+            return Capacity(Count);
+        }
 
         public new int Capacity() => values.Length * BITS;
 
@@ -721,9 +725,7 @@ public interface BitList<T>
 
             _count = 0;
             _used = 0;
-            values = bits == 0 ?
-                         Array.Empty<ulong>() :
-                         new ulong[index((uint)-bits) + 1];
+            values = bits == 0 ? Array.Empty<ulong>() : new ulong[index((uint)-bits) + 1];
             return this;
         }
 

@@ -71,9 +71,8 @@ public class NullableValueKeyDictionary<K, V> : IEnumerable<KeyValuePair<K?, V>>
     //Indexer to get or set values associated with a key
     public V this[K? key]
     {
-        get => key.HasValue ? _dictionary[key.Value]
-               : _nullKeyExists ? _nullKeyEntry
-                                  : throw new KeyNotFoundException(); //Throw exception if key not found
+        get => key.HasValue ? _dictionary[key.Value] : _nullKeyExists ? _nullKeyEntry
+                                                                      : throw new KeyNotFoundException(); //Throw exception if key not found
         set
         {
             _version++;
@@ -126,9 +125,7 @@ public class NullableValueKeyDictionary<K, V> : IEnumerable<KeyValuePair<K?, V>>
     }
 
     //Property to get the count of key-value pairs in the dictionary
-    public int Count => _dictionary.Count + (_nullKeyExists ?
-                                                 1 :
-                                                 0);
+    public int Count => _dictionary.Count + (_nullKeyExists ? 1 : 0);
 
     //Method to remove a key-value pair from the dictionary
     public bool Remove(K? key)
@@ -155,8 +152,8 @@ public class NullableValueKeyDictionary<K, V> : IEnumerable<KeyValuePair<K?, V>>
     public void Clear()
     {
         _version++;
-        _dictionary.Clear();         //Clear non-null key-value pairs
-        _nullKeyExists = false;      //Reset flag for null key
+        _dictionary.Clear();        //Clear non-null key-value pairs
+        _nullKeyExists = false;     //Reset flag for null key
         _nullKeyEntry = default(V); //Reset value for null key
     }
 
@@ -177,9 +174,7 @@ public class NullableValueKeyDictionary<K, V> : IEnumerable<KeyValuePair<K?, V>>
     }
 
     //Method to check if a key exists in the dictionary
-    public bool ContainsKey(K? key) => key.HasValue ?
-                                           _dictionary.ContainsKey(key.Value) :
-                                           _nullKeyExists;
+    public bool ContainsKey(K? key) => key.HasValue ? _dictionary.ContainsKey(key.Value) : _nullKeyExists;
 
     //Method to check if the dictionary equals another object
     public override bool Equals(object? obj) => obj is NullableValueKeyDictionary<K, V> other && Equals(other);
@@ -253,7 +248,9 @@ public class NullableValueKeyDictionary<K, V> : IEnumerable<KeyValuePair<K?, V>>
             return _on_src_enum && ((_on_src_enum = _src_enum.MoveNext()) || _src._nullKeyExists);
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
 
         void IEnumerator.Reset()
         {
@@ -273,9 +270,7 @@ public class NullableValueKeyDictionary<K, V> : IEnumerable<KeyValuePair<K?, V>>
                 if (_version != _src._version)
                     throw new InvalidOperationException();
 
-                return _on_src_enum ?
-                           new KeyValuePair<K?, V>(_src_enum.Current.Key, _src_enum.Current.Value) :
-                           new KeyValuePair<K?, V>(null, _src._nullKeyEntry);
+                return _on_src_enum ? new KeyValuePair<K?, V>(_src_enum.Current.Key, _src_enum.Current.Value) : new KeyValuePair<K?, V>(null, _src._nullKeyEntry);
             }
         }
     }

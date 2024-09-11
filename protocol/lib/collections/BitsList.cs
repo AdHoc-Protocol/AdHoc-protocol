@@ -131,9 +131,7 @@ public interface BitsList<T>
             if (values.Length != new_values_length)
             {
                 //Allocate new space or set it to an empty array if new length is 0.
-                values = new_values_length == 0 ?
-                             Array.Empty<ulong>() :
-                             new ulong[new_values_length];
+                values = new_values_length == 0 ? Array.Empty<ulong>() : new ulong[new_values_length];
 
                 Count = 0;
                 return;
@@ -181,9 +179,7 @@ public interface BitsList<T>
             {
                 var _index = (uint)index((uint)(item *= bits));
                 var _bit = bit((uint)item);
-                return BITS < _bit + bits ?
-                           value(values[_index], values[_index + 1], _bit, bits, mask) :
-                           value(values[_index], _bit, mask);
+                return BITS < _bit + bits ? value(values[_index], values[_index + 1], _bit, bits, mask) : value(values[_index], _bit, mask);
             }
             set => throw new NotImplementedException();
         }
@@ -431,9 +427,7 @@ public interface BitsList<T>
             {
                 var _bit = bit((uint)bp);
                 var index1 = (uint)(index((uint)bp) + 1);
-                var _value = BITS < _bit + bits ?
-                                 value(src, src = values[index1], _bit, bits, mask) :
-                                 value(src, _bit, mask);
+                var _value = BITS < _bit + bits ? value(src, src = values[index1], _bit, bits, mask) : value(src, _bit, mask);
                 dst.Append(_value).Append('\t');
                 if (i % 10 == 0)
                     dst.Append('\t').Append(i / 10 * 10).Append('\n');
@@ -504,7 +498,9 @@ public interface BitsList<T>
             _current = default;
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
 
         public bool MoveNext()
         {
@@ -526,11 +522,17 @@ public interface BitsList<T>
 
     class RW : R
     {
-        public RW(int bitsPerItem) : base(bitsPerItem) { }
+        public RW(int bitsPerItem) : base(bitsPerItem)
+        {
+        }
 
-        public RW(int bitsPerItem, int length) : base(bitsPerItem, length) { }
+        public RW(int bitsPerItem, int length) : base(bitsPerItem, length)
+        {
+        }
 
-        public RW(int bitsPerItem, T defaultValue, int length) : base(bitsPerItem, defaultValue, length) { }
+        public RW(int bitsPerItem, T defaultValue, int length) : base(bitsPerItem, defaultValue, length)
+        {
+        }
 
         public RW Add1(long value)
         {
@@ -569,7 +571,11 @@ public interface BitsList<T>
             return this;
         }
 
-        public override T this[int item] { get => base[item]; set => set1(this, item, value); }
+        public override T this[int item]
+        {
+            get => base[item];
+            set => set1(this, item, value);
+        }
 
         public RW Set(int index, params byte[] values)
         {

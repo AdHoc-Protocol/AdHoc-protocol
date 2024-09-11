@@ -106,14 +106,10 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
     }
 
     //Checks if the set contains an element
-    public bool Contains(T? item) => item.HasValue ?
-                                         _set.Contains(item.Value) :
-                                         _nullValueExists;
+    public bool Contains(T? item) => item.HasValue ? _set.Contains(item.Value) : _nullValueExists;
 
     //Gets the count of elements in the set
-    public int Count => _set.Count + (_nullValueExists ?
-                                          1 :
-                                          0);
+    public int Count => _set.Count + (_nullValueExists ? 1 : 0);
 
     //Checks if the set equals another object
     public override bool Equals(object? obj) => obj is NullableValueSet<T> other && Equals(other);
@@ -139,7 +135,6 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
         hash = HashCode.Combine(hash, _set.GetHashCode());
         return HashCode.Combine(hash, _nullValueExists);
     }
-
     public bool SetEquals(NullableValueSet<T>? other) => other != null && _nullValueExists == other._nullValueExists && _set.SetEquals(other._set);
 
     //Gets an enumerator for the set
@@ -194,9 +189,7 @@ public class NullableValueSet<T> : IEnumerable<T?>, IEquatable<NullableValueSet<
                 if (_version != _src._version)
                     throw new InvalidOperationException();
 
-                return _onSrcEnum ?
-                           _srcEnum.Current :
-                           null;
+                return _onSrcEnum ? _srcEnum.Current : null;
             }
         }
     }

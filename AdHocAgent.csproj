@@ -33,13 +33,7 @@
 
     <ItemGroup>
       <None Remove="Observer\observer.js" />
-      <EmbeddedResource Include="Observer\observer.js">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
       <None Remove="Observer\index.html" />
-      <EmbeddedResource Include="Observer\index.html">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
       <None Remove="Observer\favicon.ico" />
       <EmbeddedResource Include="Observer\favicon.ico">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

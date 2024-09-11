@@ -110,17 +110,6 @@ namespace org.unirail
         public static TomlTable app_props = TOML.Parse(File.OpenText(app_props_file)); //load application 'toml file'   https://www.ryansouthgate.com/2016/03/23/iconfiguration-in-netcore/
 
 
-        static string zip_exe
-        {
-            get
-            {
-                var zip_exe = app_props["7zip_exe"].AsString.Value;
-                if (!File.Exists(zip_exe))
-                    exit($"The value of 7zip_exe in {Path.Join(app_props_file, "AdHocAgent.toml")} point to none exiting file {zip_exe}. Please install 7zip (https://www.7-zip.org/download.html) and set path to the 7zip binary.");
-                return zip_exe;
-            }
-        }
-
         public static void unzip(Stream src, string dst_folder)
         {
             var tmp_src = File.OpenWrite(new_random_tmp_path);
@@ -133,7 +122,7 @@ namespace org.unirail
 
         public static void unzip(string src_file, string dst_folder) => Process.Start(new ProcessStartInfo
         {
-            FileName = zip_exe,
+            FileName = "7z",
             RedirectStandardOutput = true,
             Arguments = $" x \"{src_file}\" -aoa -o\"{dst_folder}\"",
             WindowStyle = ProcessWindowStyle.Hidden
@@ -159,7 +148,7 @@ namespace org.unirail
 
             Process.Start(new ProcessStartInfo
             {
-                FileName = zip_exe, //Use the PPMd compression, the compression level to the maximum
+                FileName = "7z", //Use the PPMd compression, the compression level to the maximum
                 Arguments = $" a -t7z -m0=PPMd -mx=9 -mmem=256m  \"{tmp_zip}.\" {string.Join(' ', files_paths.Select(path => "\"" + path + "\""))}",
                 RedirectStandardOutput = true,
                 CreateNoWindow = true
@@ -203,6 +192,26 @@ namespace org.unirail
         public static async Task Main(string[] paths)
         {
             Console.OutputEncoding = Encoding.UTF8; // !!!!!!!!!!!!!!!!!!!! damn, every .NET console application must start with that !!!!!!!!!!!
+
+            using (var _7z = new Process())
+            {
+                _7z.StartInfo = new ProcessStartInfo //ensure check
+                {
+                    FileName = "7z",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false, // Required for redirection to work
+                    CreateNoWindow = true   // Do not create a visible console window
+                };
+
+                _7z.Start();
+                _7z.WaitForExit();
+
+                if (_7z.ExitCode != 0)
+                    throw new Exception("7z command is not available or failed to execute. Please ensure 7-Zip is installed and added to the system PATH.");
+            }
+
 
             if (paths.Length == 0)
             {
@@ -333,7 +342,6 @@ namespace org.unirail
                 */
 
 
-            _ = zip_exe; //ensure check
             #region .cs files - protocol description file processing
             if (provided_path.EndsWith(".cs"))
             {

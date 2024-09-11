@@ -230,7 +230,6 @@ namespace org.unirail
                 ret.Add(fill);
             return ret;
         }
-
         #region CRC
         private const int CRC_LEN_BYTES = 2; //CRC len in bytes
 
@@ -293,29 +292,19 @@ namespace org.unirail
                         switch (error)
                         {
                             case OnError.FFFF_ERROR:
-                                Console.WriteLine("FFFF_ERROR at " + src + (ex == null ?
-                                                                                "" :
-                                                                                ex + Environment.StackTrace));
+                                Console.WriteLine("FFFF_ERROR at " + src + (ex == null ? "" : ex + Environment.StackTrace));
                                 return;
                             case OnError.CRC_ERROR:
-                                Console.WriteLine("CRC_ERROR at " + src + (ex == null ?
-                                                                               "" :
-                                                                               ex + Environment.StackTrace));
+                                Console.WriteLine("CRC_ERROR at " + src + (ex == null ? "" : ex + Environment.StackTrace));
                                 return;
                             case OnError.BYTES_DISTORTION:
-                                Console.WriteLine("BYTES_DISTORTION at " + src + (ex == null ?
-                                                                                      "" :
-                                                                                      ex + Environment.StackTrace));
+                                Console.WriteLine("BYTES_DISTORTION at " + src + (ex == null ? "" : ex + Environment.StackTrace));
                                 return;
                             case OnError.OVERFLOW:
-                                Console.WriteLine("OVERFLOW at " + src + (ex == null ?
-                                                                              "" :
-                                                                              ex + Environment.StackTrace));
+                                Console.WriteLine("OVERFLOW at " + src + (ex == null ? "" : ex + Environment.StackTrace));
                                 return;
                             case OnError.INVALID_ID:
-                                Console.WriteLine("INVALID_ID at " + src + (ex == null ?
-                                                                                "" :
-                                                                                Environment.StackTrace));
+                                Console.WriteLine("INVALID_ID at " + src + (ex == null ? "" : Environment.StackTrace));
                                 return;
                         }
                     }
@@ -337,9 +326,7 @@ namespace org.unirail
                         switch (error)
                         {
                             case OnError.OVERFLOW:
-                                Console.WriteLine("OVERFLOW at " + src + (ex == null ?
-                                                                              "" :
-                                                                              ex + Environment.StackTrace));
+                                Console.WriteLine("OVERFLOW at " + src + (ex == null ? "" : ex + Environment.StackTrace));
                                 return;
                         }
                     }
@@ -351,8 +338,8 @@ namespace org.unirail
             public class Framing : AdHoc.BytesDst, EventsHandler
             {
                 public bool isOpen() => upper_layer.isOpen();
-                public Receiver upper_layer; //the upper layer external interface
-                public EventsHandler handler;     //interface to the upper layer internal consumer
+                public Receiver upper_layer;  //the upper layer external interface
+                public EventsHandler handler; //interface to the upper layer internal consumer
 
                 public EventsHandler exchange(EventsHandler handler) => Interlocked.Exchange(ref this.handler, handler);
 
@@ -655,7 +642,6 @@ namespace org.unirail
                     SEEK_FF = 3
                 }
             }
-
             #region Slot
             internal class Slot : Context.Receiver.Slot
             {
@@ -719,9 +705,7 @@ namespace org.unirail
                 if (u4 == 0)
                     return false;
 
-                u8 = u8_ |= u4 == 0xFF ?
-                                null_value :
-                                (ulong)u4 << shift;
+                u8 = u8_ |= u4 == 0xFF ? null_value : (ulong)u4 << shift;
                 return true;
             }
 
@@ -741,7 +725,7 @@ namespace org.unirail
                 return false;
             }
 
-            public abstract BytesDst Allocate(int id); //throws Exception if wrong id
+            public abstract BytesDst Allocate(int id);  //throws Exception if wrong id
             public abstract BytesDst Receiving(int id); //throws Exception if wrong id
 
             public bool isOpen() => slot != null;
@@ -1376,8 +1360,8 @@ namespace org.unirail
             {
                 u4 = max_chars;
                 u8_ = ulong.MaxValue; //indicate state before string length received
-                u8 = 0;              //varint receiving string char holde
-                bytes_left = 0;              //varint pointer
+                u8 = 0;               //varint receiving string char holde
+                bytes_left = 0;       //varint pointer
 
                 if (varint() && //getting string length into u8
                     check_length_and_getting_string())
@@ -1403,7 +1387,7 @@ namespace org.unirail
                 }
 
                 u8_ = u8; //store string length into u8_
-                u4 = 0;  //index receiving char
+                u4 = 0;   //index receiving char
 
                 return getting_string();
             }
@@ -1479,7 +1463,6 @@ namespace org.unirail
                     subscriber!.Invoke(this);
                 return tmp;
             }
-
             #region sending
             public readonly RingBuffer<BytesSrc> sending_;
             public readonly RingBuffer<ulong> sending_value;
@@ -1560,7 +1543,7 @@ namespace org.unirail
             {
                 public bool isOpen() => upper_layer.isOpen();
                 public Transmitter upper_layer; //the upper layer external interface
-                public EventsHandler handler;     //interface to the upper level internal producer
+                public EventsHandler handler;   //interface to the upper level internal producer
 
                 public EventsHandler exchange(EventsHandler handler) => Interlocked.Exchange(ref this.handler, handler);
 
@@ -1587,9 +1570,9 @@ namespace org.unirail
                 {
                     //divide free space.
                     raw_position = enc_position +
-                                   1 +    //for 0xFF byte - frame start mark.
-                                   (limit - enc_position) / 8 +    //ensure enough space for encoded bytes in a worse case
-                                   CRC_LEN_BYTES + 2; //guaranty space for CRC + its expansion
+                                   1 +                          //for 0xFF byte - frame start mark.
+                                   (limit - enc_position) / 8 + //ensure enough space for encoded bytes in a worse case
+                                   CRC_LEN_BYTES + 2;           //guaranty space for CRC + its expansion
 
                     return raw_position < limit;
                 }
@@ -1619,17 +1602,13 @@ namespace org.unirail
                         var len = upper_layer.Read(dst, raw_position, limit - raw_position);
 
                         if (len < 1)
-                            return dst_byte < enc_position ?
-                                       enc_position - dst_byte :
-                                       len;
+                            return dst_byte < enc_position ? enc_position - dst_byte : len;
 
                         for (var max = fix + len; raw_position < max;)
                             enc_position = encode(dst[raw_position++], dst, enc_position);
                     }
 
-                    return dst_byte < enc_position ?
-                               enc_position - dst_byte :
-                               0;
+                    return dst_byte < enc_position ? enc_position - dst_byte : 0;
                 }
 
                 public void onSending(Transmitter dst, BytesSrc src)
@@ -1702,7 +1681,6 @@ namespace org.unirail
                 private int shift;
                 private ushort crc;
             }
-
             #region Slot
             internal sealed class Slot : Context.Transmitter.Slot
             {
@@ -1860,9 +1838,7 @@ namespace org.unirail
 
                 exit:
                 buffer = null;
-                return dst_byte < byte_ ?
-                           byte_ - dst_byte :
-                           -1; //no more packets left
+                return dst_byte < byte_ ? byte_ - dst_byte : -1; //no more packets left
             }
 
             public bool Allocate(uint bytes, uint this_case)
@@ -1875,17 +1851,10 @@ namespace org.unirail
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-            public void put(bool src) => put_bits(src ?
-                                                      1 :
-                                                      0, 1);
+            public void put(bool src) => put_bits(src ? 1 : 0, 1);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-            public void put(bool? src) => put_bits(src.HasValue ?
-                                                       src.Value ?
-                                                           3 :
-                                                           2 :
-                                                       0, 2);
-
+            public void put(bool? src) => put_bits(src.HasValue ? src.Value ? 3 : 2 : 0, 2);
             #region bits
             private int bits_byte = -1;
             private uint bits_transaction_bytes_;
@@ -1988,11 +1957,8 @@ namespace org.unirail
                 mode = BITS_BYTES;
                 return false;
             }
-
             #region varint
-            private static int bytes1(ulong src) => src < 1 << 8 ?
-                                                        1 :
-                                                        2;
+            private static int bytes1(ulong src) => src < 1 << 8 ? 1 : 2;
 
             public bool put_varint21(ulong src, uint continue_at_case)
             {
@@ -2008,7 +1974,7 @@ namespace org.unirail
 
             private static int bytes2(ulong src) => src < 1 << 8 ? 1
                                                     : src < 1 << 16 ? 2
-                                                                      : 3;
+                                                                    : 3;
 
             public bool put_varint32(ulong src, uint continue_at_case)
             {
@@ -2022,11 +1988,9 @@ namespace org.unirail
                 return put_bits_bytes(bytes << nulls_bits | nulls, nulls_bits + 2, src, bytes, continue_at_case);
             }
 
-            private static int bytes3(ulong src) => src < 1L << 16 ? src < 1L << 8 ?
-                                                                         1 :
-                                                                         2
+            private static int bytes3(ulong src) => src < 1L << 16 ? src < 1L << 8 ? 1 : 2
                                                     : src < 1L << 24 ? 3
-                                                                       : 4;
+                                                                     : 4;
 
             public bool put_varint42(ulong src, uint continue_at_case)
             {
@@ -2040,15 +2004,11 @@ namespace org.unirail
                 return put_bits_bytes(bytes - 1 << nulls_bits | nulls, nulls_bits + 2, src, bytes, continue_at_case);
             }
 
-            private static int bytes4(ulong src) => src < 1 << 24 ? src < 1 << 16 ?
-                                                                        src < 1 << 8 ?
-                                                                            1 :
-                                                                            2 :
-                                                                        3
+            private static int bytes4(ulong src) => src < 1 << 24 ? src < 1 << 16 ? src < 1 << 8 ? 1 : 2 : 3
                                                     : src < 1L << 32 ? 4
                                                     : src < 1L << 40 ? 5
                                                     : src < 1L << 48 ? 6
-                                                                       : 7;
+                                                                     : 7;
 
             public bool put_varint73(ulong src, uint continue_at_case)
             {
@@ -2062,16 +2022,12 @@ namespace org.unirail
                 return put_bits_bytes(bytes << nulls_bits | nulls, nulls_bits + 3, src, bytes, continue_at_case);
             }
 
-            private static int bytes5(ulong src) => src < 1L << 32 ? src < 1 << 16 ? src < 1 << 8 ?
-                                                                                         1 :
-                                                                                         2
-                                                                     : src < 1 << 24 ? 3
+            private static int bytes5(ulong src) => src < 1L << 32 ? src < 1 << 16 ? src < 1 << 8 ? 1 : 2
+                                                                       : src < 1 << 24 ? 3
                                                                                        : 4
-                                                    : src < 1L << 48 ? src < 1L << 40 ?
-                                                                           5 :
-                                                                           6
+                                                    : src < 1L << 48 ? src < 1L << 40 ? 5 : 6
                                                     : src < 1L << 56 ? 7
-                                                                       : 8;
+                                                                     : 8;
 
             public bool put_varint83(ulong src, uint continue_at_case)
             {
@@ -2255,13 +2211,9 @@ namespace org.unirail
                 mode = RETRY;
             }
 
-            public int bytes4value(int value) => value < 0xFFFF ? value < 0xFF ?
-                                                                      value == 0 ?
-                                                                          0 :
-                                                                          1 :
-                                                                      2
+            public int bytes4value(int value) => value < 0xFFFF ? value < 0xFF ? value == 0 ? 0 : 1 : 2
                                                  : value < 0xFFFFFF ? 3
-                                                                      : 4;
+                                                                    : 4;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             public void put(sbyte src) => buffer![byte_++] = (byte)src;
@@ -2471,9 +2423,7 @@ namespace org.unirail
 
         public class ArrayEqualHash<T> : IEqualityComparer<IList<T>>
         {
-            public bool Equals(IList<T>? x, IList<T>? y) => (x == null || y == null) ?
-                                                                x == y :
-                                                                x.Count == y.Count && x.SequenceEqual(y);
+            public bool Equals(IList<T>? x, IList<T>? y) => (x == null || y == null) ? x == y : x.Count == y.Count && x.SequenceEqual(y);
 
             public int GetHashCode(IList<T> list) => list.Aggregate(17, (current, item) => HashCode.Combine(current, item));
         }
@@ -2606,9 +2556,7 @@ namespace org.unirail
                 public void UInt64(ulong src, byte[] dst, int index) => Unsafe.WriteUnaligned(ref MemoryMarshal.GetReference(new Span<byte>(dst, index, 8)), BinaryPrimitives.ReverseEndianness(src));
             }
 
-            public static readonly Endianness OK = BitConverter.IsLittleEndian ?
-                                                       new LE() :
-                                                       new BE();
+            public static readonly Endianness OK = BitConverter.IsLittleEndian ? new LE() : new BE();
         }
 
         public struct NullableBool : IEquatable<NullableBool>
@@ -2622,9 +2570,7 @@ namespace org.unirail
             public bool Value
             {
                 get => value == 1;
-                set => this.value = (byte)(value ?
-                                               1 :
-                                               0);
+                set => this.value = (byte)(value ? 1 : 0);
             }
 
             public bool hasValue => value != NULL;
@@ -2636,21 +2582,13 @@ namespace org.unirail
             public static bool operator ==(NullableBool a, NullableBool b) => a.value == b.value;
             public static bool operator !=(NullableBool a, NullableBool b) => a.value != b.value;
 
-            public static bool operator ==(NullableBool a, bool b) => a.value != NULL && a.value == (byte)(b ?
-                                                                                                               1 :
-                                                                                                               0);
+            public static bool operator ==(NullableBool a, bool b) => a.value != NULL && a.value == (byte)(b ? 1 : 0);
 
-            public static bool operator !=(NullableBool a, bool b) => a.value == NULL || a.value != (byte)(b ?
-                                                                                                               1 :
-                                                                                                               0);
+            public static bool operator !=(NullableBool a, bool b) => a.value == NULL || a.value != (byte)(b ? 1 : 0);
 
-            public static bool operator ==(bool a, NullableBool b) => b.value != NULL && b.value == (byte)(a ?
-                                                                                                               1 :
-                                                                                                               0);
+            public static bool operator ==(bool a, NullableBool b) => b.value != NULL && b.value == (byte)(a ? 1 : 0);
 
-            public static bool operator !=(bool a, NullableBool b) => b.value == NULL || b.value != (byte)(a ?
-                                                                                                               1 :
-                                                                                                               0);
+            public static bool operator !=(bool a, NullableBool b) => b.value == NULL || b.value != (byte)(a ? 1 : 0);
 
             public override bool Equals(object? other) => other is NullableBool p && p.value == value;
             public bool Equals(NullableBool other) => value == other.value;
@@ -2659,9 +2597,7 @@ namespace org.unirail
             public static explicit operator bool(NullableBool a) => a.Value;
             public static implicit operator NullableBool(bool a) => new NullableBool(a);
 
-            public static implicit operator NullableBool(bool? a) => a == null ?
-                                                                         NULL :
-                                                                         a.Value;
+            public static implicit operator NullableBool(bool? a) => a == null ? NULL : a.Value;
 
             public static explicit operator byte(NullableBool a) => a.value;
             public static implicit operator NullableBool(byte a) => new NullableBool(a);
@@ -2695,7 +2631,10 @@ namespace org.unirail
         {
             var max = src_index + len;
 
-            while (bytes[max - 1] == '=') { max--; }
+            while (bytes[max - 1] == '=')
+            {
+                max--;
+            }
 
             var new_len = max - src_index;
             for (var i = new_len >> 2; 0 < i; i--) //Process full 4-character blocks
@@ -2759,7 +2698,7 @@ namespace org.unirail
 
                 request[p] = (byte)(index - p - 1); //Set the length for the last label
 
-                index += 2;    //Terminate domain name, set question type (TXT) and class (IN)
+                index += 2;              //Terminate domain name, set question type (TXT) and class (IN)
                 request[index++] = 0x10; //QTYPE = TXT
                 request[++index] = 0x01; //QCLASS = IN
 
@@ -2783,7 +2722,7 @@ namespace org.unirail
                 for (var i = 0; i < answerCount; i++) //Parse each answer
                 {
                     index += 2; //Skip NAME field
-                    //TYPE            two octets containing one of the RR TYPE codes.
+                                //TYPE            two octets containing one of the RR TYPE codes.
                     var TYPE = (ushort)((response[index] << 8) | response[index + 1]);
                     //CLASS           two octets containing one of the RR CLASS codes.
                     //
@@ -2819,11 +2758,10 @@ namespace org.unirail
 
             var ep = new IPEndPoint(IPAddress.Any, 0);
 
-            using (var udpClient = new UdpClient())
-                foreach (var os_dns in NetworkInterface.GetAllNetworkInterfaces()
-                                                       .Where(n => n.OperationalStatus == OperationalStatus.Up)
-                                                       .SelectMany(n => n.GetIPProperties().DnsAddresses)
-                                                       .ToArray())
+            using (var udpClient = new UdpClient()) foreach (var os_dns in NetworkInterface.GetAllNetworkInterfaces()
+                                                                 .Where(n => n.OperationalStatus == OperationalStatus.Up)
+                                                                 .SelectMany(n => n.GetIPProperties().DnsAddresses)
+                                                                 .ToArray())
                     try
                     {
                         var request = Create_DNS_TXT_Record_Request(key);
@@ -2834,7 +2772,9 @@ namespace org.unirail
 
                         return Parse_DNS_TXT_Record_Response(response);
                     }
-                    catch (Exception e) { }
+                    catch (Exception e)
+                    {
+                    }
 
             return null;
         }
@@ -2848,9 +2788,8 @@ namespace org.unirail
         {
             var bytes = 0;
             foreach (var ch in src)
-                bytes += ch < 0x80 ? 1
-                         : ch < 0x4_000 ? 2
-                                          : 3;
+                bytes += ch < 0x80 ? 1 : ch < 0x4_000 ? 2
+                                                      : 3;
             return bytes;
         }
 
@@ -2945,7 +2884,7 @@ namespace org.unirail
             var src_from = 0;
             var dst_to = src.Length;
             //Extract the partial character and shift from the ret parameter
-            var ch = ret & 0xFFFF;      //Low 16 bits: partial character value
+            var ch = ret & 0xFFFF;     //Low 16 bits: partial character value
             var s = (byte)(ret >> 16); //High 8 bits: number of bits already processed
             int b;
             while (src_from < dst_to)
@@ -2953,7 +2892,7 @@ namespace org.unirail
                 {
                     //Combine the partial character with the current byte and append to StringBuilder
                     dst.Append((char)(b << s | ch));
-                    s = 0; //Reset the shift
+                    s = 0;  //Reset the shift
                     ch = 0; //Reset the partial character
                 }
                 else //If the high bit is set, this is not the last byte of the character

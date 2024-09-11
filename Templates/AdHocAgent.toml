@@ -4,13 +4,6 @@
 
 server = ["wss://unirail.org"]
 
-
-#===============================Path to the 7-Zip console executable.  https://7-zip.org/download.html set latest version!
-#for Windows https://7-zip.org/a/7zr.exe
-#for MacOS https://7-zip.org/a/7z2300-mac.tar.xz
-# for Linux https://7-zip.org/a/7z2300-linux-x86.tar.xz
-7zip_exe = "C:/Program Files/7-Zip/7z.exe"
-
 # =============================== EXTERNAL C# EDITOR ==============================
 
 #JetBrains Rider

@@ -26,21 +26,12 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore
-
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
-    - name: Publish
-      run: dotnet publish --configuration Release --output ${{ github.workspace }}/release
+    - name: Publish Release Artifact
+      run: dotnet publish --configuration Release --output ./publish
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
-
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: console-application-build
-        path: ${{ github.workspace }}/release

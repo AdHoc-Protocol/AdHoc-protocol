@@ -204,7 +204,7 @@ namespace org.unirail
 
                             if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
-                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".crash_layout", FileMode.Create, FileAccess.Write))
+                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".unsaved_layout", FileMode.Create, FileAccess.Write))
                                     await ctx.Request.InputStream.CopyToAsync(fs);
 
                             continue;
@@ -218,11 +218,7 @@ namespace org.unirail
                             continue;
                     }
 
-
-                    filename = "AdHocAgent.Observer." + filename;
-
-
-                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(filename))
+                    await using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Observer." + filename))
                     {
                         if (stream == null)
                         {
@@ -249,8 +245,13 @@ namespace org.unirail
                             _ => "application/octet-stream"
                         };
                         ctx.Response.ContentLength64 = stream.Length;
-                        ctx.Response.AddHeader("Date", DateTime.Now.ToString("r"));
-                        ctx.Response.AddHeader("Last-Modified", File.GetLastWriteTime(filename).ToString("r"));
+                        //To ensure that the browser never uses cached resources
+                        //+ Ctrl + Shift + R in the browser
+                        ctx.Response.AddHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+                        ctx.Response.AddHeader("Pragma", "no-cache");
+                        ctx.Response.AddHeader("Expires", "0");
+                        ctx.Response.Headers["ETag"] = Guid.NewGuid().ToString();
+                        ctx.Response.Headers["Last-Modified"] = DateTime.UtcNow.ToString("r");
 
                         try //The specified network name is no longer available.
                         {

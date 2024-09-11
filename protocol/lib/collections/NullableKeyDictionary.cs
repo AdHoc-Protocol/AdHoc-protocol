@@ -52,9 +52,7 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
     public NullableKeyDictionary(IEqualityComparer<K>? comparer) => _dictionary = new Dictionary<K, V>(comparer);
     public NullableKeyDictionary(int capacity) => _dictionary = new Dictionary<K, V>(capacity);
     public NullableKeyDictionary(int capacity, IEqualityComparer<K>? comparer) => _dictionary = new Dictionary<K, V>(capacity, comparer);
-
     private int _version;
-
     //The main dictionary to store non-null keys
     private Dictionary<K, V> _dictionary = new Dictionary<K, V>();
 
@@ -67,9 +65,8 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
     //Indexer to get or set values associated with a key
     public V this[K key]
     {
-        get => key != null ? _dictionary[key]
-               : _nullKeyExists ? _nullKeyEntry
-                                  : throw new KeyNotFoundException(); //Throw exception if key not found
+        get => key != null ? _dictionary[key] : _nullKeyExists ? _nullKeyEntry
+                                                               : throw new KeyNotFoundException(); //Throw exception if key not found
         set
         {
             _version++;
@@ -96,7 +93,6 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
             _nullKeyEntry = value; //Set value for null key
             _nullKeyExists = true;
         }
-
         _version++;
     }
 
@@ -122,9 +118,7 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
     }
 
     //Property to get the count of key-value pairs in the dictionary
-    public int Count => _dictionary.Count + (_nullKeyExists ?
-                                                 1 :
-                                                 0);
+    public int Count => _dictionary.Count + (_nullKeyExists ? 1 : 0);
 
     //Method to remove a key-value pair from the dictionary
     public bool Remove(K key)
@@ -152,8 +146,8 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
     {
         _version++;
 
-        _dictionary.Clear();         //Clear non-null key-value pairs
-        _nullKeyExists = false;      //Reset flag for null key
+        _dictionary.Clear();        //Clear non-null key-value pairs
+        _nullKeyExists = false;     //Reset flag for null key
         _nullKeyEntry = default(V); //Reset value for null key
     }
 
@@ -174,9 +168,7 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
     }
 
     //Method to check if a key exists in the dictionary
-    public bool ContainsKey(K key) => key != null ?
-                                          _dictionary.ContainsKey(key) :
-                                          _nullKeyExists;
+    public bool ContainsKey(K key) => key != null ? _dictionary.ContainsKey(key) : _nullKeyExists;
 
     //Method to check if the dictionary equals another object
     public override bool Equals(object? obj) => obj is NullableKeyDictionary<K, V> other && Equals(other);
@@ -227,7 +219,6 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
     IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
     public Enumerator GetEnumerator_() => new Enumerator(this);
-
     public struct Enumerator : IEnumerator<KeyValuePair<K, V>>
     {
         private readonly NullableKeyDictionary<K, V> _src;
@@ -250,7 +241,9 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
             return _on_src_enum && ((_on_src_enum = _src_enum.MoveNext()) || _src._nullKeyExists);
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
 
         void IEnumerator.Reset()
         {
@@ -270,9 +263,7 @@ public class NullableKeyDictionary<K, V> : IEnumerable<KeyValuePair<K, V>>, IEqu
                 if (_version != _src._version)
                     throw new InvalidOperationException();
 
-                return _on_src_enum ?
-                           new KeyValuePair<K?, V>(_src_enum.Current.Key, _src_enum.Current.Value) :
-                           new KeyValuePair<K?, V>(null, _src._nullKeyEntry);
+                return _on_src_enum ? new KeyValuePair<K?, V>(_src_enum.Current.Key, _src_enum.Current.Value) : new KeyValuePair<K?, V>(null, _src._nullKeyEntry);
             }
         }
     }

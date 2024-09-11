@@ -1,3 +1,5 @@
+
+
 //MIT License
 //
 //Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
@@ -34,6 +36,7 @@ using System;
 using System.Collections.Generic;
 using Agent = org.unirail.Agent;
 using Entity = org.unirail.Agent.Entity;
+
 using org.unirail.collections;
 
 namespace org.unirail
@@ -41,7 +44,6 @@ namespace org.unirail
     public interface Context
     {
         const int VALUE_OF_NULL_KEY = int.MaxValue - 100;
-
         class Transmitter : AdHoc
         {
             public byte[]? _byte_arrayN;
@@ -52,18 +54,17 @@ namespace org.unirail
                 #region> Clear custom code
                 #endregion> Context.Transmitter.Clear.Code
             }
-
             #region> Custom code
             #endregion> Context.Transmitter.Code
 
             public class Slot
             {
+
                 public void clear()
                 {
                     #region> Clear custom code
                     #endregion> Context.Transmitter.Slot.Clear.Code
                 }
-
                 #region> Custom code
                 #endregion> Context.Transmitter.Slot.Code
 
@@ -117,14 +118,8 @@ namespace org.unirail
                 #endregion
 
                 int tmp;
-
-                private static int bytes4value(int value) => value < 0xFFFF ? value < 0xFF ?
-                                                                                  value == 0 ?
-                                                                                      0 :
-                                                                                      1 :
-                                                                                  2
-                                                             : value < 0xFFFFFF ? 3
-                                                                                  : 4;
+                private static int bytes4value(int value) => value < 0xFFFF ? value < 0xFF ? value == 0 ? 0 : 1 : 2 : value < 0xFFFFFF ? 3
+                                                                                                                                       : 4;
 
                 public bool no_null_values()
                 {
@@ -141,7 +136,6 @@ namespace org.unirail
                         dst.put((byte)0);
                         return true;
                     }
-
                     if (items_max < items)
                     {
                         AdHoc.Receiver.error_handler_.error(dst, AdHoc.Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In no_items(uint items, uint items_max, uint next_field_case)     items_max < items : " + items_max + " < " + items));
@@ -152,8 +146,8 @@ namespace org.unirail
 
                     return false;
                 }
-
                 #region Key does not contain null
+
                 public void put_info()
                 {
                     var items = index_max1;
@@ -177,7 +171,6 @@ namespace org.unirail
                         index_max_1(KV_count);
                         return false;
                     }
-
                     var null_V_count_bytes = bytes4value(null_V_count);
 
                     if (0 < (KV_count -= null_V_count))
@@ -191,7 +184,6 @@ namespace org.unirail
                         index_max_1(KV_count);
                         return false;
                     }
-
                     dst.put((byte)(null_V_count_bytes << 3));
                     dst.put_val((uint)null_V_count, null_V_count_bytes);
 
@@ -200,6 +192,7 @@ namespace org.unirail
                 }
                 #endregion
                 #region Key contains null
+
                 //Return `true` if leap to the new state is necessary.
                 public bool put_info(bool null_K_exists)
                 {
@@ -232,7 +225,6 @@ namespace org.unirail
                         dst.put((byte)null_key_bits);
                         return true;
                     }
-
                     state = KV_case;
                     var items_bytes = bytes4value(items);
                     dst.put((byte)(null_key_bits | items_bytes));
@@ -366,7 +358,6 @@ namespace org.unirail
                     state = null_V_case;
                     return true;
                 }
-
                 public bool leap_KV()
                 {
                     if (index1 < VALUE_OF_NULL_KEY || index_max1 == 0)
@@ -387,7 +378,6 @@ namespace org.unirail
                 #region> Clear custom code
                 #endregion> Context.Receiver.Clear.Code
             }
-
             #region> Custom code
             #endregion> Context.Receiver.Code
 
@@ -400,7 +390,6 @@ namespace org.unirail
                     #region> Clear custom code
                     #endregion> Context.Receiver.Slot.Clear.Code
                 }
-
                 #region> Custom code
                 #endregion> Context.Receiver.Slot.Code
 
@@ -414,11 +403,8 @@ namespace org.unirail
                         n -= 4;
                         i = y;
                     }
-
                     y = i << 2;
-                    return (int)(y == 0 ?
-                                     n - (i << 1 >> 31) :
-                                     n - 2 - (y << 1 >> 31));
+                    return (int)(y == 0 ? n - (i << 1 >> 31) : n - 2 - (y << 1 >> 31));
                 }
 
                 public uint state;
@@ -445,7 +431,6 @@ namespace org.unirail
                         state = next_ok_case;
                         return true;
                     }
-
                     return false;
                 }
 
@@ -453,6 +438,7 @@ namespace org.unirail
 
                 public void nulls_0(uint nulls, int index0)
                 {
+
                     this.index0 = index0 + trailing8Zeros(nulls);
                     nulls0 = nulls;
                 }
@@ -523,7 +509,6 @@ namespace org.unirail
                         state = next_ok_case;
                         return true;
                     }
-
                     return false;
                 }
 
@@ -531,6 +516,7 @@ namespace org.unirail
 
                 public void nulls_1(uint nulls, int index1)
                 {
+
                     this.index1 = index1 + trailing8Zeros(nulls);
                     nulls1 = nulls;
                 }
@@ -601,7 +587,6 @@ namespace org.unirail
                         state = next_ok_case;
                         return true;
                     }
-
                     return false;
                 }
 
@@ -609,6 +594,7 @@ namespace org.unirail
 
                 public void nulls_2(uint nulls, int index2)
                 {
+
                     this.index2 = index2 + trailing8Zeros(nulls);
                     nulls2 = nulls;
                 }
@@ -670,7 +656,6 @@ namespace org.unirail
                         src.u8 = src.get_byte();
                         return true;
                     }
-
                     src.retry_at(the_case);
                     return false;
                 }
@@ -682,8 +667,8 @@ namespace org.unirail
                     tmp = index_max1; //preserve total items count
                     return get_len1(max_items, (int)(src.u8 >> 3 & 7), next_case);
                 }
-
                 #region Key contains null
+
                 public bool hasNullKey() => 0x7F < src.u8;
 
                 public bool nullKeyHasValue() => 0xBF < src.u8;
@@ -726,9 +711,7 @@ namespace org.unirail
                     var null_V_items = index_max1;
                     if (KV_items == 0)
                     {
-                        state = null_V_items == 0 ?
-                                    next_field_case :
-                                    null_V_case;
+                        state = null_V_items == 0 ? next_field_case : null_V_case;
                         return true;
                     }
 
@@ -739,15 +722,12 @@ namespace org.unirail
 
                 public int items_count(int max_items)
                 {
-                    var items = tmp + index_max1 + (hasNullKey() ?
-                                                        1 :
-                                                        0);
+                    var items = tmp + index_max1 + (hasNullKey() ? 1 : 0);
                     if (max_items < items)
                     {
                         AdHoc.Receiver.error_handler.error(src, AdHoc.Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In items_count  (uint max_items){}   max_items < items : " + max_items + " < " + items));
                         return 0;
                     }
-
                     return items;
                 }
 

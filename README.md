@@ -71,12 +71,23 @@ To start using the AdHoc code generator, follow these steps:
 2. Install a **C# IDE** such as **[Intellij Rider](https://www.jetbrains.com/rider/)**,
    **[Visual Studio Code](https://code.visualstudio.com/)**, or *
    *[Visual Studio](https://visualstudio.microsoft.com/vs/community/)**.
-3. Install [7zip compression](https://www.7-zip.org/download.html). This utility is required for the best compression
-   when working with text file formats.   
-   You can download it for   
-   [Windows](https://www.7-zip.org/a/7zr.exe)  
-   [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
-   [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz).
+---
+
+3. Install [7-Zip Compression](https://www.7-zip.org/download.html), a utility for optimal PPMd compression of source files. Download the appropriate version for your platform:
+	
+	- **[Windows](https://www.7-zip.org/a/7zr.exe)**  
+	  Add `C:\Program Files\7-Zip` to to the system `PATH`, and ensure the `7z` command works in the console.
+	
+	- **[Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)**
+	  
+	  ```shell
+	  apk add p7zip
+	  ```
+	
+	- **[macOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)**
+	    ```
+		brew install p7zip
+		```
 4. Download the source code of
    the [AdHoс protocol metadata attributes](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/master/src/Meta.cs).
    Alternatively, you can use the version embedded in the AdHocAgent binary.
@@ -128,15 +139,32 @@ Example:
 
 ![image](https://user-images.githubusercontent.com/29354319/232010215-ea6f4b1e-2251-4c3a-956d-017d222ab1e3.png)
 
+![image](https://github.com/user-attachments/assets/565a76c2-58f3-4570-9ca8-c6bad41f4f43)
  </details>
 
 > [!NOTE]    
-> To navigate from the viewer to the source code, specify your local C# IDE path in `AdHocAgent.toml`.
+> To enable navigation from the viewer to the source code, specify the path to your local C# IDE in the `AdHocAgent.toml` configuration file.
 
 The remaining arguments are:
 
 - Paths to source files `.cs` and/or `.csproj` project files referenced in the `protocol description file`.
 - The path to a temporary folder where files received from the server will be stored.
+
+
+The Observer will search for and save the `.layout` file in the current working directory with the same name as the specified protocol description file. 
+For example, if the provided file path is   
+`my_protocol_description.cs`  the corresponding layout file will be   
+`my_protocol_description.layout`.
+
+To save the current layout, right-click on an empty space within the diagram:
+
+![image](https://github.com/user-attachments/assets/d2482a1b-5058-4903-920e-ef5dbf252ef6)
+
+Then, click `Save layout`.
+
+If you modify the layout and close the browser without saving, a `my_protocol_description.unsaved_layout` file will be created, containing the layout before closing. 
+You can rename this file to `my_protocol_description.layout` to use it, if you accidentally closed without saving.
+
 
 ## `.proto` or directory path
 
@@ -174,6 +202,7 @@ This feature is particularly useful for debugging deployments.
 
 > [!NOTE]  
 > In addition to command-line arguments, the `AdHocAgent` utility requires the following configuration file:
+
 - **`AdHocAgent.toml`:** This file includes essential settings for the `AdHocAgent` utility, such as:
 	- The URL of the code-generating server.
 	- The path to the local C# IDE binary. This allows the utility to open the IDE directly to specific source files at a specified line
@@ -182,12 +211,11 @@ This feature is particularly useful for debugging deployments.
 		  [Windows](https://www.7-zip.org/a/7zr.exe)  
 		  [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
 		  [MacOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
-	- The path to your preferred source code formatter binaries, including:  
+	- The path to your preferred source code formatter binaries, including:
 		- Download links  
-	      [clang-format](https://releases.llvm.org/download.html)  
+		  [clang-format](https://releases.llvm.org/download.html)  
 		  [prettier](https://prettier.io/docs/en/install.html)  
 		  [astyle](https://sourceforge.net/projects/astyle/files/)
-
 
 The `AdHocAgent` utility will search for the `AdHocAgent.toml` file in its directory.
 If the file is not found, the utility will generate a template that you can update with the required information.

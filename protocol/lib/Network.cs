@@ -49,11 +49,11 @@ namespace org.unirail
         public interface Channel
         {
             public enum Event
-            {          // External to internal connection
-                EXT_INT_CONNECT = 0, // Internal to external connection
-                INT_EXT_CONNECT = 1, // External to internal disconnection
-                EXT_INT_DISCONNECT = 2, // Internal to external disconnection
-                INT_EXT_DISCONNECT = 3, // Timeout event
+            {                           //External to internal connection
+                EXT_INT_CONNECT = 0,    //Internal to external connection
+                INT_EXT_CONNECT = 1,    //External to internal disconnection
+                EXT_INT_DISCONNECT = 2, //Internal to external disconnection
+                INT_EXT_DISCONNECT = 3, //Timeout event
                 TIMEOUT = 4,
             }
         }
@@ -62,30 +62,30 @@ namespace org.unirail
         {
             public enum Event
             {
-                INT_EXT_CONNECT = 6,            // Internal to external connection
-                EXT_INT_CONNECT = 7,            // External to internal connection
-                CLOSE = OPCode.CLOSE, // Close event
-                PING = OPCode.PING,  // Ping event
-                PONG = OPCode.PONG,  // Pong event
-                EMPTY_FRAME = 11            // Empty frame event
+                INT_EXT_CONNECT = 6,  //Internal to external connection
+                EXT_INT_CONNECT = 7,  //External to internal connection
+                CLOSE = OPCode.CLOSE, //Close event
+                PING = OPCode.PING,   //Ping event
+                PONG = OPCode.PONG,   //Pong event
+                EMPTY_FRAME = 11      //Empty frame event
             }
 
-            // Internal enum for WebSocket masking
+            //Internal enum for WebSocket masking
             internal enum Mask
             {
-                FIN = 0b1000_0000, // Final frame bit
-                OPCODE = 0b0000_1111, // Opcode mask
-                LEN = 0b0111_1111  // Length mask
+                FIN = 0b1000_0000,    //Final frame bit
+                OPCODE = 0b0000_1111, //Opcode mask
+                LEN = 0b0111_1111     //Length mask
             }
 
             public enum OPCode
             {
                 CONTINUATION = 0x00, //denotes a continuation frame
-                TEXT_FRAME = 0x01, //denotes a text frame
+                TEXT_FRAME = 0x01,   //denotes a text frame
                 BINARY_FRAME = 0x02, //denotes a binary frame
-                CLOSE = 0x08, //denotes a connection close
-                PING = 0x09, //denotes a ping
-                PONG = 0x0A  //denotes a pong
+                CLOSE = 0x08,        //denotes a connection close
+                PING = 0x09,         //denotes a ping
+                PONG = 0x0A          //denotes a pong
             }
 
             internal enum State
@@ -180,77 +180,77 @@ namespace org.unirail
                 return ch;
             }
 
-            // Action for handling failures
+            //Action for handling failures
             public Action<object, Exception> onFailure = (src, t) =>
-                                                         {
-                                                             Console.WriteLine("onFailure " + src);
+            {
+                Console.WriteLine("onFailure " + src);
 #if DEBUG
-                                                             Console.WriteLine(new Exception("onFailure").StackTrace);
+                Console.WriteLine(new Exception("onFailure").StackTrace);
 #endif
-                                                             Console.WriteLine(t);
-                                                         };
+                Console.WriteLine(t);
+            };
 
-            // Method to swap event handlers
+            //Method to swap event handlers
             public Action<Channel, int> swap(Action<Channel, int> other)
             {
-                var ret = onEvent; // Store current event handler
-                onEvent = other;   // Swap with new handler
-                return ret;        // Return old handler
+                var ret = onEvent; //Store current event handler
+                onEvent = other;   //Swap with new handler
+                return ret;        //Return old handler
             }
 
             public Action<Channel, int> onEvent = (channel, Event) =>
-                                                  {
+            {
 #if DEBUG
-                                                      Console.WriteLine(new Exception("onEvent").StackTrace);
+                Console.WriteLine(new Exception("onEvent").StackTrace);
 #endif
-                                                      switch (Event)
-                                                      {
-                                                          case (int)Network.Channel.Event.EXT_INT_CONNECT:
-                                                              Console.WriteLine(channel.host + ":Received connection from " + channel.peer_ip);
-                                                              return;
-                                                          case (int)Network.Channel.Event.INT_EXT_CONNECT:
-                                                              Console.WriteLine(channel.host + ":Connected to " + channel.peer_ip);
-                                                              return;
-                                                          case (int)Network.Channel.Event.EXT_INT_DISCONNECT:
-                                                              Console.WriteLine(channel.host + ":Remote peer " + channel.peer_ip + " has dropped the connection.");
-                                                              return;
-                                                          case (int)Network.Channel.Event.INT_EXT_DISCONNECT:
-                                                              Console.WriteLine(channel.host + ":This host has dropped the connection to " + channel.peer_ip);
-                                                              return;
-                                                          case (int)Network.Channel.Event.TIMEOUT:
-                                                              Console.WriteLine(channel.host + ":Timeout while receiving from " + channel.peer_ip);
-                                                              return;
-                                                          case (int)Network.WebSocket.Event.EXT_INT_CONNECT:
-                                                              Console.WriteLine(channel.host + ":Websocket from " + channel.peer_ip);
-                                                              return;
-                                                          case (int)Network.WebSocket.Event.INT_EXT_CONNECT:
-                                                              Console.WriteLine(channel.host + ":Websocket to " + channel.peer_ip);
-                                                              return;
-                                                          case (int)Network.WebSocket.Event.PING:
-                                                              Console.WriteLine(channel.host + ":PING from " + channel.peer_ip);
-                                                              return;
-                                                          case (int)Network.WebSocket.Event.PONG:
-                                                              Console.WriteLine(channel.host + ":PONG from " + channel.peer_ip);
-                                                              return;
-                                                          default:
-                                                              Console.WriteLine(channel.peer_ip + " event: " + Event);
-                                                              break;
-                                                      }
-                                                  };
+                switch (Event)
+                {
+                    case (int)Network.Channel.Event.EXT_INT_CONNECT:
+                        Console.WriteLine(channel.host + ":Received connection from " + channel.peer_ip);
+                        return;
+                    case (int)Network.Channel.Event.INT_EXT_CONNECT:
+                        Console.WriteLine(channel.host + ":Connected to " + channel.peer_ip);
+                        return;
+                    case (int)Network.Channel.Event.EXT_INT_DISCONNECT:
+                        Console.WriteLine(channel.host + ":Remote peer " + channel.peer_ip + " has dropped the connection.");
+                        return;
+                    case (int)Network.Channel.Event.INT_EXT_DISCONNECT:
+                        Console.WriteLine(channel.host + ":This host has dropped the connection to " + channel.peer_ip);
+                        return;
+                    case (int)Network.Channel.Event.TIMEOUT:
+                        Console.WriteLine(channel.host + ":Timeout while receiving from " + channel.peer_ip);
+                        return;
+                    case (int)Network.WebSocket.Event.EXT_INT_CONNECT:
+                        Console.WriteLine(channel.host + ":Websocket from " + channel.peer_ip);
+                        return;
+                    case (int)Network.WebSocket.Event.INT_EXT_CONNECT:
+                        Console.WriteLine(channel.host + ":Websocket to " + channel.peer_ip);
+                        return;
+                    case (int)Network.WebSocket.Event.PING:
+                        Console.WriteLine(channel.host + ":PING from " + channel.peer_ip);
+                        return;
+                    case (int)Network.WebSocket.Event.PONG:
+                        Console.WriteLine(channel.host + ":PONG from " + channel.peer_ip);
+                        return;
+                    default:
+                        Console.WriteLine(channel.peer_ip + " event: " + Event);
+                        break;
+                }
+            };
 
             public class Channel : SocketAsyncEventArgs
             {
                 #region> Channel code
                 #endregion> Network.TCP.Channel
 
-                public Socket? ext;                             // External socket
-                public EndPoint peer_ip => ext!.RemoteEndPoint!; // Peer IP address
-                public long peer_id = 0;                  // Peer ID
-                public long session_id = 0;                  // Session ID
+                public Socket? ext;                              //External socket
+                public EndPoint peer_ip => ext!.RemoteEndPoint!; //Peer IP address
+                public long peer_id = 0;                         //Peer ID
+                public long session_id = 0;                      //Session ID
 
-                public long receive_time = FREE;          // Time of last receive
-                public long transmit_time = FREE;          // Time of last transmit
-                public bool is_active => 0 < receive_time; // Check if channel is active
+                public long receive_time = FREE;           //Time of last receive
+                public long transmit_time = FREE;          //Time of last transmit
+                public bool is_active => 0 < receive_time; //Check if channel is active
 
                 public readonly TCP<SRC, DST> host;
 
@@ -263,10 +263,10 @@ namespace org.unirail
                     DisconnectReuseSocket = true;
                     onNewBytesToTransmitArrive =
                         _ =>
-                        {
-                            if (ext != null && Interlocked.Increment(ref transmit_lock) == 1)
-                                transmit();
-                        };
+                    {
+                        if (ext != null && Interlocked.Increment(ref transmit_lock) == 1)
+                            transmit();
+                    };
                 }
 
                 public long maintenance(long time)
@@ -287,16 +287,21 @@ namespace org.unirail
                 public virtual void Close()
                 {
                     if (ext == null)
-                        return; // Do nothing if no external socket
-                    //!!!!!!!!! CRITICAL:
-                    //When using a connection-oriented Socket, always call the Shutdown method before
-                    //closing the Socket. This ensures that all data is sent and received on the
-                    //connected socket before it is closed.
-                    //
-                    //Call the Close method to free all managed and unmanaged resources associated
-                    //with the Socket. Do not attempt to reuse the Socket after closing.
-                    try { ext?.Shutdown(SocketShutdown.Both); }
-                    catch (Exception e) { }
+                        return; //Do nothing if no external socket
+                                //!!!!!!!!! CRITICAL:
+                                //When using a connection-oriented Socket, always call the Shutdown method before
+                                //closing the Socket. This ensures that all data is sent and received on the
+                                //connected socket before it is closed.
+                                //
+                                //Call the Close method to free all managed and unmanaged resources associated
+                                //with the Socket. Do not attempt to reuse the Socket after closing.
+                    try
+                    {
+                        ext?.Shutdown(SocketShutdown.Both);
+                    }
+                    catch (Exception e)
+                    {
+                    }
 
                     ext?.Close();
                     ext = null;
@@ -335,7 +340,6 @@ namespace org.unirail
 
                     on_disposed?.Invoke(this);
                 }
-
                 #region Transmitting
                 public SRC? transmitter;
                 protected volatile int transmit_lock = 1;
@@ -447,7 +451,10 @@ namespace org.unirail
                                 receive();
                                 return;
                         }
-                    else if (_receive.SocketError == SocketError.TimedOut) { host.onEvent(this, (int)Network.Channel.Event.TIMEOUT); }
+                    else if (_receive.SocketError == SocketError.TimedOut)
+                    {
+                        host.onEvent(this, (int)Network.Channel.Event.TIMEOUT);
+                    }
                     else
                         host.onFailure(this, new Exception("SocketError:" + _receive.SocketError));
                 }
@@ -489,7 +496,7 @@ namespace org.unirail
                         do
                         {
                             if (receive_mate.BytesTransferred == 0) //the number of bytes transferred in the socket operation.
-                            {                                        //If zero is returned from a read operation, the remote end has closed the connection.
+                            {                                       //If zero is returned from a read operation, the remote end has closed the connection.
                                 Close();
                                 return;
                             }
@@ -499,10 +506,12 @@ namespace org.unirail
                             receive(receive_mate.Buffer!, receive_mate.Offset + receive_mate.BytesTransferred);
                             if (stop_receiving)
                                 return;
-                        }
-                        while (!ext!.ReceiveAsync(receive_mate));
+                        } while (!ext!.ReceiveAsync(receive_mate));
                     }
-                    catch (Exception e) { host.onFailure(this, e); } //on close() ext turn to null
+                    catch (Exception e)
+                    {
+                        host.onFailure(this, e);
+                    } //on close() ext turn to null
                 }
 
                 //manage receive_mate.SetBuffer
@@ -573,7 +582,6 @@ namespace org.unirail
                         recycle_frame(urgent_frame_data);
                     base.Close();
                 }
-
                 #region Transmitting
                 private bool sent_closing_frame;
                 volatile ControlFrameData? urgent_frame_data;
@@ -603,30 +611,28 @@ namespace org.unirail
                     //| |1|2|3|       |K|             |                               |
                     //+-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
 
-                    var s = (frame_data != null ?
-                                 frame_data.buffer_bytes + 2 :
-                                 0) + 10; // Offset 10 byte. Preallocate place for max possible header length
+                    var s = (frame_data != null ? frame_data.buffer_bytes + 2 : 0) + 10; //Offset 10 byte. Preallocate place for max possible header length
 
-                    var len = transmitter!.Read(dst, s, dst.Length - s); // Receive data into `dst` start from s position
-                    if (0 < len)                                        // Write into `dst` opt code and length
+                    var len = transmitter!.Read(dst, s, dst.Length - s); //Receive data into `dst` start from s position
+                    if (0 < len)                                         //Write into `dst` opt code and length
                     {
                         var max = s + len;
                         switch (len)
                         {
                             case < 126:                                                                                     //if 0-125,
                                 dst[s -= 2] = (int)Network.WebSocket.Mask.FIN | (int)Network.WebSocket.OPCode.BINARY_FRAME; //always last and binary
-                                dst[s + 1] = (byte)len;                                                                    //that is the payload length.
+                                dst[s + 1] = (byte)len;                                                                     //that is the payload length.
                                 break;
                             case < 0x1_0000:
                                 dst[s -= 4] = (int)Network.WebSocket.Mask.FIN | (int)Network.WebSocket.OPCode.BINARY_FRAME; //always last and binary
-                                dst[s + 1] = 126;                                                                          //If 126,
+                                dst[s + 1] = 126;                                                                           //If 126,
 
                                 dst[s + 2] = (byte)(len >> 8); ////the following 2 bytes interpreted as a 16 -bit unsigned integer are the payload length.
                                 dst[s + 3] = (byte)len;
                                 break;
                             default:
                                 dst[s -= 10] = (int)Network.WebSocket.Mask.FIN | (int)Network.WebSocket.OPCode.BINARY_FRAME; //always last and binary
-                                dst[s + 1] = 127;                                                                          //If 127,
+                                dst[s + 1] = 127;                                                                            //If 127,
 
                                 dst[s + 2] = 0; //the following 8 bytes interpreted as a 64-bit unsigned integer (the most significant bit MUST be 0) are the payload length.
                                 dst[s + 3] = 0;
@@ -820,7 +826,7 @@ namespace org.unirail
                                                                                 if (src[i] != ' ')
                                                                                 {
                                                                                     var pool = frames.Value!;
-                                                                                    var helper = pool.get(); // Get helper frame
+                                                                                    var helper = pool.get(); //Get helper frame
 
                                                                                     for (int e = i, ii = 0, b; e < src_bytes; e++, ii++)
                                                                                         if ((b = src[e]) == ' ' || b == '\r')
@@ -833,7 +839,8 @@ namespace org.unirail
                                                                                             pool.put(helper);
 
                                                                                             Interlocked.Exchange(ref transmit_lock, ext!.SendAsync(this) ? //trigger transmitting
-                                                                                                                                        1 :                //on complete - unlock itself
+                                                                                                                                        1
+                                                                                                                                                         : //on complete - unlock itself
                                                                                                                                         0);                //unlocked for new data
                                                                                             host.onEvent(this, (int)Network.WebSocket.Event.EXT_INT_CONNECT);
                                                                                             return;
@@ -883,8 +890,8 @@ namespace org.unirail
                                 if (125 < (frame_bytes_left = BYTE & (int)Network.WebSocket.Mask.LEN)) //if 0-125, that is the payload length
                                 {
                                     xor0 = frame_bytes_left == 126 ? //If 126, the following 2 bytes interpreted as a 16 -bit unsigned integer are the payload length.
-                                               2 :
-                                               8; //If 127, the following 8 bytes interpreted as a 64-bit unsigned integer (the most significant bit MUST be 0) are the payload length.
+                                               2
+                                                                   : 8; //If 127, the following 8 bytes interpreted as a 64-bit unsigned integer (the most significant bit MUST be 0) are the payload length.
                                     frame_bytes_left = 0;
                                 }
 
@@ -956,12 +963,10 @@ namespace org.unirail
 
                                         break;
                                     case Network.WebSocket.OPCode.PONG: //discard
-                                        //Pong frame MAY be sent unsolicited.  This serves as a
-                                        //unidirectional heartbeat.  A response to an unsolicited Pong frame is not expected.
+                                                                        //Pong frame MAY be sent unsolicited.  This serves as a
+                                                                        //unidirectional heartbeat.  A response to an unsolicited Pong frame is not expected.
                                         host.onEvent(this, (int)Network.WebSocket.Event.PONG);
-                                        state = frame_bytes_left == 0 ?
-                                                    Network.WebSocket.State.NEW_FRAME :
-                                                    Network.WebSocket.State.DISCARD;
+                                        state = frame_bytes_left == 0 ? Network.WebSocket.State.NEW_FRAME : Network.WebSocket.State.DISCARD;
                                         continue;
                                     default:
                                         if (frame_bytes_left == 0) //empty frame
@@ -1069,9 +1074,7 @@ namespace org.unirail
                             break;
                     }
 
-                    state = frame_bytes_left == 0 ?
-                                Network.WebSocket.State.NEW_FRAME :
-                                state_if_no_more_bytes;
+                    state = frame_bytes_left == 0 ? Network.WebSocket.State.NEW_FRAME : state_if_no_more_bytes;
                     return true;
                 }
 
@@ -1129,66 +1132,66 @@ namespace org.unirail
                         ws.Options.SetBuffer(bufferSize, bufferSize, receive_buffer);
 
                         Action<AdHoc.BytesSrc> transmitting = async src =>
-                                                              {
-                                                                  if (Interlocked.Exchange(ref transmit_lock, 1) == 1)
-                                                                      return;
+                        {
+                            if (Interlocked.Exchange(ref transmit_lock, 1) == 1)
+                                return;
 
-                                                                  for (int len; 0 < (len = channels.transmitter!.Read(transmit_buffer, 0, transmit_buffer.Length));)
-                                                                      await ws.SendAsync(new ReadOnlyMemory<byte>(transmit_buffer, 0, len), WebSocketMessageType.Binary, true, CancellationToken.None);
+                            for (int len; 0 < (len = channels.transmitter!.Read(transmit_buffer, 0, transmit_buffer.Length));)
+                                await ws.SendAsync(new ReadOnlyMemory<byte>(transmit_buffer, 0, len), WebSocketMessageType.Binary, true, CancellationToken.None);
 
-                                                                  transmit_lock = 0;
-                                                                  channels.onSent?.Invoke(channels);
-                                                              };
+                            transmit_lock = 0;
+                            channels.onSent?.Invoke(channels);
+                        };
                         var receiving = async () =>
-                                        {
-                                            for (; ; )
-                                                try
-                                                {
-                                                    var result = await ws.ReceiveAsync(new ArraySegment<byte>(receive_buffer), CancellationToken.None);
+                        {
+                            for (; ; )
+                                try
+                                {
+                                    var result = await ws.ReceiveAsync(new ArraySegment<byte>(receive_buffer), CancellationToken.None);
 
-                                                    if (result.MessageType == WebSocketMessageType.Close)
-                                                    {
-                                                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Bye", CancellationToken.None);
-                                                        return;
-                                                    }
+                                    if (result.MessageType == WebSocketMessageType.Close)
+                                    {
+                                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Bye", CancellationToken.None);
+                                        return;
+                                    }
 
-                                                    channels.receiver!.Write(receive_buffer, 0, result.Count);
-                                                }
-                                                catch (Exception e)
-                                                {
-                                                    onEvent(channels, (int)Network.Channel.Event.EXT_INT_DISCONNECT);
-                                                    break;
-                                                }
-                                        };
+                                    channels.receiver!.Write(receive_buffer, 0, result.Count);
+                                }
+                                catch (Exception e)
+                                {
+                                    onEvent(channels, (int)Network.Channel.Event.EXT_INT_DISCONNECT);
+                                    break;
+                                }
+                        };
 
                         channels.on_disposed = ch => ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Bye", CancellationToken.None);
 
                         ws
                             .ConnectAsync(server, new CancellationTokenSource(connectingTimout).Token)
                             .ContinueWith(
-                                          t =>
-                                          {
-                                              if (t.IsCompletedSuccessfully)
-                                              {
-                                                  onConnected(channels.transmitter!);
-                                                  Task.Run(receiving);
+                                t =>
+                                {
+                                    if (t.IsCompletedSuccessfully)
+                                    {
+                                        onConnected(channels.transmitter!);
+                                        Task.Run(receiving);
 
-                                                  transmit_lock = 0;
-                                                  channels.transmitter!.subscribeOnNewBytesToTransmitArrive(transmitting); //trigger sending
-                                              }
-                                              else
-                                              {
-                                                  onFailure(this, t.Exception!);
-                                                  onConnectingFailure(t.Exception!);
-                                              }
-                                          });
+                                        transmit_lock = 0;
+                                        channels.transmitter!.subscribeOnNewBytesToTransmitArrive(transmitting); //trigger sending
+                                    }
+                                    else
+                                    {
+                                        onFailure(this, t.Exception!);
+                                        onConnectingFailure(t.Exception!);
+                                    }
+                                });
 
                         toString = new StringBuilder(50)
-                                   .Append("Client ")
-                                   .Append(name)
-                                   .Append(" -> ")
-                                   .Append(server)
-                                   .ToString();
+                                       .Append("Client ")
+                                       .Append(name)
+                                       .Append(" -> ")
+                                       .Append(server)
+                                       .ToString();
                     }
 
                     private string toString;
@@ -1211,7 +1214,8 @@ namespace org.unirail
                               Func<IPEndPoint, Socket>? socketBuilder,
                               params IPEndPoint[] ips) : base(name, new_channel, bufferSize, timeout)
                 {
-                    maintenance_thread = new Thread(() => { Thread.Sleep(maintenance(DateTime.Now.Millisecond)); })
+                    maintenance_thread = new Thread(() =>
+                                                    { Thread.Sleep(maintenance(DateTime.Now.Millisecond)); })
                     {
                         Name = "Maintain server " + name,
                         IsBackground = true
@@ -1226,15 +1230,15 @@ namespace org.unirail
                 public void bind(int Backlog, Func<IPEndPoint, Socket>? socketBuilder, params IPEndPoint[] ips)
                 {
                     var sb = new StringBuilder(50)
-                             .Append("Server ")
-                             .Append(name);
+                                 .Append("Server ")
+                                 .Append(name);
 
                     socketBuilder ??= ip => new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     foreach (var ip in ips)
                     {
                         sb.Append('\n')
-                          .Append("\t\t -> ")
-                          .Append(ip);
+                            .Append("\t\t -> ")
+                            .Append(ip);
                         var tcp_listener = socketBuilder(ip);
                         tcp_listeners.Add(tcp_listener);
                         tcp_listener.Bind(ip);
@@ -1242,16 +1246,15 @@ namespace org.unirail
                         var on_accept_args = new SocketAsyncEventArgs();
 
                         EventHandler<SocketAsyncEventArgs> on_accept_handler = (_, _) =>
-                                                                               {
-                                                                                   do
-                                                                                   {
-                                                                                       if (on_accept_args.SocketError == SocketError.Success)
-                                                                                           allocate().receiver_connected(on_accept_args.AcceptSocket!);
+                        {
+                            do
+                            {
+                                if (on_accept_args.SocketError == SocketError.Success)
+                                    allocate().receiver_connected(on_accept_args.AcceptSocket!);
 
-                                                                                       on_accept_args.AcceptSocket = null; //socket must be cleared since the context object is being reused
-                                                                                   }
-                                                                                   while (!tcp_listener.AcceptAsync(on_accept_args));
-                                                                               };
+                                on_accept_args.AcceptSocket = null; //socket must be cleared since the context object is being reused
+                            } while (!tcp_listener.AcceptAsync(on_accept_args));
+                        };
                         on_accept_args.Completed += on_accept_handler;
                         if (!tcp_listener.AcceptAsync(on_accept_args))
                             on_accept_handler(tcp_listener, on_accept_args);
@@ -1262,15 +1265,15 @@ namespace org.unirail
 
                 private readonly Thread maintenance_thread;
 
-                // Async forces the maintenance thread to wake up and perform maintenance immediately,
-                // regardless of the current schedule or timeout.
+                //Async forces the maintenance thread to wake up and perform maintenance immediately,
+                //regardless of the current schedule or timeout.
                 public void maintain() => maintenance_thread.Interrupt(); //kick maintenance
 
                 public long maintenance_duty_cycle = 5000L;
 
-                // This method iterates through all active channels to determine the time
-                // for the next maintenance operation. It can be overridden if a different
-                // maintenance calculation logic is required
+                //This method iterates through all active channels to determine the time
+                //for the next maintenance operation. It can be overridden if a different
+                //maintenance calculation logic is required
                 protected virtual TimeSpan maintenance(long time)
                 {
                     var timeout = maintenance_duty_cycle;
@@ -1316,11 +1319,11 @@ namespace org.unirail
                 public void Connect(IPEndPoint server, Action<SRC> onConnected, Action<Exception> onConnectingFailure, TimeSpan connectingTimout)
                 {
                     toString = new StringBuilder(50)
-                               .Append("Client ")
-                               .Append(name)
-                               .Append(" -> ")
-                               .Append(server)
-                               .ToString();
+                                   .Append("Client ")
+                                   .Append(name)
+                                   .Append(" -> ")
+                                   .Append(server)
+                                   .ToString();
 
                     this.onConnected = onConnected;
 
@@ -1329,11 +1332,11 @@ namespace org.unirail
                     if (Socket.ConnectAsync(SocketType.Stream, ProtocolType.Tcp, onConnecting))
                         Task.Delay(connectingTimout)
                             .ContinueWith(
-                                          _ =>
-                                          {
-                                              if (channels.ConnectSocket is not { Connected: true })
-                                                  onConnectingFailure(new Exception($"Connection to the {server} in {connectingTimout}, timeout"));
-                                          });
+                                _ =>
+                                {
+                                    if (channels.ConnectSocket is not { Connected: true })
+                                        onConnectingFailure(new Exception($"Connection to the {server} in {connectingTimout}, timeout"));
+                                });
                     else
                         OnConnected();
                 }
@@ -1367,11 +1370,11 @@ namespace org.unirail
             {
                 this.src?.subscribeOnNewBytesToTransmitArrive(subscriber); //off hook
                 subscriber = (this.src = src).subscribeOnNewBytesToTransmitArrive(
-                                                                                  _ =>
-                                                                                  {
-                                                                                      for (int len; 0 < (len = src.Read(buffer, 0, buffer.Length));)
-                                                                                          dst.Write(buffer, 0, len);
-                                                                                  });
+                    _ =>
+                    {
+                        for (int len; 0 < (len = src.Read(buffer, 0, buffer.Length));)
+                            dst.Write(buffer, 0, len);
+                    });
             }
         }
 

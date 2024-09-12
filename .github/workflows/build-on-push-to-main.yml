@@ -5,7 +5,6 @@ on:
     tags:
       - 'v[0-9]*'
 
-
 jobs:
   build:
     strategy:
@@ -30,7 +29,7 @@ jobs:
         run: dotnet publish --configuration Release --output ${{ github.workspace }}/publish
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      - name: Upload artifacts
+      - name: Upload published artifacts
         uses: actions/upload-artifact@v3
         with:
           name: AdHocAgent-${{ runner.os }}
@@ -46,15 +45,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Download all artifacts
+      - name: Download published artifacts
         uses: actions/download-artifact@v3
         with:
-          path: artifacts
+          name: AdHocAgent-${{ runner.os }}
+          path: publish
       - name: Create Release
         run: |
           gh release create ${{ github.ref_name }} --generate-notes
-          for artifact in artifacts/*; do
-            gh release upload ${{ github.ref_name }} $artifact/*
-          done
+          gh release upload ${{ github.ref_name }} publish/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

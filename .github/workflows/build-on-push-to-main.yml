@@ -41,7 +41,7 @@ jobs:
       - name: Upload zipped artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: AdHocAgent-${{ runner.os }}.zip
+          name: AdHocAgent-${{ runner.os }}
           path: ${{ github.workspace }}/AdHocAgent-${{ runner.os }}.zip
 
   create-github-release:
@@ -54,8 +54,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Download zipped artifacts
+      - name: Download Windows artifact
         uses: actions/download-artifact@v3
+        with:
+          name: AdHocAgent-Windows
+          path: ./
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: AdHocAgent-macOS
+          path: ./
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: AdHocAgent-Linux
+          path: ./
       - name: Create Release
         run: |
           gh release create ${{ github.ref_name }} --generate-notes

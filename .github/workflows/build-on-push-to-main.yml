@@ -32,12 +32,12 @@ jobs:
       - name: Zip publish directory (Windows)
         if: runner.os == 'Windows'
         run: |
-          Compress-Archive -Path ${{ github.workspace }}/publish -DestinationPath ${{ github.workspace }}/AdHocAgent-${{ runner.os }}.zip
+          Compress-Archive -Path "${{ github.workspace }}\publish\*" -DestinationPath "${{ github.workspace }}\AdHocAgent-${{ runner.os }}.zip"
       - name: Zip publish directory (Unix)
         if: runner.os != 'Windows'
         run: |
-          cd ${{ github.workspace }}
-          zip -r AdHocAgent-${{ runner.os }}.zip publish
+          cd ${{ github.workspace }}/publish
+          zip -r ../AdHocAgent-${{ runner.os }}.zip .
       - name: Upload zipped artifacts
         uses: actions/upload-artifact@v3
         with:

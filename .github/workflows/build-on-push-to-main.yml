@@ -29,7 +29,12 @@ jobs:
         run: dotnet publish --configuration Release --output ${{ github.workspace }}/publish
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      - name: Zip publish directory
+      - name: Zip publish directory (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Compress-Archive -Path ${{ github.workspace }}/publish -DestinationPath ${{ github.workspace }}/AdHocAgent-${{ runner.os }}.zip
+      - name: Zip publish directory (Unix)
+        if: runner.os != 'Windows'
         run: |
           cd ${{ github.workspace }}
           zip -r AdHocAgent-${{ runner.os }}.zip publish

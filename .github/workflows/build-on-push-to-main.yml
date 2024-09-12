@@ -2,6 +2,9 @@ name: Build AdHocAgent on push to the main + Release if V tag
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - 'v[0-9]*'
+
 
 jobs:
   build:

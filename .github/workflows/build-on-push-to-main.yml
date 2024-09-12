@@ -1,4 +1,5 @@
 name: Build AdHocAgent on push to the main + Release if V tag
+
 on:
   push:
     branches: [ "main" ]
@@ -10,7 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -29,11 +29,15 @@ jobs:
         run: dotnet publish --configuration Release --output ${{ github.workspace }}/publish
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      - name: Upload published artifacts
+      - name: Zip publish directory
+        run: |
+          cd ${{ github.workspace }}
+          zip -r AdHocAgent-${{ runner.os }}.zip publish
+      - name: Upload zipped artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: AdHocAgent-${{ runner.os }}
-          path: ${{ github.workspace }}/publish
+          name: AdHocAgent-${{ runner.os }}.zip
+          path: ${{ github.workspace }}/AdHocAgent-${{ runner.os }}.zip
 
   create-github-release:
     name: Release on V tag
@@ -45,14 +49,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Download published artifacts
+      - name: Download zipped artifacts
         uses: actions/download-artifact@v3
-        with:
-          name: AdHocAgent-${{ runner.os }}
-          path: publish
       - name: Create Release
         run: |
           gh release create ${{ github.ref_name }} --generate-notes
-          gh release upload ${{ github.ref_name }} publish/*
+          gh release upload ${{ github.ref_name }} AdHocAgent-*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

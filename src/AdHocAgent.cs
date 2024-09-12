@@ -231,11 +231,6 @@ namespace org.unirail
                 Console.WriteLine("- Uploads the protocol description file to the server to generate source code.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\t.cs!  ");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("- Uploads the protocol description file to generate and test source code.");
-
-                Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("\t\t.cs?  ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("- Displays information about the protocol description file in the viewer.");
@@ -280,7 +275,6 @@ namespace org.unirail
                 Console.WriteLine("\tAnd paths to local resources such as:");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("\t\tIDE");
-                Console.WriteLine("\t\t7-Zip compression utility (used for optimal compression).");
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("\tThe AdHocAgent utility");

@@ -92,4 +92,3 @@ jobs:
           # Print the response to the console
           echo "GraphQL Introspection Query Response:"
           echo "$RESPONSE"
-K

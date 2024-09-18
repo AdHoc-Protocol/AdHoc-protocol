@@ -80,8 +80,10 @@ jobs:
       - name: Create author-specific project      
         run: |
           while IFS=, read -r author url avatar_url id; do
-            # Check if project exists, if not, create it
-            gh api graphql -f query='
+            echo "Checking projects for author: $author"
+            
+            # Run the GraphQL query to check if the project exists for the author
+            RESULT=$(gh api graphql -f query='
               query($owner: String!, $name: String!) {
                 repository(owner: $owner, name: $name) {
                   projects(first: 100) {
@@ -91,16 +93,11 @@ jobs:
                   }
                 }
               }
-            ' -F owner="cheblin" -F name="$REPO" | grep -q "$author" || {
-              gh api graphql -f mutation='
-                mutation($name: String!) {
-                  createProject(input: {name: $name}) {
-                    project {
-                      name
-                    }
-                  }
-                }
-              ' -F name="$author"
-              }
+            ' -F owner="$REPO" -F name="$REPO")
+            
+            # Output the result of the query
+            echo "Result for $author:"
+            echo "$RESULT"
+            
           done < unique_messages.txt
 

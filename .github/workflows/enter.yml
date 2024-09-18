@@ -15,6 +15,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DISCUSSION_CATEGORY_ID="42610297"  # Use the actual category ID
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.event.repository.name }}"
+          
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
@@ -30,6 +33,7 @@ jobs:
                 }
               }
             }
-          ' -F owner="$GITHUB_REPOSITORY_OWNER" -F name="${{ github.repository }}" -F categoryId="$DISCUSSION_CATEGORY_ID")
+          ' -F owner="$REPO_OWNER" -F name="$REPO_NAME" -F categoryId="$DISCUSSION_CATEGORY_ID")
+          
           echo "$MESSAGES" > messages.json
           cat messages.json  # This prints the file content into the console

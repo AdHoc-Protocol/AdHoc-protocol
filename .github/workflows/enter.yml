@@ -14,18 +14,17 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DISCUSSION_CATEGORY_ID="42610297"  # Fetch the actual category ID
+          DISCUSSION_CATEGORY_ID="42610297"  # Use the actual category ID
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
                 discussions(first: 100, categoryId: $categoryId) {
                   nodes {
                     author {
-                      id
                       login
-                      node_id
                       url
-                      avatar_url
+                      avatarUrl
+                      id
                     }
                     createdAt
                   }

@@ -43,10 +43,12 @@ using System.Threading.Tasks;
 using org.unirail.Agent;
 using Type = org.unirail.Agent.Entity.Type;
 
-namespace org.unirail{
-    public interface ChannelToObserver{
+namespace org.unirail
+{
+    public interface ChannelToObserver
+    {
         static ObserverCommunication.Transmitter transmitter = new();
-        static ObserverCommunication.Receiver    receiver    = new();
+        static ObserverCommunication.Receiver receiver = new();
 
         private static ProjectImpl? project;
 
@@ -54,15 +56,15 @@ namespace org.unirail{
         {
             try
             {
-                if( project == null ) transmitter.send(project = ProjectImpl.init()); //first send
+                if (project == null) transmitter.send(project = ProjectImpl.init()); //first send
                 else
                 {
                     var prj = project.refresh();
-                    if( prj == null ) transmitter.send(new Up_to_date()); //nothing update notitication
+                    if (prj == null) transmitter.send(new Up_to_date()); //nothing update notitication
                     else transmitter.send(project = prj);                 // reply with updated information
                 }
             }
-            catch( Exception e )
+            catch (Exception e)
             {
                 project = null;
                 transmitter.send(new Up_to_date { info = e.ToString() });
@@ -79,23 +81,23 @@ namespace org.unirail{
         public void Received(ObserverCommunication.Receiver via, Show_Code pack)
         {
             var file_path = "";
-            var line      = 0;
-            var char_pos  = 0;
-            var src       = "";
+            var line = 0;
+            var char_pos = 0;
+            var src = "";
             HasDocs item = pack.tYpe switch
-                           {
-                               Type.Project => project,
-                               Type.Host    => project.hosts[pack.idx],
-                               Type.Pack    => project.packs[pack.idx],
-                               Type.Field   => project.fields[pack.idx],
-                               Type.Channel => project.channels[pack.idx],
-                               Type.Stage   => project.channels[pack.idx],
-                               _            => throw new Exception("Unknown entity type")
-                           };
+            {
+                Type.Project => project,
+                Type.Host => project.hosts[pack.idx],
+                Type.Pack => project.packs[pack.idx],
+                Type.Field => project.fields[pack.idx],
+                Type.Channel => project.channels[pack.idx],
+                Type.Stage => project.channels[pack.idx],
+                _ => throw new Exception("Unknown entity type")
+            };
 
 
             file_path = item.project.file_path;
-            char_pos  = item.char_in_source_code;
+            char_pos = item.char_in_source_code;
             StreamReader file = new(file_path);
             src = file.ReadToEnd();
             file.Close();
@@ -109,30 +111,30 @@ namespace org.unirail{
 
             var show_code_args = AdHocAgent.app_props["show_code_args"].AsString.Value
                                            .Replace("<path to file>", $"\"{file_path}\"")
-                                           .Replace("<line number>",  line.ToString())
-                                           .Replace("<char number>",  char_pos.ToString());
+                                           .Replace("<line number>", line.ToString())
+                                           .Replace("<char number>", char_pos.ToString());
 
             Process.Start(new ProcessStartInfo
-                          {
-                              UseShellExecute = true,
-                              FileName        = show_code_exe,
-                              Arguments       = show_code_args
-                          });
+            {
+                UseShellExecute = true,
+                FileName = show_code_exe,
+                Arguments = show_code_args
+            });
         }
 
         private static async Task StartWebSocketAsync(HttpListenerContext ctx)
         {
             var ws = (await ctx.AcceptWebSocketAsync(null)).WebSocket;
-            if( ws.State != WebSocketState.Open ) AdHocAgent.exit("Observer Connection Issue");
+            if (ws.State != WebSocketState.Open) AdHocAgent.exit("Observer Connection Issue");
 
             AdHocAgent.LOG.Information("Observer connected");
 
-            if( File.Exists(AdHocAgent.raw_files_dir_path + ".layout") )
+            if (File.Exists(AdHocAgent.raw_files_dir_path + ".layout"))
             {
                 AdHocAgent.LOG.Information("Found and send {RawFilesDirPath}.layout to the observer", AdHocAgent.raw_files_dir_path);
                 var mem = new MemoryStream();
 
-                await using( var fs = File.OpenRead(AdHocAgent.raw_files_dir_path + ".layout") ) await fs.CopyToAsync(mem); // read layout binary from file
+                await using (var fs = File.OpenRead(AdHocAgent.raw_files_dir_path + ".layout")) await fs.CopyToAsync(mem); // read layout binary from file
 
                 await ws.SendAsync(mem.ToArray(), WebSocketMessageType.Binary, true, CancellationToken.None); //write layout to observer
             }
@@ -140,16 +142,16 @@ namespace org.unirail{
             var snd_buff = new byte[1024];
             transmitter.subscribeOnNewBytesToTransmitArrive(async src =>
                                                             {
-                                                                for( int len; 0 < (len = src.Read(snd_buff, 0, snd_buff.Length)); )
+                                                                for (int len; 0 < (len = src.Read(snd_buff, 0, snd_buff.Length));)
                                                                     await ws.SendAsync(snd_buff[..len], WebSocketMessageType.Binary, true, CancellationToken.None);
                                                             });
             send_project();
 
-            for( var rsv_buff = new byte[1024];; )
+            for (var rsv_buff = new byte[1024]; ;)
             {
                 var ret = await ws.ReceiveAsync(rsv_buff, CancellationToken.None); //block here
 
-                if( ret.MessageType == WebSocketMessageType.Close ) break;
+                if (ret.MessageType == WebSocketMessageType.Close) break;
 
                 receiver.Write(rsv_buff, 0, ret.Count);
             }
@@ -168,7 +170,7 @@ namespace org.unirail{
         {
             ProjectImpl.init(); //for preliminary testing purposes
             var listener = new HttpListener();
-            var url      = $"http://localhost:{port}/";
+            var url = $"http://localhost:{port}/";
             listener.Prefixes.Add(url);
             listener.IgnoreWriteExceptions = true; //ignore "The specified network name is no longer available"
             listener.Start();
@@ -177,22 +179,22 @@ namespace org.unirail{
                 //run browser
                 //Process.Start(new ProcessStartInfo() { FileName = url, UseShellExecute = true });
             }
-            catch( Exception ex ) { AdHocAgent.exit($"Tried to open link {url} to Visualizer user interface but got an error {ex}."); }
+            catch (Exception ex) { AdHocAgent.exit($"Tried to open link {url} to Visualizer user interface but got an error {ex}."); }
 
             AdHocAgent.LOG.Information("Waiting for browser connection on {Url}...", url);
 
 
-            while( true )
+            while (true)
             {
                 var ctx = await listener.GetContextAsync(); //block
 
 
-                if( ctx.Request.IsWebSocketRequest ) StartWebSocketAsync(ctx);
+                if (ctx.Request.IsWebSocketRequest) StartWebSocketAsync(ctx);
                 else
                 {
                     var filename = ctx.Request.Url!.AbsolutePath[1..];
 
-                    switch( filename )
+                    switch (filename)
                     {
                         case "":
                             filename = "index.html";
@@ -200,25 +202,25 @@ namespace org.unirail{
 
                         case "crash_layout":
 
-                            if( ctx.Request.ContentLength64 == 0 ) AdHocAgent.LOG.Warning("Layout info is empty");
+                            if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
-                                await using( var fs = File.Open(AdHocAgent.raw_files_dir_path + ".unsaved_layout", FileMode.Create, FileAccess.Write) )
+                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".unsaved_layout", FileMode.Create, FileAccess.Write))
                                     await ctx.Request.InputStream.CopyToAsync(fs);
 
                             continue;
                         case "confirmed_layout":
 
-                            if( ctx.Request.ContentLength64 == 0 ) AdHocAgent.LOG.Warning("Layout info is empty");
+                            if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
-                                await using( var fs = File.Open(AdHocAgent.raw_files_dir_path + ".layout", FileMode.Create, FileAccess.Write) )
+                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".layout", FileMode.Create, FileAccess.Write))
                                     await ctx.Request.InputStream.CopyToAsync(fs);
 
                             continue;
                     }
 
-                    await using( var stream = new FileStream(@"D:\AdHoc\Observer\Observer\" + filename, FileMode.Open, FileAccess.Read) ) // Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Observer." + filename))
+                    await using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Observer." + filename))
                     {
-                        if( stream == null )
+                        if (stream == null)
                         {
                             AdHocAgent.LOG.Error("The file {filename} embedded as an assembly resource could not be found.", filename);
                             ctx.Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -226,36 +228,36 @@ namespace org.unirail{
                         }
 
                         ctx.Response.ContentType = Path.GetExtension(filename) switch
-                                                   {
-                                                       ".css"  => "text/css",
-                                                       ".htm"  => "text/html",
-                                                       ".html" => "text/html",
-                                                       ".gif"  => "image/gif",
-                                                       ".ico"  => "image/x-icon",
-                                                       ".jpeg" => "image/jpeg",
-                                                       ".jpg"  => "image/jpeg",
-                                                       ".png"  => "image/png",
-                                                       ".wbmp" => "image/vnd.wap.wbmp",
-                                                       ".js"   => "application/x-javascript",
-                                                       ".xml"  => "text/xml",
-                                                       ".zip"  => "application/zip",
-                                                       ".jar"  => "application/java-archive",
-                                                       _       => "application/octet-stream"
-                                                   };
+                        {
+                            ".css" => "text/css",
+                            ".htm" => "text/html",
+                            ".html" => "text/html",
+                            ".gif" => "image/gif",
+                            ".ico" => "image/x-icon",
+                            ".jpeg" => "image/jpeg",
+                            ".jpg" => "image/jpeg",
+                            ".png" => "image/png",
+                            ".wbmp" => "image/vnd.wap.wbmp",
+                            ".js" => "application/x-javascript",
+                            ".xml" => "text/xml",
+                            ".zip" => "application/zip",
+                            ".jar" => "application/java-archive",
+                            _ => "application/octet-stream"
+                        };
                         ctx.Response.ContentLength64 = stream.Length;
                         //To ensure that the browser never uses cached resources
                         //+ Ctrl + Shift + R in the browser
                         ctx.Response.AddHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-                        ctx.Response.AddHeader("Pragma",        "no-cache");
-                        ctx.Response.AddHeader("Expires",       "0");
-                        ctx.Response.Headers["ETag"]          = Guid.NewGuid().ToString();
+                        ctx.Response.AddHeader("Pragma", "no-cache");
+                        ctx.Response.AddHeader("Expires", "0");
+                        ctx.Response.Headers["ETag"] = Guid.NewGuid().ToString();
                         ctx.Response.Headers["Last-Modified"] = DateTime.UtcNow.ToString("r");
 
                         try //The specified network name is no longer available.
                         {
                             await stream.CopyToAsync(ctx.Response.OutputStream);
                         }
-                        catch( Exception e ) { continue; }
+                        catch (Exception e) { continue; }
 
                         stream.Close();
                         ctx.Response.OutputStream.Flush();

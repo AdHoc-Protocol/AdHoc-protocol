@@ -236,27 +236,30 @@ namespace org.unirail
                 Console.WriteLine("- Displays information about the protocol description file in the viewer.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\t.md  ");
+                Console.Write("\t\t.md   ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("- Repeats the deployment process according to the instructions in the .md file, using source files already in the working directory.");
 
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\t.proto");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("- Indicates that the file is in Protocol Buffers format and will be sent to the server for conversion to Adhoc protocol description format.");
 
-                Console.Write("\tThe remaining arguments are paths to source ");
+                Console.Write("\t\tThe remaining arguments are paths to source ");
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write(".cs ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("and project ");
+                Console.Write("files and project ");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write(".csproj ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("files that are imported and used with the root protocol description file.");
 
-                Console.WriteLine("  If the last argument is a path to a folder, it is used as the output folder for intermediate results. If not provided, the current working directory is used.");
+                Console.WriteLine("\t\tIf the last argument is a path to a folder, it is used as the output folder for intermediate results. If not provided, the current working directory is used.");
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("\t\t.proto");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("- or path to a directory, indicates that the file(s) is in Protocol Buffers format and will be sent to the server for conversion to Adhoc protocol description format.");
+                Console.WriteLine("\t\tThe second argument can be a path to a directory containing additional imported `.proto` files.");
+
 
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write("In addition to command-line arguments, the ");
@@ -284,16 +287,25 @@ namespace org.unirail
                 Console.Write("AdHocAgent.toml");
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine(" file in its own directory.");
-                Console.WriteLine("\tIf the file does not exist, the utility generates a template for this file. You only need to update the information in this file to match your configuration.");
+                Console.WriteLine("\tIf the file does not exist, the utility will generate a template. You may need to update this file to match the latest configuration.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("  Deployment_instructions.md");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine(" - Required only for code generation tasks. This file contains deployment instructions for the generated results.");
+                Console.WriteLine(" is required only for code generation tasks. This file contains deployment instructions for the generated results. If the file does not exist, the utility will generate a template. You have to update this file with your deployment instructions.");
 
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine();
+                Console.Write("The template for your protocol description file can be found at:");
+                Console.ForegroundColor = ConsoleColor.Green;
+                var path = Path.Join(Directory.GetCurrentDirectory(), "MyProtocolDescription.cs");
+                Console.WriteLine(path);
 
                 Console.ForegroundColor = ConsoleColor.White;
 
+                await using var file = File.Create(path);
+                await Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Templates.ProtocolDescription.cs")!.CopyToAsync(file);
+                Console.ReadLine();
                 return;
             }
 

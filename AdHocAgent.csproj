@@ -25,6 +25,8 @@
       <EmbeddedResource Include="Templates\AdHocAgent.toml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <Compile Remove="Templates\ProtocolDescription.cs" />
+      <EmbeddedResource Include="Templates\ProtocolDescription.cs" />
     </ItemGroup>
 
     <ItemGroup>

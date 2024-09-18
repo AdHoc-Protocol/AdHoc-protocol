@@ -92,8 +92,10 @@ To start using the AdHoc code generator, follow these steps:
 		```
 4. Download the source code of
    the [AdHoс protocol metadata attributes](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/master/src/Meta.cs).
-   Alternatively, you can use the version embedded in the AdHocAgent binary.
-5. Add a reference to the Meta in your AdHoc protocol description project.
+   Alternatively, you can use the embedded in the AdHocAgent `.dll`.  
+   ![image](https://github.com/user-attachments/assets/76298dca-1f8c-4b88-855b-080ead6ad0d7)
+5. Add a reference to the Meta in your AdHoc protocol description project.  
+   ![image](https://github.com/user-attachments/assets/c91a05fe-3eff-4106-880f-e17f0e6b12de)
 6. Use the **[AdHocAgent](https://github.com/cheblin/AdHocAgent)** utility to upload your `protocol description file` to
    the server and obtain the generated code for deployment.
 
@@ -163,9 +165,9 @@ Then, click `Save layout`.
 If you modify the layout and close the browser without saving, a `my_protocol_description.unsaved_layout` file will be created, containing the layout before closing.
 You can rename this file to `my_protocol_description.layout` to use it, if you accidentally closed without saving.
 
-## `.proto` or directory path
+## `.proto` or path to a directory 
 
-The path to a directory indicates that the task is converting files in the [Protocol Buffers](https://developers.google.com/protocol-buffers) format to format of the AdHoc `protocol description`.
+Indicates that the task is converting files in the [Protocol Buffers](https://developers.google.com/protocol-buffers) format to format of the AdHoc `protocol description`.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -216,6 +218,9 @@ This feature is particularly useful for debugging deployments.
 
 The `AdHocAgent` utility will search for the `AdHocAgent.toml` file in its directory.
 If the file is not found, the utility will generate a template that you can update with the required information.
+
+> [!NOTE]
+> When run without arguments, the AdHocAgent utility displays the command-line help and generates a `protocol description file` template.
 
 ## Continuous deployment (CD)
 
@@ -618,39 +623,41 @@ that will run before and after the `Continuous Deployment` process. These execut
 
 # Overview
 
-The minimal `protocol description file` could be represented as follows:
+The simplest form of a `protocol description file` can be [represented as follows](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/Templates/ProtocolDescription.cs):
 
 ```csharp
-using org.unirail.Meta; // Importing AdHoc protocol attributes is mandatory
+using org.unirail.Meta; // Importing attributes required for AdHoc protocol generation
 
-namespace com.my.company // Your company namespace. Required!
+namespace com.my.company // The namespace for your company's project. Required!
 {
-    public interface MyProject // Declare the AdHoc protocol description project as "MyProject."
+    public interface MyProject // Declares an AdHoc protocol description project
     {
-        class SharedPack{ } // An empty packet that is transmitted and received by both the Client and Server hosts.
+        class CommonPacket{ } // Represents a common empty packet used across different hosts
 
-        ///<see cref='InTS'/>
-        struct Server : Host // Request to generate code for the Server host using TypeScript.
+        /// <see cref="InTS"/>-   // Generates an abstract version of the corresponding TypeScript code
+        /// <see cref="InCS"/>    // Generates the concrete implementation in C#
+        /// <see cref="InJAVA"/>  // Generates the concrete implementation in Java
+        struct Server : Host // Defines the server-side host and generates platform-specific code
         {
-            class PacketToClient{ } // An empty packet to send to the client.
+            class PacketToClient{ } // Represents an empty packet to be sent from the server to the client
         }
 
-        ///<see cref='InJAVA'/> 
-        struct Client : Host // Request to generate the code for the Client host using Java.
+        /// <see cref="InTS"/>    // Generates the concrete implementation in TypeScript
+        /// <see cref="InCS"/>-   // Generates an abstract version of the corresponding C# code
+        /// <see cref="InJAVA"/>  // Generates the concrete implementation in Java
+        struct Client : Host // Defines the client-side host and generates platform-specific code
         {
-            class PacketToServer{ } // An empty packet to send to the server.
+            class PacketToServer{ } // Represents an empty packet to be sent from the client to the server
         }
 
-        interface Channel : ChannelFor<Client, Server>{ } // The communication channel between the Client and the Server.
+        // Defines a communication channel for exchanging data between the client and server
+        interface Channel : ChannelFor<Client, Server>{ }
     }
 }
 ```
 
-If you wish to view the structure of a `protocol description file`, you can
-utilize the AdHocAgent utility by providing the path to the file followed by a
-question mark. For example: `AdHocAgent.exe /dir/minimal_descr_file.cs?`.
-Running this command will prompt the utility to display the corresponding scheme
-of the `protocol description file`.
+To view the structure of a `protocol description file`, use the AdHocAgent utility by specifying the file path followed by a question mark. 
+For example: `AdHocAgent.exe /dir/minimal_descr_file.cs?`. Running this command will prompt the utility to display the schema of the `protocol description file`.
 
 <details>
   <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -1678,10 +1685,11 @@ result
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/4c485e72-fea2-4886-b1aa-28444657fe71)
 </details>
 
+[downloads](https://github.com/AdHoc-Protocol/AdHoc-protocol/releases)
+
 * Ask questions you’re wondering about.
 * Share ideas.💡
 * Engage with other community members.
-
 [AdHoc Agent and general forum](https://github.com/AdHoc-Protocol/AdHoc-protocol/discussions)  
 [TypeScript generator forum](https://github.com/AdHoc-Protocol/InTS/discussions)  
 [Java generator forum](https://github.com/AdHoc-Protocol/InJAVA/discussions)   

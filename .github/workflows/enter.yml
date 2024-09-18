@@ -1,0 +1,34 @@
+name: Process Enter Discussion Messages
+
+on:
+  discussion:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  process-messages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get discussion messages in "Enter" category
+        id: fetch_discussions
+        run: |
+          DISCUSSION_CATEGORY="Enter"
+          MESSAGES=$(gh api graphql -f query='
+            {
+              repository(owner: "$GITHUB_REPOSITORY_OWNER", name: "$GITHUB_REPOSITORY_NAME") {
+                discussions(category: "$DISCUSSION_CATEGORY", first: 100) {
+                  nodes {
+                    author {
+                      id
+                      login
+                      node_id
+                      url
+                      avatar_url
+                    }
+                    createdAt
+                  }
+                }
+              }
+            }
+          ')
+          echo "$MESSAGES" > messages.json

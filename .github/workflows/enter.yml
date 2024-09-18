@@ -60,3 +60,10 @@ jobs:
           
           echo "$MESSAGES" > messages.json
           cat messages.json
+      
+      - name: Process messages and send
+        run: |
+          # Parse the messages.json file and remove duplicates
+          jq -r '.data.repository.discussions.nodes | unique_by(.id) | .[] | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
+          cat unique_messages.txt
+

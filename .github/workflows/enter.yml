@@ -75,7 +75,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Close connection and delete processed messages
+          # Delete processed messages
           jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
             gh api graphql -f query='
               mutation($id: ID!) {
@@ -87,6 +87,8 @@ jobs:
           done
 
       - name: Create author-specific project
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
         run: |
           while IFS=, read -r author url avatar_url id; do
             # Check if project exists, if not, create it

@@ -59,4 +59,4 @@ jobs:
           ' -F owner="$REPO_OWNER" -F name="$REPO_NAME" -F categoryId="$CATEGORY_ID")
           
           echo "$MESSAGES" > messages.json
-      
+          cat messages.json

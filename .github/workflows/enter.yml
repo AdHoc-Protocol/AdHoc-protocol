@@ -25,7 +25,7 @@ jobs:
                 }
               }
             }
-          ' -F owner="cheblin" -F name="YourRepoName")
+          ' -F owner="cheblin" -F name="AdHoc-Protocol")
           
           echo "Result:"
           echo "$RESULT"

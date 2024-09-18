@@ -15,6 +15,7 @@ jobs:
       - name: Get the discussion category ID for "Enter"
         id: fetch_category_id
         run: |
+          curl -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/AdHoc-Protocol/AdHoc-Protocol/projects
           CATEGORY_ID=$(gh api graphql -f query='
             query($owner: String!, $name: String!) {
               repository(owner: $owner, name: $name) {

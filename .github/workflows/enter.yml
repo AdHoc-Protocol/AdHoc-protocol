@@ -18,7 +18,7 @@ jobs:
           MESSAGES=$(gh api graphql -f query='
             {
               repository(owner: "$GITHUB_REPOSITORY_OWNER", name: "$GITHUB_REPOSITORY_NAME") {
-                discussions(category: "$DISCUSSION_CATEGORY", first: 100) {
+                discussions(category: 42610297) {
                   nodes {
                     author {
                       id

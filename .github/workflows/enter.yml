@@ -14,11 +14,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DISCUSSION_CATEGORY="Enter"
+          DISCUSSION_CATEGORY_ID="42610297"  # Fetch the actual category ID
           MESSAGES=$(gh api graphql -f query='
-            {
-              repository(owner: "$GITHUB_REPOSITORY_OWNER", name: "$GITHUB_REPOSITORY_NAME") {
-                discussions(category: 42610297) {
+            query($owner: String!, $name: String!, $categoryId: ID!) {
+              repository(owner: $owner, name: $name) {
+                discussions(first: 100, categoryId: $categoryId) {
                   nodes {
                     author {
                       id
@@ -32,5 +32,5 @@ jobs:
                 }
               }
             }
-          ')
+          ' -F owner="$GITHUB_REPOSITORY_OWNER" -F name="$GITHUB_REPOSITORY_NAME" -F categoryId="$DISCUSSION_CATEGORY_ID")
           echo "$MESSAGES" > messages.json

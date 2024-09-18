@@ -48,6 +48,7 @@ jobs:
                     author {
                       login
                       url
+                      email
                       avatarUrl
                     }
                     createdAt

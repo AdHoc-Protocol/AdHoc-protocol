@@ -30,6 +30,6 @@ jobs:
                 }
               }
             }
-          ' -F owner="$GITHUB_REPOSITORY_OWNER" -F name="$GITHUB_REPOSITORY_NAME" -F categoryId="$DISCUSSION_CATEGORY_ID")
+          ' -F owner="$GITHUB_REPOSITORY_OWNER" -F name="${{ github.repository }}" -F categoryId="$DISCUSSION_CATEGORY_ID")
           echo "$MESSAGES" > messages.json
           cat messages.json  # This prints the file content into the console

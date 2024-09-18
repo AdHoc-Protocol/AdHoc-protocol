@@ -61,7 +61,7 @@ jobs:
           echo "$MESSAGES" > messages.json
           cat messages.json
       
-      - name: Process messages and send
+      - name: Collect unique messages
         run: |
           # Parse the messages.json file and remove duplicates
           jq -r '.data.repository.discussions.nodes 
@@ -69,4 +69,78 @@ jobs:
           | .[] 
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
           cat unique_messages.txt
+      
+      - name: Handle response
+        if: success()
+        run: |
+          # Close connection and delete processed messages
+          jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
+            gh api graphql -f query='
+              mutation($id: ID!) {
+                deleteDiscussion(input: {id: $id}) {
+                  clientMutationId
+                }
+              }
+            ' -F id="$id"
+          done
+
+      - name: Create author-specific project
+        run: |
+          while IFS=, read -r author url avatar_url id; do
+            # Check if project exists, if not, create it
+            gh api graphql -f query='
+              query($owner: String!, $name: String!) {
+                repository(owner: $owner, name: $name) {
+                  projects(first: 100) {
+                    nodes {
+                      name
+                    }
+                  }
+                }
+              }
+            ' -F owner="$REPO_OWNER" -F name="$REPO_NAME" | grep -q "$author" || {
+              gh api graphql -f mutation='
+                mutation($name: String!) {
+                  createProject(input: {name: $name}) {
+                    project {
+                      name
+                    }
+                  }
+                }
+              ' -F name="$author"
+              
+              # Add README with author details
+              gh api graphql -f mutation='
+                mutation($name: String!, $url: String!, $avatarUrl: String!) {
+                  updateProject(input: {name: $name, body: "# [${author}](${url})  \n\n![image](${avatarUrl})\n"}) {
+                    project {
+                      name
+                    }
+                  }
+                }
+              ' -F name="$author" -F url="$url" -F avatarUrl="$avatar_url"
+              
+              # Add note with discussion ID
+              gh api graphql -f mutation='
+                mutation($id: String!, $author: String!) {
+                  addNoteToProject(input: {projectId: $author, note: $id}) {
+                    note {
+                      id
+                    }
+                  }
+                }
+              ' -F id="$id" -F author="$author"
+              
+              # Invite the author to the project
+              gh api graphql -f mutation='
+                mutation($author: String!) {
+                  inviteCollaborator(input: {projectId: $author, permission: READ_WRITE}) {
+                    collaborator {
+                      login
+                    }
+                  }
+                }
+              ' -F author="$author"
+            }
+          done < unique_messages.txt
 

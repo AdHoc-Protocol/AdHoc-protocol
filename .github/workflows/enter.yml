@@ -101,5 +101,6 @@ jobs:
                   }
                 }
               ' -F name="$author"
+              }
           done < unique_messages.txt
 

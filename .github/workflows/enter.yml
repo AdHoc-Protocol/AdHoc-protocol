@@ -78,7 +78,7 @@ jobs:
             ' -F id="$id"
           done
 
-       - name: Iterate over unique messages
+      - name: Iterate over unique messages
         run: |
           while IFS=',' read -r login url avatarUrl id; do
             # Check if a project with title "$login" exists in the organization
@@ -141,4 +141,3 @@ jobs:
               echo "Project for $login already exists, skipping..."
             fi
           done < unique_messages.txt
-

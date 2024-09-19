@@ -83,7 +83,7 @@ jobs:
           while IFS=',' read -r login url avatarUrl id; do
             # Check if a project with title "$login" exists in the organization
             PROJECT_EXISTS=$(gh api graphql -f query='
-              query($organization: String!, $name: String!, $login: String!) {
+              query($organization: String!, $name: String!) {
                 organization(login: $organization) {
                   repository(name: $name) {
                     projectsV2(first: 100) {
@@ -94,7 +94,7 @@ jobs:
                   }
                 }
               }
-            ' -F organization="$ORG" -F name="$REPO" -F login="$login" | jq -r '.data.organization.repository.projectsV2.nodes[] | select(.title == $login)')
+            ' -F organization="$ORG" -F name="$REPO" | jq --arg login "$login" -r '.data.organization.repository.projectsV2.nodes[] | select(.title == $login)')
 
             if [[ -z "$PROJECT_EXISTS" ]]; then
               echo "Creating new project for $login..."

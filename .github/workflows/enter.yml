@@ -1,4 +1,4 @@
-name: Process Enter Discussion Messages
+name: Process Sign up Discussion Messages
 
 on:
   discussion:
@@ -12,7 +12,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       REPO: AdHoc-Protocol
     steps:
-      - name: Get the discussion category ID for "Enter"
+      - name: Get the discussion category ID for "Sign up"
         id: fetch_category_id
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
@@ -35,11 +35,11 @@ jobs:
                 }
               }
             }
-          ' -F owner="$REPO" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Enter") | .id')
+          ' -F owner="$REPO" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
           
           echo "Fetched Category ID: $CATEGORY_ID"
 
-      - name: Get discussion messages in "Enter" category
+      - name: Get discussion messages in "Sign up" category
         id: fetch_discussions
         run: |          
           MESSAGES=$(gh api graphql -f query='

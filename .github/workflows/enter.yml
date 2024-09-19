@@ -38,7 +38,7 @@ jobs:
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
-                discussions(first: 1000, categoryId: $categoryId) {
+                discussions(first: 100, categoryId: $categoryId) {
                   nodes {
                     author {
                       login

@@ -30,15 +30,15 @@ jobs:
             }
           ' -F owner="$REPO" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
           
-          echo "Fetched Category ID: $CATEGORY_ID"
+          # echo "Fetched Category ID: $CATEGORY_ID"
 
-      - name: Get discussion messages in "Sign up" category
+      - name: Collect discussion messages in "Sign up" category
         id: fetch_discussions
         run: |          
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
-                discussions(first: 100, categoryId: $categoryId) {
+                discussions(first: 1000, categoryId: $categoryId) {
                   nodes {
                     author {
                       login
@@ -65,10 +65,9 @@ jobs:
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
           cat unique_messages.txt
       
-      - name: Handle response
+      - name: Delete processed messages
         if: success()
         run: |
-          # Delete processed messages
           jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
             gh api graphql -f query='
               mutation($id: ID!) {
@@ -79,27 +78,67 @@ jobs:
             ' -F id="$id"
           done
 
-      - name: Create author-specific project      
+       - name: Iterate over unique messages
         run: |
-          while IFS=, read -r author url avatar_url id; do
-            echo "Checking projects for author: $author"
-            
-            # Run the GraphQL query to check if the project exists for the author
-            RESULT=$(gh api graphql -f query='
-              query($owner: String!, $name: String!) {
-                repository(owner: $owner, name: $name) {
-                  projects(first: 100) {
-                    nodes {
-                      name
+          while IFS=',' read -r login url avatarUrl id; do
+            # Check if a project with title "$login" exists in the organization
+            PROJECT_EXISTS=$(gh api graphql -f query='
+              query($organization: String!, $name: String!, $login: String!) {
+                organization(login: $organization) {
+                  repository(name: $name) {
+                    projectsV2(first: 100) {
+                      nodes {
+                        title
+                      }
                     }
                   }
                 }
               }
-            ' -F owner="$REPO" -F name="$REPO")
-            
-            # Output the result of the query
-            echo "Result for $author:"
-            echo "$RESULT"
-            
+            ' -F organization="$ORG" -F name="$REPO" -F login="$login" | jq -r '.data.organization.repository.projectsV2.nodes[] | select(.title == $login)')
+
+            if [[ -z "$PROJECT_EXISTS" ]]; then
+              echo "Creating new project for $login..."
+
+              # Create a new project titled "$login" in the organization
+              NEW_PROJECT_ID=$(gh api graphql -f query='
+                mutation($organization: String!, $name: String!, $title: String!) {
+                  createProjectV2(input: {ownerId: $organization, title: $title, repositoryId: $name, public: false}) {
+                    projectV2 {
+                      id
+                    }
+                  }
+                }
+              ' -F organization="$ORG" -F name="$REPO" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
+
+              echo "Created project with ID: $NEW_PROJECT_ID"
+
+              # Add a note to the new project with text "$id"
+              gh api graphql -f query='
+                mutation($projectId: ID!, $content: String!) {
+                  addProjectV2ItemById(input: {projectId: $projectId, contentId: $content}) {
+                    item {
+                      id
+                    }
+                  }
+                }
+              ' -F projectId="$NEW_PROJECT_ID" -F content="$id"
+
+              echo "Added note with discussion ID: $id to project: $login"
+
+              # Invite the user to the project with read-write access
+              gh api graphql -f query='
+                mutation($organization: String!, $project: ID!, $login: String!) {
+                  inviteUserToProjectV2(input: {organizationLogin: $organization, projectId: $project, permission: WRITE, invitee: {login: $login}}) {
+                    projectV2Invitation {
+                      id
+                    }
+                  }
+                }
+              ' -F organization="$ORG" -F project="$NEW_PROJECT_ID" -F login="$login"
+
+              echo "Invited $login to project $login with read-write access"
+            else
+              echo "Project for $login already exists, skipping..."
+            fi
           done < unique_messages.txt
 

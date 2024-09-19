@@ -18,8 +18,7 @@ jobs:
           echo "Fetching private projects from the organization..."
           curl -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github.inertia-preview+json" \
-            https://api.github.com/orgs/AdHoc-Protocol/projects \
-            | jq '.[] | select(.private == true) | .name'
+            https://api.github.com/orgs/AdHoc-Protocol/projects -v
                     
           CATEGORY_ID=$(gh api graphql -f query='
             query($owner: String!, $name: String!) {

@@ -125,6 +125,7 @@ jobs:
                   }
                 }' -F projectId="$NEW_PROJECT_ID" -F title="$id"
 
+              # Get USER_ID from GitHub API
               USER_ID=$(gh api graphql -f query='
                 query($login: String!) {
                   user(login: $login) {
@@ -133,15 +134,17 @@ jobs:
                 }
               ' -F login="$login" --jq '.data.user.id')
               
+              # Update ProjectV2 Collaborators
               gh api graphql -f query='
-                mutation($projectId: ID!, $userIds: [ID!]!) {
-                  updateProjectV2Collaborators(input: {projectId: $projectId, collaborators: $userIds }) {
-                    projectV2 {
-                      id
-                    }
+                mutation($projectId: ID!, $userIds: ID!) {
+                  updateProjectV2Collaborators(input: {
+                    projectId: $projectId, 
+                    collaborators: [{userId: $userIds, role: WRITER}]
+                  }) {
+                    clientMutationId
                   }
                 }
-              ' -F projectId="$NEW_PROJECT_ID" -F userIds="[\"$USER_ID\"]"
+              ' -F projectId="$NEW_PROJECT_ID" -F userIds="$USER_ID"
 
               echo "Invited $login to project $login with read-write access"
             else

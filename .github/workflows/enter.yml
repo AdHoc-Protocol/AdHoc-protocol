@@ -5,14 +5,15 @@ on:
     types: [created]
   workflow_dispatch:
 
-jobs:
-  process-messages:
-    runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
       REPO: AdHoc-Protocol
       ORG: AdHoc-Protocol
+
+jobs:
+  process-messages:
+    runs-on: ubuntu-latest
     steps:
       - name: Get the discussion category ID for "Sign up"
         id: fetch_category_id
@@ -58,6 +59,7 @@ jobs:
           ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
 
           echo "$MESSAGES" > messages.json
+          echo "Collected messages in 'Sign up' category."
           cat messages.json
 
       - name: Collect unique messages
@@ -67,6 +69,8 @@ jobs:
           | unique_by(.author.login) 
           | .[] 
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
+          
+          echo "Collected and processed unique messages in 'Sign up' category."
           cat unique_messages.txt
 
       - name: Delete processed messages
@@ -82,9 +86,8 @@ jobs:
             ' -F id="$id"
           done
 
-      - name: Iterate over unique messages
+      - name: Iterate Over Unique Messages
         run: |
-          # Fetch the organization ID and repository ID first
           ORG_ID=$(gh api graphql -f query='
             query($organization: String!) {
               organization(login: $organization) {
@@ -93,34 +96,20 @@ jobs:
             }
           ' -F organization="$ORG" | jq -r '.data.organization.id')
 
-          REPO_ID=$(gh api graphql -f query='
-            query($organization: String!, $name: String!) {
-              organization(login: $organization) {
-                repository(name: $name) {
-                  id
-                }
-              }
-            }
-          ' -F organization="$ORG" -F name="$REPO" | jq -r '.data.organization.repository.id')
-
           while IFS=',' read -r login url avatarUrl id; do
             # Check if a project with title "$login" exists in the organization
             PROJECT_EXISTS=$(gh api graphql -f query='
-              query($organization: String!, $name: String!) {
-                repository(name: $name) {
-                  projectsV2(first: 100) {
-                    nodes {
-                      title
-                    }
+              query($organization: String!, $login: String!) {
+                organization(login: $organization) {
+                  projectsV2(first: 100, query: $login) {
+                    totalCount
                   }
                 }
               }
-            ' -F organization="$ORG" -F name="$REPO" | jq --arg login "$login" -r '.data.organization.repository.projectsV2.nodes[] | select(.title == $login)')
+            ' -F organization="$ORG" -F login="$login" | jq -r '.data.organization.projectsV2.totalCount')
 
-            if [[ -z "$PROJECT_EXISTS" ]]; then
+            if [[ "$PROJECT_EXISTS" == "0" ]]; then
               echo "Creating new project for $login..."
-
-              # Create a new project titled "$login" in the organization
               NEW_PROJECT_ID=$(gh api graphql -f query='
                 mutation($ownerId: ID!, $title: String!) {
                   createProjectV2(input: {ownerId: $ownerId, title: $title}) {
@@ -135,14 +124,14 @@ jobs:
 
               # Add a note to the new project with text "$id" (discussion ID)
               gh api graphql -f query='
-                mutation($projectId: ID!, $content: ID!) {
-                  addProjectV2ItemById(input: {projectId: $projectId, contentId: $content}) {
+                mutation($projectId: ID!, $contentId: ID!) {
+                  addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
                     item {
                       id
                     }
                   }
                 }
-              ' -F projectId="$NEW_PROJECT_ID" -F content="$id"
+              ' -F projectId="$NEW_PROJECT_ID" -F contentId="$id"
 
               echo "Added note with discussion ID: $id to project: $login"
 

@@ -120,6 +120,22 @@ jobs:
 
               echo "Created project with ID: $NEW_PROJECT_ID"
 
+              # Create README content
+              README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
+
+              # Add README to the project
+              gh api graphql -f query='
+                mutation($projectId: ID!, $content: String!) {
+                  createProjectV2ItemById(input: {projectId: $projectId, content: {body: $content}}) {
+                    item {
+                      id
+                    }
+                  }
+                }
+              ' -F projectId="$NEW_PROJECT_ID" -F content="$README_CONTENT"
+
+              echo "Added README to project: $login"
+
               # Add a note to the new project with text "$id" (discussion ID)
               gh api graphql -f query='
                 mutation($projectId: ID!, $contentId: ID!) {

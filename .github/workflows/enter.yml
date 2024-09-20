@@ -1,4 +1,4 @@
-name: Process Sign up Discussion Messages
+name: Process Sign-up Discussion Messages
 
 on:
   discussion:
@@ -7,38 +7,35 @@ on:
 
 env:
   GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
-  GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   REPO: AdHoc-Protocol
   ORG: AdHoc-Protocol
+  CATEGORY_NAME: "Sign up"
 
 jobs:
   process-messages:
     runs-on: ubuntu-latest
     steps:
       - name: Get Discussion Category ID for "Sign up"
-        id: fetch_category_id
+        id: get_category_id
         run: |
           CATEGORY_ID=$(gh api graphql -f query='
-            query($owner: String!, $name: String!) {
+            query($owner: String!, $name: String!, $categoryName: String!) {
               repository(owner: $owner, name: $name) {
-                discussionCategories(first: 100) {
-                  nodes {
-                    id
-                    name
-                  }
+                discussionCategory(name: $categoryName) {
+                  id
                 }
               }
             }
-          ' -F owner="$ORG" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
+          ' -F owner="$ORG" -F name="$REPO" -F categoryName="$CATEGORY_NAME" | jq -r '.data.repository.discussionCategory.id')
 
           if [[ -z "$CATEGORY_ID" ]]; then
-            echo "Error: Category ID not found for 'Sign up'" >&2
+            echo "Error: Category ID not found for '$CATEGORY_NAME'" >&2
             exit 1
           fi
           echo "Fetched Category ID: $CATEGORY_ID"
 
       - name: Collect discussion messages in "Sign up" category
-        id: fetch_discussions
+        id: collect_messages
         run: |
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
@@ -69,22 +66,10 @@ jobs:
           | .[] 
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
           
-          echo "Collected and processed unique messages in 'Sign up' category."
+          echo "Collected and processed unique messages in '$CATEGORY_NAME' category."
 
-      - name: Delete Processed Messages
-        if: success()
-        run: |
-          jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
-            gh api graphql -f query='
-              mutation($id: ID!) {
-                deleteDiscussion(input: {id: $id}) {
-                  clientMutationId
-                }
-              }
-            ' -F id="$id"
-          done
-
-      - name: Iterate Over Unique Messages
+      - name: Get Organization ID
+        id: get_org_id
         run: |
           ORG_ID=$(gh api graphql -f query='
             query($organization: String!) {
@@ -94,12 +79,14 @@ jobs:
             }
           ' -F organization="$ORG" | jq -r '.data.organization.id')
 
+      - name: Process Unique Messages
+        run: |
           while IFS=',' read -r login url avatarUrl id; do
             # Check if a project with title "$login" exists in the organization
             PROJECT_EXISTS=$(gh api graphql -f query='
               query($organization: String!, $login: String!) {
                 organization(login: $organization) {
-                  projectsV2(first: 100, query: $login) {
+                  projectsV2(first: 1, query: $login) {
                     totalCount
                   }
                 }
@@ -120,48 +107,67 @@ jobs:
 
               echo "Created project with ID: $NEW_PROJECT_ID"
 
-              # Create README content
               README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
-
-              # Add README to the project
+              
               gh api graphql -f query='
-                mutation($projectId: ID!, $content: String!) {
-                  createProjectV2ItemById(input: {projectId: $projectId, content: {body: $content}}) {
-                    item {
+                mutation($projectId: ID!, $readme: String!) {
+                  updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
+                    projectV2 {
                       id
                     }
                   }
                 }
-              ' -F projectId="$NEW_PROJECT_ID" -F content="$README_CONTENT"
+              ' -F projectId="$NEW_PROJECT_ID" -F readme="$README_CONTENT"
 
-              echo "Added README to project: $login"
+              echo "Updated README for project: $login"
 
               # Add a note to the new project with text "$id" (discussion ID)
               gh api graphql -f query='
-                mutation($projectId: ID!, $contentId: ID!) {
-                  addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
-                    item {
+                mutation($projectId: ID!, $title: String!) {
+                  addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
+                    projectV2DraftIssue {
                       id
                     }
                   }
-                }
-              ' -F projectId="$NEW_PROJECT_ID" -F contentId="$id"
+                }' -F projectId="$NEW_PROJECT_ID" -F title="$id"
 
               echo "Added note with discussion ID: $id to project: $login"
-
-              # Invite the user to the project with read-write access
+          
+              # First, get the user ID from the login
+              USER_ID=$(gh api graphql -f query='
+                query($login: String!) {
+                  user(login: $login) {
+                    id
+                  }
+                }
+              ' -F login="$login" --jq '.data.user.id')
+              
+              # Now, add the collaborator to the project with read-write access
               gh api graphql -f query='
-                mutation($organization: String!, $project: ID!, $login: String!) {
-                  inviteUserToProjectV2(input: {organizationLogin: $organization, projectId: $project, permission: WRITE, invitee: {login: $login}}) {
-                    projectV2Invitation {
+                mutation($projectId: ID!, $userIds: [ID!]!) {
+                  updateProjectV2Collaborators(input: {projectId: $projectId, collaborators: $userIds , role: WRITE}) {
+                    projectV2 {
                       id
                     }
                   }
                 }
-              ' -F organization="$ORG" -F project="$NEW_PROJECT_ID" -F login="$login"
+              ' -F projectId="$NEW_PROJECT_ID" -F userIds="[\"$USER_ID\"]"
 
               echo "Invited $login to project $login with read-write access"
             else
               echo "Project for $login already exists, skipping..."
             fi
           done < unique_messages.txt
+
+      - name: Delete Processed Messages
+        if: success()
+        run: |
+          cut -d',' -f4 unique_messages.txt | while read id; do
+            gh api graphql -f query='
+              mutation($id: ID!) {
+                deleteDiscussion(input: {id: $id}) {
+                  clientMutationId
+                }
+              }
+            ' -F id="$id"
+          done

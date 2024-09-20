@@ -28,7 +28,7 @@ jobs:
                 }
               }
             }
-          ' -F owner="ORG" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
+          ' -F owner="$ORG" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
           
           # echo "Fetched Category ID: $CATEGORY_ID"
 

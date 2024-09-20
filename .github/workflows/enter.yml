@@ -5,11 +5,11 @@ on:
     types: [created]
   workflow_dispatch:
 
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
-      REPO: AdHoc-Protocol
-      ORG: AdHoc-Protocol
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+  REPO: AdHoc-Protocol
+  ORG: AdHoc-Protocol
 
 jobs:
   process-messages:

@@ -106,7 +106,7 @@ jobs:
                 }
               ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
 
-              README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
+              README_CONTENT=$(echo -e "# [$login]($url)\n\n![image]($avatarUrl)")
               
               gh api graphql -f query='
                 mutation($projectId: ID!, $readme: String!) {
@@ -121,9 +121,7 @@ jobs:
               gh api graphql -f query='
                 mutation($projectId: ID!, $title: String!) {
                   addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
-                    projectV2DraftIssue {
-                      id
-                    }
+                    clientMutationId
                   }
                 }' -F projectId="$NEW_PROJECT_ID" -F title="$id"
 

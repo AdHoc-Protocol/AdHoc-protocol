@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get Discussion Category ID for "Sign up"
-        id: get_category_id
+        id: fetch_category_id
         run: |
           CATEGORY_ID=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryName: String!) {
@@ -35,7 +35,7 @@ jobs:
           echo "Fetched Category ID: $CATEGORY_ID"
 
       - name: Collect discussion messages in "Sign up" category
-        id: collect_messages
+        id: process_messages
         run: |
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
@@ -53,7 +53,7 @@ jobs:
                 }
               }
             }
-          ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
+          ' -F owner="$ORG" -F name="$REPO" -F categoryId="${{ steps.fetch_category_id.outputs.category_id }}")
 
           echo "$MESSAGES" > messages.json
           echo "Collected messages in 'Sign up' category."
@@ -78,12 +78,13 @@ jobs:
               }
             }
           ' -F organization="$ORG" | jq -r '.data.organization.id')
+          echo "org_id=$ORG_ID" >> $GITHUB_OUTPUT
 
       - name: Process Unique Messages
         run: |
           while IFS=',' read -r login url avatarUrl id; do
             # Check if a project with title "$login" exists in the organization
-            PROJECT_EXISTS=$(gh api graphql -f query='
+            USER_PROJECTS=$(gh api graphql -f query='
               query($organization: String!, $login: String!) {
                 organization(login: $organization) {
                   projectsV2(first: 1, query: $login) {
@@ -93,7 +94,7 @@ jobs:
               }
             ' -F organization="$ORG" -F login="$login" | jq -r '.data.organization.projectsV2.totalCount')
 
-            if [[ "$PROJECT_EXISTS" == "0" ]]; then
+            if [[ "$USER_PROJECTS" == "0" ]]; then
               echo "Creating new project for $login..."
               NEW_PROJECT_ID=$(gh api graphql -f query='
                 mutation($ownerId: ID!, $title: String!) {
@@ -103,9 +104,7 @@ jobs:
                     }
                   }
                 }
-              ' -F ownerId="$ORG_ID" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
-
-              echo "Created project with ID: $NEW_PROJECT_ID"
+              ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
 
               README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
               
@@ -119,9 +118,6 @@ jobs:
                 }
               ' -F projectId="$NEW_PROJECT_ID" -F readme="$README_CONTENT"
 
-              echo "Updated README for project: $login"
-
-              # Add a note to the new project with text "$id" (discussion ID)
               gh api graphql -f query='
                 mutation($projectId: ID!, $title: String!) {
                   addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
@@ -131,9 +127,6 @@ jobs:
                   }
                 }' -F projectId="$NEW_PROJECT_ID" -F title="$id"
 
-              echo "Added note with discussion ID: $id to project: $login"
-          
-              # First, get the user ID from the login
               USER_ID=$(gh api graphql -f query='
                 query($login: String!) {
                   user(login: $login) {
@@ -142,7 +135,6 @@ jobs:
                 }
               ' -F login="$login" --jq '.data.user.id')
               
-              # Now, add the collaborator to the project with read-write access
               gh api graphql -f query='
                 mutation($projectId: ID!, $userIds: [ID!]!) {
                   updateProjectV2Collaborators(input: {projectId: $projectId, collaborators: $userIds , role: WRITE}) {

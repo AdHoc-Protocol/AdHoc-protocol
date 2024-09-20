@@ -28,9 +28,13 @@ jobs:
                 }
               }
             }
-          ' -F owner="$REPO" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
-          
-          # echo "Fetched Category ID: $CATEGORY_ID"
+          ' -F owner="$ORG" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
+
+          if [[ -z "$CATEGORY_ID" ]]; then
+            echo "Category ID not found for 'Sign up'"
+            exit 1
+          fi
+          echo "Fetched Category ID: $CATEGORY_ID"
 
       - name: Collect discussion messages in "Sign up" category
         id: fetch_discussions
@@ -51,8 +55,8 @@ jobs:
                 }
               }
             }
-          ' -F owner="$REPO" -F name="$REPO" -F categoryId="$CATEGORY_ID")
-          
+          ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
+
           echo "$MESSAGES" > messages.json
           cat messages.json
 
@@ -80,6 +84,25 @@ jobs:
 
       - name: Iterate over unique messages
         run: |
+          # Fetch the organization ID and repository ID first
+          ORG_ID=$(gh api graphql -f query='
+            query($organization: String!) {
+              organization(login: $organization) {
+                id
+              }
+            }
+          ' -F organization="$ORG" | jq -r '.data.organization.id')
+
+          REPO_ID=$(gh api graphql -f query='
+            query($organization: String!, $name: String!) {
+              organization(login: $organization) {
+                repository(name: $name) {
+                  id
+                }
+              }
+            }
+          ' -F organization="$ORG" -F name="$REPO" | jq -r '.data.organization.repository.id')
+
           while IFS=',' read -r login url avatarUrl id; do
             # Check if a project with title "$login" exists in the organization
             PROJECT_EXISTS=$(gh api graphql -f query='
@@ -101,20 +124,20 @@ jobs:
 
               # Create a new project titled "$login" in the organization
               NEW_PROJECT_ID=$(gh api graphql -f query='
-                mutation($organization: String!, $name: String!, $title: String!) {
-                  createProjectV2(input: {ownerId: $organization, title: $title, repositoryId: $name, public: false}) {
+                mutation($ownerId: ID!, $title: String!) {
+                  createProjectV2(input: {ownerId: $ownerId, title: $title}) {
                     projectV2 {
                       id
                     }
                   }
                 }
-              ' -F organization="$ORG" -F name="$REPO" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
+              ' -F ownerId="$ORG_ID" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
 
               echo "Created project with ID: $NEW_PROJECT_ID"
 
-              # Add a note to the new project with text "$id"
+              # Add a note to the new project with text "$id" (discussion ID)
               gh api graphql -f query='
-                mutation($projectId: ID!, $content: String!) {
+                mutation($projectId: ID!, $content: ID!) {
                   addProjectV2ItemById(input: {projectId: $projectId, contentId: $content}) {
                     item {
                       id

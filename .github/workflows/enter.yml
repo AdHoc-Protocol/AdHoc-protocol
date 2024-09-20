@@ -135,7 +135,7 @@ jobs:
               
               gh api graphql -f query='
                 mutation($projectId: ID!, $userIds: [ID!]!) {
-                  updateProjectV2Collaborators(input: {projectId: $projectId, collaborators: $userIds , role: WRITE}) {
+                  updateProjectV2Collaborators(input: {projectId: $projectId, collaborators: $userIds }) {
                     projectV2 {
                       id
                     }

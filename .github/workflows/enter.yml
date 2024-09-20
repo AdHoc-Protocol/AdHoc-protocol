@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   REPO: AdHoc-Protocol
   ORG: AdHoc-Protocol
@@ -15,7 +15,7 @@ jobs:
   process-messages:
     runs-on: ubuntu-latest
     steps:
-      - name: Get the discussion category ID for "Sign up"
+      - name: Get Discussion Category ID for "Sign up"
         id: fetch_category_id
         run: |
           CATEGORY_ID=$(gh api graphql -f query='
@@ -32,7 +32,7 @@ jobs:
           ' -F owner="$ORG" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
 
           if [[ -z "$CATEGORY_ID" ]]; then
-            echo "Category ID not found for 'Sign up'"
+            echo "Error: Category ID not found for 'Sign up'" >&2
             exit 1
           fi
           echo "Fetched Category ID: $CATEGORY_ID"
@@ -60,9 +60,8 @@ jobs:
 
           echo "$MESSAGES" > messages.json
           echo "Collected messages in 'Sign up' category."
-          cat messages.json
 
-      - name: Collect unique messages
+      - name: Collect Unique Messages
         run: |
           # Parse the messages.json file and remove duplicates
           jq -r '.data.repository.discussions.nodes 
@@ -71,9 +70,8 @@ jobs:
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
           
           echo "Collected and processed unique messages in 'Sign up' category."
-          cat unique_messages.txt
 
-      - name: Delete processed messages
+      - name: Delete Processed Messages
         if: success()
         run: |
           jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do

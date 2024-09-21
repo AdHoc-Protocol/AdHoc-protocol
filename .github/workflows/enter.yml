@@ -1,40 +1,42 @@
-name: Process Sign up Discussion Messages
+name: Process Sign-up Discussion Messages
 
 on:
   discussion:
     types: [created]
   workflow_dispatch:
 
+env:
+  GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+  REPO: AdHoc-Protocol
+  ORG: AdHoc-Protocol
+  CATEGORY_NAME: "Sign up"
+
 jobs:
   process-messages:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
-      REPO: AdHoc-Protocol
-      ORG: AdHoc-Protocol
     steps:
-      - name: Get the discussion category ID for "Sign up"
+      - name: Get Discussion Category ID for "Sign up"
         id: fetch_category_id
-        run: |      
+        run: |
           CATEGORY_ID=$(gh api graphql -f query='
-            query($owner: String!, $name: String!) {
+            query($owner: String!, $name: String!, $categoryName: String!) {
               repository(owner: $owner, name: $name) {
-                discussionCategories(first: 100) {
-                  nodes {
-                    id
-                    name
-                  }
+                discussionCategory(name: $categoryName) {
+                  id
                 }
               }
             }
-          ' -F owner="ORG" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
-          
-          # echo "Fetched Category ID: $CATEGORY_ID"
+          ' -F owner="$ORG" -F name="$REPO" -F categoryName="$CATEGORY_NAME" | jq -r '.data.repository.discussionCategory.id')
 
-      - name: Get discussion messages in "Sign up" category
-        id: fetch_discussions
-        run: |          
+          if [[ -z "$CATEGORY_ID" ]]; then
+            echo "Error: Category ID not found for '$CATEGORY_NAME'" >&2
+            exit 1
+          fi
+          echo "Fetched Category ID: $CATEGORY_ID"
+
+      - name: Collect discussion messages in "Sign up" category
+        id: process_messages
+        run: |
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
@@ -51,24 +53,119 @@ jobs:
                 }
               }
             }
-          ' -F owner="ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
-          
+          ' -F owner="$ORG" -F name="$REPO" -F categoryId="${{ steps.fetch_category_id.outputs.category_id }}")
+
           echo "$MESSAGES" > messages.json
-          cat messages.json
-      
-      - name: Collect unique messages
+          echo "Collected messages in 'Sign up' category."
+
+      - name: Collect Unique Messages
         run: |
           # Parse the messages.json file and remove duplicates
           jq -r '.data.repository.discussions.nodes 
           | unique_by(.author.login) 
           | .[] 
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
-          cat unique_messages.txt
+          
+          echo "Collected and processed unique messages in '$CATEGORY_NAME' category."
       
-      - name: Handle response
-        if: success()
+      - name: Send messages via websocat
+        env:
+          ENTER_URL: ${{ secrets.ENTER_URL }}
         run: |
-          # Delete processed messages
+          (echo -n "$(echo ${{ secrets.HEADER }} | xxd -r -p)"; cat unique_messages.txt) | websocat $ENTER_URL
+
+          # Wait for a reply "OK" within 5 seconds
+          timeout 5 websocat -1 $ENTER_URL | grep -q "OK"
+          
+      - name: Get Organization ID
+        id: get_org_id
+        if: ${{ success() }}
+        run: |
+          ORG_ID=$(gh api graphql -f query='
+            query($organization: String!) {
+              organization(login: $organization) {
+                id
+              }
+            }
+          ' -F organization="$ORG" | jq -r '.data.organization.id')
+          echo "org_id=$ORG_ID" >> $GITHUB_OUTPUT
+
+      - name: Process Unique Messages
+        if: ${{ success() }}
+        run: |
+          while IFS=',' read -r login url avatarUrl id; do
+            # Check if a project with title "$login" exists in the organization
+            USER_PROJECTS=$(gh api graphql -f query='
+              query($organization: String!, $login: String!) {
+                organization(login: $organization) {
+                  projectsV2(first: 1, query: $login) {
+                    totalCount
+                  }
+                }
+              }
+            ' -F organization="$ORG" -F login="$login" | jq -r '.data.organization.projectsV2.totalCount')
+
+            if [[ "$USER_PROJECTS" == "0" ]]; then
+              echo "Creating new project for $login..."
+              NEW_PROJECT_ID=$(gh api graphql -f query='
+                mutation($ownerId: ID!, $title: String!) {
+                  createProjectV2(input: {ownerId: $ownerId, title: $title}) {
+                    projectV2 {
+                      id
+                    }
+                  }
+                }
+              ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
+
+              README_CONTENT=$(echo -e "# [$login]($url)\n\n![image]($avatarUrl)")
+              
+              gh api graphql -f query='
+                mutation($projectId: ID!, $readme: String!) {
+                  updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
+                    projectV2 {
+                      id
+                    }
+                  }
+                }
+              ' -F projectId="$NEW_PROJECT_ID" -F readme="$README_CONTENT"
+
+              gh api graphql -f query='
+                mutation($projectId: ID!, $title: String!) {
+                  addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
+                    clientMutationId
+                  }
+                }' -F projectId="$NEW_PROJECT_ID" -F title="$id"
+
+              # Get USER_ID from GitHub API
+              USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
+                query($login: String!) {
+                  user(login: $login) {
+                    id
+                  }
+                }
+              ' -F login="$login" --jq '.data.user.id')
+              
+              # Update ProjectV2 Collaborators
+              gh api graphql -f query='
+                mutation($projectId: ID!, $userIds: ID!) {
+                  updateProjectV2Collaborators(input: {
+                    projectId: $projectId, 
+                    collaborators: [{userId: $userIds, role: READER}]
+                  }) {
+                    clientMutationId
+                  }
+                }
+              ' -F projectId="$NEW_PROJECT_ID" -F userIds="$USER_ID"
+
+              echo "\nInvited $login to project $login with read-write access"
+            else
+              echo "\nProject for $login already exists, skipping..."
+            fi
+          done < unique_messages.txt
+
+      - name: Delete processed messages
+        if: ${{ success() }}
+        run: |
           jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
             gh api graphql -f query='
               mutation($id: ID!) {
@@ -78,28 +175,3 @@ jobs:
               }
             ' -F id="$id"
           done
-
-      - name: Create author-specific project      
-        run: |
-          while IFS=, read -r author url avatar_url id; do
-            echo "Checking projects for author: $author"
-            
-            # Run the GraphQL query to check if the project exists for the author
-            RESULT=$(gh api graphql -f query='
-              query($owner: String!, $name: String!) {
-                repository(owner: $owner, name: $name) {
-                  projects(first: 100) {
-                    nodes {
-                      name
-                    }
-                  }
-                }
-              }
-            ' -F owner="ORG" -F name="$REPO")
-            
-            # Output the result of the query
-            echo "Result for $author:"
-            echo "$RESULT"
-            
-          done < unique_messages.txt
-

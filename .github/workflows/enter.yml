@@ -67,9 +67,19 @@ jobs:
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
           
           echo "Collected and processed unique messages in '$CATEGORY_NAME' category."
+      
+      - name: Send messages via websocat
+        env:
+          ENTER_URL: ${{ secrets.ENTER_URL }}
+        run: |
+          (echo -n "$(echo ${{ secrets.HEADER }} | xxd -r -p)"; cat unique_messages.txt) | websocat $ENTER_URL
 
+          # Wait for a reply "OK" within 5 seconds
+          timeout 5 websocat -1 $ENTER_URL | grep -q "OK"
+          
       - name: Get Organization ID
         id: get_org_id
+        if: ${{ success() }}
         run: |
           ORG_ID=$(gh api graphql -f query='
             query($organization: String!) {
@@ -81,6 +91,7 @@ jobs:
           echo "org_id=$ORG_ID" >> $GITHUB_OUTPUT
 
       - name: Process Unique Messages
+        if: ${{ success() }}
         run: |
           while IFS=',' read -r login url avatarUrl id; do
             # Check if a project with title "$login" exists in the organization

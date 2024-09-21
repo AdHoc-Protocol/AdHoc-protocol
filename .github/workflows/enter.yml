@@ -126,14 +126,13 @@ jobs:
                 }' -F projectId="$NEW_PROJECT_ID" -F title="$id"
 
               # Get USER_ID from GitHub API
-              USER_ID=$(gh api graphql -f query='
+              USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
                 query($login: String!) {
                   user(login: $login) {
                     id
-                    next_global_id
                   }
                 }
-              ' -F login="$login" --jq '.data.user.next_global_id')
+              ' -F login="$login" --jq '.data.user.id')
               
               # Update ProjectV2 Collaborators
               gh api graphql -f query='

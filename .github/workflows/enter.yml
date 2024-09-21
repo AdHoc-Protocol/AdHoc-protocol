@@ -146,16 +146,16 @@ jobs:
                 }
               ' -F projectId="$NEW_PROJECT_ID" -F userIds="$USER_ID"
 
-              echo "Invited $login to project $login with read-write access"
+              echo "\nInvited $login to project $login with read-write access"
             else
-              echo "Project for $login already exists, skipping..."
+              echo "\nProject for $login already exists, skipping..."
             fi
           done < unique_messages.txt
 
-      - name: Delete Processed Messages
+      - name: Delete processed messages
         if: success()
         run: |
-          cut -d',' -f4 unique_messages.txt | while read id; do
+          jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
             gh api graphql -f query='
               mutation($id: ID!) {
                 deleteDiscussion(input: {id: $id}) {

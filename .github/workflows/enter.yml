@@ -130,9 +130,10 @@ jobs:
                 query($login: String!) {
                   user(login: $login) {
                     id
+                    next_global_id
                   }
                 }
-              ' -F login="$login" --jq '.data.user.id')
+              ' -F login="$login" --jq '.data.user.next_global_id')
               
               # Update ProjectV2 Collaborators
               gh api graphql -f query='

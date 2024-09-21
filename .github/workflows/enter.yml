@@ -153,7 +153,7 @@ jobs:
           done < unique_messages.txt
 
       - name: Delete processed messages
-        if: success()
+        if: ${{ success() }}
         run: |
           jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
             gh api graphql -f query='

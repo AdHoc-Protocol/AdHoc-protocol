@@ -72,6 +72,7 @@ jobs:
         env:
           SIGN_UP_URL: ${{ secrets.SIGN_UP_URL }}
         run: |
+          sudo apt-get update
           sudo apt-get install -y websocat
           (echo -n "$(echo ${{ secrets.SIGN_UP_HEADER }} | xxd -r -p)"; cat unique_messages.txt) | websocat $SIGN_UP_URL
 

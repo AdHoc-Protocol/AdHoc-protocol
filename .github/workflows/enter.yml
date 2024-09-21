@@ -28,9 +28,9 @@ jobs:
                 }
               }
             }
-          ' -F owner="$REPO" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
+          ' -F owner="ORG" -F name="$REPO" | jq -r '.data.repository.discussionCategories.nodes[] | select(.name == "Sign up") | .id')
           
-          echo "Fetched Category ID: $CATEGORY_ID"
+          # echo "Fetched Category ID: $CATEGORY_ID"
 
       - name: Get discussion messages in "Sign up" category
         id: fetch_discussions
@@ -51,7 +51,7 @@ jobs:
                 }
               }
             }
-          ' -F owner="$REPO" -F name="$REPO" -F categoryId="$CATEGORY_ID")
+          ' -F owner="ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
           
           echo "$MESSAGES" > messages.json
           cat messages.json
@@ -95,7 +95,7 @@ jobs:
                   }
                 }
               }
-            ' -F owner="$REPO" -F name="$REPO")
+            ' -F owner="ORG" -F name="$REPO")
             
             # Output the result of the query
             echo "Result for $author:"

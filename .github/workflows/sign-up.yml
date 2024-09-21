@@ -74,11 +74,14 @@ jobs:
         run: |
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
-          (echo -n "$(echo ${{ secrets.SIGN_UP_HEADER }} | xxd -r -p)"; cat unique_messages.txt) | websocat --binary $SIGN_UP_URL
-
-          # Wait for a reply "OK" within 5 seconds
-          timeout 5 websocat -1 $SIGN_UP_URL | grep -q "OK"
-          
+          {
+             echo -n "$(echo ${{ secrets.SIGN_UP_HEADER }} | xxd -r -p)"; 
+             cat unique_messages.txt
+          } | websocat $SIGN_UP_URL | {
+            # Wait for a reply "OK" within 5 seconds
+            timeout 5 grep -q "OK"
+          }
+                   
       - name: Get Organization ID
         id: get_org_id
         if: ${{ success() }}

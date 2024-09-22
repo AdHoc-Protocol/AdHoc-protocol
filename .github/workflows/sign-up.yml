@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: "only one instance"
-  cancel-in-progress: true
+  cancel-in-progress: false
   
 env:
   GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}

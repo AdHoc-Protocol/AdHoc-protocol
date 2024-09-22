@@ -5,6 +5,10 @@ on:
     types: [created]
   workflow_dispatch:
 
+concurrency:
+  group: "only one instance"
+  cancel-in-progress: true
+  
 env:
   GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   REPO: AdHoc-Protocol
@@ -55,6 +59,11 @@ jobs:
             }
           ' -F owner="$ORG" -F name="$REPO" -F categoryId="${{ steps.fetch_category_id.outputs.category_id }}")
 
+          if [[ -z "$MESSAGES" ]]; then
+            echo "No messages found in 'Sign up' category. Exiting..."
+            exit 0
+          fi
+
           echo "$MESSAGES" > messages.json
           echo "Collected messages in 'Sign up' category."
 
@@ -67,21 +76,48 @@ jobs:
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
           
           echo "Collected and processed unique messages in '$CATEGORY_NAME' category."
-      
+           
       - name: Send messages via websocat
         env:
           SIGN_UP_URL: ${{ secrets.SIGN_UP_URL }}
+          SIGN_UP_HEADER: ${{ secrets.SIGN_UP_HEADER }}
         run: |
+          # Download and set up websocat
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
-          {
-             echo -n "$(echo ${{ secrets.SIGN_UP_HEADER }} | xxd -r -p)"; 
-             cat unique_messages.txt
-          } | websocat --binary $SIGN_UP_URL | {
-            # Wait for a reply "OK" within 5 seconds
-            timeout 5 grep -q "OK"
+      
+          # Function to convert hex to binary
+          hex_to_binary() {
+              echo -n "$1" | xxd -r -p
           }
-                   
+      
+          # Function to convert integer to little-endian bytes
+          int_to_le_bytes() {
+              local num=$1
+              printf '\x%02x\x%02x\x%02x\x%02x' \
+                  $((num & 0xFF)) \
+                  $(((num >> 8) & 0xFF)) \
+                  $(((num >> 16) & 0xFF)) \
+                  $(((num >> 24) & 0xFF))
+          }
+      
+          # Convert header from hex to binary
+          binary_header=$(hex_to_binary "$SIGN_UP_HEADER")
+      
+          # Get file size and convert to little-endian bytes
+          file_size=$(stat -c%s unique_messages.txt)
+          le_file_size=$(int_to_le_bytes $file_size)
+      
+          # Send binary header, file size, and message content via websocat
+          {
+              printf "%s" "$binary_header"
+              printf "%s" "$le_file_size"
+              cat unique_messages.txt
+          } | websocat --binary $SIGN_UP_URL | {
+              # Wait for a reply "OK" within 5 seconds
+              timeout 5 grep -q "OK"
+          }
+         
       - name: Get Organization ID
         id: get_org_id
         if: ${{ success() }}

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: "only one instance"
+  group: "single-instance"
   cancel-in-progress: false
   
 env:
@@ -30,15 +30,15 @@ jobs:
                 }
               }
             }
-          ' -F owner="$ORG" -F name="$REPO" -F categoryName="$CATEGORY_NAME" | jq -r '.data.repository.discussionCategory.id')
-
+          ' -F owner="$ORG" -F name="$REPO" -F categoryName="$CATEGORY_NAME" --jq '.data.repository.discussionCategory.id')
+          
           if [[ -z "$CATEGORY_ID" ]]; then
             echo "Error: Category ID not found for '$CATEGORY_NAME'" >&2
             exit 1
           fi
           echo "Fetched Category ID: $CATEGORY_ID"
 
-      - name: Collect discussion messages in "Sign up" category
+      - name: Collect Discussion Messages in "Sign up" Category
         id: process_messages
         run: |
           MESSAGES=$(gh api graphql -f query='
@@ -64,63 +64,43 @@ jobs:
             exit 0
           fi
 
-          echo "$MESSAGES" > messages.json
-          echo "Collected messages in 'Sign up' category."
-
-      - name: Collect Unique Messages
-        run: |
-          # Parse the messages.json file and remove duplicates
-          jq -r '.data.repository.discussions.nodes 
+          echo "$MESSAGES" | jq -r '.data.repository.discussions.nodes 
           | unique_by(.author.login) 
           | .[] 
-          | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' messages.json > unique_messages.txt
+          | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' > unique_messages.txt
           
           echo "Collected and processed unique messages in '$CATEGORY_NAME' category."
-           
-      - name: Send messages via websocat
+
+      - name: Send Messages via websocat
         env:
           SIGN_UP_URL: ${{ secrets.SIGN_UP_URL }}
           SIGN_UP_HEADER: ${{ secrets.SIGN_UP_HEADER }}
         run: |
-          # Download and set up websocat
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
       
-          # Function to convert hex to binary
-          hex_to_binary() {
-              echo -n "$1" | xxd -r -p
-          }
-      
-          # Function to convert integer to little-endian bytes
+          hex_to_binary() { echo -n "$1" | xxd -r -p; }
           int_to_le_bytes() {
-              local num=$1
-              printf '\x%02x\x%02x\x%02x\x%02x' \
-                  $((num & 0xFF)) \
-                  $(((num >> 8) & 0xFF)) \
-                  $(((num >> 16) & 0xFF)) \
-                  $(((num >> 24) & 0xFF))
+            printf '\x%02x\x%02x\x%02x\x%02x' \
+              $((num & 0xFF)) $(((num >> 8) & 0xFF)) $(((num >> 16) & 0xFF)) $(((num >> 24) & 0xFF))
           }
       
-          # Convert header from hex to binary
           binary_header=$(hex_to_binary "$SIGN_UP_HEADER")
-      
-          # Get file size and convert to little-endian bytes
           file_size=$(stat -c%s unique_messages.txt)
           le_file_size=$(int_to_le_bytes $file_size)
       
-          # Send binary header, file size, and message content via websocat
           {
-              printf "%s" "$binary_header"
-              printf "%s" "$le_file_size"
-              cat unique_messages.txt
+            printf "%s%s" "$binary_header" "$le_file_size"
+            cat unique_messages.txt
           } | websocat --binary $SIGN_UP_URL | {
-              # Wait for a reply "OK" within 5 seconds
-              timeout 5 grep -q "OK"
+            if ! timeout 5 grep -q "OK"; then
+              echo "Error: Failed to receive 'OK' response within 5 seconds" >&2
+              exit 1
+            fi
           }
-         
+
       - name: Get Organization ID
         id: get_org_id
-        if: ${{ success() }}
         run: |
           ORG_ID=$(gh api graphql -f query='
             query($organization: String!) {
@@ -128,14 +108,12 @@ jobs:
                 id
               }
             }
-          ' -F organization="$ORG" | jq -r '.data.organization.id')
+          ' -F organization="$ORG" --jq '.data.organization.id')
           echo "org_id=$ORG_ID" >> $GITHUB_OUTPUT
 
       - name: Process Unique Messages
-        if: ${{ success() }}
         run: |
           while IFS=',' read -r login url avatarUrl id; do
-            # Check if a project with title "$login" exists in the organization
             USER_PROJECTS=$(gh api graphql -f query='
               query($organization: String!, $login: String!) {
                 organization(login: $organization) {
@@ -144,7 +122,7 @@ jobs:
                   }
                 }
               }
-            ' -F organization="$ORG" -F login="$login" | jq -r '.data.organization.projectsV2.totalCount')
+            ' -F organization="$ORG" -F login="$login" --jq '.data.organization.projectsV2.totalCount')
 
             if [[ "$USER_PROJECTS" == "0" ]]; then
               echo "Creating new project for $login..."
@@ -156,9 +134,9 @@ jobs:
                     }
                   }
                 }
-              ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" | jq -r '.data.createProjectV2.projectV2.id')
+              ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" --jq '.data.createProjectV2.projectV2.id')
 
-              README_CONTENT=$(echo -e "# [$login]($url)\n\n![image]($avatarUrl)")
+              README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
               
               gh api graphql -f query='
                 mutation($projectId: ID!, $readme: String!) {
@@ -188,23 +166,23 @@ jobs:
               
               # Update ProjectV2 Collaborators
               gh api graphql -f query='
-                mutation($projectId: ID!, $userIds: ID!) {
+                mutation($projectId: ID!, $userId: ID!) {
                   updateProjectV2Collaborators(input: {
                     projectId: $projectId, 
-                    collaborators: [{userId: $userIds, role: READER}]
+                    collaborators: [{userId: $userId, role: READER}]
                   }) {
                     clientMutationId
                   }
                 }
-              ' -F projectId="$NEW_PROJECT_ID" -F userIds="$USER_ID"
+              ' -F projectId="$NEW_PROJECT_ID" -F userId="$USER_ID"
 
-              echo "\nInvited $login to project $login with read-write access"
+              echo "Invited $login to project $login with read-write access"
             else
-              echo "\nProject for $login already exists, skipping..."
+              echo "Project for $login already exists, skipping..."
             fi
           done < unique_messages.txt
 
-      - name: Delete processed messages
+      - name: Delete Processed Messages
         if: ${{ success() }}
         run: |
           jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do

@@ -1,34 +1,34 @@
-//MIT License
+//  MIT License
 //
-//Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
-//For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
-//GitHub Repository: https://github.com/AdHoc-Protocol
+//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
+//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
+//  GitHub Repository: https://github.com/AdHoc-Protocol
 //
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to use,
-//copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-//the Software, and to permit others to do so, under the following conditions:
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to use,
+//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+//  the Software, and to permit others to do so, under the following conditions:
 //
-//1. The above copyright notice and this permission notice must be included in all
-//   copies or substantial portions of the Software.
+//  1. The above copyright notice and this permission notice must be included in all
+//     copies or substantial portions of the Software.
 //
-//2. Users of the Software must provide a clear acknowledgment in their user
-//   documentation or other materials that their solution includes or is based on
-//   this Software. This acknowledgment should be prominent and easily visible,
-//   and can be formatted as follows:
-//   "This product includes software developed by Chikirev Sirguy and the Unirail Group
-//   (https://github.com/AdHoc-Protocol)."
+//  2. Users of the Software must provide a clear acknowledgment in their user
+//     documentation or other materials that their solution includes or is based on
+//     this Software. This acknowledgment should be prominent and easily visible,
+//     and can be formatted as follows:
+//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
+//     (https://github.com/AdHoc-Protocol)."
 //
-//3. If you modify the Software and distribute it, you must include a prominent notice
-//   stating that you have changed the Software.
+//  3. If you modify the Software and distribute it, you must include a prominent notice
+//     stating that you have changed the Software.
 //
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
-//OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//SOFTWARE.
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 
 using System;
 using System.Buffers;
@@ -292,19 +292,29 @@ namespace org.unirail
                         switch (error)
                         {
                             case OnError.FFFF_ERROR:
-                                Console.WriteLine("FFFF_ERROR at " + src + (ex == null ? "" : ex + Environment.StackTrace));
+                                Console.WriteLine("FFFF_ERROR at " + src + (ex == null ?
+                                                                                "" :
+                                                                                ex + Environment.StackTrace));
                                 return;
                             case OnError.CRC_ERROR:
-                                Console.WriteLine("CRC_ERROR at " + src + (ex == null ? "" : ex + Environment.StackTrace));
+                                Console.WriteLine("CRC_ERROR at " + src + (ex == null ?
+                                                                               "" :
+                                                                               ex + Environment.StackTrace));
                                 return;
                             case OnError.BYTES_DISTORTION:
-                                Console.WriteLine("BYTES_DISTORTION at " + src + (ex == null ? "" : ex + Environment.StackTrace));
+                                Console.WriteLine("BYTES_DISTORTION at " + src + (ex == null ?
+                                                                                      "" :
+                                                                                      ex + Environment.StackTrace));
                                 return;
                             case OnError.OVERFLOW:
-                                Console.WriteLine("OVERFLOW at " + src + (ex == null ? "" : ex + Environment.StackTrace));
+                                Console.WriteLine("OVERFLOW at " + src + (ex == null ?
+                                                                              "" :
+                                                                              ex + Environment.StackTrace));
                                 return;
                             case OnError.INVALID_ID:
-                                Console.WriteLine("INVALID_ID at " + src + (ex == null ? "" : Environment.StackTrace));
+                                Console.WriteLine("INVALID_ID at " + src + (ex == null ?
+                                                                                "" :
+                                                                                Environment.StackTrace));
                                 return;
                         }
                     }
@@ -326,7 +336,9 @@ namespace org.unirail
                         switch (error)
                         {
                             case OnError.OVERFLOW:
-                                Console.WriteLine("OVERFLOW at " + src + (ex == null ? "" : ex + Environment.StackTrace));
+                                Console.WriteLine("OVERFLOW at " + src + (ex == null ?
+                                                                              "" :
+                                                                              ex + Environment.StackTrace));
                                 return;
                         }
                     }
@@ -338,8 +350,8 @@ namespace org.unirail
             public class Framing : AdHoc.BytesDst, EventsHandler
             {
                 public bool isOpen() => upper_layer.isOpen();
-                public Receiver upper_layer;  //the upper layer external interface
-                public EventsHandler handler; //interface to the upper layer internal consumer
+                public Receiver upper_layer; //the upper layer external interface
+                public EventsHandler handler;     //interface to the upper layer internal consumer
 
                 public EventsHandler exchange(EventsHandler handler) => Interlocked.Exchange(ref this.handler, handler);
 
@@ -705,7 +717,9 @@ namespace org.unirail
                 if (u4 == 0)
                     return false;
 
-                u8 = u8_ |= u4 == 0xFF ? null_value : (ulong)u4 << shift;
+                u8 = u8_ |= u4 == 0xFF ?
+                                null_value :
+                                (ulong)u4 << shift;
                 return true;
             }
 
@@ -725,7 +739,6 @@ namespace org.unirail
                 return false;
             }
 
-            public abstract BytesDst Allocate(int id);  //throws Exception if wrong id
             public abstract BytesDst Receiving(int id); //throws Exception if wrong id
 
             public bool isOpen() => slot != null;
@@ -1360,8 +1373,8 @@ namespace org.unirail
             {
                 u4 = max_chars;
                 u8_ = ulong.MaxValue; //indicate state before string length received
-                u8 = 0;               //varint receiving string char holde
-                bytes_left = 0;       //varint pointer
+                u8 = 0;              //varint receiving string char holde
+                bytes_left = 0;              //varint pointer
 
                 if (varint() && //getting string length into u8
                     check_length_and_getting_string())
@@ -1387,7 +1400,7 @@ namespace org.unirail
                 }
 
                 u8_ = u8; //store string length into u8_
-                u4 = 0;   //index receiving char
+                u4 = 0;  //index receiving char
 
                 return getting_string();
             }
@@ -1543,7 +1556,7 @@ namespace org.unirail
             {
                 public bool isOpen() => upper_layer.isOpen();
                 public Transmitter upper_layer; //the upper layer external interface
-                public EventsHandler handler;   //interface to the upper level internal producer
+                public EventsHandler handler;     //interface to the upper level internal producer
 
                 public EventsHandler exchange(EventsHandler handler) => Interlocked.Exchange(ref this.handler, handler);
 
@@ -1570,9 +1583,9 @@ namespace org.unirail
                 {
                     //divide free space.
                     raw_position = enc_position +
-                                   1 +                          //for 0xFF byte - frame start mark.
-                                   (limit - enc_position) / 8 + //ensure enough space for encoded bytes in a worse case
-                                   CRC_LEN_BYTES + 2;           //guaranty space for CRC + its expansion
+                                   1 +    //for 0xFF byte - frame start mark.
+                                   (limit - enc_position) / 8 +    //ensure enough space for encoded bytes in a worse case
+                                   CRC_LEN_BYTES + 2; //guaranty space for CRC + its expansion
 
                     return raw_position < limit;
                 }
@@ -1602,13 +1615,17 @@ namespace org.unirail
                         var len = upper_layer.Read(dst, raw_position, limit - raw_position);
 
                         if (len < 1)
-                            return dst_byte < enc_position ? enc_position - dst_byte : len;
+                            return dst_byte < enc_position ?
+                                       enc_position - dst_byte :
+                                       len;
 
                         for (var max = fix + len; raw_position < max;)
                             enc_position = encode(dst[raw_position++], dst, enc_position);
                     }
 
-                    return dst_byte < enc_position ? enc_position - dst_byte : 0;
+                    return dst_byte < enc_position ?
+                               enc_position - dst_byte :
+                               0;
                 }
 
                 public void onSending(Transmitter dst, BytesSrc src)
@@ -1838,7 +1855,9 @@ namespace org.unirail
 
                 exit:
                 buffer = null;
-                return dst_byte < byte_ ? byte_ - dst_byte : -1; //no more packets left
+                return dst_byte < byte_ ?
+                           byte_ - dst_byte :
+                           -1; //no more packets left
             }
 
             public bool Allocate(uint bytes, uint this_case)
@@ -1851,10 +1870,16 @@ namespace org.unirail
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-            public void put(bool src) => put_bits(src ? 1 : 0, 1);
+            public void put(bool src) => put_bits(src ?
+                                                      1 :
+                                                      0, 1);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-            public void put(bool? src) => put_bits(src.HasValue ? src.Value ? 3 : 2 : 0, 2);
+            public void put(bool? src) => put_bits(src.HasValue ?
+                                                       src.Value ?
+                                                           3 :
+                                                           2 :
+                                                       0, 2);
             #region bits
             private int bits_byte = -1;
             private uint bits_transaction_bytes_;
@@ -1958,7 +1983,9 @@ namespace org.unirail
                 return false;
             }
             #region varint
-            private static int bytes1(ulong src) => src < 1 << 8 ? 1 : 2;
+            private static int bytes1(ulong src) => src < 1 << 8 ?
+                                                        1 :
+                                                        2;
 
             public bool put_varint21(ulong src, uint continue_at_case)
             {
@@ -1974,7 +2001,7 @@ namespace org.unirail
 
             private static int bytes2(ulong src) => src < 1 << 8 ? 1
                                                     : src < 1 << 16 ? 2
-                                                                    : 3;
+                                                                      : 3;
 
             public bool put_varint32(ulong src, uint continue_at_case)
             {
@@ -1988,9 +2015,11 @@ namespace org.unirail
                 return put_bits_bytes(bytes << nulls_bits | nulls, nulls_bits + 2, src, bytes, continue_at_case);
             }
 
-            private static int bytes3(ulong src) => src < 1L << 16 ? src < 1L << 8 ? 1 : 2
+            private static int bytes3(ulong src) => src < 1L << 16 ? src < 1L << 8 ?
+                                                                         1 :
+                                                                         2
                                                     : src < 1L << 24 ? 3
-                                                                     : 4;
+                                                                       : 4;
 
             public bool put_varint42(ulong src, uint continue_at_case)
             {
@@ -2004,11 +2033,15 @@ namespace org.unirail
                 return put_bits_bytes(bytes - 1 << nulls_bits | nulls, nulls_bits + 2, src, bytes, continue_at_case);
             }
 
-            private static int bytes4(ulong src) => src < 1 << 24 ? src < 1 << 16 ? src < 1 << 8 ? 1 : 2 : 3
+            private static int bytes4(ulong src) => src < 1 << 24 ? src < 1 << 16 ?
+                                                                        src < 1 << 8 ?
+                                                                            1 :
+                                                                            2 :
+                                                                        3
                                                     : src < 1L << 32 ? 4
                                                     : src < 1L << 40 ? 5
                                                     : src < 1L << 48 ? 6
-                                                                     : 7;
+                                                                       : 7;
 
             public bool put_varint73(ulong src, uint continue_at_case)
             {
@@ -2022,12 +2055,16 @@ namespace org.unirail
                 return put_bits_bytes(bytes << nulls_bits | nulls, nulls_bits + 3, src, bytes, continue_at_case);
             }
 
-            private static int bytes5(ulong src) => src < 1L << 32 ? src < 1 << 16 ? src < 1 << 8 ? 1 : 2
-                                                                       : src < 1 << 24 ? 3
+            private static int bytes5(ulong src) => src < 1L << 32 ? src < 1 << 16 ? src < 1 << 8 ?
+                                                                                         1 :
+                                                                                         2
+                                                                     : src < 1 << 24 ? 3
                                                                                        : 4
-                                                    : src < 1L << 48 ? src < 1L << 40 ? 5 : 6
+                                                    : src < 1L << 48 ? src < 1L << 40 ?
+                                                                           5 :
+                                                                           6
                                                     : src < 1L << 56 ? 7
-                                                                     : 8;
+                                                                       : 8;
 
             public bool put_varint83(ulong src, uint continue_at_case)
             {
@@ -2211,9 +2248,13 @@ namespace org.unirail
                 mode = RETRY;
             }
 
-            public int bytes4value(int value) => value < 0xFFFF ? value < 0xFF ? value == 0 ? 0 : 1 : 2
+            public int bytes4value(int value) => value < 0xFFFF ? value < 0xFF ?
+                                                                      value == 0 ?
+                                                                          0 :
+                                                                          1 :
+                                                                      2
                                                  : value < 0xFFFFFF ? 3
-                                                                    : 4;
+                                                                      : 4;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             public void put(sbyte src) => buffer![byte_++] = (byte)src;
@@ -2423,7 +2464,9 @@ namespace org.unirail
 
         public class ArrayEqualHash<T> : IEqualityComparer<IList<T>>
         {
-            public bool Equals(IList<T>? x, IList<T>? y) => (x == null || y == null) ? x == y : x.Count == y.Count && x.SequenceEqual(y);
+            public bool Equals(IList<T>? x, IList<T>? y) => (x == null || y == null) ?
+                                                                x == y :
+                                                                x.Count == y.Count && x.SequenceEqual(y);
 
             public int GetHashCode(IList<T> list) => list.Aggregate(17, (current, item) => HashCode.Combine(current, item));
         }
@@ -2556,7 +2599,9 @@ namespace org.unirail
                 public void UInt64(ulong src, byte[] dst, int index) => Unsafe.WriteUnaligned(ref MemoryMarshal.GetReference(new Span<byte>(dst, index, 8)), BinaryPrimitives.ReverseEndianness(src));
             }
 
-            public static readonly Endianness OK = BitConverter.IsLittleEndian ? new LE() : new BE();
+            public static readonly Endianness OK = BitConverter.IsLittleEndian ?
+                                                       new LE() :
+                                                       new BE();
         }
 
         public struct NullableBool : IEquatable<NullableBool>
@@ -2570,7 +2615,9 @@ namespace org.unirail
             public bool Value
             {
                 get => value == 1;
-                set => this.value = (byte)(value ? 1 : 0);
+                set => this.value = (byte)(value ?
+                                               1 :
+                                               0);
             }
 
             public bool hasValue => value != NULL;
@@ -2582,13 +2629,21 @@ namespace org.unirail
             public static bool operator ==(NullableBool a, NullableBool b) => a.value == b.value;
             public static bool operator !=(NullableBool a, NullableBool b) => a.value != b.value;
 
-            public static bool operator ==(NullableBool a, bool b) => a.value != NULL && a.value == (byte)(b ? 1 : 0);
+            public static bool operator ==(NullableBool a, bool b) => a.value != NULL && a.value == (byte)(b ?
+                                                                                                               1 :
+                                                                                                               0);
 
-            public static bool operator !=(NullableBool a, bool b) => a.value == NULL || a.value != (byte)(b ? 1 : 0);
+            public static bool operator !=(NullableBool a, bool b) => a.value == NULL || a.value != (byte)(b ?
+                                                                                                               1 :
+                                                                                                               0);
 
-            public static bool operator ==(bool a, NullableBool b) => b.value != NULL && b.value == (byte)(a ? 1 : 0);
+            public static bool operator ==(bool a, NullableBool b) => b.value != NULL && b.value == (byte)(a ?
+                                                                                                               1 :
+                                                                                                               0);
 
-            public static bool operator !=(bool a, NullableBool b) => b.value == NULL || b.value != (byte)(a ? 1 : 0);
+            public static bool operator !=(bool a, NullableBool b) => b.value == NULL || b.value != (byte)(a ?
+                                                                                                               1 :
+                                                                                                               0);
 
             public override bool Equals(object? other) => other is NullableBool p && p.value == value;
             public bool Equals(NullableBool other) => value == other.value;
@@ -2597,7 +2652,9 @@ namespace org.unirail
             public static explicit operator bool(NullableBool a) => a.Value;
             public static implicit operator NullableBool(bool a) => new NullableBool(a);
 
-            public static implicit operator NullableBool(bool? a) => a == null ? NULL : a.Value;
+            public static implicit operator NullableBool(bool? a) => a == null ?
+                                                                         NULL :
+                                                                         a.Value;
 
             public static explicit operator byte(NullableBool a) => a.value;
             public static implicit operator NullableBool(byte a) => new NullableBool(a);
@@ -2631,10 +2688,7 @@ namespace org.unirail
         {
             var max = src_index + len;
 
-            while (bytes[max - 1] == '=')
-            {
-                max--;
-            }
+            while (bytes[max - 1] == '=') { max--; }
 
             var new_len = max - src_index;
             for (var i = new_len >> 2; 0 < i; i--) //Process full 4-character blocks
@@ -2698,7 +2752,7 @@ namespace org.unirail
 
                 request[p] = (byte)(index - p - 1); //Set the length for the last label
 
-                index += 2;              //Terminate domain name, set question type (TXT) and class (IN)
+                index += 2;    //Terminate domain name, set question type (TXT) and class (IN)
                 request[index++] = 0x10; //QTYPE = TXT
                 request[++index] = 0x01; //QCLASS = IN
 
@@ -2722,7 +2776,7 @@ namespace org.unirail
                 for (var i = 0; i < answerCount; i++) //Parse each answer
                 {
                     index += 2; //Skip NAME field
-                                //TYPE            two octets containing one of the RR TYPE codes.
+                    //TYPE            two octets containing one of the RR TYPE codes.
                     var TYPE = (ushort)((response[index] << 8) | response[index + 1]);
                     //CLASS           two octets containing one of the RR CLASS codes.
                     //
@@ -2758,10 +2812,11 @@ namespace org.unirail
 
             var ep = new IPEndPoint(IPAddress.Any, 0);
 
-            using (var udpClient = new UdpClient()) foreach (var os_dns in NetworkInterface.GetAllNetworkInterfaces()
-                                                                 .Where(n => n.OperationalStatus == OperationalStatus.Up)
-                                                                 .SelectMany(n => n.GetIPProperties().DnsAddresses)
-                                                                 .ToArray())
+            using (var udpClient = new UdpClient())
+                foreach (var os_dns in NetworkInterface.GetAllNetworkInterfaces()
+                                                       .Where(n => n.OperationalStatus == OperationalStatus.Up)
+                                                       .SelectMany(n => n.GetIPProperties().DnsAddresses)
+                                                       .ToArray())
                     try
                     {
                         var request = Create_DNS_TXT_Record_Request(key);
@@ -2772,32 +2827,33 @@ namespace org.unirail
 
                         return Parse_DNS_TXT_Record_Response(response);
                     }
-                    catch (Exception e)
-                    {
-                    }
+                    catch (Exception e) { }
 
             return null;
         }
 
-        //<summary>
-        ///Calculates the number of bytes required to encode a span of characters using varint encoding.
-        ///</summary>
-        ///<param name="src">The span of characters to be encoded.</param>
-        ///<returns>The total number of bytes required for varint encoding.</returns>
+        // <summary>
+        /// Calculates the number of bytes required to encode a span of characters using varint encoding.
+        /// </summary>
+        /// <param name="src">The span of characters to be encoded.</param>
+        /// <returns>The total number of bytes required for varint encoding.</returns>
         public static int varint_bytes(ReadOnlySpan<char> src)
         {
             var bytes = 0;
             foreach (var ch in src)
-                bytes += ch < 0x80 ? 1 : ch < 0x4_000 ? 2
-                                                      : 3;
+                bytes += ch < 0x80 ?
+                             1 :
+                             ch < 0x4_000 ?
+                                 2 :
+                                 3;
             return bytes;
         }
 
-        ///<summary>
-        ///Counts the number of characters that can be represented by a span of bytes in varint encoding.
-        ///</summary>
-        ///<param name="src">The span of bytes in varint encoding.</param>
-        ///<returns>The number of characters that can be represented by the input bytes.</returns>
+        /// <summary>
+        /// Counts the number of characters that can be represented by a span of bytes in varint encoding.
+        /// </summary>
+        /// <param name="src">The span of bytes in varint encoding.</param>
+        /// <returns>The number of characters that can be represented by the input bytes.</returns>
         public static int varint_chars(ReadOnlySpan<byte> src)
         {
             var chars = 0;
@@ -2807,102 +2863,99 @@ namespace org.unirail
             return chars;
         }
 
-        ///<summary>
-        ///Encodes a portion of a string into a byte array using varint encoding.
-        ///</summary>
-        ///<param name="src">The source string to encode.</param>
-        ///<param name="dst">The destination byte array.</param>
-        ///<returns>
-        ///A 64-bit unsigned integer containing two pieces of information:
-        ///- High 32 bits: The index in the source string of the first character not processed (i.e., the next character to be encoded if the operation were to continue).
-        ///- Low 32 bits: The number of bytes written to the destination array.
+        /// <summary>
+        /// Encodes a portion of a string into a byte array using varint encoding.
+        /// </summary>
+        /// <param name="src">The source string to encode.</param>
+        /// <param name="dst">The destination byte array.</param>
+        /// <returns>
+        /// A 64-bit unsigned integer containing two pieces of information:
+        /// - High 32 bits: The index in the source string of the first character not processed (i.e., the next character to be encoded if the operation were to continue).
+        /// - Low 32 bits: The number of bytes written to the destination array.
         ///
-        ///To extract these values:
-        ///- Next character to process: (int)(result >> 32)
-        ///- Bytes written: (int)(result & 0xFFFFFFFF)
-        ///</returns>
+        /// To extract these values:
+        /// - Next character to process: (int)(result >> 32)
+        /// - Bytes written: (int)(result & 0xFFFFFFFF)
+        /// </returns>
         public static ulong varint(ReadOnlySpan<char> src, Span<byte> dst)
         {
             var src_from = 0;
             var dst_from = 0;
 
-            //Iterate through the source string, starting from the specified index
+            // Iterate through the source string, starting from the specified index
             for (int dst_max = dst.Length, src_max = src.Length, ch; src_from < src_max; src_from++)
-                if ((ch = src[src_from]) < 0x80) //Most frequent case: ASCII characters (0-127) These characters are encoded as a single byte
+                if ((ch = src[src_from]) < 0x80) // Most frequent case: ASCII characters (0-127) These characters are encoded as a single byte
                 {
-                    //Check if there's enough space in the destination array for 1 byte
-                    if (dst_from == dst_max)
-                        break;
+                    // Check if there's enough space in the destination array for 1 byte
+                    if (dst_from == dst_max) break;
 
-                    //Encode the character in 1 byte (no special encoding needed)
+                    // Encode the character in 1 byte (no special encoding needed)
                     dst[dst_from++] = (byte)ch;
                 }
                 else if (ch < 0x4_000)
                 {
-                    //Check if there's enough space in the destination array for 2 bytes
-                    if (dst_max - dst_from < 2)
-                        break;
+                    // Check if there's enough space in the destination array for 2 bytes
+                    if (dst_max - dst_from < 2) break;
 
-                    //Encode the character in 2 bytes using varint encoding
-                    dst[dst_from++] = (byte)(0x80 | ch); //First byte: Set the MSB and use 7 LSBs of ch
-                    dst[dst_from++] = (byte)(ch >> 7);   //Second byte: Use the remaining 7 bits of ch
+                    // Encode the character in 2 bytes using varint encoding
+                    dst[dst_from++] = (byte)(0x80 | ch); // First byte: Set the MSB and use 7 LSBs of ch
+                    dst[dst_from++] = (byte)(ch >> 7);   // Second byte: Use the remaining 7 bits of ch
                 }
-                else //Less frequent case
+                else // Less frequent case
                 {
-                    //Check if there's enough space in the destination array for 3 bytes
-                    if (dst_max - dst_from < 3)
-                        break;
+                    // Check if there's enough space in the destination array for 3 bytes
+                    if (dst_max - dst_from < 3) break;
 
-                    //Encode the character in 3 bytes using varint encoding
-                    dst[dst_from++] = (byte)(0x80 | ch);      //First byte: Set the MSB and use 7 LSBs of ch
-                    dst[dst_from++] = (byte)(0x80 | ch >> 7); //Second byte: Set the MSB and use next 7 bits of ch
-                    dst[dst_from++] = (byte)(ch >> 14);       //Third byte: Use the remaining 2 bits of ch
+                    // Encode the character in 3 bytes using varint encoding
+                    dst[dst_from++] = (byte)(0x80 | ch);      // First byte: Set the MSB and use 7 LSBs of ch
+                    dst[dst_from++] = (byte)(0x80 | ch >> 7); // Second byte: Set the MSB and use next 7 bits of ch
+                    dst[dst_from++] = (byte)(ch >> 14);       // Third byte: Use the remaining 2 bits of ch
                 }
 
-            //Return the result: high 32 bits contain the next character index to process,
-            //low 32 bits contain the number of bytes written to the destination array
+            // Return the result: high 32 bits contain the next character index to process,
+            // low 32 bits contain the number of bytes written to the destination array
             return (ulong)(uint)src_from << 32 | (uint)dst_from;
         }
 
-        ///<summary>
-        ///Decodes a portion of a byte array into a string using varint decoding.
-        ///</summary>
-        ///<param name="src">The source byte array to decode.</param>
-        ///<param name="ret">A 32-bit integer containing two pieces of information:
-        ///    - Low 16 bits: The partial character value from a previous call (if any).
-        ///    - High 16 bits: The number of bits already processed for the partial character.
-        ///</param>
-        ///<param name="dst">The StringBuilder to append the decoded characters to.</param>
-        ///<returns>
-        ///A 32-bit integer containing two pieces of information:
-        ///- Low 16 bits: The partial character value (if decoding is incomplete).
-        ///- High 8 bits: The number of bits processed for the partial character.
-        ///This return value can be used as the 'ret' parameter in a subsequent call to continue decoding.
-        ///</returns>
+        /// <summary>
+        /// Decodes a portion of a byte array into a string using varint decoding.
+        /// </summary>
+        /// <param name="src">The source byte array to decode.</param>
+        /// <param name="ret">A 32-bit integer containing two pieces of information:
+        ///     - Low 16 bits: The partial character value from a previous call (if any).
+        ///     - High 16 bits: The number of bits already processed for the partial character.
+        /// </param>
+        /// <param name="dst">The StringBuilder to append the decoded characters to.</param>
+        /// <returns>
+        /// A 32-bit integer containing two pieces of information:
+        /// - Low 16 bits: The partial character value (if decoding is incomplete).
+        /// - High 8 bits: The number of bits processed for the partial character.
+        /// This return value can be used as the 'ret' parameter in a subsequent call to continue decoding.
+        /// </returns>
         public static int varint(ReadOnlySpan<byte> src, int ret, StringBuilder dst)
         {
             var src_from = 0;
             var dst_to = src.Length;
-            //Extract the partial character and shift from the ret parameter
-            var ch = ret & 0xFFFF;     //Low 16 bits: partial character value
-            var s = (byte)(ret >> 16); //High 8 bits: number of bits already processed
+            // Extract the partial character and shift from the ret parameter
+            var ch = ret & 0xFFFF;      // Low 16 bits: partial character value
+            var s = (byte)(ret >> 16); // High 8 bits: number of bits already processed
             int b;
             while (src_from < dst_to)
-                if ((b = src[src_from++]) < 0x80) //If the high bit is not set, this is the last byte of the character
+                if ((b = src[src_from++]) < 0x80) // If the high bit is not set, this is the last byte of the character
                 {
-                    //Combine the partial character with the current byte and append to StringBuilder
+                    // Combine the partial character with the current byte and append to StringBuilder
                     dst.Append((char)(b << s | ch));
-                    s = 0;  //Reset the shift
-                    ch = 0; //Reset the partial character
+                    s = 0; // Reset the shift
+                    ch = 0; // Reset the partial character
                 }
-                else //If the high bit is set, this is not the last byte of the character
+                else // If the high bit is set, this is not the last byte of the character
                 {
-                    //Add the 7 bits of this byte to the partial character
+                    // Add the 7 bits of this byte to the partial character
                     ch |= (b & 0x7F) << s;
-                    s += 7; //Increase the shift by 7 bits
+                    s += 7; // Increase the shift by 7 bits
                 }
 
-            //Return the current state (partial character and shift) for potential continuation
+            // Return the current state (partial character and shift) for potential continuation
             return s << 16 | ch;
         }
     }

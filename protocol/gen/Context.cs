@@ -1,36 +1,36 @@
 
 
-//MIT License
+//  MIT License
 //
-//Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
-//For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
-//GitHub Repository: https://github.com/AdHoc-Protocol
+//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
+//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
+//  GitHub Repository: https://github.com/AdHoc-Protocol
 //
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to use,
-//copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-//the Software, and to permit others to do so, under the following conditions:
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to use,
+//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+//  the Software, and to permit others to do so, under the following conditions:
 //
-//1. The above copyright notice and this permission notice must be included in all
-//   copies or substantial portions of the Software.
+//  1. The above copyright notice and this permission notice must be included in all
+//     copies or substantial portions of the Software.
 //
-//2. Users of the Software must provide a clear acknowledgment in their user
-//   documentation or other materials that their solution includes or is based on
-//   this Software. This acknowledgment should be prominent and easily visible,
-//   and can be formatted as follows:
-//   "This product includes software developed by Chikirev Sirguy and the Unirail Group
-//   (https://github.com/AdHoc-Protocol)."
+//  2. Users of the Software must provide a clear acknowledgment in their user
+//     documentation or other materials that their solution includes or is based on
+//     this Software. This acknowledgment should be prominent and easily visible,
+//     and can be formatted as follows:
+//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
+//     (https://github.com/AdHoc-Protocol)."
 //
-//3. If you modify the Software and distribute it, you must include a prominent notice
-//   stating that you have changed the Software.
+//  3. If you modify the Software and distribute it, you must include a prominent notice
+//     stating that you have changed the Software.
 //
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
-//OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//SOFTWARE.
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -46,27 +46,35 @@ namespace org.unirail
         const int VALUE_OF_NULL_KEY = int.MaxValue - 100;
         class Transmitter : AdHoc
         {
+            public Dictionary<ulong, byte>.Enumerator _Dictionary_ulong_byte__Enumerator;
+            public Dictionary<ulong, ushort>.Enumerator _Dictionary_ulong_ushort__Enumerator;
+            public Dictionary<uint, ushort>.Enumerator _Dictionary_uint_ushort__Enumerator;
             public byte[]? _byte_arrayN;
+            public Dictionary<ushort, byte>.Enumerator _Dictionary_ushort_byte__Enumerator;
+
 
             public void clear()
             {
                 _byte_arrayN = null;
-                #region> Clear custom code
-                #endregion> Context.Transmitter.Clear.Code
+                #region > Clear custom code
+                #endregion > Context.Transmitter.Clear.Code
+
             }
-            #region> Custom code
-            #endregion> Context.Transmitter.Code
+            #region > Custom code
+            #endregion > Context.Transmitter.Code
 
             public class Slot
             {
 
+
                 public void clear()
                 {
-                    #region> Clear custom code
-                    #endregion> Context.Transmitter.Slot.Clear.Code
+                    #region > Clear custom code
+                    #endregion > Context.Transmitter.Slot.Clear.Code
+
                 }
-                #region> Custom code
-                #endregion> Context.Transmitter.Slot.Code
+                #region > Custom code
+                #endregion > Context.Transmitter.Slot.Code
 
                 public uint state;
                 private readonly AdHoc.Transmitter dst;
@@ -84,6 +92,7 @@ namespace org.unirail
 
                 public bool next_index0() => ++index0 < index_max0;
 
+
                 public bool next_index_fix0() => ++index0 < index_fix0;
                 #endregion
                 #region 1
@@ -98,6 +107,7 @@ namespace org.unirail
                 }
 
                 public bool next_index1() => ++index1 < index_max1;
+
 
                 public bool next_index_fix1() => ++index1 < index_fix1;
                 #endregion
@@ -114,17 +124,27 @@ namespace org.unirail
 
                 public bool next_index2() => ++index2 < index_max2;
 
+
                 public bool next_index_fix2() => ++index2 < index_fix2;
                 #endregion
 
+
+
+
                 int tmp;
-                private static int bytes4value(int value) => value < 0xFFFF ? value < 0xFF ? value == 0 ? 0 : 1 : 2 : value < 0xFFFFFF ? 3
-                                                                                                                                       : 4;
+                private static int bytes4value(int value) => value < 0xFFFF ?
+                                                                  value < 0xFF ?
+                                                                      value == 0 ?
+                                                                          0 :
+                                                                          1 :
+                                                                      2 :
+                                                                  value < 0xFFFFFF ?
+                                                                      3 :
+                                                                      4;
 
                 public bool no_null_values()
                 {
-                    if (tmp == 0)
-                        return true;
+                    if (tmp == 0) return true;
                     index_max_1(tmp);
                     return false;
                 }
@@ -141,8 +161,7 @@ namespace org.unirail
                         AdHoc.Receiver.error_handler_.error(dst, AdHoc.Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In no_items(uint items, uint items_max, uint next_field_case)     items_max < items : " + items_max + " < " + items));
                         index_max_1(items_max);
                     }
-                    else
-                        index_max_1(items);
+                    else index_max_1(items);
 
                     return false;
                 }
@@ -156,7 +175,8 @@ namespace org.unirail
                     dst.put_val((uint)items, items_bytes);
                 }
 
-                //Return `true` if leap to the new state is necessary.
+
+                // Return `true` if leap to the new state is necessary.
                 public bool put_info(int null_V_count)
                 {
                     var KV_count = index_max1;
@@ -174,13 +194,13 @@ namespace org.unirail
                     var null_V_count_bytes = bytes4value(null_V_count);
 
                     if (0 < (KV_count -= null_V_count))
-                    { //has KV items
+                    { // has KV items
 
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_V_count_bytes << 3 | KV_count_bytes));
                         dst.put_val((uint)KV_count, KV_count_bytes);
                         dst.put_val((uint)null_V_count, null_V_count_bytes);
-                        tmp = null_V_count; //preserve
+                        tmp = null_V_count;//  preserve
                         index_max_1(KV_count);
                         return false;
                     }
@@ -193,7 +213,7 @@ namespace org.unirail
                 #endregion
                 #region Key contains null
 
-                //Return `true` if leap to the new state is necessary.
+                // Return `true` if leap to the new state is necessary.
                 public bool put_info(bool null_K_exists)
                 {
                     var items = index_max1;
@@ -233,7 +253,7 @@ namespace org.unirail
                     return false;
                 }
 
-                //Return `true` if leap to the new state is necessary.
+                // Return `true` if leap to the new state is necessary.
                 public void put_info__()
                 {
                     var KV_count = index_max1;
@@ -251,10 +271,10 @@ namespace org.unirail
                         index_max_1(KV_count);
                     }
 
-                    index1 = VALUE_OF_NULL_KEY; //indicates that sending the value of 'Map  (null)'
+                    index1 = VALUE_OF_NULL_KEY; //  indicates that sending the value of 'Map  (null)'
                 }
 
-                //Return `true` if leap to the new state is necessary.
+                // Return `true` if leap to the new state is necessary.
                 public bool put_info_(int null_V_count, uint V_array_case)
                 {
                     var KV_count = index_max1;
@@ -279,43 +299,40 @@ namespace org.unirail
                     }
 
                     var null_V_count_bytes = bytes4value(null_V_count);
-                    if (0 < (KV_count -= null_V_count)) //has KV items
+                    if (0 < (KV_count -= null_V_count)) // has KV items
                     {
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_key_bits | null_V_count_bytes << 3 | KV_count_bytes));
                         dst.put_val((uint)KV_count, KV_count_bytes);
                         dst.put_val((uint)null_V_count, null_V_count_bytes);
-                        tmp = null_V_count; //keys with null values count preserve
+                        tmp = null_V_count; // keys with null values count preserve
                         index_max_1(KV_count);
                         goto to_V_case;
                     }
 
                     dst.put((byte)(null_key_bits | null_V_count_bytes << 3));
                     dst.put_val((uint)null_V_count, null_V_count_bytes);
-                    tmp = null_V_count; //preserve
-                    index_max_1(0);     //zero KV items
+                    tmp = null_V_count; // preserve
+                    index_max_1(0);     // zero KV items
                 to_V_case:
                     state = V_array_case;
                     index1 = VALUE_OF_NULL_KEY;
                     return true;
                 }
 
-                //Return `true` if leap to the new state is necessary.
+                // Return `true` if leap to the new state is necessary.
                 public bool put_info(int null_V_count,
                                      uint null_V_case,
                                      uint next_field_case) => put_info(null_V_count, null_V_case, next_field_case, 0b1000_0000);
 
-                //Return `true` if leap to the new state is necessary.
+                // Return `true` if leap to the new state is necessary.
                 public bool put_info_(int null_V_count,
                                       uint KV_case,
                                       uint null_V_case,
                                       uint next_field_case)
-                {
-                    state = KV_case;
-                    return put_info(null_V_count, null_V_case, next_field_case, 0b1100_0000);
-                }
+                { state = KV_case; return put_info(null_V_count, null_V_case, next_field_case, 0b1100_0000); }
 
-                //Return `true` if leap to the new state is necessary.
+                // Return `true` if leap to the new state is necessary.
                 private bool put_info(int null_V_count,
                                       uint null_V_case,
                                       uint next_field_case,
@@ -341,31 +358,32 @@ namespace org.unirail
                     }
 
                     var null_V_count_bytes = bytes4value(null_V_count);
-                    if (0 < (KV_count -= null_V_count)) //has KV items
+                    if (0 < (KV_count -= null_V_count)) // has KV items
                     {
                         var KV_count_bytes = bytes4value(KV_count);
                         dst.put((byte)(null_key_bits | null_V_count_bytes << 3 | KV_count_bytes));
                         dst.put_val((uint)KV_count, KV_count_bytes);
                         dst.put_val((uint)null_V_count, null_V_count_bytes);
-                        tmp = null_V_count; //keys with null values count preserve
+                        tmp = null_V_count; // keys with null values count preserve
                         index_max_1(KV_count);
                         return false;
                     }
 
                     dst.put((byte)(null_key_bits | null_V_count_bytes << 3));
                     dst.put_val((uint)null_V_count, null_V_count_bytes);
-                    index_max_1(null_V_count); //keys with null values count
+                    index_max_1(null_V_count); // keys with null values count
                     state = null_V_case;
                     return true;
                 }
                 public bool leap_KV()
                 {
-                    if (index1 < VALUE_OF_NULL_KEY || index_max1 == 0)
-                        return false;
+                    if (index1 < VALUE_OF_NULL_KEY || index_max1 == 0) return false;
                     index1 = 0;
                     return true;
                 }
                 #endregion
+
+
             }
         }
 
@@ -373,25 +391,28 @@ namespace org.unirail
         {
             public ulong _ulong;
 
+
             public void clear()
             {
-                #region> Clear custom code
-                #endregion> Context.Receiver.Clear.Code
+                #region > Clear custom code
+                #endregion > Context.Receiver.Clear.Code
+
             }
-            #region> Custom code
-            #endregion> Context.Receiver.Code
+            #region > Custom code
+            #endregion > Context.Receiver.Code
 
             public class Slot
             {
-                public ulong _ulong;
+
 
                 public void clear()
                 {
-                    #region> Clear custom code
-                    #endregion> Context.Receiver.Slot.Clear.Code
+                    #region > Clear custom code
+                    #endregion > Context.Receiver.Slot.Clear.Code
+
                 }
-                #region> Custom code
-                #endregion> Context.Receiver.Slot.Code
+                #region > Custom code
+                #endregion > Context.Receiver.Slot.Code
 
                 private static int trailing8Zeros(uint i)
                 {
@@ -404,7 +425,9 @@ namespace org.unirail
                         i = y;
                     }
                     y = i << 2;
-                    return (int)(y == 0 ? n - (i << 1 >> 31) : n - 2 - (y << 1 >> 31));
+                    return (int)(y == 0 ?
+                                     n - (i << 1 >> 31) :
+                                     n - 2 - (y << 1 >> 31));
                 }
 
                 public uint state;
@@ -412,7 +435,7 @@ namespace org.unirail
                 public Slot(AdHoc.Receiver src) { this.src = src; }
                 #region 0
                 public int index0;
-                public int _index0; //Used to store the index of the most recent non-null value
+                public int _index0;// Used to store the index of the most recent non-null value
                 public int index_max0;
                 public uint nulls0;
 
@@ -445,8 +468,7 @@ namespace org.unirail
 
                 public bool no_index0(uint no_index_case, int no_index_index0)
                 {
-                    if (0 < src.remaining)
-                        return false;
+                    if (0 < src.remaining) return false;
                     src.retry_at(no_index_case);
                     index0 = no_index_index0;
                     return true;
@@ -455,8 +477,7 @@ namespace org.unirail
                 public bool find_exist0(int index0)
                 {
                     var nulls = src.get_byte();
-                    if (nulls == 0)
-                        return false;
+                    if (nulls == 0) return false;
                     this.index0 = index0 + trailing8Zeros(nulls);
                     nulls0 = nulls;
                     return true;
@@ -490,7 +511,7 @@ namespace org.unirail
                 #endregion
                 #region 1
                 public int index1;
-                public int _index1; //Used to store the index of the most recent non-null value
+                public int _index1;// Used to store the index of the most recent non-null value
                 public int index_max1;
                 public uint nulls1;
 
@@ -523,8 +544,7 @@ namespace org.unirail
 
                 public bool no_index1(uint no_index_case, int no_index_index1)
                 {
-                    if (0 < src.remaining)
-                        return false;
+                    if (0 < src.remaining) return false;
                     src.retry_at(no_index_case);
                     index1 = no_index_index1;
                     return true;
@@ -533,8 +553,7 @@ namespace org.unirail
                 public bool find_exist1(int index1)
                 {
                     var nulls = src.get_byte();
-                    if (nulls == 0)
-                        return false;
+                    if (nulls == 0) return false;
                     this.index1 = index1 + trailing8Zeros(nulls);
                     nulls1 = nulls;
                     return true;
@@ -568,7 +587,7 @@ namespace org.unirail
                 #endregion
                 #region 2
                 public int index2;
-                public int _index2; //Used to store the index of the most recent non-null value
+                public int _index2;// Used to store the index of the most recent non-null value
                 public int index_max2;
                 public uint nulls2;
 
@@ -601,8 +620,7 @@ namespace org.unirail
 
                 public bool no_index2(uint no_index_case, int no_index_index2)
                 {
-                    if (0 < src.remaining)
-                        return false;
+                    if (0 < src.remaining) return false;
                     src.retry_at(no_index_case);
                     index2 = no_index_index2;
                     return true;
@@ -611,8 +629,7 @@ namespace org.unirail
                 public bool find_exist2(int index2)
                 {
                     var nulls = src.get_byte();
-                    if (nulls == 0)
-                        return false;
+                    if (nulls == 0) return false;
                     this.index2 = index2 + trailing8Zeros(nulls);
                     nulls2 = nulls;
                     return true;
@@ -645,8 +662,11 @@ namespace org.unirail
                 }
                 #endregion
 
+
+
                 int max_items;
                 int tmp = 0;
+
 
                 public bool try_get_info(uint the_case)
                 {
@@ -664,7 +684,7 @@ namespace org.unirail
 
                 public bool try_null_values_count(int max_items, uint next_case)
                 {
-                    tmp = index_max1; //preserve total items count
+                    tmp = index_max1; // preserve total items count
                     return get_len1(max_items, (int)(src.u8 >> 3 & 7), next_case);
                 }
                 #region Key contains null
@@ -675,8 +695,7 @@ namespace org.unirail
 
                 public bool nullKey_Value()
                 {
-                    if (index1 < VALUE_OF_NULL_KEY)
-                        return false;
+                    if (index1 < VALUE_OF_NULL_KEY) return false;
                     index1 = 0;
                     return true;
                 }
@@ -700,8 +719,7 @@ namespace org.unirail
                 public bool leap()
                 {
                     var KV_items = index_max1;
-                    if (0 < KV_items)
-                        return false;
+                    if (0 < KV_items) return false;
                     return true;
                 }
 
@@ -711,7 +729,9 @@ namespace org.unirail
                     var null_V_items = index_max1;
                     if (KV_items == 0)
                     {
-                        state = null_V_items == 0 ? next_field_case : null_V_case;
+                        state = null_V_items == 0 ?
+                                    next_field_case :
+                                    null_V_case;
                         return true;
                     }
 
@@ -722,7 +742,9 @@ namespace org.unirail
 
                 public int items_count(int max_items)
                 {
-                    var items = tmp + index_max1 + (hasNullKey() ? 1 : 0);
+                    var items = tmp + index_max1 + (hasNullKey() ?
+                                                                1 :
+                                                                0);
                     if (max_items < items)
                     {
                         AdHoc.Receiver.error_handler.error(src, AdHoc.Receiver.OnError.OVERFLOW, new ArgumentOutOfRangeException("In items_count  (uint max_items){}   max_items < items : " + max_items + " < " + items));
@@ -733,11 +755,13 @@ namespace org.unirail
 
                 public bool no_null_values()
                 {
-                    if (tmp == 0)
-                        return true;
+                    if (tmp == 0) return true;
                     index_max_1(tmp);
                     return false;
                 }
+
+
+
             }
         }
     }

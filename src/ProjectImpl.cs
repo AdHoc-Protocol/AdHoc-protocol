@@ -37,6 +37,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -45,418 +46,10 @@ using org.unirail.Agent;
 // Microsoft.CodeAnalysis >>>> https://docs.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.semanticmodel?view=roslyn-dotnet-3.11.0
 namespace org.unirail
 {
-    public class HasDocs
-    {
-        private static readonly Regex leading_spaces = new(@"^\s+", RegexOptions.Multiline);
-        private static readonly Regex inline_comments_cleaner = new(@"^\s*/{2,}", RegexOptions.Multiline);
-        private static readonly Regex block_comments_start = new(@"/\*+", RegexOptions.Multiline);
-        private static readonly Regex block_comments_start_line = new(@"/\*+\s*(\r\n|\r|\n)", RegexOptions.Multiline);
-        private static readonly Regex block_comments_end = new(@"\s*\*+/", RegexOptions.Multiline);
-        private static readonly Regex block_comments_end_line = new(@"\s*\*+/", RegexOptions.Multiline);
-        private static readonly Regex cleanup_asterisk = new(@"^\s*\*+", RegexOptions.Multiline);
-        private static readonly Regex cleanup_see_cref = new(@"<\s*see\s*cref .*>", RegexOptions.Multiline);
-        public static readonly Regex uid = new(@"\/\*([\u00FF-\u01FF]+)\*\/");
-
-        public static string get_doc(SyntaxTrivia trivia)
-        {
-            var str = trivia.ToFullString().Trim();
-            if (str.Length == 0 || str.StartsWith('#')) return ""; //skip preprocessor instructions
-
-            //normalize doc. apply "left alignment"
-
-            foreach (var m in leading_spaces.Matches(str).Reverse()) //Reverse!!
-            {
-                var s = m.Groups[0].Value;
-                if (-1 < s.IndexOf('\t'))
-                {
-                    s = s.Replace("\t", "    ");
-                    str = str[..m.Groups[0].Index] + s + str[(m.Groups[0].Index + m.Groups[0].Length)..];
-                }
-
-                len2count.TryGetValue(s.Length, out var count);
-                count++;
-                len2count[s.Length] = count;
-            }
-
-            if (0 < len2count.Count)
-            {
-                var most = len2count.ToArray().OrderBy(e => -e.Value).First().Key;
-                len2count.Clear();
-
-                str = new Regex(@"^\s" + "{1," + most + "}", RegexOptions.Multiline).Replace(str, "");
-            }
-
-            str = inline_comments_cleaner.Replace(str, "");
-
-            var st = block_comments_start.Match(str);
-            if (st.Success)
-            {
-                st = block_comments_start_line.Match(str);
-                if (st.Success)
-                    str = block_comments_start_line.Replace(str, "", 1);
-                else
-                    str = block_comments_start.Replace(str, "", 1);
-
-                var es = block_comments_end_line.Matches(str);
-
-                if (0 < es.Count)
-                    if (es[0].Success)
-                        str = block_comments_end_line.Replace(str, "", 1, es.Last().Index);
-                    else
-                    {
-                        es = block_comments_end.Matches(str);
-                        if (es[0].Success)
-                            str = block_comments_end.Replace(str, "", 1, es.Last().Index);
-                    }
-
-                str = cleanup_asterisk.Replace(str, "");
-            }
-
-            var tmp = cleanup_see_cref
-                      .Replace(str, "")
-                      .Trim('\n', '\r', '\t', ' ', '+', '-');
-            if (tmp.Length == 0) return "";
-
-
-            switch (str[str.Length - 1])
-            {
-                case '\r':
-                case '\n':
-                    return str;
-            }
-
-            return str + "\n";
-        }
-
-        private static Dictionary<int, int> len2count = new();
-
-        public override string ToString() => _name;
-        public string _name { get; set; }
-        public string? _doc { get; set; }
-        public string? _inline_doc { get; set; }
-        public int idx = int.MaxValue; //place index
-
-        public static string brush(string name)
-        {
-            if (name.Equals("_DefaultMaxLengthOf") || !is_prohibited(name)) return name;
-
-
-            var new_name = name;
-
-            for (var i = 0; i < name.Length; i++)
-                if (char.IsLower(name[i]))
-                {
-                    new_name = new_name[..i] + char.ToUpper(new_name[i]) + new_name[(i + 1)..];
-                    if (is_prohibited(new_name)) continue;
-
-                    return new_name;
-                }
-
-            return name;
-        }
-
-        public int char_in_source_code = -1;
-
-        public ProjectImpl project;
-
-        public HasDocs(ProjectImpl? prj, string name, CSharpSyntaxNode? node)
-        {
-            if (prj == null && node == null) return;
-            project = prj ?? (ProjectImpl)this; //prj == null only for projects
-
-            if (node == null) return;
-
-            name = name[(name.LastIndexOf('.') + 1)..];
-            _name = brush(name);
-
-            char_in_source_code = node.GetLocation().SourceSpan.Start;
-
-
-            var trivias = node.GetLeadingTrivia();
-
-            var doc = trivias.Aggregate("", (current, trivia) => current + get_doc(trivia));
-
-            if (project.packs_id_info_end == -1) project.packs_id_info_end = char_in_source_code;
-
-
-            if (0 < (doc = doc.Trim('\r', '\n', '\t', ' ')).Length) _doc = doc + "\n";
-        }
-
-        public List<INamedTypeSymbol> add = new();
-
-        public void add_from(INamedTypeSymbol symbol)
-        {
-            var src = symbol.BaseType == null || symbol.BaseType.Name.Equals("Object") ?
-                          symbol.Interfaces :
-                          symbol.Interfaces.Concat(new[] { symbol.BaseType });
-
-            foreach (var Interface in src) //add `inhereted` items
-                extract(Interface);
-        }
-
-        private void extract(INamedTypeSymbol s)
-        {
-            if (s.ToString()!.StartsWith("org.unirail.Meta._<"))
-                foreach (var arg in s.TypeArguments)
-                    extract((INamedTypeSymbol)arg);
-
-            else add.Add(s);
-        }
-
-        public List<INamedTypeSymbol> del = new();
-
-        public List<ISymbol> add_fld = new();
-        public List<ISymbol> del_fld = new();
-
-
-        private static bool is_prohibited(string name)
-        {
-            if (name[0] == '_' || name[^1] == '_')
-            {
-                AdHocAgent.LOG.Error("Entity names cannot start or end with an underscore _. Please correct the name '{name}' and try again.", name);
-                AdHocAgent.exit("");
-            }
-
-            return name switch
-            {
-                // C#
-                "abstract" or "as" or "base" or "bool" or "break" or "byte" or "case" or "catch" or
-                    "char" or "checked" or "class" or "const" or "continue" or "decimal" or "default" or
-                    "delegate" or "do" or "double" or "else" or "enum" or "event" or "explicit" or "extern" or
-                    "false" or "finally" or "fixed" or "float" or "for" or "foreach" or "goto" or "if" or
-                    "implicit" or "in" or "int" or "interface" or "internal" or "is" or "lock" or "long" or
-                    "namespace" or "new" or "null" or "object" or "operator" or "out" or "override" or "params" or
-                    "private" or "protected" or "public" or "readonly" or "ref" or "return" or "sbyte" or
-                    "sealed" or "short" or "sizeof" or "stackalloc" or "static" or "string" or "struct" or
-                    "switch" or "this" or "throw" or "true" or "try" or "typeof" or "uint" or "ulong" or
-                    "unchecked" or "unsafe" or "ushort" or "using" or "virtual" or "void" or "volatile" or
-
-                    // C++
-                    "alignas" or "alignof" or "and" or "and_eq" or "asm" or "auto" or "bitand" or "bitor" or
-                    "bool" or "break" or "case" or "catch" or "char" or "char16_t" or "char32_t" or "class" or
-                    "compl" or "concept" or "const" or "consteval" or "constexpr" or "constinit" or "const_cast" or
-                    "continue" or "decltype" or "default" or "delete" or "do" or "double" or "dynamic_cast" or
-                    "else" or "enum" or "explicit" or "export" or "extern" or "false" or "float" or "for" or
-                    "friend" or "goto" or "if" or "inline" or "int" or "long" or "mutable" or "namespace" or
-                    "new" or "noexcept" or "nullptr" or "operator" or "or" or "or_eq" or "private" or
-                    "protected" or "public" or "reflexpr" or "register" or "reinterpret_cast" or "requires" or
-                    "return" or "short" or "signed" or "sizeof" or "static" or "static_assert" or "static_cast" or
-                    "struct" or "switch" or "template" or "this" or "thread_local" or "throw" or "true" or
-                    "try" or "typedef" or "typeid" or "typename" or "union" or "unsigned" or "using" or "virtual" or
-                    "void" or "volatile" or "wchar_t" or "while" or "xor" or "xor_eq" or
-
-                    // Java
-                    "abstract" or "assert" or "boolean" or "break" or "byte" or "case" or "catch" or
-                    "char" or "class" or "const" or "continue" or "default" or "do" or "double" or "else" or
-                    "enum" or "extends" or "final" or "finally" or "float" or "for" or "goto" or "if" or
-                    "implements" or "import" or "instanceof" or "int" or "interface" or "long" or "native" or
-                    "new" or "null" or "package" or "private" or "protected" or "public" or "return" or
-                    "short" or "static" or "strictfp" or "super" or "switch" or "synchronized" or "this" or
-                    "throw" or "throws" or "transient" or "true" or "try" or "void" or "volatile" or "while" or
-
-                    // TypeScript
-                    "any" or "as" or "boolean" or "break" or "case" or "catch" or "class" or "const" or
-                    "continue" or "debugger" or "declare" or "default" or "delete" or "do" or "else" or
-                    "enum" or "export" or "extends" or "false" or "finally" or "for" or "from" or "function" or
-                    "if" or "implements" or "import" or "in" or "instanceof" or "interface" or "is" or
-                    "keyof" or "let" or "module" or "namespace" or "never" or "new" or "null" or "number" or
-                    "object" or "package" or "private" or "protected" or "public" or "readonly" or "require" or
-                    "return" or "string" or "super" or "switch" or "symbol" or "this" or "throw" or "true" or
-                    "try" or "type" or "typeof" or "undefined" or "unique" or "unknown" or "var" or "void" or
-                    "while" or "with" or "yield" or
-
-                    // Rust
-                    "abstract" or "as" or "async" or "await" or "become" or "box" or "break" or "const" or
-                    "continue" or "crate" or "do" or "dyn" or "else" or "enum" or "extern" or "false" or
-                    "final" or "fn" or "for" or "if" or "impl" or "in" or "let" or "loop" or "macro" or
-                    "match" or "mod" or "move" or "mut" or "override" or "priv" or "pub" or "ref" or
-                    "return" or "self" or "Self" or "static" or "struct" or "super" or "trait" or "true" or
-                    "try" or "type" or "typeof" or "union" or "unsafe" or "use" or "where" or "while" or
-
-                    // Go
-                    "break" or "case" or "chan" or "const" or "continue" or "default" or "defer" or "else" or
-                    "fallthrough" or "for" or "func" or "go" or "goto" or "if" or "import" or "interface" or
-                    "map" or "package" or "range" or "return" or "select" or "struct" or "switch" or "type" or
-                    "var" or
-
-                    // Reserved keywords or special cases across multiple languages
-                    "arguments" or "eval" or "null" or "true" or "false" or "undefined" or "void" => true,
-                _ => false
-            };
-        }
-    }
-
-    public class Entity : HasDocs
-    {
-        public static bool equals(ISymbol x, ISymbol y) => SymbolEqualityComparer.Default.Equals(x, y);
-
-        public static bool doAlter(INamedTypeSymbol entity, Action<ISymbol> on_add, Action<ISymbol> on_del)
-        {
-            if (!entity.Name.Equals("Alter") || !entity.ToString()!.StartsWith("org.")) return false;
-
-            if (entity.TypeArguments[0] is not INamedTypeSymbol add_item) on_add(entity.TypeArguments[0]);
-            else if (!do_(add_item, on_add))
-                on_add(add_item);
-
-            if (entity.TypeArguments[1] is not INamedTypeSymbol del_item) on_del(entity.TypeArguments[0]);
-            else if (!do_(del_item, on_del))
-                on_add(del_item);
-
-            return true;
-        }
-
-        public static bool do_(INamedTypeSymbol entity, Action<ISymbol> on_item)
-        {
-            if (!entity.Name.Equals("_") || !entity.ToString()!.StartsWith("org.")) return false;
-
-            foreach (var item in entity.TypeParameters) on_item(item);
-
-            return true;
-        }
-
-        public BaseTypeDeclarationSyntax? node;
-
-        public Entity? parent_entity => project.entities[symbol.OriginalDefinition.ContainingType];
-
-        public ProjectImpl in_project
-        {
-            get
-            {
-                for (var e = this; ; e = e.parent_entity)
-                    if (e is ProjectImpl project)
-                        return project;
-            }
-        }
-
-
-        public ProjectImpl.HostImpl? in_host
-        {
-            get
-            {
-                for (var e = this; e != null; e = e.parent_entity)
-                    switch (e)
-                    {
-                        case ProjectImpl.HostImpl host: return host;
-                        case ProjectImpl: return null;
-                    }
-
-                return null;
-            }
-        }
-
-
-        public string full_path
-        {
-            get
-            {
-                if (this is ProjectImpl)
-                    return this == project ?
-                               "" :
-                               symbol!.ToString() ?? "";
-
-                var path = _name;
-                for (var e = parent_entity; ; path = e._name + "." + path, e = e.parent_entity)
-                    if (e is ProjectImpl)
-                        return (e == project //root project
-                                    ?
-                                    "" :
-                                    e.symbol + "." //full path
-                               ) + path;
-            }
-        }
-
-        public int line_in_src_code => symbol!.Locations[0].GetLineSpan().StartLinePosition.Line + 1;
-        public INamedTypeSymbol? symbol;
-        public SemanticModel model;
-
-
-        public bool? _included;
-        public virtual bool included => _included ?? false;
-
-
-        public Entity(ProjectImpl prj, CSharpCompilation? compilation, BaseTypeDeclarationSyntax? node) : base(prj, node == null ?
-                                                                                                                        "" :
-                                                                                                                        node.Identifier.ToString(), node)
-        {
-            if (compilation == null || node == null) return;
-            this.node = node;
-            model = compilation.GetSemanticModel(node.SyntaxTree);
-            symbol = model.GetDeclaredSymbol(node)!;
-            project.entities.Add(symbol, this);
-            if (!_name.Equals(symbol.Name))
-            {
-                AdHocAgent.LOG.Warning("The entity '{entity}' name at the {provided_path} line: {line} is prohibited. Please correct the name manually.", symbol, AdHocAgent.provided_path, line_in_src_code);
-                AdHocAgent.exit("");
-            }
-
-            var txt = node.SyntaxTree.ToString();
-            var s = uid_pos;
-            var rn = txt.IndexOf('\n', s);
-            if (rn == -1) rn = txt.IndexOf('\r', s);
-
-            var comments_after = node.DescendantTrivia().Where(
-                                                               t =>
-                                                                   (t.IsKind(SyntaxKind.MultiLineCommentTrivia) || t.IsKind(SyntaxKind.SingleLineCommentTrivia)) &&
-                                                                   s <= t.SpanStart &&
-                                                                   t.SpanStart < rn
-                                                              );
-            if (!comments_after.Any()) return;
-
-            var m = HasDocs.uid.Match(comments_after.First().ToString());
-            if (!m.Success) return;
-
-            uid = (ushort)str2int(m.Groups[1].Value);
-            comments_after = comments_after.Skip(1);
-
-            //_inline_doc += string.Join(' ', comments_after.Select(get_doc));
-        }
-
-        public bool is_real => symbol != null;
-
-        public ushort uid = ushort.MaxValue;
-        public ushort _uid => uid;
-
-        public int uid_pos
-        {
-            get
-            {
-                var span = symbol!.Locations[0].SourceSpan;
-                return span.Start + span.Length;
-            }
-        }
-
-
-        public Entity(ProjectImpl project, BaseTypeDeclarationSyntax? node) : base(project, node?.Identifier.ToString() ?? "", node) { this.node = node; }
-
-        private const int base256 = 0xFF;
-
-        private static byte[] bytes = new byte[20];
-
-        public static int str2int(string str)
-        {
-            var ret = 0;
-            for (var i = 0; i < str.Length; i++)
-                ret |= (str[i] - base256) << i * 8;
-
-            return ret;
-        }
-
-        public static int int2str(int src, char[] dst)
-        {
-            var i = 0;
-            do { dst[i++] = (char)((src & 0xFF) + base256); }
-            while (0 < (src >>= 8));
-
-            return i;
-        }
-    }
-
-
     public class ProjectImpl : Entity, Project
     {
-        public readonly Dictionary<INamedTypeSymbol, HostImpl.PackImpl[]> named_packs = new(SymbolEqualityComparer.Default); //Group related packets under a descriptive name
+        public readonly Dictionary<ISymbol, ChannelImpl.NamedPackSet> named_packs = new(SymbolEqualityComparer.Default); //Group related packets under a descriptive name
 
-        public readonly Dictionary<ISymbol, Entity> entities = new(SymbolEqualityComparer.Default);
 
         public Dictionary<string, Type> types; //runtime reflection types
 
@@ -470,14 +63,25 @@ namespace org.unirail
         public int packs_id_info_start = -1;
         public int packs_id_info_end = -1;
         public string file_path;
+        public static readonly List<ProjectImpl> projects = []; //all projects
+        public static ProjectImpl projects_root => projects[0];
 
         private class Protocol_Description_Parser : CSharpSyntaxWalker
         {
-            public readonly List<ProjectImpl> projects = new(); //all projects
+            ProjectImpl project_of(ITypeSymbol src)
+            {
+                var parent = src.ContainingType;
+
+                while (true)
+                {
+                    var prj = projects.FirstOrDefault(prj => equals(prj.symbol, parent));
+                    if (prj != null) return prj;
+                    parent = parent.ContainingType;
+                    if (parent == null) AdHocAgent.exit($"Cannot find project source code of {src}", 44);
+                }
+            }
 
             public HasDocs? HasDocs_instance;
-
-            public int inline_doc_line;
 
             public Dictionary<string, Type> types = new();
             private ProjectImpl project;
@@ -504,7 +108,7 @@ namespace org.unirail
                 var model = compilation.GetSemanticModel(node.SyntaxTree);
                 var symbol = model.GetDeclaredSymbol(node)!;
 
-                if (symbol.OriginalDefinition.ContainingType == null) //top-level C# interface - it's a project
+                if (symbol.OriginalDefinition.ContainingType == null) //The top-level C# interface serves as the project’s declaration.
                 {
                     HasDocs_instance = project = new ProjectImpl(projects.Count == 0 //root project
                                                                      ?
@@ -521,28 +125,35 @@ namespace org.unirail
                 }
                 else
                 {
-                    var interfaces = symbol.Interfaces;
-                    var str = interfaces[0].ToString()!;
-                    if (0 < interfaces.Length && str.StartsWith("org."))
-                        switch (interfaces[0].Name)
-                        {
-                            case "ChannelFor":
-                                HasDocs_instance = new ChannelImpl(project, compilation, node); //Channel
-                                break;
-                            case "L" or "R":
-                                HasDocs_instance = new ChannelImpl.StageImpl(project, compilation, node); //host stage
-                                break;
-                            case "_":
-                                project.named_packs.Add(symbol, Array.Empty<HostImpl.PackImpl>()); //set of packs
-                                HasDocs_instance = null;
-                                break;
-                            default:
-                                HasDocs_instance = null;
-                                break;
-                        }
+                    for (var sym = symbol; ;)
+                    {
+                        var interfaces = sym.Interfaces;
+                        if (0 < interfaces.Length && interfaces[0].isMeta())
+                            switch (interfaces[0].Name)
+                            {
+                                case "Modify":
+                                    sym = (INamedTypeSymbol)interfaces[0].TypeArguments[0];
+                                    continue;
+                                case "ChannelFor":
+                                    HasDocs_instance = new ChannelImpl(project, compilation, node); //Channel
+                                    break;
+                                case "L" or "R" or "LR":
+                                    HasDocs_instance = new ChannelImpl.StageImpl(project, compilation, node); //host stage
+                                    break;
+                                case "_":
+                                    project.named_packs.Add(symbol, new ChannelImpl.NamedPackSet(project, compilation, node)); //set of packs
+                                    HasDocs_instance = null;
+                                    break;
+                                default:
+                                    HasDocs_instance = null;
+                                    break;
+                            }
+                        else AdHocAgent.exit($"Unknown type interface entity {symbol}");
+
+                        break;
+                    }
                 }
 
-                inline_doc_line = node.GetLocation().GetMappedLineSpan().StartLinePosition.Line;
                 base.VisitInterfaceDeclaration(node);
             }
 
@@ -552,12 +163,11 @@ namespace org.unirail
                 var symbol = model.GetDeclaredSymbol(node)!;
                 var interfaces = symbol.Interfaces;
 
-                if (project.entities[symbol.ContainingType] is ProjectImpl && 0 < interfaces.Length && interfaces[0].Name.Equals("Host"))
+                if (entities[symbol.ContainingType] is ProjectImpl && 0 < interfaces.Length && interfaces[0].Name.Equals("Host"))
                     HasDocs_instance = new HostImpl(project, compilation, node); //host
                 else
                     HasDocs_instance = new HostImpl.PackImpl(project, compilation, node); //constants set
 
-                inline_doc_line = node.GetLocation().GetMappedLineSpan().StartLinePosition.Line;
                 base.VisitStructDeclaration(node);
             }
 
@@ -565,7 +175,6 @@ namespace org.unirail
             {
                 HasDocs_instance = new HostImpl.PackImpl(project, compilation, clazz);
 
-                inline_doc_line = clazz.GetLocation().GetMappedLineSpan().StartLinePosition.Line;
 
                 base.VisitClassDeclaration(clazz);
             }
@@ -573,7 +182,6 @@ namespace org.unirail
             public override void VisitEnumDeclaration(EnumDeclarationSyntax ENUM)
             {
                 HasDocs_instance = new HostImpl.PackImpl(project, compilation, ENUM);
-                inline_doc_line = ENUM.GetLocation().GetMappedLineSpan().StartLinePosition.Line;
 
                 base.VisitEnumDeclaration(ENUM);
             }
@@ -585,7 +193,6 @@ namespace org.unirail
 
                 foreach (var variable in node.Declaration.Variables) { HasDocs_instance = new HostImpl.PackImpl.FieldImpl(project, node, variable, model); }
 
-                inline_doc_line = node.GetLocation().GetMappedLineSpan().StartLinePosition.Line;
                 base.VisitFieldDeclaration(node);
             }
 
@@ -595,7 +202,6 @@ namespace org.unirail
                 var model = compilation.GetSemanticModel(node.SyntaxTree);
 
                 HasDocs_instance = new HostImpl.PackImpl.FieldImpl(project, node, model);
-                inline_doc_line = node.GetLocation().GetMappedLineSpan().StartLinePosition.Line;
                 base.VisitEnumMemberDeclaration(node);
             }
 
@@ -603,8 +209,10 @@ namespace org.unirail
             public override void VisitTrivia(SyntaxTrivia trivia)
             {
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
-                    if (HasDocs_instance != null && inline_doc_line == trivia.GetLocation().GetMappedLineSpan().StartLinePosition.Line)
+                {
+                    if (HasDocs_instance != null && HasDocs_instance.line_in_src_code == trivia.GetLocation().GetMappedLineSpan().StartLinePosition.Line + 1)
                         HasDocs_instance._inline_doc += trivia.ToString().Trim('\r', '\n', '\t', ' ', '/');
+                }
 
                 base.VisitTrivia(trivia);
             }
@@ -647,9 +255,6 @@ namespace org.unirail
                 #endregion
                 else
                 {
-                    var txt = comment_line.Parent!.ToFullString()[(comment_line.FullSpan.End - comment_line.Parent!.FullSpan.Start)..];
-
-
                     if (HasDocs_instance is HostImpl host) //language &  generate/skip implementation at current lang config
                     {
                         var lang = node.Cref.ToString() switch
@@ -666,9 +271,9 @@ namespace org.unirail
                         {
                             #region read host language configuration
                             host._langs |= (Project.Host.Langs)lang; //register language config
+                            var txt = comment_line.Parent!.DescendantNodes().FirstOrDefault(t => node.Span.End < t.Span.Start)?.ToString().Trim() ?? "";
 
-                            host._default_impl_hash_equal = (0 < txt.Length //the first char after last `>` impl pack
-                                                                 ?
+                            host._default_impl_hash_equal = (0 < txt.Length ? //the first char after last `>` impl pack
                                                                  txt[0] :
                                                                  ' ') switch
                             {
@@ -677,8 +282,7 @@ namespace org.unirail
                                 _ => host._default_impl_hash_equal
                             };
 
-                            host._default_impl_hash_equal = (1 < txt.Length //the second char after last `>` - hash and equals methods
-                                                                 ?
+                            host._default_impl_hash_equal = (1 < txt.Length ? //the second char after last `>` - hash and equals methods
                                                                  txt[1] :
                                                                  ' ') switch
                             {
@@ -714,63 +318,6 @@ namespace org.unirail
 
 
                     if (cref == null) AdHocAgent.exit($"`Reference to unknown entity {node.Parent} detected. Correct or delete it");
-
-                    var del = 0 < txt.Length && txt[0] == '-'; //the first char after last `>` is `-`
-
-                    #region alter pack configuration
-                    switch (cref!.Kind)
-                    {
-                        case SymbolKind.Field: // Reference to a field
-                            switch (HasDocs_instance)
-                            {
-                                case HostImpl.PackImpl dst_pack: // Adding or removing a field from the pack entity
-
-                                    if (cref is IFieldSymbol src_field && (src_field.IsStatic || src_field.IsConst))
-                                    {
-                                        AdHocAgent.LOG.Error("Field '{src_field}' is {static_const}, but only instance fields can be {add_del} to '{dst_pack}'.",
-                                                             src_field,
-                                                             src_field.IsConst ?
-                                                                 "const" :
-                                                                 "static",
-                                                             del ?
-                                                                 "del" :
-                                                                 "add",
-                                                             dst_pack);
-
-                                        AdHocAgent.exit("Please correct the error and try again.", -9);
-                                    }
-
-                                    (del ?
-                                         dst_pack.del_fld :
-                                         dst_pack.add_fld).Add(cref);
-                                    break;
-                                default:
-                                    AdHocAgent.LOG.Warning("Unrecognized use of '{src_field}' in '{dst}', operation skipped.", cref, HasDocs_instance);
-                                    break;
-                            }
-
-                            break;
-                        case SymbolKind.NamedType:
-                            switch (HasDocs_instance)
-                            {
-                                case HostImpl.PackImpl add_fields_to_pack: // Add fields from one pack to another
-                                    (del ?
-                                         add_fields_to_pack.del :
-                                         add_fields_to_pack.add).Add((INamedTypeSymbol)cref);
-                                    break;
-
-                                default:
-                                    AdHocAgent.LOG.Warning("{Cref} cannot be apply to the {HasDocsInstance}  type only", cref, HasDocs_instance);
-                                    break;
-                            }
-
-                            break;
-
-                        default:
-                            AdHocAgent.exit($"Reference to an unknown entity {node.Cref} at {HasDocs_instance}");
-                            break;
-                    }
-                    #endregion
                 }
 
             END:
@@ -782,7 +329,7 @@ namespace org.unirail
 
         //calling only on root project
         //                                                                                                    imported_projects_pack_id_info - pack_id_info from other included projects
-        public ISet<HostImpl.PackImpl> read_packs_id_info_and_write_update(Dictionary<INamedTypeSymbol, int>? imported_projects_pack_id_info)
+        public ISet<HostImpl.PackImpl> read_packs_id_info_and_write_update(IEnumerable<ProjectImpl> imported_projects)
         {
             // Packs in stages are transmittable and must have a valid `id`.
             var packs = channels
@@ -797,12 +344,12 @@ namespace org.unirail
             {
                 var used = false;
 
-                foreach (var fld in project.raw_fields.Values.Where(fld => fld.V != null && fld.get_exT_pack == pack))
+                foreach (var fld in raw_fields.Values.Where(fld => fld.V != null && fld.get_exT_pack == pack))
                     AdHocAgent.exit($"The field `{fld.symbol}` at the line: {fld.line_in_src_code} is a Map with a key of empty pack {pack.symbol}, which is unsupported and unnecessary.");
 
-                foreach (var fld in project.raw_fields.Values.Where(fld => fld.get_exT_pack == pack)
-                                           .Concat(project.raw_fields.Values.Where(fld => fld.V != null && fld.V.get_exT_pack == pack).Select(fld => fld.V!)) //field value has empty packs as type
-                       )                                                                                                                                      //change field type to boolean
+                foreach (var fld in raw_fields.Values.Where(fld => fld.get_exT_pack == pack)
+                                              .Concat(raw_fields.Values.Where(fld => fld.V != null && fld.V.get_exT_pack == pack).Select(fld => fld.V!)) //field value has empty packs as type
+                       )                                                                                                                                 //change field type to boolean
                 {
                     used = true;
                     fld.switch_to_boolean();
@@ -834,50 +381,45 @@ namespace org.unirail
             project.all_packs.RemoveAll(pack => pack._id is 0 or (int)Project.Host.Pack.Field.DataType.t_constants);
 
             #region read/write packs id
-            foreach (var pack in packs) //extract saved communication packs id  info
-            {
+            var update_packs_id_info = false; //Update packs_id_info in the source file is needed to reflect changes.
+
+            var imported_projects_pack_id_info = imported_projects
+                                                 .SelectMany(prj => prj.pack_id_info)
+                                                 .ToDictionary(pair => pair.Key, pair => pair.Value, SymbolEqualityComparer.Default);
+
+            var included_packs = packs.Where(p => p.included).ToArray();
+
+            foreach (var pack in included_packs) //extract saved communication packs id  info
                 if (!pack._name.Equals(pack.symbol!.Name))
                 {
                     AdHocAgent.LOG.Error("The name of the pack {entity} (line:{line}) has been changed to {new_name}. However, the pack cannot be assigned an ID until its name is manually corrected", pack.symbol, pack.line_in_src_code, pack._name);
                     AdHocAgent.exit("", 66);
                 }
-
-                var key = pack.symbol;
-                if (pack_id_info.TryGetValue(key!, out var current_id)) pack._id = (ushort)current_id; //root does not has id info... maybe imported projects have
-                else if (imported_projects_pack_id_info!.ContainsKey(key)) pack._id = (ushort)pack_id_info[key];
-            }
+                else if (pack_id_info.TryGetValue(pack.symbol!, out var id) || imported_projects_pack_id_info.TryGetValue(pack.symbol!, out id)) //root does not has id info... maybe imported projects have
+                    pack._id = (ushort)id;
 
             if (new FileInfo(AdHocAgent.provided_path).IsReadOnly) //Protocol description file is locked - packs id updating process skipped.
                 return packs;
 
             #region detect pack's id duplication
-            foreach (var pks in packs.Where(pk => pk._id < (int)Project.Host.Pack.Field.DataType.t_subpack).GroupBy(pack => pack._id).Where(g => 1 < g.Count()))
+            foreach (var pks in included_packs.Where(pk => pk._id < (int)Project.Host.Pack.Field.DataType.t_subpack).GroupBy(pack => pack._id).Where(g => 1 < g.Count()))
             {
-                var _1 = pks.First();
+                update_packs_id_info = true;
                 var list = pks.Aggregate("", (current, pk) => current + pk.full_path + "\n");
-                AdHocAgent.LOG.Warning("Packs \n{List} with equal id = {Id} detected. Will preserve one assignment, others will be renumbered", list, _1._id);
+                AdHocAgent.LOG.Warning("Packs \n{List} with the same id = {Id} detected. One assignment will be preserved, and the others will be renumbered.", list, pks.Key);
 
                 //find a one to preserve it's id in root project first
-                if (_1.project != project)
-                {
-                    var pk = pks.FirstOrDefault(pk => pk.project == project);
-                    if (pk != null) _1 = pk;
-                }
+                var pk = pks.FirstOrDefault(pk => pk.project == this) ?? pks.First();
 
-                foreach (var pk in pks) //
-                    if (pk != _1)
-                        pk._id = (int)Project.Host.Pack.Field.DataType.t_subpack; //reset for renumbering
+                foreach (var _pk in pks.Where(_pk => _pk != pk))
+                    _pk._id = (int)Project.Host.Pack.Field.DataType.t_subpack; // reset for renumbering
             }
             #endregion
 
 
             #region renumbering
-            // check that pack_id_info and `packs` have fully idenical packs
-            var update_packs_id_info = pack_id_info.Count != packs.Count || !packs.All(pack => pack_id_info.ContainsKey(pack.symbol!)); //is need update packs_id_info in source file
-
-
             for (var id = 0; ; id++) //set new packs id
-                if (packs.All(pack => pack._id != id))
+                if (included_packs.All(pack => pack._id != id))
                 {
                     var pack = packs.FirstOrDefault(pack => pack._id == (int)Project.Host.Pack.Field.DataType.t_subpack);
                     if (pack == null) break;    //no more pack without id
@@ -886,50 +428,41 @@ namespace org.unirail
                 }
             #endregion
 
-            var updates = new List<(int, int)>(10);
 
-            var uid = 0;
+            var top = 0;
+            var tmp = new char[4];
 
-            void set_uid(Entity dst, Func<int, bool> check)
+            void write_updated_uid(StreamWriter _file, string _source_code, List<(int, ulong)> updated_uid)
             {
-                while (check(uid)) uid++;
-                if (dst.is_real) updates.Add((dst.uid_pos, uid));
-                dst.uid = (ushort)uid++;
-            }
-
-            foreach (var host in hosts.Where(host => host.uid == 0xFFFF))
-                set_uid(host, uid => hosts.Any(h => h.uid == uid));
-
-            uid = 0;
-            foreach (var channel in channels.Where(ch => ch.uid == 0xFFFF))
-                set_uid(channel, uid => channels.Any(ch => ch.uid == uid));
-
-            uid = 0;
-            foreach (var pack in packs.Where(pack => pack.uid == 0xFFFF))
-                set_uid(pack, uid => packs.Any(pack => pack.uid == uid));
-
-            uid = 0;
-            foreach (var channel in channels)
-            {
-                var stages = channel.stages;
-                foreach (var stage in stages.Where(host => host.uid == 0xFFFF))
-                    set_uid(stage, uid => stages.Any(stage => stage.uid == uid));
-
-                var uid_ = 0;
-                foreach (var stage in stages.Where(st => st.is_real))
+                foreach (var (pos, uid) in updated_uid.OrderBy((b) => b.Item1))
                 {
-                    var branches = stage.branchesL.Concat(stage.branchesR).ToArray();
-                    foreach (var br in branches.Where(b => b.uid == 0xFFFF))
-                    {
-                        while (branches.Any(pack => pack.uid == uid_)) uid_++;
-                        updates.Add((br.uid_pos, uid_));
-                        br.uid = (ushort)uid_++;
-                    }
+                    _file.Write(_source_code[top..pos]);
+                    _file.Write("/*");
+                    var len = uid.to_base256_chars(tmp);
+                    _file.Write(tmp, 0, len);
+                    _file.Write("*/");
+                    top = pos;
                 }
+
+                _file.Write(_source_code[top..]);
+
+                _file.Flush();
+                _file.Close();
             }
 
-            if (!update_packs_id_info && updates.Count == 0) return packs; //================================= Update the current packs' ID information in the protocol description file.
 
+            foreach (var prj in imported_projects.Where(prj => 0 < prj.updated_uid.Count))
+            {
+                using StreamWriter _file = new(prj.node!.SyntaxTree.FilePath);
+                top = 0;
+                write_updated_uid(_file, prj.node!.SyntaxTree.ToString(), prj.updated_uid);
+            }
+
+
+            if (!update_packs_id_info && updated_uid.Count == 0) return packs;
+
+            //================================= Update the current packs' ID information in the protocol description file.
+            top = 0;
             var long_full_path = (HostImpl.PackImpl pack) => pack.project == project ?
                                                                  pack.full_path :
                                                                  pack.symbol!.ToString(); //namespace + project_name + pack.full_path
@@ -938,7 +471,7 @@ namespace org.unirail
             var source_code = node!.SyntaxTree.ToString();
             using StreamWriter file = new(AdHocAgent.provided_path);
 
-            var top = 0;
+
             if (update_packs_id_info)
             {
                 if (packs_id_info_start == -1) packs_id_info_start = packs_id_info_end; //no saved packs id info in source file
@@ -946,7 +479,9 @@ namespace org.unirail
 
                 file.Write(source_code[..packs_id_info_start]);
                 file.Write("/**\n");
-                foreach (var pack in packs.OrderBy(pack => long_full_path(pack)))
+                foreach (var pack in included_packs
+                                     .Where(pack => !pack_id_info.TryGetValue(pack.symbol!, out var id) &&
+                                                    !imported_projects_pack_id_info.TryGetValue(pack.symbol!, out id) || pack._id != id).OrderBy(pack => long_full_path(pack)))
                 {
                     file.Write("\t\t<see cref = '");
 
@@ -964,225 +499,159 @@ namespace org.unirail
                 top = packs_id_info_end;
             }
 
-            var tmp = new char[4];
-            foreach (var (pos, id) in updates.OrderBy((b) => b.Item1))
-            {
-                file.Write(source_code[top..pos]);
-                file.Write("/*");
-                var len = int2str(id, tmp);
-                file.Write(tmp, 0, len);
-                file.Write("*/");
-                top = pos;
-            }
-
-            file.Write(source_code[top..]);
-
-            file.Flush();
-            file.Close();
+            write_updated_uid(file, source_code, updated_uid);
             #endregion
             return packs;
         }
 
-        string[] compiled_files = Array.Empty<string>();
-        int[] compiled_files_times = Array.Empty<int>();
 
-        public ProjectImpl? refresh() => compiled_files
-                                         .Where((path, i) => new FileInfo(path).LastWriteTime.Millisecond != compiled_files_times[i]).Any() ?
-                                             init() :
-                                             null;
+        // Refreshes the project if any project files have changed since processing.
+        public static bool refresh(DateTime on_time)
+        {
+            if (processing_files.All(path => new FileInfo(path).LastWriteTime < processing_time)) return on_time < processing_time; // Check if all files' last write times are older than processingTime.
+            init();                                                                                                                  // If any file changed, reinitialize the project.
+            return true;
+        }
 
+        // Stores the paths of processed files.
+        static List<string> processing_files = [];
+
+        static DateTime processing_time = DateTime.Now;
 
         public static ProjectImpl init()
         {
-            var compiled_files = new List<string>();
-            var compiled_files_times = new List<int>();
+            processing_files.Clear();
+            processing_time = DateTime.Now;
+            projects.Clear();
 
+            // Parse syntax trees from provided paths.
             var trees = new[] { AdHocAgent.provided_path }
                         .Concat(AdHocAgent.provided_paths)
                         .Select(path =>
                                 {
-                                    compiled_files.Add(path);
-                                    compiled_files_times.Add(new FileInfo(path).LastWriteTime.Millisecond);
+                                    // Add file path and last write time to respective lists.
+                                    processing_files.Add(path);
 
+                                    // Read the source code from the file.
                                     StreamReader file = new(path);
                                     var src = file.ReadToEnd();
                                     file.Close();
+
+                                    // Return a parsed syntax tree for the file.
                                     return SyntaxFactory.ParseSyntaxTree(src, path: path);
                                 }).ToArray();
 
+            // Compile the syntax trees into an assembly.
             var compilation = CSharpCompilation.Create("Output",
                                                        trees,
                                                        ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
-                                                       .Split(Path.PathSeparator)
+                                                       .Split(Path.PathSeparator) // Load trusted assemblies.
                                                        .Select(path => MetadataReference.CreateFromFile(path)),
                                                        new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                                                                                     optimizationLevel: OptimizationLevel.Debug,
-                                                                                    warningLevel: 0, // Set warning level to 0 to suppress warnings
+                                                                                    warningLevel: 0, // Suppress warnings by setting warning level to 0.
                                                                                     assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default));
 
+            // Instantiate a protocol description parser with the compilation result.
             var parser = new Protocol_Description_Parser(compilation);
 
-
+            // Emit the compiled assembly to a memory stream.
             using (var ms = new MemoryStream())
             {
-                var result = compilation.Emit(ms); // write IL code into memory
+                var result = compilation.Emit(ms); // Write IL code into memory.
+
+                // Check if the compilation was successful.
                 if (!result.Success)
                 {
-                    AdHocAgent.LOG.Error("The protocol description file {ProvidedPath} has an issues:\n{issue}", AdHocAgent.provided_path, string.Join(Environment.NewLine, result.Diagnostics.Select(d => d.ToString()).ToArray()));
+                    // Log errors and exit if compilation fails.
+                    AdHocAgent.LOG.Error("The protocol description file {ProvidedPath} has an issue:\n{issue}",
+                                         AdHocAgent.provided_path,
+                                         string.Join(Environment.NewLine, result.Diagnostics.Select(d => d.ToString()).ToArray()));
                     AdHocAgent.exit("Please fix the problem and rerun");
                 }
 
-                ms.Seek(0, SeekOrigin.Begin); // load this 'virtual' DLL so that we can use
+                // Reset the stream position and load the assembly from memory.
+                ms.Seek(0, SeekOrigin.Begin);
                 var types = Assembly.Load(ms.ToArray()).GetTypes();
+
+                // Add parsed types to the protocol parser.
                 foreach (var type in types) parser.types.Add(type.ToString().Replace("+", "."), type);
             }
 
-
-            foreach (var tree in trees) //parsing all projects
+            // Visit all syntax trees to parse project details.
+            foreach (var tree in trees)
                 parser.Visit(tree.GetRoot());
 
-            if (parser.projects.Count == 0)
-                AdHocAgent.exit($@"No any project detected. Provided file {AdHocAgent.provided_path} has not complete or wrong format. Try to start from init template.");
-            var project = parser.projects[0]; //switch to root project
-            project._included = true;
-            project.compiled_files = compiled_files.ToArray();
-            project.compiled_files_times = compiled_files_times.ToArray();
+            // Ensure at least one project is detected.
+            if (projects.Count == 0)
+                AdHocAgent.exit($@"No project detected. Provided file {AdHocAgent.provided_path} is incomplete or in the wrong format. Try using the init template.");
 
-            project.source = AdHocAgent.zip(project.compiled_files);
+            // Set the first project as the root and include it in the project structure.
+            var root_project = projects[0]; // Switch to root project.
+            root_project._included = true;
 
-            #region merge everything into the root project
-            foreach (var prj in parser.projects.Skip(1))
+            root_project.source = AdHocAgent.zip(processing_files);
+
+            foreach (var prj in projects.Where(prj => prj.uid == ulong.MaxValue)) // Assign a pseudo-random "unique" identifier (based on current time) to projects without a UID
             {
-                foreach (var (key, value) in prj.entities) project.entities.Add(key, value);
-
-                project.hosts.AddRange(prj.hosts);
-                project.channels.AddRange(prj.channels);
-
-                foreach (var (key, value) in prj.named_packs) project.named_packs.Add(key, value);
-
-                project.constants_packs.AddRange(prj.constants_packs);
-                project.all_packs.AddRange(prj.all_packs);
-
-                foreach (var (key, value) in prj.raw_fields) project.raw_fields.Add(key, value);
+                prj.updated_uid.Add((prj.uid_pos, prj.uid = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 0x192_8A31_D95EUL)); //8 bytes Pseudo-random "unique" identifier
+                Thread.Sleep(1);                                                                                                         // Ensure unique UIDs by delaying 1ms between assignments
             }
+
+            #region process project's imports
+            var once = new HashSet<object>(20);
+            root_project.Init(once);
             #endregion
 
-            var typedefs = project.all_packs.Where(pack => pack.is_typedef).Distinct().ToArray();
-            project.all_packs.RemoveAll(pack => pack.is_typedef);
+            var typedefs = root_project.all_packs.Where(pack => pack.is_typedef).Distinct().ToArray(); //preserve
+            root_project.all_packs.RemoveAll(pack => pack.is_typedef);
 
-            #region process project imports constants/ enum
-            while (project.collect_imported_entities(new HashSet<ProjectImpl>())) ;
+            //all constants pack, enums  in the root project are included by default
+            foreach (var pack in root_project.constants_packs) pack._included = true;
 
-            project.constants_packs.AddRange(project.project_constants_packs);
-
-            //all constants, enums packs in the root project are included by default
-            foreach (var pack in project.constants_packs.Where(pack => pack.is_constants_set || pack.is_enum)) pack._included = true;
-            #endregion
-
-            #region process named pack set
-            {
-                var rerun = true;
-
-                while (rerun)
-                {
-                    rerun = false;
-                    foreach (var name in project.named_packs.Keys) process_named_packs_set(name);
-                }
-
-                void process_named_packs_set(INamedTypeSymbol dst)
-                {
-                    var tmp = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
-                    var pks = new HashSet<HostImpl.PackImpl>();
-                    foreach (var symbol in dst.Interfaces)
-                        add(symbol, tmp, pks);
-
-                    var len = project.named_packs[dst].Length;
-                    project.named_packs[dst] = pks.ToArray();
-                    if (!rerun) rerun = len != project.named_packs[dst].Length; //rerun if added
-
-                    pks.Clear();
-                    tmp.Clear();
-                }
-
-
-                void add(INamedTypeSymbol symbol, HashSet<INamedTypeSymbol> tmp, HashSet<HostImpl.PackImpl> pks)
-                {
-                    if (symbol.ToString()!.StartsWith("org.unirail.Meta._<"))
-                        foreach (var arg in symbol.TypeArguments)
-                            add((INamedTypeSymbol)arg, tmp, pks);
-                    else if (tmp.Add(symbol))
-                        if (project.named_packs.ContainsKey(symbol))
-                        {
-                            process_named_packs_set(symbol);
-                            pks.UnionWith(project.named_packs[symbol]);
-                        }
-                        else if (project.entities.TryGetValue(symbol, out var item) && item is HostImpl.PackImpl { is_constants_set: false, is_enum: false } pack)
-                            pks.Add(pack);
-                        else
-                        {
-                            AdHocAgent.LOG.Error("Unexpected item {item} in named packs set", symbol);
-                            AdHocAgent.exit("Fix the problem and restart");
-                        }
-                }
-            }
-            #endregion
 
             #region process project Channels
-            project.channels = project.channels
-                                      .Where(ch => ch.included)
-                                      .Distinct()
-                                      .ToList();
+            root_project.channels = root_project.channels
+                                                .Where(ch => !ch.modifier && (ch._included = true).Value)
+                                                .Distinct()
+                                                .Select((ch, idx) =>
+                                                        {
+                                                            ch.idx = idx;
+                                                            return ch;
+                                                        })
+                                                .ToList();
 
-            if (project.channels.Count == 0) AdHocAgent.exit("No any information about communication Channels.", 45);
-            for (var idx = 0; idx < project.channels.Count; idx++)
-            {
-                var ch = project.channels[idx];
-                ch.idx = idx; //set storage place index
-                ch.hostL._included = true;
-                ch.hostR._included = true;
-                ch.Init();
-
-                foreach (var pack in ch.stages.SelectMany(stage => stage.branchesL.SelectMany(branch => branch.packs)).Distinct())
-                {
-                    ch.hostL_transmitting_packs.Add(pack);
-                    pack._included = true;
-                }
-
-                foreach (var pack in ch.stages.SelectMany(stage => stage.branchesR.SelectMany(branch => branch.packs)).Distinct())
-                {
-                    ch.hostR_transmitting_packs.Add(pack);
-                    pack._included = true;
-                }
-            }
+            if (root_project.channels.Count == 0) AdHocAgent.exit("There is no information available about communication channels.", 45);
+            foreach (var ch in root_project.channels) ch.set_transmitting_packs(once);
             #endregion
 
 
             #region collect, enumerate and check hosts
             {
-                project.hosts = project.hosts.Where(host => host.included).Distinct().OrderBy(host => host.full_path).ToList();
-                for (var i = 0; i < project.hosts.Count; i++) project.hosts[i].idx = i;
+                root_project.hosts = root_project.hosts.Where(host => host.included).Distinct().OrderBy(host => host.full_path).ToList();
+                for (var idx = 0; idx < root_project.hosts.Count; idx++) root_project.hosts[idx].idx = idx;
                 var exit = false;
-                foreach (var host in project.hosts.Where(host => host._langs == 0))
+                foreach (var host in root_project.hosts.Where(host => host._langs == 0))
                 {
                     exit = true;
-                    AdHocAgent.LOG.Error("Host {host} has no language implementation information. Use <see cref = \'InLANG\'/> comments construction to add it.", host.symbol);
+                    AdHocAgent.LOG.Error("The host {host} lacks language implementation information. Please use the C# `///<see cref=\"InLANG\"/>` XML comment on the host to add it.", host.symbol);
                 }
 
                 if (exit) AdHocAgent.exit("Correct detected problems and restart", 45);
 
                 // Remove from host's scopes: packs registered on project scope
-                foreach (var host in project.hosts)
-                    host.packs.RemoveAll(pack => project.project_constants_packs.Contains(pack));
+                foreach (var host in root_project.hosts)
+                    host.packs.RemoveAll(pack => root_project.constants_packs.Contains(pack));
             }
             #endregion
 
 
-            HostImpl.PackImpl.FieldImpl.init(project); //process all fields
+            HostImpl.PackImpl.FieldImpl.init(root_project); //process all fields
 
             //after typedef fields pocessed
             #region process typedefs
             {
-                var flds = project.raw_fields.Values;
+                var flds = raw_fields.Values;
 
                 for (var rerun = true; rerun;)
                 {
@@ -1191,7 +660,7 @@ namespace org.unirail
                     foreach (var T in typedefs)
                     {
                         var src = T.fields[0];
-                        project.raw_fields.Remove(src.symbol!); //remove typedef field
+                        raw_fields.Remove(src.symbol!); //remove typedef field
 
                         foreach (var dst in flds)
                         {
@@ -1259,19 +728,13 @@ namespace org.unirail
             #endregion
 
 
-            HostImpl.PackImpl.init(project);
-            HostImpl.init(project);
+            HostImpl.PackImpl.init(root_project);
+            HostImpl.init(root_project);
 
-            //imported_pack_id_info  - collection of pack_id_info from imported projects
-            //root project pack_id_info override  imported projects pack_id_info
-            var imported_projects_pack_id_info = new Dictionary<INamedTypeSymbol, int>(SymbolEqualityComparer.Default);
-            foreach (var prj in parser.projects.Skip(1))
-                foreach (var pair in prj.pack_id_info)
-                    imported_projects_pack_id_info.Add(pair.Key, pair.Value);
 
-            var packs = project.read_packs_id_info_and_write_update(imported_projects_pack_id_info);
-            packs.UnionWith(project.all_packs.Where(p => p.included));       //add included transmittable to the packs
-            packs.UnionWith(project.constants_packs.Where(c => c.included)); //add included enums & constants sets to the packs
+            var packs = root_project.read_packs_id_info_and_write_update(projects.Skip(1));
+            packs.UnionWith(root_project.all_packs.Where(p => p.included));       //add included transmittable to the packs
+            packs.UnionWith(root_project.constants_packs.Where(c => c.included)); //add included enums & constants sets to the packs
 
 
             //include packs that are not transmited but build a namespaces hierarchy
@@ -1302,49 +765,49 @@ namespace org.unirail
                     }
                     else break;
 
-            foreach (var host in project.hosts)
-                packs.UnionWith(host.pack_impl.Keys.Where(symbol1 => project.entities[symbol1] is HostImpl.PackImpl).Select(symbol2 =>
-                                                                                                                            {
-                                                                                                                                var pack = (HostImpl.PackImpl)project.entities[symbol2];
-                                                                                                                                pack._included = true;
-                                                                                                                                return pack;
-                                                                                                                            }));
+            foreach (var host in root_project.hosts)
+                packs.UnionWith(host.pack_impl.Keys.Where(symbol1 => entities[symbol1] is HostImpl.PackImpl).Select(symbol2 =>
+                                                                                                                    {
+                                                                                                                        var pack = (HostImpl.PackImpl)entities[symbol2];
+                                                                                                                        pack._included = true;
+                                                                                                                        return pack;
+                                                                                                                    }));
 
-            project.packs = packs.OrderBy(pack => pack.full_path).ToList(); //save all used packs
+            root_project.packs = packs.OrderBy(pack => pack.full_path).ToList(); //save all used packs
 
 
             #region Detect redundant pack's language information.
-            project.hosts.ForEach(
-                                  host =>
-                                  {
-                                      packs.Clear(); // re-use
+            root_project.hosts.ForEach(
+                                       host =>
+                                       {
+                                           packs.Clear(); // re-use
 
-                                      foreach (var ch in project.channels.Where(ch => ch.hostL == host || ch.hostR == host))
-                                      {
-                                          packs.UnionWith(ch.hostL_transmitting_packs);
-                                          packs.UnionWith(ch.hostL_related_packs);
+                                           foreach (var ch in root_project.channels.Where(ch => ch.hostL == host || ch.hostR == host))
+                                           {
+                                               packs.UnionWith(ch.hostL_transmitting_packs);
+                                               packs.UnionWith(ch.hostL_related_packs);
 
-                                          packs.UnionWith(ch.hostR_transmitting_packs);
-                                          packs.UnionWith(ch.hostR_related_packs);
-                                      }
-                                      //now in packs all host's transmitted and received packs
-
-
-                                      //check enums usage, and to do precise distributions among hosts
-                                      var host_used_enums = packs
-                                                            .SelectMany(pack => pack.fields)
-                                                            .Select(fld => fld.exT_pack)
-                                                            .Where(exT => exT != null && exT.EnumUnderlyingType != null)
-                                                            .Select(exT => (HostImpl.PackImpl)project.entities[exT]).Distinct();
+                                               packs.UnionWith(ch.hostR_transmitting_packs);
+                                               packs.UnionWith(ch.hostR_related_packs);
+                                           }
+                                           //now in packs all host's transmitted and received packs
 
 
-                                      //import used enums in the  host scope
-                                      host.packs.AddRange(host_used_enums);
-                                      host.packs = host.packs.Distinct().ToList();
-                                  });
+                                           //check enums usage, and to do precise distributions among hosts
+                                           var host_used_enums = packs
+                                                                 .SelectMany(pack => pack.fields)
+                                                                 .Select(fld => fld.exT_pack)
+                                                                 .Where(exT => exT != null && exT.EnumUnderlyingType != null)
+                                                                 .Select(exT => (HostImpl.PackImpl)entities[exT]).Distinct();
 
 
-            foreach (var ch in project.channels) //Remove non-transmittable packs
+                                           //import used enums in the  host scope
+                                           host.packs.AddRange(host_used_enums);
+                                           host.packs = host.packs.Distinct().ToList();
+                                       });
+
+
+            foreach (var ch in root_project.channels) //Remove non-transmittable packs
             {
                 ch.hostL_related_packs.RemoveAll(pack => !pack.is_transmittable);
                 ch.hostR_related_packs.RemoveAll(pack => !pack.is_transmittable);
@@ -1352,26 +815,23 @@ namespace org.unirail
 
 
             //To make packs that are present in every host's scope globally available, move them to the topmost scope of the project.
-            if (project.hosts.All(host => 0 < host.packs.Count))
+            if (root_project.hosts.All(host => 0 < host.packs.Count))
             {
                 packs.Clear(); //re-use
-                packs.UnionWith(project.hosts[0].packs);
-                project.hosts.ForEach(host => packs.IntersectWith(host.packs));
+                packs.UnionWith(root_project.hosts[0].packs);
+                root_project.hosts.ForEach(host => packs.IntersectWith(host.packs));
 
                 //now in the `packs` only globaly used packs, move them on the top by deleting from narrow hosts scope
-                project.hosts.ForEach(host => host.packs.RemoveAll(pack => packs.Contains(pack)));
+                root_project.hosts.ForEach(host => host.packs.RemoveAll(pack => packs.Contains(pack)));
             }
-
-            //delete on host scope registered packs, if they already register globaly
-            project.hosts.ForEach(host => host.packs.RemoveAll(pack => project.project_constants_packs.Contains(pack)));
             #endregion
 
 
             #region set packs idx (storage place index)  and collect all fields
-            HashSet<HostImpl.PackImpl.FieldImpl> fields = new();
-            for (var idx = 0; idx < project.packs.Count; idx++)
+            HashSet<HostImpl.PackImpl.FieldImpl> fields = [];
+            for (var idx = 0; idx < root_project.packs.Count; idx++)
             {
-                var pack = project.packs[idx];
+                var pack = root_project.packs[idx];
                 pack.idx = idx; //set pack's idx
 
                 foreach (var fld in pack.fields)
@@ -1391,7 +851,7 @@ namespace org.unirail
 
             var problem = false;
 
-            foreach (var par_child in project.packs.GroupBy(pack => pack.parent_entity))
+            foreach (var par_child in root_project.packs.GroupBy(pack => pack.parent_entity))
             {
                 var parent = (par_child.Key as HostImpl.PackImpl)!;
 
@@ -1407,7 +867,7 @@ Please rename duplicate nested types.");
 
                     AdHocAgent.LOG.Error(@"in the pack {pack} : {nested_types} ",
                                          parent == null ?
-                                             project.symbol :
+                                             root_project.symbol :
                                              parent.symbol,
                                          0 < nested_types.Length ?
                                              nested_types :
@@ -1419,7 +879,7 @@ Please rename duplicate nested types.");
             if (problem) AdHocAgent.exit("Fix the problem and try again.", 22);
 
 
-            var packs_with_parent = project.packs.Where(pack => pack._parent != null).ToArray();
+            var packs_with_parent = root_project.packs.Where(pack => pack._parent != null).ToArray();
 
             bool repeat;
             do
@@ -1439,21 +899,20 @@ Please rename duplicate nested types.");
 
 
             //for more predictable stable order
-            string orderBy(HostImpl.PackImpl.FieldImpl fld) => project.packs.First(pack => pack.fields.Contains(fld) || pack._static_fields_.Contains(fld)).full_path + fld._name;
+            string orderBy(HostImpl.PackImpl.FieldImpl fld) => root_project.packs.First(pack => pack.fields.Contains(fld) || pack._static_fields_.Contains(fld)).full_path + fld._name;
 
-            project.fields = fields.OrderBy(fld => orderBy(fld)).ToArray();
+            root_project.fields = fields.OrderBy(fld => orderBy(fld)).ToArray();
 
-            for (var idx = 0; idx < project.fields.Length; idx++) project.fields[idx].idx = idx; //set fields  idx
+            for (var idx = 0; idx < root_project.fields.Length; idx++) root_project.fields[idx].idx = idx; //set fields  idx
 
-            var error = false;
 
             #region update referred
-            foreach (var pack in project.packs)
-                pack._referred = pack.is_transmittable && project.fields.Any(fld => fld.get_exT_pack == pack || (fld.V != null && fld.V.get_exT_pack == pack));
+            foreach (var pack in root_project.packs)
+                pack._referred = pack.is_transmittable && root_project.fields.Any(fld => fld.get_exT_pack == pack || (fld.V != null && fld.V.get_exT_pack == pack));
             #endregion
 
-            if (error) AdHocAgent.exit("Please correct detected problems and repeat.", 44);
-            return project;
+            UID_Impl.read_write_uid();
+            return root_project;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1465,54 +924,184 @@ Please rename duplicate nested types.");
             return name;
         }
 
-        readonly HashSet<HostImpl.PackImpl> project_constants_packs = new(); //project scope constants packs
-
-        bool collect_imported_entities(HashSet<ProjectImpl> path) //return true if collected collection size changed
+        public override void Init(HashSet<object> once)
         {
-            path.Add(this);
+            foreach (var I in symbol!.Interfaces)
+                if (entities.TryGetValue(I, out var value) && value is ProjectImpl prj)
+                {
+                    prj.Init(once);
 
-            var fix_constants_count = project_constants_packs.Count;
 
-            foreach (var symbol in project.add)
-                if (project.entities.TryGetValue(symbol, out var item))
-                    switch (item)
+                    void check_duplicate(string prefix, IEnumerable<Entity> set)
                     {
-                        case ProjectImpl prj: //import all constants and value packs from
+                        var error = "";
+                        foreach (var i in set.GroupBy(c => c._name).Where(g => 1 < g.Count()))
+                        {
+                            using var en = i.GetEnumerator();
+                            while (en.MoveNext())
+                                error += en.Current.symbol! + "\n";
 
-                            if (path.Contains(prj)) continue;
+                            error += "\n";
+                        }
 
-                            prj.collect_imported_entities(path);
-
-                            project_constants_packs.UnionWith(prj.project_constants_packs);
-
-                            continue;
-
-                        case HostImpl.PackImpl pack:
-
-                            if (pack.is_constants_set || pack.is_enum)
-                                if (project_constants_packs.Add(pack) && !constants_packs.Contains(pack))
-                                    constants_packs.Add(pack);
-
-                            continue;
-                        case ChannelImpl channel:
-                            channel._included = true;
-                            continue;
+                        if (error != "")
+                            AdHocAgent.exit($"The following {prefix} have duplicate names: \n{error}This is unacceptable. Please resolve the issue.");
                     }
-                else AdHocAgent.LOG.Warning("A project can only import other projects/enums/constants/values packs but {Symbol} is not this type, its import will be skipped", symbol);
 
-            path.Remove(this);
-            return project_constants_packs.Count != fix_constants_count;
+
+                    hosts.AddRange(prj.hosts);
+                    check_duplicate("hosts", hosts);
+
+                    channels.AddRange(prj.channels.Where(ch => !ch.modifier));
+                    check_duplicate("channels", channels);
+
+                    constants_packs.AddNew(prj.constants_packs);
+
+                    all_packs.AddNew(prj.all_packs);
+                }
+
+            once.Clear();
+            start();
+            foreach (var pack in named_packs.Values) pack.Init(once);
+            if (restart())
+                foreach (var pack in named_packs.Values)
+                    pack.Init(once);
+
+            once.Clear();
+            start();
+            foreach (var ch in channels) ch.Init(once);
+            if (restart())
+                foreach (var ch in channels)
+                    ch.Init(once);
+
+
+            once.Clear(); // Each stage is processed only once, as there are no cycle-referencing dependencies.
+            start();
+            foreach (var st in channels.SelectMany(ch => ch.stages).ToArray())
+                st.Init(once);
+
+
+            once.Clear();
+            start();
+            foreach (var pack in all_packs)
+            {
+                pack.Init(once);
+                pack._nested_max = (ushort)pack.calculate_fields_type_depth(once);
+            }
+
+            if (restart())
+                foreach (var pack in all_packs)
+                    pack.Init(once);
+
+
+            List<Entity> unassigned = [];
+            HashSet<ulong> assigned = [];
+
+            void set_persistant_uid(IEnumerable<Entity> entities) // Our goal is to minimize the UID, to reduce the footprint in the source code
+            {
+                var uid = 0U;
+
+                foreach (var entity in entities.Where(e => e.origin == null)) // Exclude clones and include only items belonging to this project
+                    if (entity.uid == ulong.MaxValue) unassigned.Add(entity);
+                    else assigned.Add(entity.uid);
+
+                foreach (var entity in unassigned)
+                {
+                    while (assigned.Contains(uid)) uid++;
+                    updated_uid.Add((entity.uid_pos, uid));
+                    entity.uid = (ushort)uid++;
+                }
+
+                assigned.Clear();
+                unassigned.Clear();
+            }
+
+            set_persistant_uid(hosts);
+            set_persistant_uid(channels);
+            set_persistant_uid(all_packs.Concat(constants_packs));
+
+            List<ChannelImpl.BranchImpl> unassigned_ = [];
+
+            foreach (var stages in channels.Select(channel => channel.stages))
+            {
+                set_persistant_uid(stages);
+
+                foreach (var stage in stages)
+                {
+                    foreach (var branch in stage.branchesL.Concat(stage.branchesR).Where(br => br.origin == null))
+                        if (branch.uid == ushort.MaxValue) unassigned_.Add(branch);
+                        else assigned.Add(branch.uid);
+
+                    var uid = 0UL;
+                    foreach (var branch in unassigned_)
+                    {
+                        while (assigned.Contains(uid)) uid++;
+                        updated_uid.Add((branch.uid_pos, uid));
+                        branch.uid = (ushort)uid++;
+                    }
+
+                    assigned.Clear();
+                    unassigned_.Clear();
+                }
+            }
         }
 
+        List<(int, ulong)> updated_uid = [];
 
-        // In the root project, root_project == null, but the 'project' field points to itself.
+        public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once) => false;
+
+        public override void modify(ISymbol by_what, bool add, HashSet<object> once)
+        {
+            if (entities.TryGetValue(by_what, out var value)) //project's entity
+                switch (value)
+                {
+                    case ProjectImpl prj: return;
+                    case HostImpl host:
+                        if (add)
+                            AdHocAgent.LOG.Information("Only enums, constant sets, channels, or other projects can be imported into the project. Importing the host {host} will be ignored. Instead, reference the host {host} as the endpoint within the {project} channels.", host, host, _name);
+                        else
+                        {
+                            hosts.Remove(host);
+                            channels.RemoveAll(ch => ch.hostR == host || ch.hostL == host);
+                        }
+
+                        break;
+                    case HostImpl.PackImpl pack: //import single pack to the project
+
+                        if (pack.is_constants_set || pack.is_enum)
+                        {
+                            if (!add) constants_packs.Remove(pack);
+                            else if (!constants_packs.Contains(pack)) constants_packs.Add(pack);
+                            return;
+                        }
+
+                        if (add)
+                            AdHocAgent.LOG.Information("Only enums, constant sets, channels, or other projects may be imported into the project. Importing the pack {pack}  will be ignored. instead, reference the pack {pack} in a branch of a stage within the {project} channels.", pack, pack, _name);
+                        else
+                            foreach (var st in channels.SelectMany(ch => ch.stages))
+                            {
+                                foreach (var br in st.branchesL)
+                                    br.packs.Remove(pack);
+                                foreach (var br in st.branchesR)
+                                    br.packs.Remove(pack);
+                            }
+
+                        break;
+                    case ChannelImpl channel: // import single channel to the project.
+
+                        if (!add) channels.Remove(channel);
+                        else if (!channels.Contains(channel)) channels.Add(channel);
+                        return;
+                }
+            else { AdHocAgent.exit($"The source code for '{by_what}' could not be found. Have you remembered to include the source files of other imported projects?"); }
+        }
+
+        // In the root project, `root_project` is null, but the 'project' field references itself.
         public ProjectImpl(ProjectImpl? root_project, CSharpCompilation compilation, InterfaceDeclarationSyntax node, string namespace_) : base(null, compilation, node)
         {
             file_path = node.SyntaxTree.FilePath;
             if (root_project != null) //not root project
                 project = root_project;
-
-            add_from(symbol!);
 
             _namespacE = namespace_;
             this.node = node;
@@ -1524,7 +1113,7 @@ Please rename duplicate nested types.");
 
         public long _time { get; set; }
 
-        public byte[] source = Array.Empty<byte>();
+        public byte[] source = [];
         public object? _source() => source;
         public int _source_len => source.Length;
         public byte _source(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => source[item];
@@ -1534,14 +1123,13 @@ Please rename duplicate nested types.");
         public object? _hosts() => hosts;
         public Project.Host _hosts(Context.Transmitter ctx, Context.Transmitter.Slot slot, int d) => hosts[d];
 
+        //All fields, including the virtual `V` field, are used as the value of a `Map` data type.
+        static IEnumerable<HostImpl.PackImpl.FieldImpl?> all_fields() => raw_fields.Values.Concat(raw_fields.Values.Select(fld => fld.V).Where(fld => fld != null)).Distinct();
 
-        //all fields - include virtual V field - used as Value of Map datatype
-        IEnumerable<HostImpl.PackImpl.FieldImpl?> all_fields() => raw_fields.Values.Concat(raw_fields.Values.Select(fld => fld.V).Where(fld => fld != null)).Distinct();
-
-        public Dictionary<ISymbol, HostImpl.PackImpl.FieldImpl> raw_fields = new Dictionary<ISymbol, HostImpl.PackImpl.FieldImpl>(SymbolEqualityComparer.Default);
+        public static Dictionary<ISymbol, HostImpl.PackImpl.FieldImpl> raw_fields = new(SymbolEqualityComparer.Default);
 
 
-        public HostImpl.PackImpl.FieldImpl[] fields = Array.Empty<HostImpl.PackImpl.FieldImpl>();
+        public HostImpl.PackImpl.FieldImpl[] fields = [];
 
         public object? _fields() => 0 < fields.Length ?
                                         fields :
@@ -1551,8 +1139,8 @@ Please rename duplicate nested types.");
         public Project.Host.Pack.Field _fields(Context.Transmitter ctx, Context.Transmitter.Slot slot, int d) => fields[d];
 
 
-        public readonly List<HostImpl.PackImpl> all_packs = new();
-        public readonly List<HostImpl.PackImpl> constants_packs = new(); //enums + constant sets
+        public readonly List<HostImpl.PackImpl> all_packs = [];
+        public readonly List<HostImpl.PackImpl> constants_packs = []; //enums + constant sets
 
 
         public List<HostImpl.PackImpl> packs;
@@ -1564,7 +1152,7 @@ Please rename duplicate nested types.");
         public int _packs_len => packs.Count;
         public Project.Host.Pack _packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int d) => packs[d];
 
-        public List<ChannelImpl> channels = new();
+        public List<ChannelImpl> channels = [];
 
         public int _channels_len => channels.Count;
 
@@ -1585,6 +1173,7 @@ Please rename duplicate nested types.");
 
         public class HostImpl : Entity, Project.Host
         {
+            public byte _uid => (byte)uid;
             public Project.Host.Langs _langs { get; set; }
 
             public override bool included => _included ?? in_project.included;
@@ -1596,7 +1185,7 @@ Please rename duplicate nested types.");
             }
 
             #region pack_impl_hash_equal
-            public readonly Dictionary<ISymbol, uint> pack_impl = new Dictionary<ISymbol, uint>(SymbolEqualityComparer.Default); //pack -> impl information
+            public readonly Dictionary<ISymbol, uint> pack_impl = new(SymbolEqualityComparer.Default); //pack -> impl information
             private Dictionary<ISymbol, uint>.Enumerator pack_impl_enum;
 
             public object? _pack_impl_hash_equal() => pack_impl.Count == 0 ?
@@ -1609,7 +1198,7 @@ Please rename duplicate nested types.");
             public ushort _pack_impl_hash_equal_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot slot)
             {
                 pack_impl_enum.MoveNext();
-                return (ushort)project.entities[pack_impl_enum.Current.Key].idx;
+                return (ushort)entities[pack_impl_enum.Current.Key].idx;
             }
 
             public uint _pack_impl_hash_equal_Val(Context.Transmitter ctx, Context.Transmitter.Slot slot) => pack_impl_enum.Current.Value;
@@ -1618,7 +1207,7 @@ Please rename duplicate nested types.");
 
 
             #region field_impl
-            public readonly Dictionary<ISymbol, Project.Host.Langs> field_impl = new Dictionary<ISymbol, Project.Host.Langs>(SymbolEqualityComparer.Default);
+            public readonly Dictionary<ISymbol, Project.Host.Langs> field_impl = new(SymbolEqualityComparer.Default);
             private Dictionary<ISymbol, Project.Host.Langs>.Enumerator field_impl_enum;
 
 
@@ -1632,13 +1221,13 @@ Please rename duplicate nested types.");
             public ushort _field_impl_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot slot)
             {
                 field_impl_enum.MoveNext();
-                return (ushort)project.raw_fields[field_impl_enum.Current.Key].idx;
+                return (ushort)raw_fields[field_impl_enum.Current.Key].idx;
             }
 
             public Project.Host.Langs _field_impl_Val(Context.Transmitter ctx, Context.Transmitter.Slot slot) => field_impl_enum.Current.Value;
             #endregion
 
-            public List<PackImpl> packs = new(); // Host-dedicated packs
+            public List<PackImpl> packs = []; // Host-dedicated packs
 
             public object? _packs() => 0 < packs.Count ?
                                            packs :
@@ -1647,17 +1236,17 @@ Please rename duplicate nested types.");
             public int _packs_len => packs.Count;
             public ushort _packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => (ushort)packs[item].idx;
 
-
-            public ChannelImpl.StageImpl[] stages;
-
+            public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once) => false;
+            protected override void Collect_Modification(Entity target, HashSet<object> once) { }
+            public override void modify(ISymbol by_what, bool add, HashSet<object> once) { }
 
             public static void init(ProjectImpl project) //host
             {
-                HashSet<PackImpl> packs = new();
+                HashSet<PackImpl> packs = [];
 
                 foreach (var ch in project.channels)
                 {
-                    //validate ports.
+                    //validate hosts.
                     //if an port._packs.Count == 0 it is OK -> port can receive packs only,
                     //but if booth, connected with Channel ports are empty, this is not OK
                     if (ch.hostL_transmitting_packs.Count == 0 && ch.hostR_transmitting_packs.Count == 0)
@@ -1680,6 +1269,7 @@ Please rename duplicate nested types.");
 
             public class PackImpl : Entity, Project.Host.Pack
             {
+                public ushort _uid => (ushort)uid;
                 public ushort _id { get; set; }
 
                 public virtual ushort? _parent => parent_entity switch
@@ -1691,7 +1281,8 @@ Please rename duplicate nested types.");
 
                 public ushort? _nested_max { get; set; }
                 public bool _referred { get; set; }
-                public List<FieldImpl> fields = new();
+
+                public List<FieldImpl> fields = [];
 
                 public object? _fields() => 0 < fields.Count ?
                                                 fields :
@@ -1700,7 +1291,7 @@ Please rename duplicate nested types.");
                 public int _fields_len => fields.Count;
                 public int _fields(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => fields[item].idx;
 
-                public List<FieldImpl> _static_fields_ = new();
+                public List<FieldImpl> _static_fields_ = [];
 
                 public object? _static_fields() => 0 < _static_fields_.Count ?
                                                        _static_fields_ :
@@ -1752,7 +1343,6 @@ Please rename duplicate nested types.");
                 public PackImpl(ProjectImpl project, CSharpCompilation compilation, ClassDeclarationSyntax pack) : base(project, compilation, pack)
                 {
                     _id = (int)Project.Host.Pack.Field.DataType.t_subpack; //by default subpack type
-                    add_from(symbol!);
 
                     project.all_packs.Add(this);
                 }
@@ -1775,40 +1365,20 @@ Please rename duplicate nested types.");
                             pack.related_packs(dst);
                 }
 
-                internal static void init(ProjectImpl project)
+
+                private int inheritance_depth;
+
+                internal static void init(ProjectImpl root_project)
                 {
-                    #region set packs inheritance_depth , nested_max and verify Value packs
-                    HashSet<PackImpl> path = new();
-
-                    project.all_packs.ForEach(pack =>
-                                              {
-                                                  path.Clear();
-                                                  pack.inheritance_depth = pack.calculate_inheritance_depth(path, 0);
-                                              });
-
-                    foreach (var pack in project
-                                         .all_packs
-                                         .Where(pack => !pack.is_typedef)
-                                         .OrderBy(pack => pack.inheritance_depth)) //packs without inheretace go first
-                    {
-                        path.Clear();
-                        pack.collect_fields(path);
-
-                        path.Clear();
-                        pack._nested_max = (ushort)pack.calculate_fields_type_depth(path);
-                    }
-                    #endregion
-
-
+                    var all_fields = ProjectImpl.all_fields().ToList();
                     #region process enums
-                    var all_fields = project.all_fields().ToList();
-                    foreach (var enum_ in project.constants_packs.Where(e => e.is_enum))
+                    foreach (var enum_ in root_project.constants_packs.Where(e => e.is_enum))
                     {
                         if (!enum_.included && enum_.in_project.included) enum_._included = true;
 
                         foreach (var dst in enum_._static_fields_.Where(fld => fld.substitute_value_from != null)) //substitute value
                         {
-                            var src = project.raw_fields[dst.substitute_value_from!];
+                            var src = raw_fields[dst.substitute_value_from!];
                             dst._value_int = src._value_int;
                         }
 
@@ -1911,7 +1481,7 @@ Please rename duplicate nested types.");
                         fld_0._max_value = max;
 
 
-                        #region propagate enum params to fields where it used
+                        #region Propagate enum parameters to the fields where they are used.
                         var this_enum_used_fields = all_fields.Where(fld => SymbolEqualityComparer.Default.Equals(enum_.symbol, fld?.exT_pack)).ToArray();
 
 
@@ -1935,7 +1505,7 @@ Please rename duplicate nested types.");
                         #region Detect nullable fields using this bit-range enum and allocate space for a null value.
                         if (fld_0._bits != null && this_enum_used_fields.Any(fld => fld.nullable))
                         {
-                            var null_value = (long)((byte)enum_._static_fields_.Count);
+                            var null_value = (long)(byte)enum_._static_fields_.Count;
                             var bits_if_field_nullable = 64 - BitOperations.LeadingZeroCount((ulong)null_value);
 
                             if (enum_._id == (int)Project.Host.Pack.Field.DataType.t_flags) //search a skipped bit in flags enum, to allocate for the null_value
@@ -1984,10 +1554,10 @@ Please rename duplicate nested types.");
                         #endregion
                     }
 
-                    #region _DefaultMaxLengthOf reading, delete and apply
-                    var all_default_collection_capacity = project.constants_packs.Where(en => en._name.Equals("_DefaultMaxLengthOf")).ToArray();
+                    #region _DefaultMaxLengthOf read, delete, and apply operations.
+                    var all_default_collection_capacity = root_project.constants_packs.Where(en => en._name.Equals("_DefaultMaxLengthOf")).ToArray();
 
-                    foreach (var pack in all_default_collection_capacity.OrderBy(en => en.in_project == project)) //The root project settings should be placed last in order to override all inherited project settings
+                    foreach (var pack in all_default_collection_capacity.OrderBy(en => en.in_project == root_project)) //The root project settings should be placed last in order to override all inherited project settings
                         pack._static_fields_.ForEach(fld =>
                                                      {
                                                          switch (fld._name)
@@ -2009,12 +1579,12 @@ Please rename duplicate nested types.");
 
                     foreach (var en in all_default_collection_capacity)
                     {
-                        en._static_fields_.ForEach(fld => project.raw_fields.Remove(fld.symbol!));
-                        project.constants_packs.Remove(en);
+                        en._static_fields_.ForEach(fld => raw_fields.Remove(fld.symbol!));
+                        root_project.constants_packs.Remove(en);
                     }
 
                     //apply acquired default length settings
-                    foreach (var fld in project.all_fields())
+                    foreach (var fld in all_fields)
                     {
                         if (fld!.is_Map) fld._map_set_len ??= (uint?)FieldImpl._DefaultMaxLengthOf.Maps;
                         else if (fld.is_Set) fld._map_set_len ??= (uint?)FieldImpl._DefaultMaxLengthOf.Sets;
@@ -2030,44 +1600,21 @@ Please rename duplicate nested types.");
                     #endregion
 
 
-                    project.constants_packs.RemoveAll(enum_ => enum_._id == (ushort)Project.Host.Pack.Field.DataType.t_subpack); // remove marked to delete enums
+                    root_project.constants_packs.RemoveAll(enum_ => enum_._id == (ushort)Project.Host.Pack.Field.DataType.t_subpack); // remove marked to delete enums
                     #endregion
                 }
 
 
-                private int inheritance_depth;
-
-                private int calculate_inheritance_depth(ISet<PackImpl> path, int depth)
-                {
-                    foreach (var sym in add)
-                    {
-                        try
-                        {
-                            var pack = (PackImpl)project.entities[sym];
-                            if (!path.Add(pack)) continue;
-                            depth = pack.calculate_inheritance_depth(path, Math.Max(path.Count, depth));
-                            path.Remove(pack);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                            throw;
-                        }
-                    }
-
-                    return depth;
-                }
-
                 private int cyclic_depth;
 
-                private int calculate_fields_type_depth(ISet<PackImpl> path)
+                internal int calculate_fields_type_depth(ISet<object> path)
                 {
                     if (path.Count == 0) cyclic_depth = 0;
 
                     try
                     {
-                        foreach (var datatype in fields.Where(f => f.exT_pack != null).Select(f => (PackImpl)project.entities[f.exT_pack!])
-                                                       .Concat(fields.Where(f => f.V != null && f.V.exT_pack != null).Select(f => (PackImpl)project.entities[f.V!.exT_pack!])).Distinct())
+                        foreach (var datatype in fields.Where(f => f.exT_pack != null).Select(f => (PackImpl)entities[f.exT_pack!])
+                                                       .Concat(fields.Where(f => f.V != null && f.V.exT_pack != null).Select(f => (PackImpl)entities[f.V!.exT_pack!])).Distinct())
                         {
                             if (!path.Add(datatype))
                             {
@@ -2081,8 +1628,8 @@ Please rename duplicate nested types.");
                     }
                     catch (Exception e)
                     {
-                        foreach (var fld in fields.Where(f => f.exT_pack != null && !project.entities.ContainsKey(f.exT_pack!))
-                                                  .Concat(fields.Where(f => f.V != null && f.V.exT_pack != null && !project.entities.ContainsKey(f.V.exT_pack!))))
+                        foreach (var fld in fields.Where(f => f.exT_pack != null && !entities.ContainsKey(f.exT_pack!))
+                                                  .Concat(fields.Where(f => f.V != null && f.V.exT_pack != null && !entities.ContainsKey(f.V.exT_pack!))))
                             AdHocAgent.LOG.Error("Line {line}: Unsupported field type '{type}' detected for field '{field}'.", fld.line_in_src_code, fld.exT_pack, fld);
                         AdHocAgent.exit("", 23);
                     }
@@ -2093,38 +1640,41 @@ Please rename duplicate nested types.");
                 }
 
 
-                private List<FieldImpl> collect_fields(ISet<PackImpl> path)
+                public override void modify(ISymbol by_what, bool add, HashSet<object> once)
                 {
-                    //add fields from inherited and added packs
-                    var add_packs = add.Select(sym => (PackImpl)project.entities[sym]).Where(pack => pack != this && !path.Contains(pack));
-
-                    if (add_packs.Any())
+                    if (raw_fields.TryGetValue(by_what, out var by_fld)) apply(by_fld);
+                    else if (entities.TryGetValue(by_what, out var value) && value is PackImpl by_pack)
                     {
-                        path.Add(this);
-
-                        foreach (var pack in add_packs)
-                            foreach (var fld in pack.collect_fields(path).Where(fld => !exists(fld._name)))
-                                fields.Add(fld);
-
-                        path.Remove(this);
+                        by_pack.Init(once);
+                        foreach (var fLd in by_pack.fields.Concat(by_pack._static_fields_)) apply(fLd);
                     }
-
-                    add.Clear();
-
-                    //add individual fields
-                    foreach (var fld in add_fld.Select(sym => project.raw_fields[sym]).Where(fld => !exists(fld._name)))
-                        fields.Add(fld);
-
-                    add_fld.Clear();
+                    else
+                        AdHocAgent.exit($"Unexpected attempt to apply {(add ? "add" : "remove")} modification by {by_what} to the pack {symbol} (line: {line_in_src_code}).");
 
 
-                    //del individual fields
-                    foreach (var fld in del_fld.Select(sym => project.raw_fields[sym]))
-                        fields.Remove(fld);
+                    void apply(FieldImpl fld)
+                    {
+                        if (add)
+                        {
+                            var flds = fields;
+                            var i = flds.FindIndex(f => f._name == fld._name); //same name
+                            if (i == -1)
+                                i = (flds = _static_fields_).FindIndex(s => s._name == fld._name); //same name
 
-                    del_fld.Clear();
 
-                    return fields;
+                            if (-1 < i)
+                                if (inited) flds.RemoveAt(i); //modifier force
+                                else return;                   //normal init
+
+                            (fld.is_const ?
+                                 _static_fields_ :
+                                 fields).Add(fld);
+                        }
+                        else
+                            (fld.is_const ?
+                                 _static_fields_ :
+                                 fields).Remove(fld);
+                    }
                 }
 
 
@@ -2144,14 +1694,9 @@ Please rename duplicate nested types.");
 
                 public class FieldImpl : HasDocs, Project.Host.Pack.Field
                 {
-                    public Entity parent_entity => project.entities[symbol.OriginalDefinition.ContainingType];
-
                     public ISymbol? substitute_value_from;
-                    public int line_in_src_code => symbol!.Locations[0].GetLineSpan().StartLinePosition.Line + 1;
-                    public readonly ISymbol? symbol;
                     private readonly SemanticModel model;
                     public readonly FieldDeclarationSyntax? fld_node;
-
 
                     private FieldImpl(ProjectImpl project, FieldDeclarationSyntax? node, SemanticModel? model) : base(project, "", null) //virtual field used to hold information of V in Map(K,V)
                     {
@@ -2173,10 +1718,10 @@ Please rename duplicate nested types.");
                         this.model = model;
                         symbol = model.GetDeclaredSymbol(node)!;
                         check_name();
-                        if (project.entities[symbol!.ContainingType] is PackImpl pack) pack._static_fields_.Add(this);
-                        else AdHocAgent.exit($"`{project.entities[symbol!.ContainingType].full_path}` cannot contains any fields. Delete `{_name}`.");
+                        if (entities[symbol!.ContainingType] is PackImpl pack) pack._static_fields_.Add(this);
+                        else AdHocAgent.exit($"`{entities[symbol!.ContainingType].full_path}` cannot contains any fields. Delete `{_name}`.");
 
-                        project.raw_fields.Add(symbol, this);
+                        raw_fields.Add(symbol, this);
 
                         var user_assigned_value = node.EqualsValue == null ?
                                                       null :
@@ -2199,140 +1744,138 @@ Please rename duplicate nested types.");
                         fld_node = node;
                         var T = model.GetTypeInfo(node.Declaration.Type).Type!;
 
-                        project.raw_fields.Add(symbol, this);
-
-                        if (symbol is IFieldSymbol fld && (is_const = fld.IsStatic || fld.IsConst)) //  static/const field
-                        {
-                            if (project.entities[symbol!.ContainingType] is PackImpl pack) pack._static_fields_.Add(this);
-                            else AdHocAgent.exit($"`{project.entities[symbol!.ContainingType].full_path}` cannot contains any fields. Delete `{_name}`.");
-
-                            var constant = project.runtimeFieldInfo(symbol).GetValue(null); // runtime constant value
-                            switch (T)
+                        raw_fields.Add(symbol, this);
+                        if (entities[symbol!.ContainingType] is PackImpl pack)
+                            if (symbol is IFieldSymbol fld && (is_const = fld.IsStatic || fld.IsConst)) //  static/const field
                             {
-                                case IArrayTypeSymbol array:
-                                    init_exT((INamedTypeSymbol)array.ElementType, null);
-                                    _array_ = (Array?)constant;
-                                    break;
-                                case INamedTypeSymbol type:
-                                    init_exT(type, constant);
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            if (project.entities[symbol!.ContainingType] is PackImpl pack) pack.fields.Add(this);
-                            else AdHocAgent.exit($"`{project.entities[symbol!.ContainingType].full_path}` cannot contains any fields. Delete `{_name}`.");
+                                pack._static_fields_.Add(this);
 
-
-                            void KV_params(ITypeSymbol KV, FieldImpl dst)
-                            {
-                                switch (KV)
+                                var constant = project.runtimeFieldInfo(symbol).GetValue(null); // runtime constant value
+                                switch (T)
                                 {
                                     case IArrayTypeSymbol array:
-                                        if (KV.NullableAnnotation == NullableAnnotation.Annotated) dst.set_null_value_bit(1);
-                                        dst._exT_array = (uint)(array.Rank - 1);
-
-                                        dst.init_exT((INamedTypeSymbol)array.ElementType, null);
-                                        return;
-                                    case INamedTypeSymbol type:
-                                        dst.init_exT(type, null);
-                                        return;
-                                }
-                            }
-
-                            var nullable = fld_node?.Declaration.Type is NullableTypeSyntax;
-
-                            if (T.ToString()!.StartsWith("org.unirail.Meta.Set<"))
-                            {
-                                is_Set = true;
-
-                                switch (T)
-                                {
-                                    case IArrayTypeSymbol array: //Set<int>[,]
-                                        if (nullable) set_null_value_bit(3);
-                                        if (array.ElementType.NullableAnnotation == NullableAnnotation.Annotated) set_null_value_bit(2);
-                                        _map_set_array = (uint)(array.Rank - 1);
-
-                                        KV_params(((INamedTypeSymbol)array.ElementType).TypeArguments[0], this);
-
+                                        init_exT((INamedTypeSymbol)array.ElementType, null);
+                                        _array_ = (Array?)constant;
                                         break;
                                     case INamedTypeSymbol type:
-                                        if (nullable) set_null_value_bit(2);
-                                        KV_params(type.TypeArguments[0], this);
+                                        init_exT(type, constant);
                                         break;
                                 }
-
-                                if (exT_primitive == (int)Project.Host.Pack.Field.DataType.t_bool)
-                                    AdHocAgent.exit($"The field `{symbol}` at the line: {line_in_src_code} is a Set of `bool` type, which is unsupported and unnecessary.");
-                            }
-                            else if (T.ToString()!.StartsWith("org.unirail.Meta.Map<"))
-                            {
-                                V = new FieldImpl(project, node, model); //The Map Value info
-
-                                void KV(INamedTypeSymbol type)
-                                {
-                                    KV_params(type.TypeArguments[0], this);
-                                    KV_params(type.TypeArguments[1], V);
-                                }
-
-                                switch (T)
-                                {
-                                    case IArrayTypeSymbol array: //Map<int, int>[,]
-                                        if (nullable) set_null_value_bit(3);
-                                        if (array.ElementType.NullableAnnotation == NullableAnnotation.Annotated) set_null_value_bit(2);
-                                        _map_set_array = (uint)(array.Rank - 1);
-
-                                        KV((INamedTypeSymbol)array.ElementType);
-
-                                        break;
-                                    case INamedTypeSymbol type:
-                                        if (nullable) set_null_value_bit(2);
-                                        KV(type);
-                                        break;
-                                }
-
-                                if (exT_primitive == (int)Project.Host.Pack.Field.DataType.t_bool)
-                                    AdHocAgent.exit($"The field `{symbol}` at the line: {line_in_src_code} is a Map with a key of type `bool`, which is unsupported and unnecessary.");
                             }
                             else
-                                switch (T)
+                            {
+                                pack.fields.Add(this);
+
+                                void KV_params(ITypeSymbol KV, FieldImpl dst)
                                 {
-                                    case IArrayTypeSymbol array:
+                                    switch (KV)
+                                    {
+                                        case IArrayTypeSymbol array:
+                                            if (KV.NullableAnnotation == NullableAnnotation.Annotated) dst.set_null_value_bit(1);
+                                            dst._exT_array = (uint)(array.Rank - 1);
 
-                                        switch (array.ElementType)
-                                        {
-                                            case IArrayTypeSymbol array_ext:
-                                                if (nullable) set_null_value_bit(3);
-                                                if (array_ext.NullableAnnotation == NullableAnnotation.Annotated) set_null_value_bit(2);
-                                                _map_set_array = (uint)(array.Rank - 1);
+                                            dst.init_exT((INamedTypeSymbol)array.ElementType, null);
+                                            return;
+                                        case INamedTypeSymbol type:
+                                            dst.init_exT(type, null);
+                                            return;
+                                    }
+                                }
 
-                                                _exT_array = (uint)(array_ext.Rank - 1);
-                                                init_exT((INamedTypeSymbol)array_ext.ElementType, null);
-                                                break;
-                                            case INamedTypeSymbol type:
-                                                if (nullable) set_null_value_bit(2);
+                                var nullable = fld_node?.Declaration.Type is NullableTypeSyntax;
 
-                                                _exT_array = (uint)(array.Rank - 1);
+                                if (T.isSet())
+                                {
+                                    is_Set = true;
+
+                                    switch (T)
+                                    {
+                                        case IArrayTypeSymbol array: //Set<int>[,]
+                                            if (nullable) set_null_value_bit(3);
+                                            if (array.ElementType.NullableAnnotation == NullableAnnotation.Annotated) set_null_value_bit(2);
+                                            _map_set_array = (uint)(array.Rank - 1);
+
+                                            KV_params(((INamedTypeSymbol)array.ElementType).TypeArguments[0], this);
+
+                                            break;
+                                        case INamedTypeSymbol type:
+                                            if (nullable) set_null_value_bit(2);
+                                            KV_params(type.TypeArguments[0], this);
+                                            break;
+                                    }
+
+                                    if (exT_primitive == (int)Project.Host.Pack.Field.DataType.t_bool)
+                                        AdHocAgent.exit($"The field `{symbol}` at the line: {line_in_src_code} is a Set of `bool` type, which is unsupported and unnecessary.");
+                                }
+                                else if (T.isMap())
+                                {
+                                    V = new FieldImpl(project, node, model); //The Map Value info
+
+                                    void KV(INamedTypeSymbol type)
+                                    {
+                                        KV_params(type.TypeArguments[0], this);
+                                        KV_params(type.TypeArguments[1], V);
+                                    }
+
+                                    switch (T)
+                                    {
+                                        case IArrayTypeSymbol array: //Map<int, int>[,]
+                                            if (nullable) set_null_value_bit(3);
+                                            if (array.ElementType.NullableAnnotation == NullableAnnotation.Annotated) set_null_value_bit(2);
+                                            _map_set_array = (uint)(array.Rank - 1);
+
+                                            KV((INamedTypeSymbol)array.ElementType);
+
+                                            break;
+                                        case INamedTypeSymbol type:
+                                            if (nullable) set_null_value_bit(2);
+                                            KV(type);
+                                            break;
+                                    }
+
+                                    if (exT_primitive == (int)Project.Host.Pack.Field.DataType.t_bool)
+                                        AdHocAgent.exit($"The field `{symbol}` at the line: {line_in_src_code} is a Map with a key of type `bool`, which is unsupported and unnecessary.");
+                                }
+                                else
+                                    switch (T)
+                                    {
+                                        case IArrayTypeSymbol array:
+
+                                            switch (array.ElementType)
+                                            {
+                                                case IArrayTypeSymbol array_ext:
+                                                    if (nullable) set_null_value_bit(3);
+                                                    if (array_ext.NullableAnnotation == NullableAnnotation.Annotated) set_null_value_bit(2);
+                                                    _map_set_array = (uint)(array.Rank - 1);
+
+                                                    _exT_array = (uint)(array_ext.Rank - 1);
+                                                    init_exT((INamedTypeSymbol)array_ext.ElementType, null);
+                                                    break;
+                                                case INamedTypeSymbol type:
+                                                    if (nullable) set_null_value_bit(2);
+
+                                                    _exT_array = (uint)(array.Rank - 1);
+                                                    init_exT(type, null);
+
+                                                    break;
+                                            }
+
+                                            break;
+                                        case INamedTypeSymbol type:
+                                            if (nullable)
+                                            {
+                                                set_null_value_bit(0);
+                                                init_exT(type is { SpecialType: SpecialType.None, TypeArguments.Length: > 0 } ?
+                                                             (INamedTypeSymbol)type.TypeArguments[0] :
+                                                             type, null);
+                                            }
+                                            else
                                                 init_exT(type, null);
 
-                                                break;
-                                        }
-
-                                        break;
-                                    case INamedTypeSymbol type:
-                                        if (nullable)
-                                        {
-                                            set_null_value_bit(0);
-                                            init_exT(type is { SpecialType: SpecialType.None, TypeArguments.Length: > 0 } ?
-                                                         (INamedTypeSymbol)type.TypeArguments[0] :
-                                                         type, null);
-                                        }
-                                        else
-                                            init_exT(type, null);
-
-                                        break;
-                                }
-                        }
+                                            break;
+                                    }
+                            }
+                        else AdHocAgent.exit($"The entity `{entities[symbol!.ContainingType].full_path}` cannot contains any fields. Delete the field `{_name}` line:{line_in_src_code}.");
 
                         if (!_name.Equals(symbol.Name))
                             AdHocAgent.LOG.Warning("The name of {entity} is prohibited and changed to {new_name}. Please correct the name manually", symbol, _name);
@@ -2510,7 +2053,7 @@ Please rename duplicate nested types.");
 
                     internal PackImpl? get_exT_pack => exT_pack == null ?
                                                            null :
-                                                           (PackImpl)project.entities[exT_pack];
+                                                           (PackImpl)entities[exT_pack];
 
                     public INamedTypeSymbol? exT_pack;
                     public int? exT_primitive;
@@ -2611,7 +2154,7 @@ Please rename duplicate nested types.");
                             return;
                         }
 
-                        AdHocAgent.LOG.Error("The MinMax attribute for Field {field} (line: {line}) cannot be used with VarInt attributes[X, V, A]. Use VarInt attributes to set MinMax restrictions.", _name, line_in_src_code);
+                        AdHocAgent.LOG.Error("The MinMax attribute for Field {field} (line: {line}) cannot be used with VarInt attributes[X, V, A]. Use VarInt attribute arguments to set MinMax restrictions.", _name, line_in_src_code);
                         AdHocAgent.exit("Please resolve the issue and try running again.");
                     }
 
@@ -2665,10 +2208,10 @@ Please rename duplicate nested types.");
                     {
                         if (src.IsKind(SyntaxKind.IdentifierName))
                         {
-                            var fld = project.raw_fields[model.GetSymbolInfo(src).Symbol!];
+                            var fld = raw_fields[model.GetSymbolInfo(src).Symbol!];
                             return (fld.substitute_value_from == null ?
                                         fld :
-                                        project.raw_fields[fld.substitute_value_from])._value_int!.Value; //return sudstitute value
+                                        raw_fields[fld.substitute_value_from])._value_int!.Value; //return sudstitute value
                         }
 
                         try { return Convert.ToInt64(model.GetConstantValue(src).Value); }
@@ -2679,10 +2222,10 @@ Please rename duplicate nested types.");
                     {
                         if (!src.IsKind(SyntaxKind.IdentifierName)) return Convert.ToDouble(model.GetConstantValue(src).Value);
 
-                        var fld = project.raw_fields[model.GetSymbolInfo(src).Symbol!];
+                        var fld = raw_fields[model.GetSymbolInfo(src).Symbol!];
                         return (fld.substitute_value_from == null ?
                                     fld :
-                                    project.raw_fields[fld.substitute_value_from])._value_double!.Value; //return sudstitute value
+                                    raw_fields[fld.substitute_value_from])._value_double!.Value; //return sudstitute value
                     }
 
                     #region dims
@@ -2696,7 +2239,7 @@ Please rename duplicate nested types.");
 
                     public static void init(ProjectImpl project)
                     {
-                        var fields = project.raw_fields.Values;
+                        var fields = raw_fields.Values;
                         #region processs Attributes
                         foreach (var fld in fields.Where(fld => fld.is_const && fld.fld_node != null)) //calculated  values for const fields
                             foreach (var args_list in from list in fld.fld_node!.AttributeLists
@@ -2707,7 +2250,7 @@ Please rename duplicate nested types.");
                                                       where args_list != null
                                                       select args_list)
                             {
-                                var dst_const_fld = project.raw_fields[fld.model.GetSymbolInfo(args_list.Arguments[0].Expression).Symbol!];
+                                var dst_const_fld = raw_fields[fld.model.GetSymbolInfo(args_list.Arguments[0].Expression).Symbol!];
                                 if (dst_const_fld.substitute_value_from != null)
                                 {
                                     AdHocAgent.LOG.Error("The const field {const_field} already has a value assigned from static field {current_static}, and the static field {new_static} would override it. This redundancy is unnecessary and serves no purpose.", dst_const_fld, dst_const_fld.substitute_value_from, fld.symbol);
@@ -2739,6 +2282,7 @@ Please rename duplicate nested types.");
                                         break;
                                 }
 
+                                FLD!._check_once = false;
                                 foreach (var attr in list.Attributes)
                                 {
                                     var name = attr.Name.ToString();
@@ -2757,7 +2301,7 @@ Please rename duplicate nested types.");
                                                 foreach (var exp in attr_args.Select(arg => arg.Expression))
                                                     if (exp is PrefixUnaryExpressionSyntax _exp) //read and control of using Dims attribute args
                                                     {
-                                                        var val = (uint)(FLD!.value_of(_exp.Operand));
+                                                        var val = (uint)FLD!.value_of(_exp.Operand);
 
                                                         switch (_exp.ToString()[0])
                                                         {
@@ -2783,14 +2327,14 @@ Please rename duplicate nested types.");
                                                     {
                                                         if (FLD!._exT_array == null && fld._map_set_array == null) //the length of an array without a declared array detected.
                                                         {
-                                                            AdHocAgent.LOG.Error("The `[D]` attribute argument `{arg}`, without prefix character, specifies the maximum length of an array. However, the field ‘{field}’ on line {line}’ does not have an array declaration such as ‘[]’, ‘[,]’, or ‘[,,]’ .", exp, FLD, fld.line_in_src_code);
+                                                            AdHocAgent.LOG.Error("The `[D]` attribute argument `{arg}`, without prefix character, specifies the maximum length of an array. However, the field ‘{field}’ (line:{line}) does not have an array declaration such as ‘[]’, ‘[,]’, or ‘[,,]’ .", exp, FLD, fld.line_in_src_code);
                                                             AdHocAgent.exit("Please specify array type and retry", -1);
                                                         }
 
-                                                        if (FLD!._exT_array != null)                              //fully correct using argument
-                                                            FLD!._exT_array |= (uint)(FLD.value_of(exp)) << 3;     //take the max length of the array from `exp`
-                                                        else                                                       //not fully correct but ok
-                                                            FLD!._map_set_array |= (uint)(FLD.value_of(exp)) << 3; //take the max length of the array of Map/Set/Array collection from the `exp`
+                                                        if (FLD._exT_array != null)                            //fully correct using argument
+                                                            FLD._exT_array |= (uint)FLD.value_of(exp) << 3;     //take the max length of the array from `exp`
+                                                        else                                                    //not fully correct but ok
+                                                            FLD._map_set_array |= (uint)FLD.value_of(exp) << 3; //take the max length of the array of Map/Set/Array collection from the `exp`
                                                     }
 
                                                 if (KV == ' ') // not Key or Val generics
@@ -2815,7 +2359,7 @@ Please rename duplicate nested types.");
                                                                     AdHocAgent.exit("Please specify array type and retry", -1);
                                                                 }
 
-                                                                FLD!._exT_array |= (uint?)(dims[0] >> 1 << 3); //take the max length of the array from dims[0]
+                                                                FLD._exT_array |= (uint?)(dims[0] >> 1 << 3); //take the max length of the array from dims[0]
                                                             }
 
                                                             dims.Clear();
@@ -3109,7 +2653,7 @@ Please rename duplicate nested types.");
                         #region Process constants substitute
                         foreach (var dst_fld in fields.Where(fld => !fld.is_const && fld.substitute_value_from != null)) //not enums but static fields
                         {
-                            var src_fld = project.raw_fields[dst_fld.substitute_value_from!]; //takes type and value from src
+                            var src_fld = raw_fields[dst_fld.substitute_value_from!]; //takes type and value from src
                             dst_fld.exT_primitive = dst_fld.inT = src_fld.exT_primitive;
                             dst_fld._value_double = src_fld._value_double;
                             dst_fld._value_int = src_fld._value_int;
@@ -3134,38 +2678,69 @@ Please rename duplicate nested types.");
             }
         }
 
+
         public class ChannelImpl : Entity, Project.Channel
         {
+            public byte _uid => (byte)uid;
+
             public ChannelImpl(ProjectImpl project, CSharpCompilation compilation, InterfaceDeclarationSyntax Channel) : base(project, compilation, Channel) //struct based
             {
                 project.channels.Add(this);
+                if (parent_entity is not ProjectImpl) AdHocAgent.exit($"The definition of the channel {symbol} should be placed directly within the project’s scope.");
 
                 var interfaces = symbol!.Interfaces;
-                if (interfaces.Length == 0 || !interfaces[0].Name.Equals("ChannelFor"))
-                {
-                    AdHocAgent.LOG.Error("The channel {channel} should implement the {interface} interface and connect two distinct hosts.", symbol, "org.unirail.Meta.ChannelFor<HostA,HostB>");
-                    AdHocAgent.exit("Fix the problem and restart");
-                }
+                if (0 < interfaces.Length)
+                    switch (interfaces[0].Name)
+                    {
+                        case "ChannelFor":
+                            if (!equals(symbol!.Interfaces[0].TypeArguments[0], symbol!.Interfaces[0].TypeArguments[1])) return;
+                            AdHocAgent.LOG.Error("The channel {ch} should connect two distinct hosts.", symbol);
+                            AdHocAgent.exit("Fix the problem and restart");
+                            return;
 
-                if (parent_entity is not ProjectImpl) AdHocAgent.exit($"The definition of channel {symbol} should be placed directly within a project scope.");
+                        case "Modify":
+                            if (symbol!.Interfaces[0].TypeArguments[0] is INamedTypeSymbol sym && sym.TypeKind == TypeKind.Interface) return; //minimal test
+                            AdHocAgent.LOG.Error("The channel {channel} can Modify other channels only. But {Modify} is not", symbol, symbol!.Interfaces[0].TypeArguments[0]);
+                            AdHocAgent.exit("Fix the problem and restart");
 
-                if (!equals(symbol!.Interfaces[0].TypeArguments[0], symbol!.Interfaces[0].TypeArguments[1])) return;
+                            return;
+                    }
 
-                AdHocAgent.LOG.Error("The channel {ch} should connect two separate hosts.", symbol);
+                AdHocAgent.LOG.Error("The channel {channel} should `implements` the {ChannelFor} or {Modify}  interfaces.", symbol, "org.unirail.Meta.ChannelFor<HostA,HostB>", "org.unirail.Meta.Modify<ModifyChannel>");
                 AdHocAgent.exit("Fix the problem and restart");
             }
 
+            public ChannelImpl clone() => new(project, null, (InterfaceDeclarationSyntax)node!)
+            {
+                origin = this,
+                _name = _name,
+                _doc = _doc,
+                _inline_doc = _inline_doc,
+                char_in_source_code = char_in_source_code,
+                project = project,
+                node = node,
+                symbol = symbol,
+                model = model,
+                uid = uid,
+
+                stages = stages.Select(st => st.clone()).ToList(),
+
+                hostL = hostL,
+                hostL_transmitting_packs = hostL_transmitting_packs.ToList(),
+                hostL_related_packs = hostL_related_packs.ToList(),
+
+                hostR = hostR,
+                hostR_transmitting_packs = hostR_transmitting_packs.ToList(),
+                hostR_related_packs = hostR_related_packs.ToList(),
+            };
 
             public override bool included => _included ?? in_project.included;
 
-            internal ITypeSymbol L => symbol!.Interfaces[0].TypeArguments[0];
-            internal ITypeSymbol R => symbol!.Interfaces[0].TypeArguments[1];
 
-
-            internal HostImpl hostL => (HostImpl)project.entities[L];
+            public HostImpl? hostL;
             public ushort _hostL => (ushort)hostL.idx;
 
-            public List<HostImpl.PackImpl> hostL_transmitting_packs = new();
+            public List<HostImpl.PackImpl> hostL_transmitting_packs = [];
 
             public object? _hostL_transmitting_packs() => hostL_transmitting_packs.Count == 0 ?
                                                               null :
@@ -3175,7 +2750,7 @@ Please rename duplicate nested types.");
             public ushort _hostL_transmitting_packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => (ushort)hostL_transmitting_packs[item].idx;
 
 
-            public List<HostImpl.PackImpl> hostL_related_packs = new();
+            public List<HostImpl.PackImpl> hostL_related_packs = [];
 
             public object? _hostL_related_packs() => hostL_related_packs.Count == 0 ?
                                                          null :
@@ -3185,10 +2760,10 @@ Please rename duplicate nested types.");
             public ushort _hostL_related_packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => (ushort)hostL_related_packs[item].idx;
 
 
-            internal HostImpl hostR => (HostImpl)project.entities[R];
-            public ushort _hostR => (ushort)hostR.idx;
+            public HostImpl? hostR;
+            public ushort _hostR => (ushort)hostR!.idx;
 
-            public List<HostImpl.PackImpl> hostR_transmitting_packs = new();
+            public List<HostImpl.PackImpl> hostR_transmitting_packs = [];
 
             public object? _hostR_transmitting_packs() => hostR_transmitting_packs.Count == 0 ?
                                                               null :
@@ -3198,7 +2773,7 @@ Please rename duplicate nested types.");
             public ushort _hostR_transmitting_packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => (ushort)hostR_transmitting_packs[item].idx;
 
 
-            public List<HostImpl.PackImpl> hostR_related_packs = new();
+            public List<HostImpl.PackImpl> hostR_related_packs = [];
 
             public object? _hostR_related_packs() => hostR_related_packs.Count == 0 ?
                                                          null :
@@ -3208,7 +2783,7 @@ Please rename duplicate nested types.");
             public ushort _hostR_related_packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => (ushort)hostR_related_packs[item].idx;
 
 
-            public List<StageImpl> stages = new();
+            public List<StageImpl> stages = [];
 
             public object? _stages() => stages.Count == 0 ?
                                             null :
@@ -3218,106 +2793,222 @@ Please rename duplicate nested types.");
             public Project.Channel.Stage _stages(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => stages[item];
 
 
-            private bool inited;
-
-            public void Init() //channel
+            public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
             {
-                if (inited) return; //double inited protection
-                inited = true;
+                foreach (var modified_channel in this_modified.Select(s => s.TypeArguments[0])) //normally only one modified channel
+                    foreach (var stage in symbol!.GetTypeMembers())                             //stages declared in this channel body
+                        foreach (var by_stage_modefied_entity in stage.Interfaces.Where(I => I.isModify()).Select(I => I.TypeArguments[0]))
+                            if (!equals(modified_channel, by_stage_modefied_entity) && !equals(modified_channel, by_stage_modefied_entity.OriginalDefinition.ContainingType))
+                                AdHocAgent.LOG.Warning("Stage {stage} (line: {line}) in channel {symbol}, modifying Channel {ch}, is attempting to modify entity <{modefied}> from a different channel. This is likely an error.", stage, entities[stage].line_in_src_code, symbol, modified_channel, by_stage_modefied_entity);
 
-                if (stages.Count == 0)
+                foreach (var I in this_modified)
                 {
-                    //The communication channel with a completely empty body. Constructing the default channel stages.
+                    modifier = true;
+                    var target_channel = (ChannelImpl)entities[I.TypeArguments[0]];
 
-                    var stage = new StageImpl();
-                    stage._name = "Init";
-                    stage.branchesL.Add(new BranchImpl()
+                    if (I.TypeArguments.Length == 3) // Modify<TargetChannel, HostA, HostB>
                     {
-                        packs = project.all_packs.Where(pack =>
-                                                        {
-                                                            var host = pack.in_host;
-                                                            return host == null || pack.in_host == hostL;
-                                                        }).ToList()
-                    });
-
-                    stage.branchesR.Add(new BranchImpl()
-                    {
-                        packs = project.all_packs.Where(pack =>
-                                                        {
-                                                            var host = pack.in_host;
-                                                            return host == null || pack.in_host == hostR;
-                                                        }).ToList()
-                    });
-                    stages.Add(stage);
-                }
-
-                stages.ForEach(stage => stage.Init());
-
-                if (1 < symbol!.Interfaces.Length) //channel import other channel
-                {
-                    //inheritance detected
-                    var count = this.stages.Count;
-
-                    var stages = this.stages.ToDictionary(stage => stage.symbol!.Name);
-
-                    var SwapHosts = false;
-                    foreach (var entity in symbol!.Interfaces.Skip(1))
-                        if (project.entities[
-                                             (SwapHosts = entity.Name.Equals("SwapHosts")) ?
-                                                 entity.TypeArguments[0] :
-                                                 entity
-                                            ] is ChannelImpl ch_ancestor)
-                        {
-                            ch_ancestor.Init();
-
-                            var imported_stages = ch_ancestor.stages.Where(s => !stages.ContainsKey(s.symbol!.Name)).ToArray();
-
-
-                            if (SwapHosts)
-                                foreach (var stage in imported_stages)
-                                {
-                                    var s = stage.clone();
-                                    s.branchesL = stage.branchesR;
-                                    s.branchesR = stage.branchesL;
-
-                                    this.stages.Add(s);
-                                }
-                            else
-                                this.stages.AddRange(imported_stages);
-                        }
-                        else
-                        {
-                            AdHocAgent.LOG.Error("The communication channel {channel} can only inherit from other channels. However, {entity} is not a channel.", this, entity);
-                            AdHocAgent.exit("Fix the problem and restart");
-                        }
-
-                    //re link stage's branches
-
-                    foreach (var stage in this.stages.GetRange(count, this.stages.Count - count))
-                    {
-                        var branches = stage.branchesL.Concat(stage.branchesR).ToArray();
-                        for (var i = 0; i < branches.Length; i++)
-                        {
-                            var branch = branches[i];
-                            var name = branch.goto_stage!._name;
-                            if (branch.goto_stage == null || !stages.ContainsKey(name) || stages[name] == branch.goto_stage) continue;
-                            branch = branches[i] = branch.clone();
-                            branch.goto_stage = stages[name];
-                        }
+                        target_channel.hostL = (HostImpl)entities[I.TypeArguments[1]];
+                        target_channel.hostR = (HostImpl)entities[I.TypeArguments[2]];
                     }
+
+                    Collect_Modification(target_channel, once);
+                    return true;
                 }
 
-                var idx = 0;
-                stages.ForEach(stage => stage.idx = idx++);
+
+                foreach (var stage in symbol!.GetTypeMembers().SelectMany(s => s.Interfaces).Where(I => I.isModify()))
+                {
+                    //      interface ModifyChannel  {
+                    //          interface ModifyStage Modify<ModifiedStage>,
+                    //            _<
+                    //                Server.Info,//
+                    //                AuthorisationRequest
+                    //            >{ }
+                    //
+                    //  case
+                    modifier = true;
+                    Collect_Modification(entities[stage.TypeArguments[0].OriginalDefinition.ContainingType], once);
+                    return true;
+                }
+
+                var i = symbol!.Interfaces.First(I => I.isChannelFor());
+                hostL = (HostImpl)entities[i.TypeArguments[0]];
+                hostR = (HostImpl)entities[i.TypeArguments[1]];
+
+                if (stages.Count != 0) return false;
+
+                //This communication channel has a completely empty body. Constructing the one default channel's stage: 'Init'.
+
+                var one_stage = new StageImpl(project) { _name = "Init" };
+
+                one_stage.branchesL.Add(new BranchImpl(project)
+                {
+                    packs = projects_root.all_packs.Where(pack =>
+                                                          {
+                                                              var host = pack.in_host;
+                                                              return host == null || host == hostL;
+                                                          }).ToList(),
+                    goto_stage = one_stage
+                });
+
+                one_stage.branchesR.Add(new BranchImpl(project)
+                {
+                    packs = projects_root.all_packs.Where(pack =>
+                                                          {
+                                                              var host = pack.in_host;
+                                                              return host == null || host == hostR;
+                                                          }).ToList(),
+                    goto_stage = one_stage
+                });
+                stages.Add(one_stage);
+                return false;
+            }
+
+            void apply(StageImpl stage, bool add, bool SwapHosts)
+            {
+                var i = stages.FindIndex(st => equals(st.symbol, stage.symbol));
+
+                if (i == -1)
+                {
+                    if (!add) return;
+
+                    var cloned = stage.clone();
+                    if (SwapHosts)
+                        (cloned.branchesL, cloned.branchesR) = (cloned.branchesR, cloned.branchesL);
+
+                    stages.Add(cloned);
+                }
+                else if (!add) stages.RemoveAt(i);
+            }
+
+            public override void modify(ISymbol by_what, bool add, HashSet<object> once)
+            {
+                bool SwapHosts;
+
+                if (entities.TryGetValue((SwapHosts = by_what.Name.Equals("SwapHosts")) && by_what.isMeta() ?
+                                             ((INamedTypeSymbol)by_what).TypeArguments[0] :
+                                             by_what, out var value))
+                    switch (value)
+                    {
+                        case ChannelImpl channel:
+                            channel.Init(once);
+
+                            channel.stages.ForEach(stage => apply(stage, add, SwapHosts));
+                            break;
+                        case StageImpl stage:
+                            apply(stage, add, SwapHosts);
+                            break;
+                    }
             }
 
 
+            public void set_transmitting_packs(HashSet<object> once)
+            {
+                once.Clear(); // Clear the set to prepare for storing visited stages
+
+                #region sweap stages not reachable from root stage
+                void scan(StageImpl src) // Recursive method to traverse and mark all reachable stages
+                {
+                    if (!once.Add(src)) return;                             // If the stage has already been visited, return
+                    src.idx = -1;                                            // Mark the stage as reachable from root - stages[0]
+                    foreach (var br in src.branchesL.Concat(src.branchesR)) // Recursively scan through all branches, following links to other stages
+                        scan(br.goto_stage ?? (br.goto_stage = src));
+                }
+
+                scan(stages[0]); // Start the traversal from the root stage (stages[0])
+
+                // Remove stages that were not marked as reachable (idx != -1) and reindex the remaining ones
+                stages = stages.Where(st => st.idx == -1).Select((st, i) =>
+                                                                 {
+                                                                     st.idx = i; // Assign a new index to each remaining stage
+                                                                     return st;
+                                                                 }).ToList();
+                #endregion
+                #region merge branches with same goto stage
+
+                void merge_same_goto_stage_branches(List<BranchImpl> brs)
+                {
+                    foreach (var g in brs.GroupBy(br => br.goto_stage!.symbol, SymbolEqualityComparer.Default).Where(g => 1 < g.Count()).ToArray())
+                    {
+                        var dst = g.First();
+                        foreach (var br in g.Skip(1))
+                        {
+                            brs.Remove(br);
+                            dst.packs.AddRange(br.packs);
+                        }
+
+                        dst.packs = dst.packs.GroupBy(p => p.symbol, SymbolEqualityComparer.Default)
+                                       .Select(g => g.First()).ToList();
+                    }
+                }
+
+                foreach (var st in stages)
+                {
+                    merge_same_goto_stage_branches(st.branchesL);
+                    merge_same_goto_stage_branches(st.branchesR);
+                }
+                #endregion
+
+
+                hostL._included = true;
+                hostR._included = true;
+
+                foreach (var pack in stages.SelectMany(stage => stage.branchesL.SelectMany(branch => branch.packs)).Distinct())
+                {
+                    hostL_transmitting_packs.Add(pack);
+                    pack._included = true;
+                }
+
+                foreach (var pack in stages.SelectMany(stage => stage.branchesR.SelectMany(branch => branch.packs)).Distinct())
+                {
+                    hostR_transmitting_packs.Add(pack);
+
+                    pack._included = true;
+                }
+            }
+
+
+            public class NamedPackSet : Entity
+            {
+                public HashSet<HostImpl.PackImpl> packs = [];
+
+                internal NamedPackSet(ProjectImpl project, CSharpCompilation compilation, InterfaceDeclarationSyntax stage) : base(project, compilation, stage) { }
+
+                public void apply(HostImpl.PackImpl pack, bool add)
+                {
+                    if (add)
+                        packs.Add(pack);
+                    else
+                        packs.Remove(pack);
+                }
+
+                public override void modify(ISymbol by_what, bool add, HashSet<object> once)
+                {
+                    if (entities.TryGetValue(by_what, out var value))
+                        switch (value)
+                        {
+                            case HostImpl.PackImpl pack:
+                                apply(pack, add);
+                                return;
+                            case NamedPackSet nps:
+                                foreach (var pack in nps.packs) apply(pack, add);
+                                return;
+                        }
+
+
+                    AdHocAgent.LOG.Error("Unexpected item {item} import in the named packs set {pack}", by_what, symbol);
+                    AdHocAgent.exit("Fix the problem and restart");
+                }
+            }
+
             public class StageImpl : Entity, Project.Channel.Stage
             {
-                public static readonly StageImpl Exit = new();
+                public ushort _uid => (ushort)uid;
+                public static StageImpl? Exit;
 
 
-                internal StageImpl() : base(null, null, null) { _name = ""; }
+                internal StageImpl(ProjectImpl project) : base(project, null, null) { _name = ""; }
 
 
                 internal StageImpl(ProjectImpl project, CSharpCompilation compilation, InterfaceDeclarationSyntax stage) : base(project, compilation, stage)
@@ -3326,11 +3017,10 @@ Please rename duplicate nested types.");
 
                     if (parent_entity is not ChannelImpl)
                     {
-                        AdHocAgent.LOG.Error("The declaration of stage {stage} should be nested within a channel scope.", symbol);
+                        AdHocAgent.LOG.Error("Stage {stage} declaration must be within a channel scope, but {parent_entity} is not a channel", symbol, symbol!.OriginalDefinition.ContainingType);
                         AdHocAgent.exit("Fix the problem and try again");
                     }
 
-                    add_from(symbol!);
                     var ch = project.channels.Last();
 
                     ch.stages.Add(this);
@@ -3343,117 +3033,181 @@ Please rename duplicate nested types.");
                         }
                 }
 
-                public void Init()
+                //  on code
+                //
+                //      interface ModifyChannel  {
+                //          interface ModifyStage Modify<ModifiedStage>,
+                //            _<
+                //                Server.Info//
+                //               ,//
+                //                AuthorisationRequest
+                //            >{ }
+                //
+                // pass to Init Modify<ModifiedStage>
+                public IEnumerable<INamedTypeSymbol> by_parent_channel_modify => symbol!.OriginalDefinition.ContainingType.Interfaces.Where(I => I.isModify());
+
+                public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
                 {
-                    if (symbol == null) return;
+                    if (base.As_Modifier_Dispatch_Modifications_On_Targets(once)) return true; //direct modification of other stages
 
-                    var txt = node.SyntaxTree.ToString();
+                    Collect_Modification(this, once); //just build self
 
+                    if (by_parent_channel_modify.Any()) //and cast to target channels
+                        foreach (var what_modify in by_parent_channel_modify)
+                            ((ChannelImpl)entities[what_modify.TypeArguments[0]]).apply(this, true, false);
+
+                    return true;
+                }
+
+                public override void modify(ISymbol by_what, bool add, HashSet<object> once) { }
+                public bool _LR => branchesR == branchesL;
+
+                protected override void Collect_Modification(Entity target, HashSet<object> once)
+                {
+                    var target_stage = (StageImpl)target;
 
                     List<BranchImpl>? branches = null;
+
                     foreach (var item in node!.BaseList!.Types)
                     {
                         var str = item.ToString();
+                        var line = item.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
                         switch (str)
                         {
                             case "L":
-                                branches = branchesL;
+                                branches = target_stage.branchesL;
                                 continue;
                             case "R":
-                                branches = branchesR;
+                                branches = target_stage.branchesR;
+                                continue;
+                            case "LR":
+                                branches = target_stage.branchesR = target_stage.branchesL;
                                 continue;
                             default:
+
+                                bool scan(INamedTypeSymbol src, Func<INamedTypeSymbol, bool> todo) => todo(src) && src.TypeArguments.OfType<INamedTypeSymbol>().All(sym => scan(sym, todo));
+
+                                if (str.StartsWith("Modify<")) continue;
+
                                 if (str.StartsWith("_<")) //Branch start
                                 {
-                                    var s = item.SpanStart;
-                                    var branch = new BranchImpl()
+                                    var uid_pos = item.SpanStart + 2; // "_<".length
+                                    BranchImpl? branch;
+
+                                    if (modifier) // modify specific stage
                                     {
-                                        uid_pos = s + 2, // "_<".length
-                                        _doc = string.Join(' ', item.GetLeadingTrivia().Select(t => get_doc(t)))
-                                    };
-                                    branches.Add(branch);
+                                        #region search - maybe modify specific branch
+                                        StageImpl? update_from_goto_stage = null;
+                                        StageImpl? update_to_goto_stage = null;
+
+                                        //fast self modifier pre scan goto stages
+                                        var generics = item.DescendantNodes().OfType<GenericNameSyntax>().First();
+                                        foreach (var stage_sym in generics.TypeArgumentList.Arguments.Select(generic => model.GetSymbolInfo(generic).Symbol!))
+                                            if (stage_sym.isMeta())
+                                            {
+                                                if (stage_sym.Name == "X") //maybe this is the replaceable goto stage
+                                                    scan((INamedTypeSymbol)stage_sym, (t) => (!entities.TryGetValue(t, out var entity) || entity is not StageImpl st) || (update_from_goto_stage = st) == null);
+                                            }
+                                            else if (stage_sym.Name != "Exit")
+                                                if (entities[stage_sym] is StageImpl st)
+                                                {
+                                                    st.Init(once);
+                                                    var targget_channel = (ChannelImpl)target.parent_entity!;
+
+                                                    update_to_goto_stage = targget_channel.stages.First(s => equals(s.symbol, st.symbol));
+                                                }
+
+                                        var search_branch_by_goto_stage = update_from_goto_stage ?? update_to_goto_stage;
+
+                                        branch = branches!.FirstOrDefault(br => br.goto_stage == search_branch_by_goto_stage);
+                                        #endregion
+
+                                        if (branch == null)
+                                            branches.Add(branch = new BranchImpl(project)
+                                            {
+                                                uid_pos = uid_pos,
+                                                line_in_src_code = (uint)line,
+                                                _doc = string.Join(' ', item.GetLeadingTrivia().Select(t => get_doc(t)))
+                                            });
+
+                                        branch.goto_stage = update_to_goto_stage ?? update_from_goto_stage;
+                                    }
+                                    else
+                                        branches!.Add(branch = new BranchImpl(project)
+                                        {
+                                            uid_pos = uid_pos,
+                                            line_in_src_code = (uint)line,
+                                            _doc = string.Join(' ', item.GetLeadingTrivia().Select(t => get_doc(t))),
+                                            goto_stage = this //self referenced by default
+                                        });
 
                                     #region getting branch's /*UID*/ and inline comments
-                                    var rn = txt.IndexOf('\n', s);
-                                    if (rn == -1) rn = txt.IndexOf('\r', s);
-
-                                    var comments_after_branch_declare = item.DescendantTrivia().Where(
-                                                                                                      t =>
-                                                                                                          (t.IsKind(SyntaxKind.MultiLineCommentTrivia) || t.IsKind(SyntaxKind.SingleLineCommentTrivia)) &&
-                                                                                                          s < t.SpanStart &&
-                                                                                                          t.SpanStart < rn
-                                                                                                     );
-                                    if (comments_after_branch_declare.Any())
-                                    {
-                                        var m = HasDocs.uid.Match(comments_after_branch_declare.First().ToString());
-                                        if (m.Success)
+                                    foreach (var t in item.DescendantTrivia().Where(t => item.Span.Start < t.Span.Start))
+                                        if (t.IsKind(SyntaxKind.EndOfLineTrivia)) break;
+                                        else if (t.IsKind(SyntaxKind.MultiLineCommentTrivia))
                                         {
-                                            branch.uid = (ushort)str2int(m.Groups[1].Value);
-                                            comments_after_branch_declare = comments_after_branch_declare.Skip(1);
+                                            var m = HasDocs.uid.Match(t.ToString());
+                                            if (m.Success) branch.uid = (ushort)m.Groups[1].Value.to_base256_value();
+                                            else branch._doc += get_doc(t);
                                         }
-                                    }
-
-                                    branch._doc += string.Join(' ', comments_after_branch_declare.Select(t => get_doc(t)));
+                                        else if (t.IsKind(SyntaxKind.SingleLineCommentTrivia)) branch._doc += get_doc(t);
                                     #endregion
 
-                                    void set_goto(StageImpl goto_stage)
+                                    // fill branch
+                                    foreach (var generic in item.DescendantNodes().OfType<GenericNameSyntax>().First().TypeArgumentList.Arguments)
                                     {
-                                        if (branch.goto_stage != null)
-                                        {
-                                            AdHocAgent.LOG.Error("There are multiple unexpected stages {stage1} and {stage2} within a branch of the {stage}  while there should be only one.", branch.goto_stage.symbol, goto_stage.symbol, symbol);
-                                            AdHocAgent.exit("Fix the problem and restart.");
-                                        }
+                                        var sym = model.GetSymbolInfo(generic).Symbol!;
+                                        var del = sym.isMeta() && sym.Name == "X";
 
-                                        branch.goto_stage = goto_stage;
-                                    }
+                                        scan((INamedTypeSymbol)sym, s =>
+                                                                    {
+                                                                        if (s.isMeta())
+                                                                        {
+                                                                            if (s.Name != "Exit") return true;
+                                                                            Exit ??= new StageImpl(projects[0])
+                                                                            {
+                                                                                symbol = (INamedTypeSymbol?)s
+                                                                            };
 
-                                    var nodes = item.DescendantNodes().Where(n => !(n is GenericNameSyntax || n is TypeArgumentListSyntax)).ToArray();
+                                                                            if (!modifier) branch.goto_stage = Exit;
+                                                                        }
+                                                                        else if (project.named_packs.TryGetValue(s, out var nps))
+                                                                            if (del)
+                                                                                branch.packs.RemoveAll(p => nps.packs.Any(pp => equals(p.symbol, pp.symbol)));
+                                                                            else
+                                                                                branch.packs.AddRange(nps.packs.Where(p => !branch.packs.Any(pp => equals(p.symbol, pp.symbol))));
+                                                                        else
+                                                                            switch (entities[s])
+                                                                            {
+                                                                                case HostImpl.PackImpl pack:
 
-                                    for (var i = 0; i < nodes.Length; i++)
-                                    {
-                                        var node = nodes[i];
+                                                                                    if (!pack.is_transmittable) // Exclude non-transmittable enums and constants, as they are included in every host's scope.
+                                                                                    {
+                                                                                        AdHocAgent.LOG.Error("The {pack} (like:{line}) on the stage {stage} is not transmittable.",
+                                                                                                             pack, generic.GetLocation().GetLineSpan().StartLinePosition.Line + 1, symbol);
+                                                                                        AdHocAgent.exit("Delete the pack and restart");
+                                                                                    }
 
-                                        var d = node.ToString().Count(ch => ch == '.'); // QualifiedNameSyntax  --- > "Agent.Version"
-                                        if (0 < d) i += d + 1;                                 // skip repeated for additional, separated  Agent and Version
+                                                                                    if (del)
+                                                                                        branch.packs.RemoveAll(p => equals(p.symbol, pack.symbol));
+                                                                                    else if (branch.packs.All(p => !equals(p.symbol, pack.symbol)))
+                                                                                        branch.packs.Add(pack);
 
-                                        var node_symbol = model.GetSymbolInfo(node).Symbol;
+                                                                                    break;
 
-                                        if (node_symbol.Name.Equals("Exit") && node_symbol.ToString()!.StartsWith("org.unirail"))
-                                        {
-                                            Exit.symbol = (INamedTypeSymbol?)node_symbol;
-                                            set_goto(Exit);
-                                        }
-                                        else if (project.named_packs.TryGetValue((INamedTypeSymbol)node_symbol, out var pks))
-                                        {
-                                            foreach (var pack in pks)
-                                                if (!branch.packs.Contains(pack))
-                                                    branch.packs.Add(pack);
-                                        }
-                                        else
-                                            switch (project.entities[node_symbol])
-                                            {
-                                                case HostImpl.PackImpl pack:
-                                                    branch.packs.Add(pack);
-                                                    var doc = item.GetLeadingTrivia();
-                                                    if (!pack.is_transmittable) //exclude none transmittable enums and constants - they are going to every hosts scope)
-                                                    {
-                                                        AdHocAgent.LOG.Error("The {pack} (like:{line}) on the stage {stage} is not transmittable.",
-                                                                             pack, node.GetLocation().GetLineSpan().StartLinePosition.Line + 1, symbol);
-                                                        AdHocAgent.exit("Delete the pack and restart");
-                                                    }
+                                                                                case StageImpl stage:                          //branch goto target stage
+                                                                                    if (!modifier) branch.goto_stage = stage; //modifier do it upper, differently
+                                                                                    break;
+                                                                                default:
 
-                                                    continue;
+                                                                                    AdHocAgent.LOG.Error("Unexpected item {item} (like:{line}) in the {stage} declaration",
+                                                                                                         s, generic.GetLocation().GetLineSpan().StartLinePosition.Line + 1, symbol);
+                                                                                    AdHocAgent.exit("Fix the problem and restart.");
+                                                                                    break;
+                                                                            }
 
-                                                case StageImpl stage:
-                                                    set_goto(stage);
-                                                    continue;
-                                                default:
-
-                                                    AdHocAgent.LOG.Error("Unexpected item {item} (like:{line}) in the {stage} declaration",
-                                                                         node_symbol, node.GetLocation().GetLineSpan().StartLinePosition.Line + 1, symbol);
-                                                    AdHocAgent.exit("Fix the problem and restart.");
-                                                    return;
-                                            }
+                                                                        return true;
+                                                                    });
                                     }
 
                                     continue;
@@ -3470,37 +3224,67 @@ Please rename duplicate nested types.");
                 private ushort timeout = 0xFFFF;
 
                 public ushort _timeout { get => timeout; set => timeout = value; }
-
-                public List<BranchImpl> branchesL = new();
+                public List<BranchImpl> branchesL = [];
                 public object? _branchesL() => branchesL;
                 public int _branchesL_len => branchesL.Count;
                 public Project.Channel.Stage.Branch _branchesL(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => branchesL[item];
 
-                public List<BranchImpl> branchesR = new();
-                public object? _branchesR() => branchesR;
-                public int _branchesR_len => branchesR.Count;
+                public List<BranchImpl> branchesR = [];
+
+                public object? _branchesR() => _LR ?
+                                                   null :
+                                                   branchesR;
+
+                public int _branchesR_len => _LR ?
+                                                 0 :
+                                                 branchesR.Count;
+
                 public Project.Channel.Stage.Branch _branchesR(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => branchesR[item];
-                public StageImpl clone() => (StageImpl)MemberwiseClone();
+
+                public StageImpl clone() => new(project)
+                {
+                    origin = this,
+                    _doc = _doc,
+                    _inline_doc = _inline_doc,
+                    _name = _name,
+                    symbol = symbol,
+                    uid = uid,
+                    timeout = timeout,
+                    branchesL = branchesL.Select(br => br.clone()).ToList(),
+                    branchesR = branchesR.Select(br => br.clone()).ToList(),
+                };
             }
 
-            public class BranchImpl : Project.Channel.Stage.Branch
+            public class BranchImpl(ProjectImpl project) : Project.Channel.Stage.Branch
             {
+                public BranchImpl? origin;
+
+                public BranchImpl clone() => new(project)
+                {
+                    origin = this,
+                    _doc = _doc,
+                    uid = uid,
+                    packs = packs.ToList(),
+                };
+
                 public ushort uid = ushort.MaxValue;
                 public ushort _uid => uid;
+                public bool no_info = true;
 
+                public ProjectImpl project = project;
                 public int uid_pos;
+                public uint line_in_src_code;
 
                 public string? _doc { get; set; }
 
                 public StageImpl? goto_stage; //if null Exit stage
-                public BranchImpl clone() => (BranchImpl)MemberwiseClone();
 
-                public ushort _goto_stage => goto_stage == StageImpl.Exit ? (ushort)Project.Channel.Stage.Type.Exit :
-                                             goto_stage == null ? (ushort)Project.Channel.Stage.Type.None :
-                                                                            (ushort)goto_stage.idx;
+                public ushort _goto_stage => goto_stage == StageImpl.Exit ?
+                                                 (ushort)Project.Channel.Stage.Exit :
+                                                 (ushort)goto_stage!.idx;
 
 
-                public List<HostImpl.PackImpl> packs = new();
+                public List<HostImpl.PackImpl> packs = [];
 
 
                 public object? _packs() => packs.Count == 0 ?
@@ -3510,6 +3294,778 @@ Please rename duplicate nested types.");
                 public int _packs_len => packs.Count;
                 public ushort _packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => (ushort)packs[item].idx;
             }
+        }
+    }
+
+
+    public abstract class HasDocs
+    {
+        private static readonly Regex leading_spaces = new(@"^\s+", RegexOptions.Multiline);
+        private static readonly Regex inline_comments_cleaner = new(@"^\s*/{2,}", RegexOptions.Multiline);
+        private static readonly Regex block_comments_start = new(@"/\*+", RegexOptions.Multiline);
+        private static readonly Regex block_comments_start_line = new(@"/\*+\s*(\r\n|\r|\n)", RegexOptions.Multiline);
+        private static readonly Regex block_comments_end = new(@"\s*\*+/", RegexOptions.Multiline);
+        private static readonly Regex block_comments_end_line = new(@"\s*\*+/", RegexOptions.Multiline);
+        private static readonly Regex cleanup_asterisk = new(@"^\s*\*+", RegexOptions.Multiline);
+        private static readonly Regex cleanup_see_cref = new(@"<\s*see\s*cref .*>", RegexOptions.Multiline);
+        public static readonly Regex uid = new(@"\/\*([\u00FF-\u01FF]+)\*\/");
+
+        public static string get_doc(SyntaxTrivia trivia)
+        {
+            var str = trivia.ToFullString().Trim();
+            if (str.Length == 0 || str.StartsWith('#')) return ""; //skip preprocessor instructions
+
+            //normalize doc. apply "left alignment"
+
+            foreach (var m in leading_spaces.Matches(str).Reverse()) //Reverse!!
+            {
+                var s = m.Groups[0].Value;
+                if (-1 < s.IndexOf('\t'))
+                {
+                    s = s.Replace("\t", "    ");
+                    str = str[..m.Groups[0].Index] + s + str[(m.Groups[0].Index + m.Groups[0].Length)..];
+                }
+
+                len2count.TryGetValue(s.Length, out var count);
+                count++;
+                len2count[s.Length] = count;
+            }
+
+            if (0 < len2count.Count)
+            {
+                var most = len2count.ToArray().OrderBy(e => -e.Value).First().Key;
+                len2count.Clear();
+
+                str = new Regex(@"^\s" + "{1," + most + "}", RegexOptions.Multiline).Replace(str, "");
+            }
+
+            str = inline_comments_cleaner.Replace(str, "");
+
+            var st = block_comments_start.Match(str);
+            if (st.Success)
+            {
+                st = block_comments_start_line.Match(str);
+                if (st.Success)
+                    str = block_comments_start_line.Replace(str, "", 1);
+                else
+                    str = block_comments_start.Replace(str, "", 1);
+
+                var es = block_comments_end_line.Matches(str);
+
+                if (0 < es.Count)
+                    if (es[0].Success)
+                        str = block_comments_end_line.Replace(str, "", 1, es.Last().Index);
+                    else
+                    {
+                        es = block_comments_end.Matches(str);
+                        if (es[0].Success)
+                            str = block_comments_end.Replace(str, "", 1, es.Last().Index);
+                    }
+
+                str = cleanup_asterisk.Replace(str, "");
+            }
+
+            var tmp = cleanup_see_cref
+                      .Replace(str, "")
+                      .Trim('\n', '\r', '\t', ' ', '+', '-');
+            if (tmp.Length == 0) return "";
+
+
+            switch (str[str.Length - 1])
+            {
+                case '\r':
+                case '\n':
+                    return str;
+            }
+
+            return str + "\n";
+        }
+
+        private static Dictionary<int, int> len2count = new();
+
+        public override string ToString() => _name;
+        public string _name { get; set; }
+        public string? _doc { get; set; }
+        public string? _inline_doc { get; set; }
+        public int idx = int.MaxValue; //place index
+
+        public static string brush(string name)
+        {
+            if (name.Equals("_DefaultMaxLengthOf") || !is_prohibited(name)) return name;
+
+
+            var new_name = name;
+
+            for (var i = 0; i < name.Length; i++)
+                if (char.IsLower(name[i]))
+                {
+                    new_name = new_name[..i] + char.ToUpper(new_name[i]) + new_name[(i + 1)..];
+                    if (is_prohibited(new_name)) continue;
+
+                    return new_name;
+                }
+
+            return name;
+        }
+
+        public int char_in_source_code = -1;
+
+        public ProjectImpl project;
+
+        public HasDocs(ProjectImpl? prj, string name, CSharpSyntaxNode? node)
+        {
+            project = prj ?? (ProjectImpl)this; //prj == null only for projects
+
+            if (node == null) return;
+
+            name = name[(name.LastIndexOf('.') + 1)..];
+            _name = brush(name);
+
+            char_in_source_code = node.GetLocation().SourceSpan.Start;
+
+
+            var trivias = node.GetLeadingTrivia();
+
+            var doc = trivias.Aggregate("", (current, trivia) => current + get_doc(trivia));
+
+            if (project.packs_id_info_end == -1) project.packs_id_info_end = char_in_source_code;
+
+
+            if (0 < (doc = doc.Trim('\r', '\n', '\t', ' ')).Length) _doc = doc + "\n";
+        }
+
+
+        public static bool equals(ISymbol? x, ISymbol? y) => SymbolEqualityComparer.Default.Equals(x, y);
+
+
+        private static bool is_prohibited(string name)
+        {
+            if (name[0] == '_' || name[^1] == '_')
+            {
+                AdHocAgent.LOG.Error("Entity names cannot start or end with an underscore _. Please correct the name '{name}' and try again.", name);
+                AdHocAgent.exit("");
+            }
+
+            return name switch
+            {
+                // C#
+                "abstract" or "as" or "base" or "bool" or "break" or "byte" or "case" or "catch" or
+                    "char" or "checked" or "class" or "const" or "continue" or "decimal" or "default" or
+                    "delegate" or "do" or "double" or "else" or "enum" or "event" or "explicit" or "extern" or
+                    "false" or "finally" or "fixed" or "float" or "for" or "foreach" or "goto" or "if" or
+                    "implicit" or "in" or "int" or "interface" or "internal" or "is" or "lock" or "long" or
+                    "namespace" or "new" or "null" or "object" or "operator" or "out" or "override" or "params" or
+                    "private" or "protected" or "public" or "readonly" or "ref" or "return" or "sbyte" or
+                    "sealed" or "short" or "sizeof" or "stackalloc" or "static" or "string" or "struct" or
+                    "switch" or "this" or "throw" or "true" or "try" or "typeof" or "uint" or "ulong" or
+                    "unchecked" or "unsafe" or "ushort" or "using" or "virtual" or "void" or "volatile" or
+
+                    // C++
+                    "alignas" or "alignof" or "and" or "and_eq" or "asm" or "auto" or "bitand" or "bitor" or
+                    "bool" or "break" or "case" or "catch" or "char" or "char16_t" or "char32_t" or "class" or
+                    "compl" or "concept" or "const" or "consteval" or "constexpr" or "constinit" or "const_cast" or
+                    "continue" or "decltype" or "default" or "delete" or "do" or "double" or "dynamic_cast" or
+                    "else" or "enum" or "explicit" or "export" or "extern" or "false" or "float" or "for" or
+                    "friend" or "goto" or "if" or "inline" or "int" or "long" or "mutable" or "namespace" or
+                    "new" or "noexcept" or "nullptr" or "operator" or "or" or "or_eq" or "private" or
+                    "protected" or "public" or "reflexpr" or "register" or "reinterpret_cast" or "requires" or
+                    "return" or "short" or "signed" or "sizeof" or "static" or "static_assert" or "static_cast" or
+                    "struct" or "switch" or "template" or "this" or "thread_local" or "throw" or "true" or
+                    "try" or "typedef" or "typeid" or "typename" or "union" or "unsigned" or "using" or "virtual" or
+                    "void" or "volatile" or "wchar_t" or "while" or "xor" or "xor_eq" or
+
+                    // Java
+                    "abstract" or "assert" or "boolean" or "break" or "byte" or "case" or "catch" or
+                    "char" or "class" or "const" or "continue" or "default" or "do" or "double" or "else" or
+                    "enum" or "extends" or "final" or "finally" or "float" or "for" or "goto" or "if" or
+                    "implements" or "import" or "instanceof" or "int" or "interface" or "long" or "native" or
+                    "new" or "null" or "package" or "private" or "protected" or "public" or "return" or
+                    "short" or "static" or "strictfp" or "super" or "switch" or "synchronized" or "this" or
+                    "throw" or "throws" or "transient" or "true" or "try" or "void" or "volatile" or "while" or
+
+                    // TypeScript
+                    "any" or "as" or "boolean" or "break" or "case" or "catch" or "class" or "const" or
+                    "continue" or "debugger" or "declare" or "default" or "delete" or "do" or "else" or
+                    "enum" or "export" or "extends" or "false" or "finally" or "for" or "from" or "function" or
+                    "if" or "implements" or "import" or "in" or "instanceof" or "interface" or "is" or
+                    "keyof" or "let" or "module" or "namespace" or "never" or "new" or "null" or "number" or
+                    "object" or "package" or "private" or "protected" or "public" or "readonly" or "require" or
+                    "return" or "string" or "super" or "switch" or "symbol" or "this" or "throw" or "true" or
+                    "try" or "type" or "typeof" or "undefined" or "unique" or "unknown" or "var" or "void" or
+                    "while" or "with" or "yield" or
+
+                    // Rust
+                    "abstract" or "as" or "async" or "await" or "become" or "box" or "break" or "const" or
+                    "continue" or "crate" or "do" or "dyn" or "else" or "enum" or "extern" or "false" or
+                    "final" or "fn" or "for" or "if" or "impl" or "in" or "let" or "loop" or "macro" or
+                    "match" or "mod" or "move" or "mut" or "override" or "priv" or "pub" or "ref" or
+                    "return" or "self" or "Self" or "static" or "struct" or "super" or "trait" or "true" or
+                    "try" or "type" or "typeof" or "union" or "unsafe" or "use" or "where" or "while" or
+
+                    // Go
+                    "break" or "case" or "chan" or "const" or "continue" or "default" or "defer" or "else" or
+                    "fallthrough" or "for" or "func" or "go" or "goto" or "if" or "import" or "interface" or
+                    "map" or "package" or "range" or "return" or "select" or "struct" or "switch" or "type" or
+                    "var" or
+
+                    // Reserved keywords or special cases across multiple languages
+                    "arguments" or "eval" or "null" or "true" or "false" or "undefined" or "void" => true,
+                _ => false
+            };
+        }
+
+        public int line_in_src_code => symbol!.Locations[0].GetLineSpan().StartLinePosition.Line + 1;
+        public ISymbol? symbol;
+    }
+
+    public abstract class Entity : HasDocs
+    {
+        public Entity? origin;
+        public static readonly Dictionary<ISymbol, Entity> entities = new(SymbolEqualityComparer.Default);
+
+        public BaseTypeDeclarationSyntax? node;
+
+        public Entity? parent_entity => entities.GetValueOrDefault(symbol!.OriginalDefinition.ContainingType);
+
+        public ProjectImpl in_project
+        {
+            get
+            {
+                for (var e = this; ; e = e.parent_entity)
+                    if (e is ProjectImpl project)
+                        return project;
+            }
+        }
+
+
+        public ProjectImpl.HostImpl? in_host
+        {
+            get
+            {
+                for (var e = this; e != null; e = e.parent_entity)
+                    switch (e)
+                    {
+                        case ProjectImpl.HostImpl host: return host;
+                        case ProjectImpl: return null;
+                    }
+
+                return null;
+            }
+        }
+
+
+        public string full_path
+        {
+            get
+            {
+                if (this is ProjectImpl)
+                    return this == project ?
+                               "" :
+                               symbol!.ToString() ?? "";
+
+                var path = _name;
+                for (var e = parent_entity; ; path = e._name + "." + path, e = e.parent_entity)
+                    if (e is ProjectImpl)
+                        return (e == project //root project
+                                    ?
+                                    "" :
+                                    e.symbol + "." //full path
+                               ) + path;
+            }
+        }
+
+
+        public INamedTypeSymbol? symbol;
+        public SemanticModel model;
+
+
+        public bool? _included;
+        public virtual bool included => _included ?? false;
+
+
+        //Identify and mark the scope of entities requiring re-initialization due to a detected cyclic dependency.
+        private uint _inited = int.MaxValue;
+
+        private static bool cyclic = false; //If a cyclic dependency is detected during initialization, re-initialization is required.
+        private static uint inited_seed = 0;
+        private static uint fix_inited_seed = 0;
+
+        public static void start()
+        {
+            cyclic = false;
+            fix_inited_seed = inited_seed;
+        }
+
+        public static bool restart()
+        {
+            if (!cyclic) return false;
+            inited_seed = fix_inited_seed;
+            cyclic = false;
+            return true;
+        }
+
+        public bool inited => _inited < inited_seed;
+
+        public void set_inited() => _inited = ++inited_seed;
+
+        public IEnumerable<INamedTypeSymbol> this_modified => symbol!.Interfaces.Where(I => I.isModify());
+
+        public virtual void Init(HashSet<object> once)
+        {
+            if (inited || !once.Add(this) && (cyclic = true)) return; //Ensure the entity is initialized only once and prevent re-entry caused by cyclic references.
+
+            if (!As_Modifier_Dispatch_Modifications_On_Targets(once)) Collect_Modification(this, once);
+
+            once.Remove(this);
+            set_inited(); //Only from this point is the entity fully initialized
+        }
+
+        public bool modifier;
+
+        public virtual bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
+        {
+            foreach (var m in this_modified)
+            {
+                modifier = true;
+                Collect_Modification(entities[m.TypeArguments[0]], once);
+            }
+
+            return modifier;
+        }
+
+
+        protected virtual void Collect_Modification(Entity target, HashSet<object> once)
+        {
+            //   UP
+            //   |
+            //   V
+            //  down
+
+            foreach (var comment in node!.GetLeadingTrivia()
+                                         .Select(t => t.GetStructure())
+                                         .OfType<DocumentationCommentTriviaSyntax>())
+                foreach (var see in comment.DescendantNodes()
+                                           .OfType<XmlCrefAttributeSyntax>())
+                    target.modify(model.GetSymbolInfo(see.Cref).Symbol!, see.Parent!.Parent!.DescendantNodes().FirstOrDefault(t => see.Span.End < t.Span.Start)?.ToString().Trim()[0] != '-', once);
+
+            //left -> right
+
+            if (node!.BaseList == null) return;
+
+            foreach (var item in node!.BaseList!.Types)
+            {
+                void modify_from(SyntaxNode entity, bool add)
+                {
+                    var str = entity.ToString();
+
+                    if (str.StartsWith("_<")) //list
+                    {
+                        foreach (var arg in entity.DescendantNodes().OfType<GenericNameSyntax>())
+                            foreach (var t in arg.TypeArgumentList.Arguments)
+                                modify_from(t, true);
+                    }
+                    else if (str.StartsWith("X<")) //delete list
+                        foreach (var arg in entity.DescendantNodes().OfType<GenericNameSyntax>())
+                            foreach (var t in arg.TypeArgumentList.Arguments)
+                                modify_from(t, false);
+                    else if (!str.StartsWith("Modify<") && !str.StartsWith("ChannelFor<"))
+                        target.modify(model.GetTypeInfo(entity is SimpleBaseTypeSyntax sbt ?
+                                                            sbt.Type :
+                                                            entity).Type!, add, once);
+                }
+
+                modify_from(item, true);
+            }
+        }
+
+        public abstract void modify(ISymbol by_what, bool add, HashSet<object> once);
+
+        public Entity(ProjectImpl prj, CSharpCompilation? compilation, BaseTypeDeclarationSyntax? node) : base(prj, node == null ?
+                                                                                                                        "" :
+                                                                                                                        node.Identifier.ToString(), node)
+        {
+            if (compilation == null || node == null) return;
+            this.node = node;
+            model = compilation.GetSemanticModel(node.SyntaxTree);
+            base.symbol = symbol = model.GetDeclaredSymbol(node)!;
+
+
+            entities.Add(symbol, this);
+            if (!_name.Equals(symbol.Name))
+            {
+                AdHocAgent.LOG.Warning("The entity '{entity}' name at the {provided_path} line: {line} is prohibited. Please correct the name manually.", symbol, AdHocAgent.provided_path, line_in_src_code);
+                AdHocAgent.exit("");
+            }
+
+
+            foreach (var t in node.DescendantTrivia())
+            {
+                var tl = t.GetLocation().GetMappedLineSpan().StartLinePosition.Line + 1;
+                if (line_in_src_code < tl) break;
+                if (tl < line_in_src_code || !t.IsKind(SyntaxKind.MultiLineCommentTrivia)) continue;
+
+                var m = HasDocs.uid.Match(t.ToString());
+                if (!m.Success) continue;
+                uid = m.Groups[1].Value.to_base256_value();
+                break;
+            }
+        }
+
+        public ulong uid = ulong.MaxValue; // Unique identifier for the entity, used by the visualizer in code looks like this    /*ÿ*/
+
+        public int uid_pos //uid position in the source code
+        {
+            get
+            {
+                var span = symbol!.Locations[0].SourceSpan;
+                return span.Start + span.Length;
+            }
+        }
+
+        public bool no_info = true;
+
+        public Entity(ProjectImpl project, BaseTypeDeclarationSyntax? node) : base(project, node?.Identifier.ToString() ?? "", node) { this.node = node; }
+    }
+
+    public static class Extensions
+    {
+        public static bool isChannelFor(this ISymbol? sym) => sym != null && sym.ToString()!.StartsWith("org.unirail.Meta.ChannelFor<");
+        public static bool isMeta(this ISymbol? sym) => sym != null && sym.ToString()!.StartsWith("org.unirail.Meta");
+        public static bool is_(this ISymbol? sym) => sym != null && sym.ToString()!.StartsWith("org.unirail.Meta._<");
+        public static bool isX(this ISymbol? sym) => sym != null && sym.ToString()!.StartsWith("org.unirail.Meta.X<");
+        public static bool isModify(this ISymbol? sym) => sym != null && sym.ToString()!.StartsWith("org.unirail.Meta.Modify<");
+        public static bool isSet(this ISymbol? sym) => sym != null && sym.ToString()!.StartsWith("org.unirail.Meta.Set<");
+        public static bool isMap(this ISymbol? sym) => sym != null && sym.ToString()!.StartsWith("org.unirail.Meta.Map<");
+
+        public static ulong to_base256_value(this string str)
+        {
+            var ret = 0UL;
+            for (var i = 0; i < str.Length; i++)
+                ret |= (ulong)(str[i] - base256) << i * 8;
+
+            return ret;
+        }
+
+        private const int base256 = 0xFF;
+
+        public static int to_base256_chars(this ulong src, char[] dst)
+        {
+            var i = 0;
+            do dst[i++] = (char)((src & 0xFF) + base256);
+            while (0 < (src >>= 8));
+
+            return i;
+        }
+
+
+        public static void AddNew<T>(this List<T> dst, List<T> src) => src.ForEach(t =>
+                                                                                   {
+                                                                                       if (!dst.Contains(t)) dst.Add(t);
+                                                                                   });
+    }
+
+    internal class UID_Impl : UID
+    {
+        public static UID? data;
+        public static int data_bytes; //bytes allocated for Info
+
+        public override void Received(SaveLayout_UID.Receiver via)
+        {
+            data = this;
+            data_bytes += via.byte_;
+            via.byte_ = via.byte_max; //pack received. preventing continue
+        }
+
+        public static void read_write_uid() //We need to map the imported projects scope unique ID (project.uid << 16 | entity.uid) to the current project scope unique ID.
+        {
+            data = null;
+            data_bytes = 0;
+            foreach (var same_uid in ProjectImpl.projects
+                                                .GroupBy(p => p.uid)
+                                                .Where(g => g.Count() > 1))
+            {
+                var chars = new char[10];
+
+                AdHocAgent.exit($"Projects:\n{string.Join("\n", same_uid.Select(prj => prj.symbol!.ToString()))}\n have the same UID /*{new string(chars, 0, same_uid.Key.to_base256_chars(chars))}*/." +
+                                //
+                                $"Please manually change the project UID to /*{new string(chars, 0, (same_uid.Key + 1).to_base256_chars(chars))}*/.");
+            }
+
+            var update_info = !File.Exists(AdHocAgent.layout.Value); //need update info
+            var buffer = new byte[1024];
+
+            using var layout_file = new FileStream(AdHocAgent.layout.Value, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+
+            if (!update_info)
+            {
+                var reader = new SaveLayout_UID.Receiver();
+                _Allocator.DEFAULT.new_UID = (src) => new UID_Impl(); //switch UID_Info allocator to Info
+
+                var len = layout_file.Read(buffer, 0, buffer.Length);
+                do
+                {
+                    var i = reader.Write(buffer, 0, len);
+                    if (data != null) break;
+                    data_bytes += i;
+                }
+                while (0 < (len = layout_file.Read(buffer, 0, buffer.Length)));
+            }
+
+            if (update_info = data == null) data = new UID_Impl();
+
+
+            var new_uid = 0U;
+            var root_project = ProjectImpl.projects[0];
+
+
+            if (data!._projects == null) // Initialize _projects and assign UIDs sequentially
+            {
+                data._projects = new Dictionary<ulong, byte>(ProjectImpl.projects.Count);
+                foreach (var prj in ProjectImpl.projects)
+                    data._projects.Add(prj.uid, (byte)(prj.uid = new_uid++));
+
+                update_info = true;
+            }
+            else
+            {
+                foreach (var prj in ProjectImpl.projects) // First loop: Update existing project UIDs or add with a default value
+                    if (data._projects!.TryGetValue(prj.uid, out var uid))
+                        prj.uid = uid;
+
+                foreach (var prj in ProjectImpl.projects.Where(p => 0xFF < p.uid)) // Second loop: Assign new UIDs where necessary
+                {
+                    while (data._projects!.ContainsValue((byte)new_uid)) new_uid++; // Ensure no duplicate UIDs
+                    data._projects!.Add(prj.uid, (byte)(prj.uid = new_uid++));       // Store new UID
+                    update_info = true;
+                }
+            }
+
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=================================== Unique Indexing the hosts diagram
+            ushort host_path(ProjectImpl.HostImpl host) => (ushort)(host.project.uid << 8 | //1byte
+                                                                    host.uid);              //1byte
+
+            new_uid = 0U;
+            if (data._hosts == null) // Initialize _hosts and assign UIDs sequentially
+            {
+                data._hosts = new Dictionary<ushort, byte>(root_project.hosts.Count);
+                foreach (var h in root_project.hosts)
+                    data._hosts.Add(host_path(h), (byte)(h.uid = new_uid++));
+
+                update_info = true;
+            }
+            else
+            {
+                foreach (var h in root_project.hosts) // First loop to update existing hosts' UIDs
+                    if (data._hosts.TryGetValue(host_path(h), out var uid))
+                    {
+                        h.uid = uid;
+                        h.no_info = false;
+                    }
+
+                foreach (var h in root_project.hosts.Where(h => h.no_info)) // Second loop to assign new UIDs to hosts without one
+                {
+                    while (data._hosts.ContainsValue((byte)new_uid)) new_uid++; // Ensure no duplicate UIDs
+                    data._hosts.Add(host_path(h), (byte)(h.uid = new_uid++));
+                    update_info = true;
+                }
+            }
+
+
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@===================================  Unique Indexing the packs diagram
+            uint pack_path(ProjectImpl.HostImpl.PackImpl pack) => (uint)(pack.project.uid << 16 | //1byte
+                                                                         pack.uid);               //2byte
+
+            new_uid = 0U;
+            if (data._packs == null) // Initialize _packs and assign UIDs sequentially
+            {
+                data._packs = new Dictionary<uint, ushort>(root_project.packs.Count);
+                foreach (var p in root_project.packs)
+                    data._packs.Add(pack_path(p), (byte)(p.uid = new_uid++));
+
+                update_info = true;
+            }
+            else
+            {
+                foreach (var p in root_project.packs) // First loop to update existing packs' UIDs
+                    if (data._packs.TryGetValue(pack_path(p), out var uid))
+                    {
+                        p.uid = uid;
+                        p.no_info = false;
+                    }
+
+                foreach (var p in root_project.packs.Where(h => h.no_info)) // Second loop to assign new UIDs to packs without one
+                {
+                    while (data._packs.ContainsValue((byte)new_uid)) new_uid++; // Ensure no duplicate UIDs
+                    data._packs.Add(pack_path(p), (byte)(p.uid = new_uid++));
+                    update_info = true;
+                }
+            }
+
+
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ===================================  Unique Indexing the channels-stages-branches diagram
+            ushort channel_path(ProjectImpl.ChannelImpl ch) => (ushort)(ch.project.uid << 8 | //1byte
+                                                                        ch.uid);              //1byte
+
+            new_uid = 0U;
+            if (data!._channels == null) // Initialize _channels and assign UIDs sequentially
+            {
+                data._channels = new Dictionary<ushort, byte>(root_project.channels.Count);
+                foreach (var ch in root_project.channels)
+                    data._channels.Add(channel_path(ch), (byte)(ch.uid = new_uid++));
+
+                update_info = true;
+            }
+            else
+            {
+                foreach (var ch in root_project.channels) // First loop to update existing channels' UIDs
+                    if (data._channels.TryGetValue(channel_path(ch), out var uid))
+                    {
+                        ch.uid = uid;
+                        ch.no_info = false;
+                    }
+
+                foreach (var ch in root_project.channels.Where(ch => ch.no_info)) // Second loop to assign new UIDs to channels without one
+                {
+                    while (data._channels.ContainsValue((byte)new_uid)) new_uid++; // Ensure no duplicate UIDs
+                    data._channels.Add(channel_path(ch), (byte)(ch.uid = new_uid++));
+                    update_info = true;
+                }
+            }
+
+
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            uint stage_path(ProjectImpl.ChannelImpl ch, ProjectImpl.ChannelImpl.StageImpl st) => (uint)(ch.uid << 24 |         //1byte
+                                                                                                        st.project.uid << 16 | //1byte
+                                                                                                        st.uid);               //2bytes
+
+            new_uid = 0;
+            if (data._stages == null) // Initialize _stages and assign UIDs sequentially
+            {
+                data._stages = new Dictionary<uint, ushort>(10);
+
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        data._stages.Add(stage_path(ch, st), (ushort)(st.uid = new_uid++));
+            }
+            else
+            {
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        if (data._stages.TryGetValue(stage_path(ch, st), out var uid))
+                        {
+                            st.uid = uid;
+                            st.no_info = false;
+                        }
+
+
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages.Where(st => st.no_info))
+                    {
+                        while (data._stages.ContainsValue((byte)new_uid)) new_uid++; // Ensure no duplicate UIDs
+                        data._stages.Add(stage_path(ch, st), (ushort)(st.uid = new_uid++));
+                        update_info = true;
+                    }
+            }
+
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            ulong branch_path(ProjectImpl.ChannelImpl ch, ProjectImpl.ChannelImpl.StageImpl st, bool L, ProjectImpl.ChannelImpl.BranchImpl br) => (L ?
+                                                                                                                                                       1UL << 41 :
+                                                                                                                                                       0U) | //1bit
+                                                                                                                                                  ch.uid << 32 | //1byte
+                                                                                                                                                  st.uid << 24 | //2bytes
+                                                                                                                                                  br.project.uid << 16 | //1byte
+                                                                                                                                                  br.uid;                //2bytes
+
+            bool check(ProjectImpl.ChannelImpl ch, ProjectImpl.ChannelImpl.StageImpl st, ProjectImpl.ChannelImpl.BranchImpl br)
+            {
+                if (br.packs.Count == 0)
+                    AdHocAgent.exit($"In channel '{ch.symbol}', stage '{st.symbol}', the branch targeting '{br.goto_stage!.symbol}' has no associated packs. This is an error. Please fix the issue.");
+                return true;
+            }
+
+            new_uid = 0;
+            if (data._branches == null) // Initialize _branches and assign UIDs sequentially
+            {
+                data._branches = new Dictionary<ulong, ushort>(10);
+
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        foreach (var br in st.branchesL.Where(br => check(ch, st, br)))
+                            data._branches.Add(branch_path(ch, st, true, br), br.uid = (ushort)new_uid++);
+
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        foreach (var br in st.branchesR.Where(br => check(ch, st, br)))
+                            data._branches.Add(branch_path(ch, st, false, br), br.uid = (ushort)new_uid++);
+            }
+            else
+            {
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        foreach (var br in st.branchesL.Where(br => check(ch, st, br)))
+                            if (data._branches.TryGetValue(branch_path(ch, st, true, br), out var uid))
+                            {
+                                br.uid = uid;
+                                br.no_info = false;
+                            }
+
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        foreach (var br in st.branchesR.Where(br => check(ch, st, br)))
+                            if (data._branches.TryGetValue(branch_path(ch, st, false, br), out var uid))
+                            {
+                                br.uid = uid;
+                                br.no_info = false;
+                            }
+
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        foreach (var br in st.branchesL.Where(br => br.no_info))
+                        {
+                            while (data._branches.ContainsValue((byte)new_uid)) new_uid++; // Ensure no duplicate UIDs
+                            data._branches.Add(branch_path(ch, st, true, br), br.uid = (ushort)new_uid++);
+                            update_info = true;
+                        }
+
+                foreach (var ch in root_project.channels)
+                    foreach (var st in ch.stages)
+                        foreach (var br in st.branchesR.Where(br => br.no_info))
+                        {
+                            while (data._branches.ContainsValue((byte)new_uid)) new_uid++; // Ensure no duplicate UIDs
+                            try { data._branches.Add(branch_path(ch, st, false, br), br.uid = (ushort)new_uid++); }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                                throw;
+                            }
+
+                            update_info = true;
+                        }
+            }
+
+
+            if (!update_info) return;
+
+            byte[]? preserve_bytes = null; //bytes needed to preserve
+            if (data_bytes < layout_file.Length)
+            {
+                layout_file.Position = data_bytes;
+                layout_file.Read(preserve_bytes = new byte[layout_file.Length - data_bytes]);
+            }
+
+            layout_file.Position = 0; //write info first
+
+            var writer = new SaveLayout_UID.Transmitter();
+
+            writer.subscribeOnNewBytesToTransmitArrive((src) =>
+                                                       {
+                                                           for (var len = src.Read(buffer, 0, buffer.Length); 0 < len; len = src.Read(buffer, 0, buffer.Length))
+                                                               layout_file!.Write(buffer, 0, len);
+                                                       });
+            writer.send(data);
+
+            data_bytes = (int)layout_file.Position; //fix info size
+            if (preserve_bytes != null) layout_file!.Write(preserve_bytes);
         }
     }
 }

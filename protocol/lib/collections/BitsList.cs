@@ -1,34 +1,34 @@
-//MIT License
+//  MIT License
 //
-//Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
-//For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
-//GitHub Repository: https://github.com/AdHoc-Protocol
+//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
+//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
+//  GitHub Repository: https://github.com/AdHoc-Protocol
 //
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to use,
-//copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-//the Software, and to permit others to do so, under the following conditions:
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to use,
+//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+//  the Software, and to permit others to do so, under the following conditions:
 //
-//1. The above copyright notice and this permission notice must be included in all
-//   copies or substantial portions of the Software.
+//  1. The above copyright notice and this permission notice must be included in all
+//     copies or substantial portions of the Software.
 //
-//2. Users of the Software must provide a clear acknowledgment in their user
-//   documentation or other materials that their solution includes or is based on
-//   this Software. This acknowledgment should be prominent and easily visible,
-//   and can be formatted as follows:
-//   "This product includes software developed by Chikirev Sirguy and the Unirail Group
-//   (https://github.com/AdHoc-Protocol)."
+//  2. Users of the Software must provide a clear acknowledgment in their user
+//     documentation or other materials that their solution includes or is based on
+//     this Software. This acknowledgment should be prominent and easily visible,
+//     and can be formatted as follows:
+//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
+//     (https://github.com/AdHoc-Protocol)."
 //
-//3. If you modify the Software and distribute it, you must include a prominent notice
-//   stating that you have changed the Software.
+//  3. If you modify the Software and distribute it, you must include a prominent notice
+//     stating that you have changed the Software.
 //
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
-//OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//SOFTWARE.
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 
 using System;
 using System.Collections;
@@ -38,8 +38,7 @@ using System.Text;
 
 namespace org.unirail.collections;
 
-public interface BitsList<T>
-    where T : struct
+public interface BitsList<T> where T : struct
 {
     public static ulong mask(int bits) => (1UL << bits) - 1;
 
@@ -76,6 +75,7 @@ public interface BitsList<T>
 
     static int len4bits(uint bits) => (int)((bits + BITS) >> LEN);
 
+
     abstract class R : ICloneable, IEquatable<R>
     {
         protected ulong[] values = Array.Empty<ulong>();
@@ -98,46 +98,46 @@ public interface BitsList<T>
             default_value = default;
         }
 
+
         protected R(int bits_per_item, T default_value, int Count)
         {
             mask = mask(bits = bits_per_item);
             this.Count = Math.Abs(Count);
             values = new ulong[len4bits((uint)(this.Count * bits))];
-            if (to_byte(this.default_value = default_value) == 0)
-                return;
-            for (var i = 0; i < Count; i++)
-                append(this, i, default_value);
+            if (to_byte(this.default_value = default_value) == 0) return;
+            for (var i = 0; i < Count; i++) append(this, i, default_value);
         }
 
         public int Capacity() => values.Length * BITS / bits;
 
-        //Adjusts the length of the storage array based on the number of items.
-        //If 0 < items , it adjusts the storage space according to the 'items' parameter.
-        //If items < 0, it cleans up and allocates -items space.
+        // Adjusts the length of the storage array based on the number of items.
+        // If 0 < items , it adjusts the storage space according to the 'items' parameter.
+        // If items < 0, it cleans up and allocates -items space.
         protected void Capacity(int items)
         {
-            if (0 < items) //If positive, adjust the array size to fit the specified number of items.
+            if (0 < items) // If positive, adjust the array size to fit the specified number of items.
             {
-                if (items < Count)
-                    Count = items; //Adjust the size if items are less than the current size.
+                if (items < Count) Count = items; // Adjust the size if items are less than the current size.
 
                 Array.Resize(ref values, len4bits((uint)(items * bits)));
                 return;
             }
 
-            //If negative, clear the array and allocate space for the absolute value of items.
+            // If negative, clear the array and allocate space for the absolute value of items.
             var new_values_length = len4bits((uint)(-items * bits));
 
             if (values.Length != new_values_length)
             {
-                //Allocate new space or set it to an empty array if new length is 0.
-                values = new_values_length == 0 ? Array.Empty<ulong>() : new ulong[new_values_length];
+                // Allocate new space or set it to an empty array if new length is 0.
+                values = new_values_length == 0 ?
+                    Array.Empty<ulong>() :
+                    new ulong[new_values_length];
 
                 Count = 0;
                 return;
             }
 
-            clear(); //Clear the array.
+            clear(); // Clear the array.
         }
 
         protected void clear()
@@ -153,17 +153,16 @@ public interface BitsList<T>
             var hash = HashCode.Combine(149989999, Count);
             var i = index((uint)Count);
             hash = HashCode.Combine(hash, values[i] & (1UL << bit((uint)Count)) - 1);
-            while (-1 < --i)
-                hash = HashCode.Combine(hash, values[i]);
+            while (-1 < --i) hash = HashCode.Combine(hash, values[i]);
             return hash;
         }
+
 
         public override bool Equals(object? other) => other != null && Equals(other as R);
 
         public bool Equals(R? other)
         {
-            if (other == null || other.Count != Count)
-                return false;
+            if (other == null || other.Count != Count) return false;
 
             var i = index((uint)Count);
             var mask = (1UL << bit((uint)Count)) - 1;
@@ -179,7 +178,9 @@ public interface BitsList<T>
             {
                 var _index = (uint)index((uint)(item *= bits));
                 var _bit = bit((uint)item);
-                return BITS < _bit + bits ? value(values[_index], values[_index + 1], _bit, bits, mask) : value(values[_index], _bit, mask);
+                return BITS < _bit + bits ?
+                    value(values[_index], values[_index + 1], _bit, bits, mask) :
+                    value(values[_index], _bit, mask);
             }
             set => throw new NotImplementedException();
         }
@@ -206,8 +207,7 @@ public interface BitsList<T>
             item = index(p);
             var src = dst.values;
             var dst_ = dst.values;
-            if (dst.Capacity() * BITS < p)
-                dst.Capacity(-Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits(p)));
+            if (dst.Capacity() * BITS < p) dst.Capacity(-Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits(p)));
             var v = to_byte(value) & dst.mask;
             var _bit = bit(p);
             if (0 < _bit)
@@ -233,64 +233,55 @@ public interface BitsList<T>
             {
                 var i = src[item];
                 dst_[item] = i << dst.bits | v;
-                if (max < ++item)
-                    break;
+                if (max < ++item) break;
                 v = i >> BITS - dst.bits;
             }
         }
 
+
         protected static void set(R dst, int from, params T[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, src[i]);
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, src[i]);
         }
 
         protected static void set(R dst, int from, params byte[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params sbyte[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params ushort[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params short[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params int[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params uint[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params long[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set(R dst, int from, params ulong[] src)
         {
-            for (var i = src.Length; -1 < --i;)
-                set1(dst, from + i, from_byte(src[i]));
+            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
         }
 
         protected static void set1(R dst, int item, T src)
@@ -310,14 +301,12 @@ public interface BitsList<T>
                     dst.values[_index] = i << k >> k | v << _bit;
                     dst.values[_index + 1] = dst.values[_index + 1] >> dst.bits - k << dst.bits - k | v >> k;
                 }
-                else
-                    dst.values[_index] = ~(~0UL >> BITS - dst.bits << _bit) & i | v << _bit;
+                else dst.values[_index] = ~(~0UL >> BITS - dst.bits << _bit) & i | v << _bit;
 
                 return;
             }
 
-            if (dst.Capacity() <= item)
-                dst.Capacity(Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits((uint)(total_bits + dst.bits))));
+            if (dst.Capacity() <= item) dst.Capacity(Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits((uint)(total_bits + dst.bits))));
             if (to_byte(dst.default_value) != 0)
                 for (var t = dst.Count; t < item; t++)
                     append(dst, item, dst.default_value);
@@ -349,8 +338,7 @@ public interface BitsList<T>
         {
             if (item + 1 == dst.Count)
             {
-                if (to_byte(dst.default_value) == 0)
-                    append(dst, item, default); //zeroed place
+                if (to_byte(dst.default_value) == 0) append(dst, item, default); //zeroed place
                 dst.Count--;
                 return;
             }
@@ -363,19 +351,15 @@ public interface BitsList<T>
 
             if (_index + 1 == dst.Capacity())
             {
-                if (_bit == 0)
-                    dst.values[_index] = i >> dst.bits;
-                else if (k < dst.bits)
-                    dst.values[_index] = i << k >> k;
-                else if (dst.bits < k)
-                    dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit;
+                if (_bit == 0) dst.values[_index] = i >> dst.bits;
+                else if (k < dst.bits) dst.values[_index] = i << k >> k;
+                else if (dst.bits < k) dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit;
 
                 dst.Count--;
                 return;
             }
 
-            if (_bit == 0)
-                dst.values[_index] = i >>= dst.bits;
+            if (_bit == 0) dst.values[_index] = i >>= dst.bits;
             else if (k < dst.bits)
             {
                 var ii = dst.values[_index + 1];
@@ -418,19 +402,18 @@ public interface BitsList<T>
 
         public StringBuilder ToString(StringBuilder? dst)
         {
-            if (dst == null)
-                dst = new StringBuilder(Count * 4);
-            else
-                dst.EnsureCapacity(dst.Length + Count * 4);
+            if (dst == null) dst = new StringBuilder(Count * 4);
+            else dst.EnsureCapacity(dst.Length + Count * 4);
             var src = values[(uint)0];
             for (int bp = 0, max = Count * bits, i = 1; bp < max; bp += bits, i++)
             {
                 var _bit = bit((uint)bp);
                 var index1 = (uint)(index((uint)bp) + 1);
-                var _value = BITS < _bit + bits ? value(src, src = values[index1], _bit, bits, mask) : value(src, _bit, mask);
+                var _value = BITS < _bit + bits ?
+                    value(src, src = values[index1], _bit, bits, mask) :
+                    value(src, _bit, mask);
                 dst.Append(_value).Append('\t');
-                if (i % 10 == 0)
-                    dst.Append('\t').Append(i / 10 * 10).Append('\n');
+                if (i % 10 == 0) dst.Append('\t').Append(i / 10 * 10).Append('\n');
             }
 
             return dst;
@@ -468,10 +451,8 @@ public interface BitsList<T>
 
         public T[] ToArray(T[]? dst)
         {
-            if (Count == 0)
-                return null;
-            if (dst == null || dst.Length < Count)
-                dst = new T[Count];
+            if (Count == 0) return null;
+            if (dst == null || dst.Length < Count) dst = new T[Count];
             for (int item = 0, max = Count * bits; item < max; item += bits)
                 dst[item / bits] = this[item];
             return dst;
@@ -480,6 +461,7 @@ public interface BitsList<T>
         public bool Contains(T item) => -1 < indexOf(item);
 
         public int IndexOf(T item) => indexOf(item);
+
 
         public Enumerator GetEnumerator() => new Enumerator(this);
     }
@@ -542,8 +524,7 @@ public interface BitsList<T>
 
         public RW Add(params T[] values)
         {
-            foreach (var value in values)
-                Set(Count, value);
+            foreach (var value in values) Set(Count, value);
             return this;
         }
 
@@ -643,6 +624,7 @@ public interface BitsList<T>
             return this;
         }
 
+
         public new RW Capacity(int value)
         {
             if (value < 1)
@@ -660,12 +642,9 @@ public interface BitsList<T>
             get => base.Count;
             set
             {
-                if (value < 1)
-                    Clear();
-                else if (base.Count < value)
-                    set1(this, value - 1, default_value);
-                else
-                    base.Count = value;
+                if (value < 1) Clear();
+                else if (base.Count < value) set1(this, value - 1, default_value);
+                else base.Count = value;
             }
         }
 

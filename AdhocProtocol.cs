@@ -39,36 +39,36 @@ namespace org.unirail
      * AdHoc agent protocol description
      */
     /**
-        <see cref = 'Agent.Project'          id = '5'/>
-        <see cref = 'Agent.Login'            id = '8'/>
-        <see cref = 'Agent.Proto'            id = '7'/>
-        <see cref = 'Agent.RequestResult'    id = '6'/>
-        <see cref = 'Agent.Signup'           id = '12'/>
-        <see cref = 'Agent.Version'          id = '13'/>
-        <see cref = 'Observer.Layout'        id = '9'/>
+        <see cref = 'Agent.Login'            id = '5'/>
+        <see cref = 'Agent.Project'          id = '8'/>
+        <see cref = 'Agent.Proto'            id = '9'/>
+        <see cref = 'Agent.RequestResult'    id = '7'/>
+        <see cref = 'Agent.Signup'           id = '6'/>
+        <see cref = 'Agent.Version'          id = '2'/>
+        <see cref = 'LayoutFile.Info'        id = '1'/>
+        <see cref = 'LayoutFile.UID'         id = '0'/>
         <see cref = 'Observer.Show_Code'     id = '11'/>
-        <see cref = 'Observer.Up_to_date'    id = '10'/>
-        <see cref = 'Server.Info'            id = '0'/>
+        <see cref = 'Observer.Up_to_date'    id = '12'/>
+        <see cref = 'Server.Info'            id = '4'/>
         <see cref = 'Server.Invitation'      id = '3'/>
-        <see cref = 'Server.Result'          id = '1'/>
+        <see cref = 'Server.Result'          id = '10'/>
     */
-    public interface AdhocProtocol :
+    public interface AdhocProtocol/*ǫſǇĲ*/  :
         _<
-            AdhocProtocol.Agent.Project.Host.Pack.Field.DataType, //propagate DataType constants set to all hosts
-            AdhocProtocol.Agent.Project.Channel.Stage.Type
+            AdhocProtocol.Agent.Project.Host.Pack.Field.DataType //propagate DataType constants set to all hosts
         >
     {
-        class max_65_000_chars
+        class max_65_000_chars/*ÿ*/
         {
             [D(+65_000)] string TYPEDEF; // Maximum 65,000 characters
         }
 
-        class max_1_000_chars
+        class max_1_000_chars/*Ā*/
         {
             [D(+1_000)] string TYPEDEF; // Maximum 1,000 characters
         }
 
-        class Root
+        class Root/*ā*/
         {
             string name;
             max_65_000_chars doc; // Documentation with a maximum of 65,000 characters
@@ -77,7 +77,7 @@ namespace org.unirail
 
 
         /**
-        <see cref = 'InJAVA'/> following packs generate in JAVA with full implementation
+        <see cref = 'InJAVA'/> The following packs of the `Server` host are fully implemented and generated in JAVA.
         <see cref = 'Result'/>
         <see cref = 'Agent.Proto'/>
         <see cref = 'Agent.Login'/>
@@ -85,22 +85,22 @@ namespace org.unirail
         <see cref = 'Agent.Signup'/>
         <see cref = 'Server.Invitation'/>
         <see cref = 'Agent.Project.Channel.Stage.Branch'/>
-        <see cref = 'InJAVA'/>-- by default rest of the packs in JAVA generate abstracted (without implementation)
+        <see cref = 'InJAVA'/>-- The remaining packs are generated in JAVA as abstract (without implementation).
         */
-        struct Server /*ā*/ : Host
+        struct Server/*ÿ*/  : Host
         {
-            public class Invitation /*Ā*/
+            public class Invitation/*Ă*/
             {
                 public ulong uid; // Unique identifier for the invitation
             }
 
-            public class Info /*ā*/
+            public class Info/*ă*/
             {
                 string task;
                 max_65_000_chars info; // Information with a maximum of 65,000 characters
             }
 
-            public class Result /*ć*/
+            public class Result/*Ą*/
             {
                 string task;
                 [D(3_000_0000)] Binary[,] result; //3 megabytes compressed binary
@@ -110,8 +110,9 @@ namespace org.unirail
 
 
         /**
-            <see cref = 'InCS'/> following packs generate in C# with full implementation
+            <see cref = 'InCS'/> The following packs of the `Agent` host are fully implemented and generated in C#.
             <see cref = 'Server.Info'/>
+            <see cref = 'LayoutFile.UID'/>
             <see cref = 'Server.Result'/>
             <see cref = 'RequestResult'/>
             <see cref = 'Version'/>
@@ -120,11 +121,11 @@ namespace org.unirail
             <see cref = 'Proto'/>
             <see cref = 'Observer.Up_to_date'/>
             <see cref = 'Observer.Show_Code'/>
-            <see cref = 'InCS'/>-- by default rest of the packs in C#  generate abstracted (without implementation)
+            <see cref = 'InCS'/>-- The remaining packs are generated in C# as abstract (without implementation).
          */
-        struct Agent /*ÿ*/ : Host
+        struct Agent/*Ā*/  : Host
         {
-            public class Project /*ą*/ : Root
+            public class Project/*ą*/  : Root
             {
                 string task; // Unique ID
                 string namespacE;
@@ -138,9 +139,9 @@ namespace org.unirail
                 [D(0xFF)] Channel[,] channels; // 512/2 = 256 max
                 #endregion
 
-                public class Host : Root
+                public class Host/*Ć*/  : Root
                 {
-                    ushort uid;   // Layout ID
+                    byte uid;   // Layout ID
                     Langs langs; // Languages set to generate source code. A bit-per language.
 
                     /**
@@ -160,7 +161,7 @@ namespace org.unirail
                     [D(65_000)] ushort[,] packs; // Local constants or enums, referred to as packs, are declared within the scope of the current host.
 
                     [Flags]
-                    public enum Langs : ushort
+                    public enum Langs/*Ę*/  : ushort
                     {
                         InCPP,
                         InRS,
@@ -171,7 +172,7 @@ namespace org.unirail
                         All = 0xFFFF
                     }
 
-                    public class Pack : Root
+                    public class Pack/*ć*/  : Root
                     {
                         ushort id;     // Pack's identifier
                         ushort? parent; // Identifier of the parent pack
@@ -183,7 +184,7 @@ namespace org.unirail
                         [D(65_000)] int[,] fields;
                         [D(65_000)] int[,] static_fields;
 
-                        public class Field : Root
+                        public class Field/*Ĉ*/  : Root
                         {
                             [D(32)] int[,] dims; // Dimensions
 
@@ -227,7 +228,7 @@ namespace org.unirail
                             max_1_000_chars value_string; // Constant value
                             [D(255)] max_1_000_chars[,] array;        // Constant array values
 
-                            public enum DataType
+                            public enum DataType/*ę*/
                             {
                                 t_constants = 65535,
                                 t_enum_sw = 65534,
@@ -255,7 +256,7 @@ namespace org.unirail
                     }
                 }
 
-                public class Channel : Root
+                public class Channel/*ĉ*/  : Root
                 {
                     ushort hostL;
                     [D(0xFFFF)] ushort[,] hostL_transmitting_packs;
@@ -267,17 +268,18 @@ namespace org.unirail
 
                     [D(0xFFF)] Stage[,] stages;
 
-                    ushort uid; // Layout ID
+                    byte uid; // Layout ID
 
-                    public class Stage : Root
+                    public class Stage/*Ċ*/  : Root
                     {
                         ushort timeout;
                         ushort uid; // Layout ID
+                        private bool LR;
 
                         [D(0xFFF)] Branch[,] branchesL;
                         [D(0xFFF)] Branch[,] branchesR;
 
-                        public class Branch
+                        public class Branch/*ċ*/
                         {
                             ushort uid; // Layout ID
                             string doc;
@@ -286,27 +288,22 @@ namespace org.unirail
                             [D(0xFFFF)] ushort[,] packs;
                         }
 
-                        public enum Type : ushort
-                        {
-                            Exit = ushort.MaxValue,
-                            None = ushort.MaxValue - 1,
-                            Remaining = ushort.MaxValue - 2,
-                        }
+                        const ushort Exit = ushort.MaxValue;
                     }
                 }
             }
 
-            public class RequestResult /*Ą*/ // The request for pending task result
+            public class RequestResult/*Č*/  // The request for pending task result
             {
                 string task;
             }
 
-            public class Signup /*ă*/
+            public class Signup/*č*/
             {
                 [D(50)] Binary[,] oauth; // OAuth token with a maximum of 50 characters
             }
 
-            public class Login /*Ă*/
+            public class Login/*Ď*/
             {
                 public ulong uid; // Unique identifier for the login
             }
@@ -314,13 +311,13 @@ namespace org.unirail
             /*
              The first pack negotiates versions
             */
-            public class Version /*ÿ*/
+            public class Version/*ď*/
             {
                 public uint uid; // Unique identifier for the version
             }
 
 
-            public class Proto /*Ć*/
+            public class Proto/*Đ*/
             {
                 string task; // Unique ID
                 string name;
@@ -328,53 +325,13 @@ namespace org.unirail
             }
         }
 
-        class Entity
-        {
-            Type tYpe;
-
-            public enum Type : byte
-            {
-                Project,
-                Host,
-                Pack,
-                Field,
-                Channel,
-                Stage,
-            }
-
-            ushort idx;
-        }
 
         /**
-        <see cref = 'InTS'/>
+        <see cref = 'InTS'/>All packs of the `Observer` host are fully implemented and generated in TypeScript
         */
-        struct Observer /*Ā*/ : Host
+        struct Observer/*ā*/  : Host
         {
-            public class Layout /*Ĉ*/
-            {
-                byte split;
-                View host_packs;
-                View pack_fields;
-
-                class View
-                {
-                    int X; // Viewer parameters
-                    int Y;
-                    float zoom;
-
-                    Map<uint, XY> id2xy; // Fast access to info by ID
-                }
-
-                public class XY
-                {
-                    int x;
-                    int y;
-                }
-
-                Map<uint, XY> channels_id2xy;
-            }
-
-            public class Up_to_date /*Ċ*/ // Request to send updated Project pack or Up_to_date if data is not changed
+            public class Up_to_date/*đ*/  // Request to send updated Project pack or Up_to_date if data is not changed
             {
                 max_65_000_chars info; // Can be an updating error description
             }
@@ -386,10 +343,91 @@ namespace org.unirail
             // https://code.visualstudio.com/docs/editor/command-line#_launching-from-command-line
             //-g or --goto	When used with file:line{:character}, opens a file at a specific line and optional character position.
             //This argument is provided since some operating systems permit : in a file name.
-            public class Show_Code /*ĉ*/ : Entity { } // Request to show entity in editor
+            public class Show_Code/*Ē*/  : Entity { } // Request to show entity in editor
+
+            public class Entity/*ē*/
+            {
+                Type tYpe;
+
+                public enum Type/*Ě*/  : byte
+                {
+                    Project,
+                    Host,
+                    Pack,
+                    Field,
+                    Channel,
+                    Stage,
+                }
+
+                ushort idx; //Entity index in the project's container.
+            }
         }
 
-        interface Communication /*ÿ*/ : ChannelFor<Agent, Server>
+
+        /**
+        <see cref = 'InCS'/>All packs of the virtual `LayoutFile` host are fully implemented and generated in C#
+        */
+        struct LayoutFile/*Ă*/  : Host
+        {
+            public class UID/*Ĕ*/
+            {
+                Map<ulong, byte> projects;
+                Map<ushort, byte> hosts;
+                [D(+ushort.MaxValue)] Map<uint, ushort> packs;
+                Map<ushort, byte> channels;
+                [D(+ushort.MaxValue)] Map<uint, ushort> stages;
+                [D(+ushort.MaxValue)] Map<ulong, ushort> branches;
+            }
+
+            public class Info/*ĕ*/
+            {
+                byte split;
+                View host_packs;
+                View pack_fields;
+
+                class View/*Ė*/
+                {
+                    int X; // Viewer parameters
+                    int Y;
+                    float zoom;
+                }
+
+                public class XY/*ė*/
+                {
+                    int x;
+                    int y;
+                }
+
+                [D(0xFFFF)] XY?[,] hosts; //hosts diagram
+
+                [D(0xFFFF)] XY?[,] packs; //packs diagram
+
+                [D(0xFFFF)] XY?[,] channels; //channels-stages-branches diagram
+                [D(0xFFFF)] XY?[,] stages;
+                [D(0xFFFF)] XY?[,] branchas;
+            }
+        }
+
+        interface SaveLayout_UID/*ÿ*/  : ChannelFor<Agent, LayoutFile>
+        { //save and restore Layout UID translation
+            interface Start/*ÿ*/  : LR,
+                                    _</*ÿ*//*Ā*/
+                                        LayoutFile.UID
+                                    >
+            { };
+        }
+
+        interface SaveLayout_Info/*Ā*/  : ChannelFor<Observer, LayoutFile>
+        { //save and restore Layout info
+            interface Start/*ÿ*/  : LR,
+                                    _</*ÿ*//*Ā*/
+                                        LayoutFile.Info
+                                    >
+            { };
+        }
+
+
+        interface Communication/*ā*/  : ChannelFor<Agent, Server>
         {
             interface Info_Result : // Packs set
                 _<
@@ -399,26 +437,26 @@ namespace org.unirail
             { }
 
             [Timeout(12)]
-            interface Start /*ÿ*/ : L,
-                                    _< /*ÿ*/
+            interface Start/*ÿ*/  : L,
+                                    _</*ÿ*/
                                         Agent.Version,
                                         VersionMatching
                                     >
             { }
 
-            interface VersionMatching /*Ā*/ : R,
-                                              _<                     /*Ā*/
+            interface VersionMatching/*Ā*/  : R,
+                                              _</*ÿ*/
                                                   Server.Invitation, // Version OK invite to login
                                                   Login
                                               >,
-                                              _<               /*ā*/
+                                              _</*Ā*/
                                                   Server.Info, // Version not match. Replay the problem info
                                                   Exit
                                               >
             { }
 
-            interface Login /*ā*/ : L,
-                                    _< /*Ă*/
+            interface Login/*ā*/  : L,
+                                    _</*ÿ*/
                                         Agent.Login,
                                         Agent.Signup,
                                         LoginResponse
@@ -426,77 +464,67 @@ namespace org.unirail
             { }
 
             [Timeout(12)]
-            interface LoginResponse /*Ă*/ : R,
-                                            _<                     /*ă*/
+            interface LoginResponse/*Ă*/  : R,
+                                            _</*ÿ*/
                                                 Server.Invitation, // Login OK
                                                 TodoJobRequest
                                             >,
-                                            _<               /*Ą*/
+                                            _</*Ā*/
                                                 Server.Info, // Login expire/wrong ...etc.
                                                 Exit
                                             >
             { }
 
             [Timeout(12)]
-            interface TodoJobRequest /*ă*/ : L,
-                                             _< /*ą*/
+            interface TodoJobRequest/*ă*/  : L,
+                                             _</*ÿ*/
                                                  Agent.RequestResult,
                                                  Agent.Project,
                                                  Project
                                              >,
-                                             _< /*Ć*/
+                                             _</*Ā*/
                                                  Agent.Proto,
                                                  Proto
                                              >
             { }
 
-            interface Project /*Ą*/ : R,
-                                      _< /*ć*/
+            interface Project/*Ą*/  : R,
+                                      _</*ÿ*/
                                           Info_Result,
                                           Exit
                                       >
             { }
 
-            interface Proto /*ą*/ : R,
-                                    _< /*Ĉ*/
+            interface Proto/*ą*/  : R,
+                                    _</*ÿ*/
                                         Info_Result,
                                         Exit
                                     >
             { }
         }
 
-        interface ObserverCommunication /*Ā*/ : ChannelFor<Agent, Observer>
+
+        interface ObserverCommunication/*Ă*/  : ChannelFor<Agent, Observer>
         {
-            interface Start /*Ć*/ : L,
-                                    _< /*ÿ*/
-                                        Observer.Layout,
-                                        Layout
-                                    >, _< /*Ā*/
+            interface Start/*ÿ*/  : L,
+                                    _</*ÿ*/
                                         Agent.Project,
                                         Operate
                                     >
             { }
 
-            interface Layout /*ć*/ : L,
-                                     _< /*ā*/
-                                         Agent.Project,
-                                         Operate
-                                     >
-            { }
-
-            interface Operate /*Ĉ*/ : R,
-                                      _< /*Ă*/
-                                          Observer.Show_Code,
-                                          Observer.Layout
+            interface Operate/*Ā*/  : R,
+                                      _</*ÿ*/
+                                          Observer.Show_Code
                                       >,
-                                      _< /*ă*/
+                                      _</*Ā*/
                                           Observer.Up_to_date,
                                           RefreshProject
                                       >
             { }
 
-            interface RefreshProject /*ĉ*/ : L,
-                                             _< /*Ą*/
+            interface RefreshProject/*ā*/  : L,
+                                             _</*ÿ*/
                                                  Agent.Project,
                                                  Observer.Up_to_date,
                                                  Operate

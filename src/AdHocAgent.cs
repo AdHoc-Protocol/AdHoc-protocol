@@ -58,15 +58,15 @@ namespace org.unirail
     {
         class CallerEnricher : ILogEventEnricher
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
             {
-                var stackTrace = new StackTrace(true); // true to capture file information
-                var stack = stackTrace.GetFrame(6);
+                var stack = new StackTrace(true) // true to capture file information
+                            .GetFrames().Skip(1).FirstOrDefault(stack => stack.GetFileName() != null);
 
                 logEvent.AddPropertyIfAbsent(new LogEventProperty("FileLine", new ScalarValue(sb.Clear()
-                                                                                                .Append(stack.GetFileName())
+                                                                                                .Append(stack!.GetFileName())
                                                                                                 .Append(":line ")
                                                                                                 .Append(stack.GetFileLineNumber())
                                                                                                 .ToString())));
@@ -136,7 +136,7 @@ namespace org.unirail
             name = Path.Join(Path.GetTempPath(), name);
             File.WriteAllBytes(name, src);
 
-            var ret = zip(new[] { name });
+            var ret = zip([name]);
             File.Delete(name);
             return ret;
         }
@@ -319,7 +319,7 @@ namespace org.unirail
             if (paths[0].EndsWith(".cs?")) // run provided protocol description file viewer
             {
                 provided_path = paths[0][..^1]; //cut '?'
-                paths_parser(paths);
+                set_provided_paths(paths[1..]);
                 await ChannelToObserver.Start();
                 return;
             }
@@ -351,7 +351,7 @@ namespace org.unirail
             #region .cs files - protocol description file processing
             if (provided_path.EndsWith(".cs"))
             {
-                paths_parser(paths);
+                set_provided_paths(paths[1..]);
                 ChannelToServer.Start(ProjectImpl.init());
                 return;
             }
@@ -365,18 +365,18 @@ namespace org.unirail
             var all_files = new Dictionary<string, List<string>>();
 
             foreach (var file in (File.Exists(provided_path) ?
-                                      new[] { provided_path } :
+                                      [provided_path] :
                                       Directory.EnumerateFiles(provided_path, "*.proto", SearchOption.AllDirectories))
                     .Concat(
                             1 < paths.Length && paths[1].EndsWith(".proto") ?
                                 Directory.EnumerateFiles(paths[1], "*.proto", SearchOption.AllDirectories) :
-                                new string[] { }
+                                []
                            ))
             {
                 var key = Path.GetFileName(file);
                 if (all_files.TryGetValue(key, out var val))
                     val.Add(file);
-                else all_files[key] = new List<string>(new[] { file });
+                else all_files[key] = [.. new[] { file }];
             }
 
             var syntax = new Regex(@"^\s*syntax\s*=\s*.*;", RegexOptions.Multiline);
@@ -477,7 +477,7 @@ namespace org.unirail
 
             if (File.Exists(provided_path))
             {
-                var str = process_proto_files(new[] { provided_path });
+                var str = process_proto_files([provided_path]);
                 var bytes = new byte[AdHoc.varint_bytes(str)];
                 AdHoc.varint(str.AsSpan(), new Span<byte>(bytes));
 
@@ -533,26 +533,29 @@ namespace org.unirail
             #endregion
         }
 
-        private static void paths_parser(string[] paths)
+        private static void set_provided_paths(string[] paths)
         {
-            if (paths.Length == 1) return;
+            if (paths.Length == 0) return;
 
             var collect = new HashSet<string>();
 
             foreach (var path in paths)
-                if (path.EndsWith(".csproj"))
+                if (File.Exists(path))
                 {
-                    var csproj = paths[1];
+                    if (path.EndsWith(".csproj"))
+                    {
+                        var csproj = paths[1];
 
-                    var dir = Path.GetDirectoryName(csproj)!;
+                        var dir = Path.GetDirectoryName(csproj)!;
 
-                    foreach (var xml_path in XElement.Load(csproj)
-                                                     .Descendants()
-                                                     .Where(n => n.Name.ToString().Equals("Compile"))
-                                                     .Select(n => Path.GetFullPath(n.Attribute("Include")!.Value, dir)))
-                        collect.Add(xml_path);
+                        foreach (var xml_path in XElement.Load(csproj)
+                                                         .Descendants()
+                                                         .Where(n => n.Name.ToString().Equals("Compile"))
+                                                         .Select(n => Path.GetFullPath(n.Attribute("Include")!.Value, dir)))
+                            collect.Add(xml_path);
+                    }
+                    else if (path.EndsWith(".cs")) collect.Add(path);
                 }
-                else if (path.EndsWith(".cs")) collect.Add(path);
                 else if (!Directory.Exists(destination_dir_path = path))
                     Directory.CreateDirectory(destination_dir_path);
 
@@ -566,6 +569,7 @@ namespace org.unirail
         public static string destination_dir_path = Directory.GetCurrentDirectory();
 
         public static string raw_files_dir_path => Path.Combine(destination_dir_path, Path.GetFileName(provided_path)[..^3]);
+        public static Lazy<string> layout = new(() => AdHocAgent.raw_files_dir_path + ".layout"); // path to the layout file
 
         public static int exit(string banner, int code = 1)
         {
@@ -585,7 +589,7 @@ namespace org.unirail
 
         public static string program_file_dir => Path.GetDirectoryName(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase!).Path))!;
         public static string provided_path; //can be AdHoc ptotocol description or Protocol buffers convertor input
-        public static string[] provided_paths = Array.Empty<string>();
+        public static string[] provided_paths = [];
         public static string task => HashFor(Path.GetDirectoryName(provided_path)!).ToString("X") + "_" + Path.GetFileName(provided_path);
 
         static ulong HashFor(string str)
@@ -607,7 +611,7 @@ namespace org.unirail
             static string raw_files_dir_path;
 
 
-            static StringBuilder sb = new StringBuilder();
+            static StringBuilder sb = new();
 
             class LineInfo
             {
@@ -736,7 +740,7 @@ namespace org.unirail
 
             public static void redeploy(string deployment_instructions_file)
             {
-                raw_files_dir_path = provided_path[..^("Deployment.md".Length)]; //cut 'Deployment.md'  and get directory with source files
+                raw_files_dir_path = provided_path[..^"Deployment.md".Length]; //cut 'Deployment.md'  and get directory with source files
                 if (!Directory.Exists(raw_files_dir_path) && !Directory.Exists(raw_files_dir_path = Path.Join(Directory.GetCurrentDirectory(), Path.GetFileName(raw_files_dir_path))))
                     exit($"Cannot find source folder {Path.GetFileName(raw_files_dir_path)} at {Path.GetDirectoryName(provided_path)} and at working directory {Directory.GetCurrentDirectory()} redeploy process canceled");
 
@@ -832,12 +836,17 @@ astyle  --style=allman
   FILE_PATH 
 ```
 
+To format C# files with `dotnet format` use the command in format `before and after deployment execution`
+```shell
+[before deployment](dotnet format ""C:/My Deployment/folder/MyProject/InCS/My Host2"" )
+```
+
 ```regexp
 \.ts$
 ```
 
 ```shell
-prettier --write FILE_PATH --print-width  999
+prettier --write FILE_PATH --tab-width 4 --bracket-spacing false --print-width  999
 ```
 
 ```regexp
@@ -961,7 +970,7 @@ After making the necessary modifications, you can rerun the deployment process b
                         var head = match.Groups[2].Captures[0];
                         info.customization = match.ToString()[(head.Index + head.Length + 1 - match.Index)..]; //backup line customization
                         if (targets_lines_count == 1 &&
-                            !string.Equals((match.Groups[2].Captures[0].Value).Trim(' ', '<', '>', '\\', '/'),
+                            !string.Equals(match.Groups[2].Captures[0].Value.Trim(' ', '<', '>', '\\', '/'),
                                            Path.GetFullPath(info.path).Replace('\\', '/').Trim(' ', '\\', '/'),
                                            StringComparison.InvariantCultureIgnoreCase))
                             targets_lines_count = int.MinValue; //need tree lines fully update mark
@@ -1012,7 +1021,7 @@ After making the necessary modifications, you can rerun the deployment process b
 
                 //======================== binaries execute before deployment
                 foreach (var before_deployment in new Regex(@"\[before deployment\]\((.+)\)").Matches(deployment_instructions_txt).Select(m => m.Groups[1].Value))
-                    Start_and_wait(before_deployment, "", raw_files_dir_path);
+                    Start_and_wait(before_deployment, raw_files_dir_path);
 
 
                 var shell_tasks = new Regex(@"^([^\s].+?)(?:\r?\n(?=\s)|\r?\n?$)(?:\s+(.+?)(?:\r?\n(?=\s)|\r?\n?$))*", RegexOptions.Multiline);
@@ -1053,15 +1062,14 @@ After making the necessary modifications, you can rerun the deployment process b
                                     "System.Core.dll",
                                     "System.Runtime.dll"
                                 }.Select(s => Path.Combine(obj, s))
-                                 .Concat(new[]
-                                         {
+                                 .Concat([
                                              typeof(object).Assembly.Location,
-                                             typeof(Console).Assembly.Location,
-                                             Assembly.Load("System.Runtime").Location,
-                                             Assembly.Load("System.Collections").Location,
-                                             Assembly.Load("System.Linq").Location,
-                                             Assembly.Load("System.Text.RegularExpressions").Location
-                                         }).Select(p => MetadataReference.CreateFromFile(p))
+                                     typeof(Console).Assembly.Location,
+                                     Assembly.Load("System.Runtime").Location,
+                                     Assembly.Load("System.Collections").Location,
+                                     Assembly.Load("System.Linq").Location,
+                                     Assembly.Load("System.Text.RegularExpressions").Location
+                                         ]).Select(p => MetadataReference.CreateFromFile(p))
                                  .Concat(
                                          new Regex(@"^(?:\""([^\""]+)\""\r?\n)*")
                                              .Matches(target)
@@ -1082,7 +1090,7 @@ After making the necessary modifications, you can rerun the deployment process b
 
                             var compilation = CSharpCompilation.Create(
                                                                        Path.GetRandomFileName(),
-                                                                       syntaxTrees: new[] { CSharpSyntaxTree.ParseText(target) },
+                                                                       syntaxTrees: [CSharpSyntaxTree.ParseText(target)],
                                                                        references: refs,
                                                                        options: new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
@@ -1172,7 +1180,7 @@ After making the necessary modifications, you can rerun the deployment process b
 
                 //binaries execute after deployment
                 foreach (var after_deployment in new Regex(@"\[after deployment\]\((.+)\)").Matches(deployment_instructions_txt).Select(m => m.Groups[1].Value))
-                    Start_and_wait(after_deployment, "", raw_files_dir_path);
+                    Start_and_wait(after_deployment, raw_files_dir_path);
 
                 if (0 < obsoletes_targets.Count || targets_lines_count != receiver_files_lines.Count) // Fully update tree lines needed
                 {
@@ -1205,7 +1213,7 @@ After making the necessary modifications, you can rerun the deployment process b
             }
 
             private static readonly Dictionary<string, string> uid2custom_code = new();
-            private static readonly string[] rn = { "\r\n", "\r", "\n" };
+            private static readonly string[] rn = ["\r\n", "\r", "\n"];
 
             private static readonly Regex JAVA = new(@"//#region\s*>.*?$\s*([\s\S]*?)\s*//#endregion\s*>\s+?(.*?)\s*?$", RegexOptions.Multiline);
             private static readonly Regex CS = new(@"#region\s*>.*?$\s*([\s\S]*?)\s*#endregion\s*>\s+?(.*?)\s*?$", RegexOptions.Multiline);
@@ -1262,7 +1270,7 @@ After making the necessary modifications, you can rerun the deployment process b
 
                 if (0 < uid2custom_code.Count) //orphaned custom code has been detected
                 {
-                    LOG.Error("Orphaned custom code");
+                    LOG.Error($"Orphaned custom code detected in {target_file_path}. Open and compare it with the new {raw_file_path} by key strings.");
                     foreach (var (id, code) in uid2custom_code)
                     {
                         LOG.Error("{id}", id);
@@ -1285,6 +1293,17 @@ After making the necessary modifications, you can rerun the deployment process b
                 File.Copy(raw_file_path, target_file_path, true);
                 return "👉 " + target_file_path;
             }
+        }
+
+        public static string Start_and_wait(string exe_args, string WorkingDirectory)
+        {
+            var regex = new Regex(@"^(?:""([^""]+)""|(\S+))\s+(.*)");
+            var match = regex.Match(exe_args);
+            var exe = match.Groups[1].Success ?
+                          match.Groups[1].Value :
+                          match.Groups[2].Value;
+            var args = match.Groups[3].Value;
+            return Start_and_wait(exe, args, WorkingDirectory);
         }
 
         public static string Start_and_wait(string exe, string args, string WorkingDirectory)
@@ -1317,8 +1336,10 @@ After making the necessary modifications, you can rerun the deployment process b
                     using (var process = Process.Start(startInfo))
                     {
                         // Read the entire output of the process
-                        var output = process.StandardOutput.ReadToEnd();
                         error += process.StandardError.ReadToEnd();
+                        var output = error == "" ? //!!!
+                                         process.StandardOutput.ReadToEnd() :
+                                         "";
                         // Wait for the process to complete
                         process.WaitForExit();
                         // Return the output if successful
@@ -1334,8 +1355,10 @@ After making the necessary modifications, you can rerun the deployment process b
                         // Second attempt: Execute the process with modified start info
                         using (var process = Process.Start(startInfo))
                         {
-                            var output = process.StandardOutput.ReadToEnd();
                             error += process.StandardError.ReadToEnd();
+                            var output = error == "" ? //!!!
+                                             process.StandardOutput.ReadToEnd() :
+                                             "";
                             process.WaitForExit();
                             if (0 < error.Length)
                             {

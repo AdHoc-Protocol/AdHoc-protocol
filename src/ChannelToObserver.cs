@@ -32,11 +32,12 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,30 +51,29 @@ namespace org.unirail
         static ObserverCommunication.Transmitter transmitter = new();
         static ObserverCommunication.Receiver receiver = new();
 
-        private static ProjectImpl? project;
+        //Sets the processing time of this channel (connection) to a value that guarantees the project will be uploaded on the next request.
+        static DateTime projectSentTime = DateTime.MinValue; //
 
         static void send_project()
         {
             try
             {
-                if (project == null) transmitter.send(project = ProjectImpl.init()); //first send
-                else
+                if (ProjectImpl.refresh(projectSentTime))
                 {
-                    var prj = project.refresh();
-                    if (prj == null) transmitter.send(new Up_to_date()); //nothing update notitication
-                    else transmitter.send(project = prj);                 // reply with updated information
+                    transmitter.send(ProjectImpl.projects_root);      // reply with updated information
+                    projectSentTime = DateTime.Now; // on this channel (connection)
                 }
+                else
+                    transmitter.send(new Up_to_date()); //nothing update notitication
             }
             catch (Exception e)
             {
-                project = null;
+                AdHocAgent.LOG.Error(e.ToString());
+                //Sets the processing time of this channel (connection) to a value that guarantees the project will be uploaded on the next request.
+                projectSentTime = DateTime.MinValue;
                 transmitter.send(new Up_to_date { info = e.ToString() });
             }
         }
-
-
-        public void Received(ObserverCommunication.Receiver via, Layout pack) { }
-
 
         //request to send updated Project pack or Up_to_date  if data is not changed
         public void Received(ObserverCommunication.Receiver via, Up_to_date pack) => send_project();
@@ -86,12 +86,12 @@ namespace org.unirail
             var src = "";
             HasDocs item = pack.tYpe switch
             {
-                Type.Project => project,
-                Type.Host => project.hosts[pack.idx],
-                Type.Pack => project.packs[pack.idx],
-                Type.Field => project.fields[pack.idx],
-                Type.Channel => project.channels[pack.idx],
-                Type.Stage => project.channels[pack.idx],
+                Type.Project => ProjectImpl.projects_root,
+                Type.Host => ProjectImpl.projects_root.hosts[pack.idx],
+                Type.Pack => ProjectImpl.projects_root.packs[pack.idx],
+                Type.Field => ProjectImpl.projects_root.fields[pack.idx],
+                Type.Channel => ProjectImpl.projects_root.channels[pack.idx],
+                Type.Stage => ProjectImpl.projects_root.channels[pack.idx],
                 _ => throw new Exception("Unknown entity type")
             };
 
@@ -122,6 +122,7 @@ namespace org.unirail
             });
         }
 
+
         private static async Task StartWebSocketAsync(HttpListenerContext ctx)
         {
             var ws = (await ctx.AcceptWebSocketAsync(null)).WebSocket;
@@ -129,15 +130,17 @@ namespace org.unirail
 
             AdHocAgent.LOG.Information("Observer connected");
 
-            if (File.Exists(AdHocAgent.raw_files_dir_path + ".layout"))
-            {
-                AdHocAgent.LOG.Information("Found and send {RawFilesDirPath}.layout to the observer", AdHocAgent.raw_files_dir_path);
-                var mem = new MemoryStream();
+            await using (var fs = File.OpenRead(AdHocAgent.layout.Value))
+                if (UID_Impl.data_bytes < fs.Length)
+                {
+                    AdHocAgent.LOG.Information("Found and send {RawFilesDirPath} to the observer", AdHocAgent.layout.Value);
+                    var mem = new byte[fs.Length - UID_Impl.data_bytes];
+                    fs.Position = UID_Impl.data_bytes;
+                    fs.Read(mem); // read layout binary from file
 
-                await using (var fs = File.OpenRead(AdHocAgent.raw_files_dir_path + ".layout")) await fs.CopyToAsync(mem); // read layout binary from file
+                    await ws.SendAsync(mem, WebSocketMessageType.Binary, true, CancellationToken.None); //write layout to observer
+                }
 
-                await ws.SendAsync(mem.ToArray(), WebSocketMessageType.Binary, true, CancellationToken.None); //write layout to observer
-            }
 
             var snd_buff = new byte[1024];
             transmitter.subscribeOnNewBytesToTransmitArrive(async src =>
@@ -161,14 +164,13 @@ namespace org.unirail
 
             transmitter.Close();
             receiver.Close();
-
-            project = null;
         }
 
 
         public static async Task Start(ushort port = 4321)
         {
             ProjectImpl.init(); //for preliminary testing purposes
+
             var listener = new HttpListener();
             var url = $"http://localhost:{port}/";
             listener.Prefixes.Add(url);
@@ -188,6 +190,13 @@ namespace org.unirail
             {
                 var ctx = await listener.GetContextAsync(); //block
 
+                async void save(string dst)
+                {
+                    await using var fs = new FileStream(dst, FileMode.Open, FileAccess.ReadWrite);
+                    fs.Position = UID_Impl.data_bytes; // Seek to the position where you want to start writing (Info.data_bytes)
+                    await ctx.Request.InputStream.CopyToAsync(fs);
+                    fs.SetLength(fs.Position); // Truncate the file at the current position, removing any leftover bytes from the original file
+                }
 
                 if (ctx.Request.IsWebSocketRequest) StartWebSocketAsync(ctx);
                 else
@@ -197,6 +206,8 @@ namespace org.unirail
                     switch (filename)
                     {
                         case "":
+                            //Sets the processing time of this channel (connection) to a value that guarantees the project will be uploaded on the next request.
+                            projectSentTime = DateTime.MinValue;
                             filename = "index.html";
                             break;
 
@@ -204,21 +215,22 @@ namespace org.unirail
 
                             if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
                             else
-                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".unsaved_layout", FileMode.Create, FileAccess.Write))
-                                    await ctx.Request.InputStream.CopyToAsync(fs);
+                            {
+                                var unsaved_layout = AdHocAgent.raw_files_dir_path + ".unsaved_layout";
+
+                                File.Copy(AdHocAgent.layout.Value, unsaved_layout, true);
+                                save(unsaved_layout);
+                            }
 
                             continue;
                         case "confirmed_layout":
 
                             if (ctx.Request.ContentLength64 == 0) AdHocAgent.LOG.Warning("Layout info is empty");
-                            else
-                                await using (var fs = File.Open(AdHocAgent.raw_files_dir_path + ".layout", FileMode.Create, FileAccess.Write))
-                                    await ctx.Request.InputStream.CopyToAsync(fs);
+                            else save(AdHocAgent.layout.Value);
 
                             continue;
                     }
-
-                    await using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Observer." + filename))
+                    await using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Observer." + filename))
                     {
                         if (stream == null)
                         {
@@ -245,8 +257,7 @@ namespace org.unirail
                             _ => "application/octet-stream"
                         };
                         ctx.Response.ContentLength64 = stream.Length;
-                        //To ensure that the browser never uses cached resources
-                        //+ Ctrl + Shift + R in the browser
+                        // Ctrl + Shift + R in the browser To ensure that the browser never uses cached resources
                         ctx.Response.AddHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
                         ctx.Response.AddHeader("Pragma", "no-cache");
                         ctx.Response.AddHeader("Expires", "0");

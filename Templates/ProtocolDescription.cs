@@ -11,7 +11,7 @@ namespace com.my.company // The namespace for your company's project. Required!
         /// <see cref="InJAVA"/>  // Generates the concrete implementation in Java
         struct Server : Host // Defines the server-side host and generates platform-specific code
         {
-            class PacketToClient{ } // Represents an empty packet to be sent from the server to the client
+            public class PacketToClient{ } // Represents an empty packet to be sent from the server to the client
         }
 
         /// <see cref="InTS"/>    // Generates the concrete implementation in TypeScript
@@ -19,10 +19,22 @@ namespace com.my.company // The namespace for your company's project. Required!
         /// <see cref="InJAVA"/>  // Generates the concrete implementation in Java
         struct Client : Host // Defines the client-side host and generates platform-specific code
         {
-            class PacketToServer{ } // Represents an empty packet to be sent from the client to the server
+            public class PacketToServer{ } // Represents an empty packet to be sent from the client to the server
         }
 
         // Defines a communication channel for exchanging data between the client and server
-        interface Channel : ChannelFor<Client, Server>{ }
+        interface Channel : ChannelFor<Client, Server>{
+            interface Start :
+                L,
+                _<
+                    CommonPacket,
+                    Client.PacketToServer
+                >,
+                R,
+                _<
+                    CommonPacket,
+                    Server.PacketToClient
+                >{ }
+        }
     }
 }

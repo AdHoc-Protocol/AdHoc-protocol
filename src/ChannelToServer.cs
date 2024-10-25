@@ -316,8 +316,7 @@ namespace org.unirail
             AdHocAgent.exit("Here is the result of the .proto format conversion: " + AdHocAgent.destination_dir_path, 0);
         }
 
-
-        public void Received(Communication.Receiver via, Info pack)
+        public void Received(Communication.Receiver via, Agent.Info pack)
         {
             if (via.curr_stage == Communication.Stages.VersionMatching) //the agent and server have incompatible protocol versions
             {

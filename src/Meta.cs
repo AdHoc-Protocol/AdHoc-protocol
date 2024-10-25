@@ -126,9 +126,6 @@ namespace org.unirail
         }
 
 
-        public interface Alter<ADD, DEL> { } //tuning
-
-
         //type that best fit to transmit binary data.
         //In Java it is the signed  byte
         //In C# it is   the unsigned byte
@@ -138,10 +135,6 @@ namespace org.unirail
 
         public interface Map<K, V> { }
 
-        public interface ChannelFor<HostA, HostB>
-            where HostA : struct, Host
-            where HostB : struct, Host
-        { }
 
         public interface InCPP { } //pack implemented with hash and equals methods
 
@@ -160,15 +153,23 @@ namespace org.unirail
 
         public interface Host { } //mark Host struct (vs Constants pack struct)
 
+        public interface ChannelFor<HostA, HostB>
+            where HostA : struct, Host
+            where HostB : struct, Host
+        { }
+
         [AttributeUsage(AttributeTargets.Interface)]
         public class TimeoutAttribute : Attribute
         {
             public TimeoutAttribute(uint seconds) { }
         }
 
-        public interface L { } //left host
+        public interface L { }  // Represents branches of the left host
 
-        public interface R { } //right host
+        public interface R { }  // Represents branches of the right host
+
+        public interface LR { } // Represents branches of both the left and right hosts
+
 
         public interface Exit { } //Exit stage
 
@@ -180,8 +181,36 @@ namespace org.unirail
             public ValueForAttribute(double to_const) { }
         }
 
+        public interface Modify<Target> { }
+
+        public interface Modify<TargetChannel, HostA, HostB> { }
 
         public interface SwapHosts<Channel> { }
+
+        //Update _1 on _2
+        public interface U<_1, _2> { }
+
+        //Delete items
+        public interface X<_1> { }
+
+        public interface X<_1, _2> { }
+
+        public interface X<_1, _2, _3> { }
+
+        public interface X<_1, _2, _3, _4> { }
+
+        public interface X<_1, _2, _3, _4, _5> { }
+
+        public interface X<_1, _2, _3, _4, _5, _6> { }
+
+        public interface X<_1, _2, _3, _4, _5, _6, _7> { }
+
+        public interface X<_1, _2, _3, _4, _5, _6, _7, _8> { }
+
+        public interface X<_1, _2, _3, _4, _5, _6, _7, _8, _9> { }
+
+        public interface X<_1, _2, _3, _4, _5, _6, _7, _8, _9, _10> { }
+
 
         //wrapper that let use non-interface-based entities (class/struct/enums)
         public interface _<_1> { }

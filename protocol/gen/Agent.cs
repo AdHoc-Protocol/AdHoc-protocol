@@ -1,36 +1,36 @@
 
 
-//MIT License
+//  MIT License
 //
-//Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
-//For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
-//GitHub Repository: https://github.com/AdHoc-Protocol
+//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
+//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
+//  GitHub Repository: https://github.com/AdHoc-Protocol
 //
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to use,
-//copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-//the Software, and to permit others to do so, under the following conditions:
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to use,
+//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+//  the Software, and to permit others to do so, under the following conditions:
 //
-//1. The above copyright notice and this permission notice must be included in all
-//   copies or substantial portions of the Software.
+//  1. The above copyright notice and this permission notice must be included in all
+//     copies or substantial portions of the Software.
 //
-//2. Users of the Software must provide a clear acknowledgment in their user
-//   documentation or other materials that their solution includes or is based on
-//   this Software. This acknowledgment should be prominent and easily visible,
-//   and can be formatted as follows:
-//   "This product includes software developed by Chikirev Sirguy and the Unirail Group
-//   (https://github.com/AdHoc-Protocol)."
+//  2. Users of the Software must provide a clear acknowledgment in their user
+//     documentation or other materials that their solution includes or is based on
+//     this Software. This acknowledgment should be prominent and easily visible,
+//     and can be formatted as follows:
+//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
+//     (https://github.com/AdHoc-Protocol)."
 //
-//3. If you modify the Software and distribute it, you must include a prominent notice
-//   stating that you have changed the Software.
+//  3. If you modify the Software and distribute it, you must include a prominent notice
+//     stating that you have changed the Software.
 //
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
-//OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//SOFTWARE.
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -50,42 +50,52 @@ AdHoc agent protocol description
 
 */
 
+
 namespace org.unirail
 {
     /*
-    <see cref = 'InCS'/> following packs generate in C# with full implementation
-    <see cref = 'Server.Info'/>
-    <see cref = 'Server.Result'/>
-    <see cref = 'RequestResult'/>
-    <see cref = 'Version'/>
-    <see cref = 'Signup'/>
-    <see cref = 'Login'/>
-    <see cref = 'Proto'/>
-    <see cref = 'Observer.Up_to_date'/>
-    <see cref = 'Observer.Show_Code'/>
-    <see cref = 'InCS'/>-- by default rest of the packs in C#  generate abstracted (without implementation)
+<see cref = 'InCS'/> The following packs of the `Agent` host are fully implemented and generated in C#.
+<see cref = 'Server.Info'/>
+<see cref = 'LayoutFile.UID'/>
+<see cref = 'Server.Result'/>
+<see cref = 'RequestResult'/>
+<see cref = 'Version'/>
+<see cref = 'Signup'/>
+<see cref = 'Login'/>
+<see cref = 'Proto'/>
+<see cref = 'Observer.Up_to_date'/>
+<see cref = 'Observer.Show_Code'/>
+<see cref = 'InCS'/>-- The remaining packs are generated in C# as abstract (without implementation).
 
-    */
+*/
     namespace Agent
     {
 
-        public struct Invitation : IEquatable<Invitation>
+
+        public struct Login : IEquatable<Login>
         {
 
             public int __id => __id_;
-            public const int __id_ = 3;
+            public const int __id_ = 5;
 
-            public ulong uid = 0; //Unique identifier for the invitation
+            public ulong uid = 0;//Unique identifier for the login
 
-            public Invitation() { }
-            public Invitation(ulong src) => uid = src;
+            public Login() { }
+            public Login(ulong src) => uid = src;
 
-            public class Handler : Communication.Receiver.Receivable, AdHoc.Transmitter.BytesSrc
+
+
+
+
+
+            public class Handler : AdHoc.Receiver.BytesDst, Communication.Transmitter.Transmittable
             {
-                public int __id => 3;
+                public int __id => 5;
                 public static readonly Handler ONE = new();
 
-                void Communication.Receiver.Receivable.Received(Communication.Receiver via) => Communication.Receiver.onReceive.Received(via, (Invitation)via.u8);
+
+                public virtual void Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, (Login)via.u8);
+
 
                 bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                 {
@@ -95,13 +105,13 @@ namespace org.unirail
                     {
                         case 0:
                             __dst.pull_value();
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
                             return false;
                         case 1:
                             return __dst.put((ulong)__dst.u8, 123);
 
-                        default: return true;
+                        default:
+                            return true;
                     }
                 }
 
@@ -117,34 +127,43 @@ namespace org.unirail
                             return true;
                     }
                 }
+
             }
 
-            public bool Equals(Invitation other) => uid == other.uid;
 
-            public static bool operator ==(Invitation? a, Invitation? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.uid == b!.Value.uid);
-            public static bool operator !=(Invitation? a, Invitation? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.uid != b!.Value.uid);
 
-            public override bool Equals(object? other) => other is Invitation p && p.uid == uid;
+            public bool Equals(Login other) => uid == other.uid;
+
+            public static bool operator ==(Login? a, Login? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.uid == b!.Value.uid);
+            public static bool operator !=(Login? a, Login? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.uid != b!.Value.uid);
+
+            public override bool Equals(object? other) => other is Login p && p.uid == uid;
             public override int GetHashCode() => uid.GetHashCode();
 
-            public static implicit operator ulong(Invitation a) => a.uid;
-            public static implicit operator Invitation(ulong a) => new Invitation(a);
+            public static implicit operator ulong(Login a) => a.uid;
+            public static implicit operator Login(ulong a) => new Login(a);
+
+
+
         }
         public class Proto : IEquatable<Proto>, Communication.Transmitter.Transmittable
         {
 
             public int __id => __id_;
-            public const int __id_ = 7;
+            public const int __id_ = 9;
 
-            void Communication.Transmitter.Transmittable.Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, this);
+            public virtual void Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, this);
             #region task
 
-            public string? task { get; set; } = null; //Unique ID
+            public string? task { get; set; } = null;//Unique ID
 
             public struct task_
-            { //Unique ID
+            {  //Unique ID
+
+
 
                 public const int STR_LEN_MAX = 255;
+
             }
             #endregion
             #region name
@@ -154,7 +173,10 @@ namespace org.unirail
             public struct name_
             {
 
+
+
                 public const int STR_LEN_MAX = 255;
+
             }
             #endregion
             #region proto
@@ -175,16 +197,19 @@ namespace org.unirail
                     return;
                 }
 
-                _proto = AdHoc.Resize<byte>(__src, Math.Min(__src!.Length, Agent.Proto.proto_.ARRAY_LEN_MAX), 0);
-                ;
+                _proto = AdHoc.Resize<byte>(__src, Math.Min(__src!.Length, Agent.Proto.proto_.ARRAY_LEN_MAX), 0); ;
             }
 
             public struct proto_
-            { //Max 65k zipped
+            {  //Max 65k zipped
+
+
 
                 public const int ARRAY_LEN_MAX = 512000;
+
             }
             #endregion
+
 
             public int GetHashCode
             {
@@ -200,8 +225,7 @@ namespace org.unirail
                     #region proto
 
                     if (_proto != null)
-                        for (int __i = 0, MAX = proto_len; __i < MAX; __i++)
-                            _hash = HashCode.Combine(_hash, _proto[__i]);
+                        for (int __i = 0, MAX = proto_len; __i < MAX; __i++) _hash = HashCode.Combine(_hash, _proto[__i]);
                     #endregion
 
                     return (int)_hash;
@@ -209,41 +233,30 @@ namespace org.unirail
             }
             bool IEquatable<Proto>.Equals(Proto? _pack)
             {
-                if (_pack == null)
-                    return false;
+                if (_pack == null) return false;
 
                 bool __t;
                 #region task
-                if (task == null)
-                {
-                    if (_pack.task != null)
-                        return false;
-                }
-                else if (_pack.task == null || !task!.Equals(_pack.task))
-                    return false;
+                if (task == null) { if (_pack.task != null) return false; }
+                else if (_pack.task == null || !task!.Equals(_pack.task)) return false;
                 #endregion
                 #region name
-                if (name == null)
-                {
-                    if (_pack.name != null)
-                        return false;
-                }
-                else if (_pack.name == null || !name!.Equals(_pack.name))
-                    return false;
+                if (name == null) { if (_pack.name != null) return false; }
+                else if (_pack.name == null || !name!.Equals(_pack.name)) return false;
                 #endregion
                 #region proto
 
                 if (_proto != _pack._proto)
-                    if (_proto == null || _pack._proto == null || _proto!.Length != _pack._proto!.Length)
-                        return false;
+                    if (_proto == null || _pack._proto == null || _proto!.Length != _pack._proto!.Length) return false;
                     else
                         for (int __i = 0, MAX = proto_len; __i < MAX; __i++)
-                            if (_proto[__i] != _pack._proto[__i])
-                                return false;
+                            if (_proto[__i] != _pack._proto[__i]) return false;
                 #endregion
 
                 return true;
             }
+
+
 
             bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
             {
@@ -253,41 +266,40 @@ namespace org.unirail
                     switch (__slot.state)
                     {
                         case 0:
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
                             return false;
 
                         case 1:
 
-                            if (!__dst.init_fields_nulls(task != null ? 1 : 0, 1))
-                                return false;
+
+
+                            if (!__dst.init_fields_nulls(task != null ? 1 : 0, 1)) return false;
                             if (name != null) __dst.set_fields_nulls(1 << 1);
-                            if (_proto != null)
-                                __dst.set_fields_nulls(1 << 2);
+                            if (_proto != null) __dst.set_fields_nulls(1 << 2);
 
                             __dst.flush_fields_nulls();
                             goto case 2;
                         case 2:
                             #region task
 
-                            if (__dst.is_null(1))
-                                goto case 3;
+
+                            if (__dst.is_null(1)) goto case 3;
                             if (__dst.put(task!, 3)) goto case 3;
                             return false;
                         case 3:
                             #endregion
                             #region name
 
-                            if (__dst.is_null(1 << 1))
-                                goto case 4;
+
+                            if (__dst.is_null(1 << 1)) goto case 4;
                             if (__dst.put(name!, 4)) goto case 4;
                             return false;
                         case 4:
                             #endregion
                             #region proto
 
-                            if (__dst.is_null(1 << 2))
-                                goto case 6;
+
+                            if (__dst.is_null(1 << 2)) goto case 6;
 
                             if (__slot.index_max_1(_proto!.Length) == 0)
                             {
@@ -304,8 +316,7 @@ namespace org.unirail
                                 if (0 < __v)
                                 {
                                     __slot.index1 = __v += __i = __slot.index1;
-                                    for (; __i < __v; __i++)
-                                        __dst.put((byte)_proto![__i]);
+                                    for (; __i < __v; __i++) __dst.put((byte)_proto![__i]);
                                 }
                                 __dst.retry_at(5);
                                 return false;
@@ -316,16 +327,1133 @@ namespace org.unirail
                         case 6:
                         #endregion
 
+
+
                         default:
                             return true;
                     }
             }
+
+
+
+
+
+        }
+
+        public struct Version : IEquatable<Version>
+        {
+
+            public int __id => __id_;
+            public const int __id_ = 2;
+
+            public uint uid = 0;//Unique identifier for the version
+
+            public Version() { }
+            public Version(uint src) => uid = src;
+
+
+
+
+
+
+            public class Handler : AdHoc.Receiver.BytesDst, Communication.Transmitter.Transmittable
+            {
+                public int __id => 2;
+                public static readonly Handler ONE = new();
+
+
+                public virtual void Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, (Version)via.u8);
+
+
+                bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
+                {
+                    var __slot = __dst.slot!;
+                    ulong _bits;
+                    switch (__slot.state)
+                    {
+                        case 0:
+                            __dst.pull_value();
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
+                            return false;
+                        case 1:
+                            return __dst.put((uint)__dst.u8, 123);
+
+                        default:
+                            return true;
+                    }
+                }
+
+                bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
+                {
+                    var __slot = __src.slot!;
+                    switch (__slot.state)
+                    {
+                        case 0:
+                            return __src.get_uint_u8(123);
+
+                        default:
+                            return true;
+                    }
+                }
+
+            }
+
+
+
+            public bool Equals(Version other) => uid == other.uid;
+
+            public static bool operator ==(Version? a, Version? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.uid == b!.Value.uid);
+            public static bool operator !=(Version? a, Version? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.uid != b!.Value.uid);
+
+            public override bool Equals(object? other) => other is Version p && p.uid == uid;
+            public override int GetHashCode() => uid.GetHashCode();
+
+            public static implicit operator uint(Version a) => a.uid;
+            public static implicit operator Version(uint a) => new Version(a);
+
+            public static implicit operator ulong(Version a) => (ulong)(a.uid);
+            public static implicit operator Version(ulong a) => new Version((uint)a);
+
+
+
+            public struct Nullable : IEquatable<Nullable>
+            {
+                public Nullable() { }
+                public Nullable(ulong value) => this.value = value;
+                public Nullable(Version value) => Value = value;
+
+                public ulong value = NULL;
+
+                public Version Value
+                {
+                    get => new Version((uint)(value));
+                    set => this.value = (ulong)value.uid;
+                }
+
+                public bool hasValue => value != NULL;
+                public void to_null() => value = NULL;
+
+                public const ulong NULL = (ulong)0x1_0000_0000;
+
+                public bool Equals(Nullable other) => value == other.value;
+
+                public static bool operator ==(Nullable? a, Nullable? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.value == b!.Value.value);
+                public static bool operator !=(Nullable? a, Nullable? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.value != b!.Value.value);
+
+                public static bool operator ==(Nullable a, Version b) => a.value == (ulong)b.uid;
+                public static bool operator !=(Nullable a, Version b) => a.value != (ulong)b.uid;
+                public static bool operator ==(Version a, Nullable b) => (ulong)a.uid == b.value;
+                public static bool operator !=(Version a, Nullable b) => (ulong)a.uid != b.value;
+                public override bool Equals(object? other) => other is Nullable p && p.value == value;
+                public override int GetHashCode() => value.GetHashCode();
+                public static implicit operator ulong(Nullable a) => a.value;
+                public static implicit operator Nullable(ulong a) => new Nullable(a);
+                public static implicit operator Nullable(Version a) => new Nullable(a);
+            }
+
+        }
+        public class UID : IEquatable<UID>, SaveLayout_UID.Receiver.Receivable, SaveLayout_UID.Transmitter.Transmittable
+        {
+
+            public int __id => __id_;
+            public const int __id_ = 0;
+            public virtual void Received(SaveLayout_UID.Receiver via) => SaveLayout_UID.Receiver.onReceive.Received(via, this);
+
+            public virtual void Sent(SaveLayout_UID.Transmitter via) => SaveLayout_UID.Transmitter.onTransmit.Sent(via, this);
+            #region projects
+            public Dictionary<ulong, byte>? projects_new(int _items)
+            {
+
+
+
+                return _projects = new Dictionary<ulong, byte>(_items);
+            }
+
+            public Dictionary<ulong, byte>? _projects;
+            public int projects_len() => _projects!.Count;
+            public bool projects(ulong key, byte value)
+            {
+                var dst = _projects!;
+
+
+
+
+                if (dst.ContainsKey(key))
+                {
+                    dst[key] = value;
+                    return false;
+                }
+
+                dst.Add(key, value);
+                return true;
+            }
+
+            private int projects_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot) { ctx._Dictionary_ulong_byte__Enumerator = _projects!.GetEnumerator(); return _projects!.Count; }
+            private ulong projects_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot)
+            {
+                ctx._Dictionary_ulong_byte__Enumerator.MoveNext();
+                return ctx._Dictionary_ulong_byte__Enumerator.Current.Key;
+            }
+
+            private byte projects_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot) => (byte)ctx._Dictionary_ulong_byte__Enumerator.Current.Value;
+
+            public interface projects_
+            {
+
+                public const int TYPE_LEN_MAX = 255;
+
+
+
+
+            }
+            #endregion
+            #region hosts
+            public Dictionary<ushort, byte>? hosts_new(int _items)
+            {
+
+
+
+                return _hosts = new Dictionary<ushort, byte>(_items);
+            }
+
+            public Dictionary<ushort, byte>? _hosts;
+            public int hosts_len() => _hosts!.Count;
+            public bool hosts(ushort key, byte value)
+            {
+                var dst = _hosts!;
+
+
+
+
+                if (dst.ContainsKey(key))
+                {
+                    dst[key] = value;
+                    return false;
+                }
+
+                dst.Add(key, value);
+                return true;
+            }
+
+            private int hosts_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot) { ctx._Dictionary_ushort_byte__Enumerator = _hosts!.GetEnumerator(); return _hosts!.Count; }
+            private ushort hosts_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot)
+            {
+                ctx._Dictionary_ushort_byte__Enumerator.MoveNext();
+                return ctx._Dictionary_ushort_byte__Enumerator.Current.Key;
+            }
+
+            private byte hosts_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot) => (byte)ctx._Dictionary_ushort_byte__Enumerator.Current.Value;
+
+            public interface hosts_
+            {
+
+                public const int TYPE_LEN_MAX = 255;
+
+
+
+
+            }
+            #endregion
+            #region packs
+            public Dictionary<uint, ushort>? packs_new(int _items)
+            {
+
+
+
+                return _packs = new Dictionary<uint, ushort>(_items);
+            }
+
+            public Dictionary<uint, ushort>? _packs;
+            public int packs_len() => _packs!.Count;
+            public bool packs(uint key, ushort value)
+            {
+                var dst = _packs!;
+
+
+
+
+                if (dst.ContainsKey(key))
+                {
+                    dst[key] = value;
+                    return false;
+                }
+
+                dst.Add(key, value);
+                return true;
+            }
+
+            private int packs_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot) { ctx._Dictionary_uint_ushort__Enumerator = _packs!.GetEnumerator(); return _packs!.Count; }
+            private uint packs_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot)
+            {
+                ctx._Dictionary_uint_ushort__Enumerator.MoveNext();
+                return ctx._Dictionary_uint_ushort__Enumerator.Current.Key;
+            }
+
+            private ushort packs_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot) => (ushort)ctx._Dictionary_uint_ushort__Enumerator.Current.Value;
+
+            public interface packs_
+            {
+
+                public const int TYPE_LEN_MAX = 65535;
+
+
+
+
+            }
+            #endregion
+            #region channels
+            public Dictionary<ushort, byte>? channels_new(int _items)
+            {
+
+
+
+                return _channels = new Dictionary<ushort, byte>(_items);
+            }
+
+            public Dictionary<ushort, byte>? _channels;
+            public int channels_len() => _channels!.Count;
+            public bool channels(ushort key, byte value)
+            {
+                var dst = _channels!;
+
+
+
+
+                if (dst.ContainsKey(key))
+                {
+                    dst[key] = value;
+                    return false;
+                }
+
+                dst.Add(key, value);
+                return true;
+            }
+
+            private int channels_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot) { ctx._Dictionary_ushort_byte__Enumerator = _channels!.GetEnumerator(); return _channels!.Count; }
+            private ushort channels_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot)
+            {
+                ctx._Dictionary_ushort_byte__Enumerator.MoveNext();
+                return ctx._Dictionary_ushort_byte__Enumerator.Current.Key;
+            }
+
+            private byte channels_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot) => (byte)ctx._Dictionary_ushort_byte__Enumerator.Current.Value;
+
+            public interface channels_
+            {
+
+                public const int TYPE_LEN_MAX = 255;
+
+
+
+
+            }
+            #endregion
+            #region stages
+            public Dictionary<uint, ushort>? stages_new(int _items)
+            {
+
+
+
+                return _stages = new Dictionary<uint, ushort>(_items);
+            }
+
+            public Dictionary<uint, ushort>? _stages;
+            public int stages_len() => _stages!.Count;
+            public bool stages(uint key, ushort value)
+            {
+                var dst = _stages!;
+
+
+
+
+                if (dst.ContainsKey(key))
+                {
+                    dst[key] = value;
+                    return false;
+                }
+
+                dst.Add(key, value);
+                return true;
+            }
+
+            private int stages_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot) { ctx._Dictionary_uint_ushort__Enumerator = _stages!.GetEnumerator(); return _stages!.Count; }
+            private uint stages_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot)
+            {
+                ctx._Dictionary_uint_ushort__Enumerator.MoveNext();
+                return ctx._Dictionary_uint_ushort__Enumerator.Current.Key;
+            }
+
+            private ushort stages_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot) => (ushort)ctx._Dictionary_uint_ushort__Enumerator.Current.Value;
+
+            public interface stages_
+            {
+
+                public const int TYPE_LEN_MAX = 65535;
+
+
+
+
+            }
+            #endregion
+            #region branches
+            public Dictionary<ulong, ushort>? branches_new(int _items)
+            {
+
+
+
+                return _branches = new Dictionary<ulong, ushort>(_items);
+            }
+
+            public Dictionary<ulong, ushort>? _branches;
+            public int branches_len() => _branches!.Count;
+            public bool branches(ulong key, ushort value)
+            {
+                var dst = _branches!;
+
+
+
+
+                if (dst.ContainsKey(key))
+                {
+                    dst[key] = value;
+                    return false;
+                }
+
+                dst.Add(key, value);
+                return true;
+            }
+
+            private int branches_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot) { ctx._Dictionary_ulong_ushort__Enumerator = _branches!.GetEnumerator(); return _branches!.Count; }
+            private ulong branches_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot)
+            {
+                ctx._Dictionary_ulong_ushort__Enumerator.MoveNext();
+                return ctx._Dictionary_ulong_ushort__Enumerator.Current.Key;
+            }
+
+            private ushort branches_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot) => (ushort)ctx._Dictionary_ulong_ushort__Enumerator.Current.Value;
+
+            public interface branches_
+            {
+
+                public const int TYPE_LEN_MAX = 65535;
+
+
+
+
+            }
+            #endregion
+
+
+            public int GetHashCode
+            {
+                get
+                {
+                    var _hash = 3001003L;
+                    #region projects
+
+                    using (var _e = _projects.GetEnumerator())
+                        while (_e.MoveNext())
+                            _hash = HashCode.Combine(_hash, _e.Current);
+                    #endregion
+                    #region hosts
+
+                    using (var _e = _hosts.GetEnumerator())
+                        while (_e.MoveNext())
+                            _hash = HashCode.Combine(_hash, _e.Current);
+                    #endregion
+                    #region packs
+
+                    using (var _e = _packs.GetEnumerator())
+                        while (_e.MoveNext())
+                            _hash = HashCode.Combine(_hash, _e.Current);
+                    #endregion
+                    #region channels
+
+                    using (var _e = _channels.GetEnumerator())
+                        while (_e.MoveNext())
+                            _hash = HashCode.Combine(_hash, _e.Current);
+                    #endregion
+                    #region stages
+
+                    using (var _e = _stages.GetEnumerator())
+                        while (_e.MoveNext())
+                            _hash = HashCode.Combine(_hash, _e.Current);
+                    #endregion
+                    #region branches
+
+                    using (var _e = _branches.GetEnumerator())
+                        while (_e.MoveNext())
+                            _hash = HashCode.Combine(_hash, _e.Current);
+                    #endregion
+
+                    return (int)_hash;
+                }
+            }
+            bool IEquatable<UID>.Equals(UID? _pack)
+            {
+                if (_pack == null) return false;
+
+                bool __t;
+                #region projects
+
+                if (_projects != _pack._projects)
+                    if (_projects == null || _pack._projects == null || _projects!.Count != _pack._projects!.Count) return false;
+                    else
+                        using (var en = _projects.GetEnumerator())
+                            while (en.MoveNext())
+                                if (!_pack._projects.TryGetValue(en.Current.Key, out var _val2_)) return false;
+                                else
+                                {
+
+                                    var _val1_ = en.Current.Value;
+
+                                    if (_val1_ != _val2_) return false;
+
+                                }
+                #endregion
+                #region hosts
+
+                if (_hosts != _pack._hosts)
+                    if (_hosts == null || _pack._hosts == null || _hosts!.Count != _pack._hosts!.Count) return false;
+                    else
+                        using (var en = _hosts.GetEnumerator())
+                            while (en.MoveNext())
+                                if (!_pack._hosts.TryGetValue(en.Current.Key, out var _val2_)) return false;
+                                else
+                                {
+
+                                    var _val1_ = en.Current.Value;
+
+                                    if (_val1_ != _val2_) return false;
+
+                                }
+                #endregion
+                #region packs
+
+                if (_packs != _pack._packs)
+                    if (_packs == null || _pack._packs == null || _packs!.Count != _pack._packs!.Count) return false;
+                    else
+                        using (var en = _packs.GetEnumerator())
+                            while (en.MoveNext())
+                                if (!_pack._packs.TryGetValue(en.Current.Key, out var _val2_)) return false;
+                                else
+                                {
+
+                                    var _val1_ = en.Current.Value;
+
+                                    if (_val1_ != _val2_) return false;
+
+                                }
+                #endregion
+                #region channels
+
+                if (_channels != _pack._channels)
+                    if (_channels == null || _pack._channels == null || _channels!.Count != _pack._channels!.Count) return false;
+                    else
+                        using (var en = _channels.GetEnumerator())
+                            while (en.MoveNext())
+                                if (!_pack._channels.TryGetValue(en.Current.Key, out var _val2_)) return false;
+                                else
+                                {
+
+                                    var _val1_ = en.Current.Value;
+
+                                    if (_val1_ != _val2_) return false;
+
+                                }
+                #endregion
+                #region stages
+
+                if (_stages != _pack._stages)
+                    if (_stages == null || _pack._stages == null || _stages!.Count != _pack._stages!.Count) return false;
+                    else
+                        using (var en = _stages.GetEnumerator())
+                            while (en.MoveNext())
+                                if (!_pack._stages.TryGetValue(en.Current.Key, out var _val2_)) return false;
+                                else
+                                {
+
+                                    var _val1_ = en.Current.Value;
+
+                                    if (_val1_ != _val2_) return false;
+
+                                }
+                #endregion
+                #region branches
+
+                if (_branches != _pack._branches)
+                    if (_branches == null || _pack._branches == null || _branches!.Count != _pack._branches!.Count) return false;
+                    else
+                        using (var en = _branches.GetEnumerator())
+                            while (en.MoveNext())
+                                if (!_pack._branches.TryGetValue(en.Current.Key, out var _val2_)) return false;
+                                else
+                                {
+
+                                    var _val1_ = en.Current.Value;
+
+                                    if (_val1_ != _val2_) return false;
+
+                                }
+                #endregion
+
+                return true;
+            }
+
+
+
+            bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
+            {
+                var __slot = __dst.slot!;
+                int __i = 0, __t = 0, __v = 0;
+                for (; ; )
+                    switch (__slot.state)
+                    {
+                        case 0:
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
+                            return false;
+
+                        case 1:
+
+
+
+                            if (!__dst.init_fields_nulls(_projects != null ? 1 : 0, 1)) return false;
+                            if (_hosts != null) __dst.set_fields_nulls(1 << 1);
+                            if (_packs != null) __dst.set_fields_nulls(1 << 2);
+                            if (_channels != null) __dst.set_fields_nulls(1 << 3);
+                            if (_stages != null) __dst.set_fields_nulls(1 << 4);
+                            if (_branches != null) __dst.set_fields_nulls(1 << 5);
+
+                            __dst.flush_fields_nulls();
+                            goto case 2;
+                        case 2:
+                            #region projects
+
+
+                            if (__dst.is_null(1)) goto case 7;
+
+                            if (!__dst.Allocate(5, 2)) return false;
+                            if (__slot.no_items(_projects!.Count, 255)) goto case 7;
+                            #region sending map info
+
+
+
+                            __slot.put_info();
+                            goto case 3;
+                        case 3:
+                            #endregion
+
+                            projects_Init(__dst, __slot);
+                            goto case 4;
+                        #region sending key
+                        case 4:
+                            if (__dst.put((ulong)projects_NextItem_Key(__dst, __slot), 5)) goto case 5;
+                            return false;
+                        case 5:
+                            #endregion
+                            #region sending value
+                            if (__dst.put((byte)projects_Val(__dst, __slot), 6)) goto case 6;
+                            return false;
+                        case 6:
+                            #endregion
+                            if (__slot.next_index1()) goto case 4;
+
+                            goto case 7;
+                        case 7:
+                            #endregion
+                            #region hosts
+
+
+                            if (__dst.is_null(1 << 1)) goto case 12;
+
+                            if (!__dst.Allocate(5, 7)) return false;
+                            if (__slot.no_items(_hosts!.Count, 255)) goto case 12;
+                            #region sending map info
+
+
+
+                            __slot.put_info();
+                            goto case 8;
+                        case 8:
+                            #endregion
+
+                            hosts_Init(__dst, __slot);
+                            goto case 9;
+                        #region sending key
+                        case 9:
+                            if (__dst.put((ushort)hosts_NextItem_Key(__dst, __slot), 10)) goto case 10;
+                            return false;
+                        case 10:
+                            #endregion
+                            #region sending value
+                            if (__dst.put((byte)hosts_Val(__dst, __slot), 11)) goto case 11;
+                            return false;
+                        case 11:
+                            #endregion
+                            if (__slot.next_index1()) goto case 9;
+
+                            goto case 12;
+                        case 12:
+                            #endregion
+                            #region packs
+
+
+                            if (__dst.is_null(1 << 2)) goto case 17;
+
+                            if (!__dst.Allocate(5, 12)) return false;
+                            if (__slot.no_items(_packs!.Count, 65535)) goto case 17;
+                            #region sending map info
+
+
+
+                            __slot.put_info();
+                            goto case 13;
+                        case 13:
+                            #endregion
+
+                            packs_Init(__dst, __slot);
+                            goto case 14;
+                        #region sending key
+                        case 14:
+                            if (__dst.put((uint)packs_NextItem_Key(__dst, __slot), 15)) goto case 15;
+                            return false;
+                        case 15:
+                            #endregion
+                            #region sending value
+                            if (__dst.put((ushort)packs_Val(__dst, __slot), 16)) goto case 16;
+                            return false;
+                        case 16:
+                            #endregion
+                            if (__slot.next_index1()) goto case 14;
+
+                            goto case 17;
+                        case 17:
+                            #endregion
+                            #region channels
+
+
+                            if (__dst.is_null(1 << 3)) goto case 22;
+
+                            if (!__dst.Allocate(5, 17)) return false;
+                            if (__slot.no_items(_channels!.Count, 255)) goto case 22;
+                            #region sending map info
+
+
+
+                            __slot.put_info();
+                            goto case 18;
+                        case 18:
+                            #endregion
+
+                            channels_Init(__dst, __slot);
+                            goto case 19;
+                        #region sending key
+                        case 19:
+                            if (__dst.put((ushort)channels_NextItem_Key(__dst, __slot), 20)) goto case 20;
+                            return false;
+                        case 20:
+                            #endregion
+                            #region sending value
+                            if (__dst.put((byte)channels_Val(__dst, __slot), 21)) goto case 21;
+                            return false;
+                        case 21:
+                            #endregion
+                            if (__slot.next_index1()) goto case 19;
+
+                            goto case 22;
+                        case 22:
+                            #endregion
+                            #region stages
+
+
+                            if (__dst.is_null(1 << 4)) goto case 27;
+
+                            if (!__dst.Allocate(5, 22)) return false;
+                            if (__slot.no_items(_stages!.Count, 65535)) goto case 27;
+                            #region sending map info
+
+
+
+                            __slot.put_info();
+                            goto case 23;
+                        case 23:
+                            #endregion
+
+                            stages_Init(__dst, __slot);
+                            goto case 24;
+                        #region sending key
+                        case 24:
+                            if (__dst.put((uint)stages_NextItem_Key(__dst, __slot), 25)) goto case 25;
+                            return false;
+                        case 25:
+                            #endregion
+                            #region sending value
+                            if (__dst.put((ushort)stages_Val(__dst, __slot), 26)) goto case 26;
+                            return false;
+                        case 26:
+                            #endregion
+                            if (__slot.next_index1()) goto case 24;
+
+                            goto case 27;
+                        case 27:
+                            #endregion
+                            #region branches
+
+
+                            if (__dst.is_null(1 << 5)) goto case 32;
+
+                            if (!__dst.Allocate(5, 27)) return false;
+                            if (__slot.no_items(_branches!.Count, 65535)) goto case 32;
+                            #region sending map info
+
+
+
+                            __slot.put_info();
+                            goto case 28;
+                        case 28:
+                            #endregion
+
+                            branches_Init(__dst, __slot);
+                            goto case 29;
+                        #region sending key
+                        case 29:
+                            if (__dst.put((ulong)branches_NextItem_Key(__dst, __slot), 30)) goto case 30;
+                            return false;
+                        case 30:
+                            #endregion
+                            #region sending value
+                            if (__dst.put((ushort)branches_Val(__dst, __slot), 31)) goto case 31;
+                            return false;
+                        case 31:
+                            #endregion
+                            if (__slot.next_index1()) goto case 29;
+
+                            goto case 32;
+                        case 32:
+                        #endregion
+
+
+
+                        default:
+                            return true;
+                    }
+            }
+
+            bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
+            {
+                var __slot = __src.slot!;
+                int __i = 0, __t = 0, __v = 0;
+                for (; ; )
+                    switch (__slot.state)
+                    {
+                        case 0:
+
+                            if (__src.get_fields_nulls(0)) goto case 1;
+                            return false;
+                        case 1:
+                            #region projects
+
+                            if (__src.is_null(1)) goto case 7;
+
+
+                            if (__slot.try_get_info(1) && __slot.try_items_count(Agent.UID.projects_.TYPE_LEN_MAX, 2)) goto case 2;
+                            return false;
+                        case 2:
+
+
+                            projects_new(__v = __slot.items_count(Agent.UID.projects_.TYPE_LEN_MAX));
+
+                            if (__v == 0) goto case 7;
+
+
+                            if (__slot.leap()) goto case 7;
+
+                            goto case 3;
+                        case 3:
+                            #region receiving key
+
+
+                            if (!__src.has_8bytes(4)) return false;
+                            __src._ulong = (ulong)__src.get_ulong();
+                            goto case 5;//leap
+                        case 4:
+                            __src._ulong = (ulong)__src.get_ulong_();
+                            goto case 5;
+                        case 5:
+                            #endregion
+                            #region receiving value
+
+
+                            if (!__src.has_1bytes(6)) return false;
+
+                            _projects.Add(__src._ulong, (byte)__src.get_byte());
+                            if (__slot.next_index1()) goto case 3;
+
+                            goto case 7;//leap
+                        case 6:
+
+                            _projects.Add(__src._ulong, (byte)__src.get_byte_());
+                            if (__slot.next_index1()) goto case 3;
+
+                            goto case 7;
+                        case 7:
+                            #endregion
+                            #endregion
+                            #region hosts
+
+                            if (__src.is_null(1 << 1)) goto case 13;
+
+
+                            if (__slot.try_get_info(7) && __slot.try_items_count(Agent.UID.hosts_.TYPE_LEN_MAX, 8)) goto case 8;
+                            return false;
+                        case 8:
+
+
+                            hosts_new(__v = __slot.items_count(Agent.UID.hosts_.TYPE_LEN_MAX));
+
+                            if (__v == 0) goto case 13;
+
+
+                            if (__slot.leap()) goto case 13;
+
+                            goto case 9;
+                        case 9:
+                            #region receiving key
+
+
+                            if (!__src.has_2bytes(10)) return false;
+                            __src._ulong = (ushort)__src.get_ushort();
+                            goto case 11;//leap
+                        case 10:
+                            __src._ulong = (ushort)__src.get_ushort_();
+                            goto case 11;
+                        case 11:
+                            #endregion
+                            #region receiving value
+
+
+                            if (!__src.has_1bytes(12)) return false;
+
+                            _hosts.Add((ushort)__src._ulong, (byte)__src.get_byte());
+                            if (__slot.next_index1()) goto case 9;
+
+                            goto case 13;//leap
+                        case 12:
+
+                            _hosts.Add((ushort)__src._ulong, (byte)__src.get_byte_());
+                            if (__slot.next_index1()) goto case 9;
+
+                            goto case 13;
+                        case 13:
+                            #endregion
+                            #endregion
+                            #region packs
+
+                            if (__src.is_null(1 << 2)) goto case 19;
+
+
+                            if (__slot.try_get_info(13) && __slot.try_items_count(Agent.UID.packs_.TYPE_LEN_MAX, 14)) goto case 14;
+                            return false;
+                        case 14:
+
+
+                            packs_new(__v = __slot.items_count(Agent.UID.packs_.TYPE_LEN_MAX));
+
+                            if (__v == 0) goto case 19;
+
+
+                            if (__slot.leap()) goto case 19;
+
+                            goto case 15;
+                        case 15:
+                            #region receiving key
+
+
+                            if (!__src.has_4bytes(16)) return false;
+                            __src._ulong = (uint)__src.get_uint();
+                            goto case 17;//leap
+                        case 16:
+                            __src._ulong = (uint)__src.get_uint_();
+                            goto case 17;
+                        case 17:
+                            #endregion
+                            #region receiving value
+
+
+                            if (!__src.has_2bytes(18)) return false;
+
+                            _packs.Add((uint)__src._ulong, (ushort)__src.get_ushort());
+                            if (__slot.next_index1()) goto case 15;
+
+                            goto case 19;//leap
+                        case 18:
+
+                            _packs.Add((uint)__src._ulong, (ushort)__src.get_ushort_());
+                            if (__slot.next_index1()) goto case 15;
+
+                            goto case 19;
+                        case 19:
+                            #endregion
+                            #endregion
+                            #region channels
+
+                            if (__src.is_null(1 << 3)) goto case 25;
+
+
+                            if (__slot.try_get_info(19) && __slot.try_items_count(Agent.UID.channels_.TYPE_LEN_MAX, 20)) goto case 20;
+                            return false;
+                        case 20:
+
+
+                            channels_new(__v = __slot.items_count(Agent.UID.channels_.TYPE_LEN_MAX));
+
+                            if (__v == 0) goto case 25;
+
+
+                            if (__slot.leap()) goto case 25;
+
+                            goto case 21;
+                        case 21:
+                            #region receiving key
+
+
+                            if (!__src.has_2bytes(22)) return false;
+                            __src._ulong = (ushort)__src.get_ushort();
+                            goto case 23;//leap
+                        case 22:
+                            __src._ulong = (ushort)__src.get_ushort_();
+                            goto case 23;
+                        case 23:
+                            #endregion
+                            #region receiving value
+
+
+                            if (!__src.has_1bytes(24)) return false;
+
+                            _channels.Add((ushort)__src._ulong, (byte)__src.get_byte());
+                            if (__slot.next_index1()) goto case 21;
+
+                            goto case 25;//leap
+                        case 24:
+
+                            _channels.Add((ushort)__src._ulong, (byte)__src.get_byte_());
+                            if (__slot.next_index1()) goto case 21;
+
+                            goto case 25;
+                        case 25:
+                            #endregion
+                            #endregion
+                            #region stages
+
+                            if (__src.is_null(1 << 4)) goto case 31;
+
+
+                            if (__slot.try_get_info(25) && __slot.try_items_count(Agent.UID.stages_.TYPE_LEN_MAX, 26)) goto case 26;
+                            return false;
+                        case 26:
+
+
+                            stages_new(__v = __slot.items_count(Agent.UID.stages_.TYPE_LEN_MAX));
+
+                            if (__v == 0) goto case 31;
+
+
+                            if (__slot.leap()) goto case 31;
+
+                            goto case 27;
+                        case 27:
+                            #region receiving key
+
+
+                            if (!__src.has_4bytes(28)) return false;
+                            __src._ulong = (uint)__src.get_uint();
+                            goto case 29;//leap
+                        case 28:
+                            __src._ulong = (uint)__src.get_uint_();
+                            goto case 29;
+                        case 29:
+                            #endregion
+                            #region receiving value
+
+
+                            if (!__src.has_2bytes(30)) return false;
+
+                            _stages.Add((uint)__src._ulong, (ushort)__src.get_ushort());
+                            if (__slot.next_index1()) goto case 27;
+
+                            goto case 31;//leap
+                        case 30:
+
+                            _stages.Add((uint)__src._ulong, (ushort)__src.get_ushort_());
+                            if (__slot.next_index1()) goto case 27;
+
+                            goto case 31;
+                        case 31:
+                            #endregion
+                            #endregion
+                            #region branches
+
+                            if (__src.is_null(1 << 5)) goto case 37;
+
+
+                            if (__slot.try_get_info(31) && __slot.try_items_count(Agent.UID.branches_.TYPE_LEN_MAX, 32)) goto case 32;
+                            return false;
+                        case 32:
+
+
+                            branches_new(__v = __slot.items_count(Agent.UID.branches_.TYPE_LEN_MAX));
+
+                            if (__v == 0) goto case 37;
+
+
+                            if (__slot.leap()) goto case 37;
+
+                            goto case 33;
+                        case 33:
+                            #region receiving key
+
+
+                            if (!__src.has_8bytes(34)) return false;
+                            __src._ulong = (ulong)__src.get_ulong();
+                            goto case 35;//leap
+                        case 34:
+                            __src._ulong = (ulong)__src.get_ulong_();
+                            goto case 35;
+                        case 35:
+                            #endregion
+                            #region receiving value
+
+
+                            if (!__src.has_2bytes(36)) return false;
+
+                            _branches.Add(__src._ulong, (ushort)__src.get_ushort());
+                            if (__slot.next_index1()) goto case 33;
+
+                            goto case 37;//leap
+                        case 36:
+
+                            _branches.Add(__src._ulong, (ushort)__src.get_ushort_());
+                            if (__slot.next_index1()) goto case 33;
+
+                            goto case 37;
+                        case 37:
+                        #endregion
+                        #endregion
+
+                        default:
+                            return true;
+                    }
+            }
+
+
+
+
         }
         public interface Project : Communication.Transmitter.Transmittable, ObserverCommunication.Transmitter.Transmittable
         {
 
             int AdHoc.Transmitter.BytesSrc.__id => __id_;
-            public const int __id_ = 5;
+            public const int __id_ = 8;
 
             void Communication.Transmitter.Transmittable.Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, this);
             void ObserverCommunication.Transmitter.Transmittable.Sent(ObserverCommunication.Transmitter via) => ObserverCommunication.Transmitter.onTransmit.Sent(via, this);
@@ -333,9 +1461,12 @@ namespace org.unirail
 
             public string? _task { get; }
             public struct _task_
-            { //Unique ID
+            {  //Unique ID
+
+
 
                 public const int STR_LEN_MAX = 255;
+
             }
             #endregion
             #region namespacE
@@ -344,7 +1475,10 @@ namespace org.unirail
             public struct _namespacE_
             {
 
+
+
                 public const int STR_LEN_MAX = 255;
+
             }
             #endregion
             #region time
@@ -362,9 +1496,12 @@ namespace org.unirail
             //Get the element of the collection
             public byte _source(Context.Transmitter ctx, Context.Transmitter.Slot __slot, int item);
             public struct _source_
-            { //Max 130k zipped sources
+            {  //Max 130k zipped sources
+
+
 
                 public const int ARRAY_LEN_MAX = 131071;
+
             }
             #endregion
             #region fields
@@ -380,7 +1517,10 @@ namespace org.unirail
             public struct _fields_
             {
 
+
+
                 public const int ARRAY_LEN_MAX = 65535;
+
             }
             #endregion
             #region packs
@@ -396,7 +1536,10 @@ namespace org.unirail
             public struct _packs_
             {
 
+
+
                 public const int ARRAY_LEN_MAX = 65535;
+
             }
             #endregion
             #region hosts
@@ -410,9 +1553,12 @@ namespace org.unirail
             //Get the element of the collection
             public Agent.Project.Host _hosts(Context.Transmitter ctx, Context.Transmitter.Slot __slot, int item);
             public struct _hosts_
-            { //512 max
+            {  //512 max
+
+
 
                 public const int ARRAY_LEN_MAX = 511;
+
             }
             #endregion
             #region channels
@@ -426,9 +1572,12 @@ namespace org.unirail
             //Get the element of the collection
             public Agent.Project.Channel _channels(Context.Transmitter ctx, Context.Transmitter.Slot __slot, int item);
             public struct _channels_
-            { //512/2 = 256 max
+            {  //512/2 = 256 max
+
+
 
                 public const int ARRAY_LEN_MAX = 255;
+
             }
             #endregion
             #region name
@@ -437,16 +1586,22 @@ namespace org.unirail
             public struct _name_
             {
 
+
+
                 public const int STR_LEN_MAX = 255;
+
             }
             #endregion
             #region doc
 
             public string? _doc { get; }
             public struct _doc_
-            { //Documentation with a maximum of 65,000 characters
+            {  //Documentation with a maximum of 65,000 characters
+
+
 
                 public const int STR_LEN_MAX = 65000;
+
             }
             #endregion
             #region inline_doc
@@ -455,9 +1610,15 @@ namespace org.unirail
             public struct _inline_doc_
             {
 
+
+
                 public const int STR_LEN_MAX = 255;
+
             }
             #endregion
+
+
+
 
             bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
             {
@@ -467,58 +1628,51 @@ namespace org.unirail
                     switch (__slot.state)
                     {
                         case 0:
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
                             return false;
 
                         case 1:
 
-                            if (!__dst.Allocate(8, 1))
-                                return false;
+                            if (!__dst.Allocate(8, 1)) return false;
                             __dst.put((long)_time);
 
                             goto case 2;
                         case 2:
 
-                            if (!__dst.init_fields_nulls(_task != null ? 1 : 0, 2))
-                                return false;
+
+
+                            if (!__dst.init_fields_nulls(_task != null ? 1 : 0, 2)) return false;
                             if (_namespacE != null) __dst.set_fields_nulls(1 << 1);
-                            if (_source() != null)
-                                __dst.set_fields_nulls(1 << 2);
-                            if (_fields() != null)
-                                __dst.set_fields_nulls(1 << 3);
-                            if (_packs() != null)
-                                __dst.set_fields_nulls(1 << 4);
-                            if (_hosts() != null)
-                                __dst.set_fields_nulls(1 << 5);
-                            if (_channels() != null)
-                                __dst.set_fields_nulls(1 << 6);
-                            if (_name != null)
-                                __dst.set_fields_nulls(1 << 7);
+                            if (_source() != null) __dst.set_fields_nulls(1 << 2);
+                            if (_fields() != null) __dst.set_fields_nulls(1 << 3);
+                            if (_packs() != null) __dst.set_fields_nulls(1 << 4);
+                            if (_hosts() != null) __dst.set_fields_nulls(1 << 5);
+                            if (_channels() != null) __dst.set_fields_nulls(1 << 6);
+                            if (_name != null) __dst.set_fields_nulls(1 << 7);
 
                             __dst.flush_fields_nulls();
                             goto case 3;
                         case 3:
                             #region task
 
-                            if (__dst.is_null(1))
-                                goto case 4;
+
+                            if (__dst.is_null(1)) goto case 4;
                             if (__dst.put(_task!, 4)) goto case 4;
                             return false;
                         case 4:
                             #endregion
                             #region namespacE
 
-                            if (__dst.is_null(1 << 1))
-                                goto case 5;
+
+                            if (__dst.is_null(1 << 1)) goto case 5;
                             if (__dst.put(_namespacE!, 5)) goto case 5;
                             return false;
                         case 5:
                             #endregion
                             #region source
 
-                            if (__dst.is_null(1 << 2))
-                                goto case 7;
+
+                            if (__dst.is_null(1 << 2)) goto case 7;
 
                             if (__slot.index_max_1(_source_len) == 0)
                             {
@@ -535,8 +1689,7 @@ namespace org.unirail
                                 if (0 < __v)
                                 {
                                     __slot.index1 = __v += __i = __slot.index1;
-                                    for (; __i < __v; __i++)
-                                        __dst.put((byte)_source(__dst, __slot, __i));
+                                    for (; __i < __v; __i++) __dst.put((byte)_source(__dst, __slot, __i));
                                 }
                                 __dst.retry_at(6);
                                 return false;
@@ -548,8 +1701,8 @@ namespace org.unirail
                             #endregion
                             #region fields
 
-                            if (__dst.is_null(1 << 3))
-                                goto case 9;
+
+                            if (__dst.is_null(1 << 3)) goto case 9;
 
                             if (__slot.index_max_1(_fields_len) == 0)
                             {
@@ -562,16 +1715,15 @@ namespace org.unirail
                         case 8:
 
                             for (var b = true; b;)
-                                if (!__dst.put_bytes(_fields(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 8U : 9U))
-                                    return false;
+                                if (!__dst.put_bytes(_fields(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 8U : 9U)) return false;
 
                             goto case 9;
                         case 9:
                             #endregion
                             #region packs
 
-                            if (__dst.is_null(1 << 4))
-                                goto case 11;
+
+                            if (__dst.is_null(1 << 4)) goto case 11;
 
                             if (__slot.index_max_1(_packs_len) == 0)
                             {
@@ -584,16 +1736,15 @@ namespace org.unirail
                         case 10:
 
                             for (var b = true; b;)
-                                if (!__dst.put_bytes(_packs(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 10U : 11U))
-                                    return false;
+                                if (!__dst.put_bytes(_packs(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 10U : 11U)) return false;
 
                             goto case 11;
                         case 11:
                             #endregion
                             #region hosts
 
-                            if (__dst.is_null(1 << 5))
-                                goto case 13;
+
+                            if (__dst.is_null(1 << 5)) goto case 13;
 
                             if (__slot.index_max_1(_hosts_len) == 0)
                             {
@@ -606,16 +1757,15 @@ namespace org.unirail
                         case 12:
 
                             for (var b = true; b;)
-                                if (!__dst.put_bytes(_hosts(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 12U : 13U))
-                                    return false;
+                                if (!__dst.put_bytes(_hosts(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 12U : 13U)) return false;
 
                             goto case 13;
                         case 13:
                             #endregion
                             #region channels
 
-                            if (__dst.is_null(1 << 6))
-                                goto case 15;
+
+                            if (__dst.is_null(1 << 6)) goto case 15;
 
                             if (__slot.index_max_1(_channels_len) == 0)
                             {
@@ -628,23 +1778,23 @@ namespace org.unirail
                         case 14:
 
                             for (var b = true; b;)
-                                if (!__dst.put_bytes(_channels(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 14U : 15U))
-                                    return false;
+                                if (!__dst.put_bytes(_channels(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 14U : 15U)) return false;
 
                             goto case 15;
                         case 15:
                             #endregion
                             #region name
 
-                            if (__dst.is_null(1 << 7))
-                                goto case 16;
+
+                            if (__dst.is_null(1 << 7)) goto case 16;
                             if (__dst.put(_name!, 16)) goto case 16;
                             return false;
                         case 16:
                             #endregion
 
-                            if (!__dst.init_fields_nulls(_doc != null ? 1 : 0, 16))
-                                return false;
+
+
+                            if (!__dst.init_fields_nulls(_doc != null ? 1 : 0, 16)) return false;
                             if (_inline_doc != null) __dst.set_fields_nulls(1 << 1);
 
                             __dst.flush_fields_nulls();
@@ -652,25 +1802,31 @@ namespace org.unirail
                         case 17:
                             #region doc
 
-                            if (__dst.is_null(1))
-                                goto case 18;
+
+                            if (__dst.is_null(1)) goto case 18;
                             if (__dst.put(_doc!, 18)) goto case 18;
                             return false;
                         case 18:
                             #endregion
                             #region inline_doc
 
-                            if (__dst.is_null(1 << 1))
-                                goto case 19;
+
+                            if (__dst.is_null(1 << 1)) goto case 19;
                             if (__dst.put(_inline_doc!, 19)) goto case 19;
                             return false;
                         case 19:
                         #endregion
 
+
+
                         default:
                             return true;
                     }
             }
+
+
+
+
 
             public interface Channel : AdHoc.Transmitter.BytesSrc
             {
@@ -694,7 +1850,10 @@ namespace org.unirail
                 public struct _hostL_transmitting_packs_
                 {
 
+
+
                     public const int ARRAY_LEN_MAX = 65535;
+
                 }
                 #endregion
                 #region hostL_related_packs
@@ -710,7 +1869,10 @@ namespace org.unirail
                 public struct _hostL_related_packs_
                 {
 
+
+
                     public const int ARRAY_LEN_MAX = 65535;
+
                 }
                 #endregion
                 #region hostR
@@ -730,7 +1892,10 @@ namespace org.unirail
                 public struct _hostR_transmitting_packs_
                 {
 
+
+
                     public const int ARRAY_LEN_MAX = 65535;
+
                 }
                 #endregion
                 #region hostR_related_packs
@@ -746,7 +1911,10 @@ namespace org.unirail
                 public struct _hostR_related_packs_
                 {
 
+
+
                     public const int ARRAY_LEN_MAX = 65535;
+
                 }
                 #endregion
                 #region stages
@@ -762,12 +1930,15 @@ namespace org.unirail
                 public struct _stages_
                 {
 
+
+
                     public const int ARRAY_LEN_MAX = 4095;
+
                 }
                 #endregion
                 #region uid
 
-                public ushort _uid { get; }
+                public byte _uid { get; }
                 #endregion
                 #region name
 
@@ -775,16 +1946,22 @@ namespace org.unirail
                 public struct _name_
                 {
 
+
+
                     public const int STR_LEN_MAX = 255;
+
                 }
                 #endregion
                 #region doc
 
                 public string? _doc { get; }
                 public struct _doc_
-                { //Documentation with a maximum of 65,000 characters
+                {  //Documentation with a maximum of 65,000 characters
+
+
 
                     public const int STR_LEN_MAX = 65000;
+
                 }
                 #endregion
                 #region inline_doc
@@ -793,9 +1970,15 @@ namespace org.unirail
                 public struct _inline_doc_
                 {
 
+
+
                     public const int STR_LEN_MAX = 255;
+
                 }
                 #endregion
+
+
+
 
                 bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                 {
@@ -808,38 +1991,32 @@ namespace org.unirail
                                 throw new NotSupportedException();
                             case 1:
 
-                                if (!__dst.Allocate(6, 1))
-                                    return false;
+                                if (!__dst.Allocate(5, 1)) return false;
                                 __dst.put((ushort)_hostL);
                                 __dst.put((ushort)_hostR);
-                                __dst.put((ushort)_uid);
+                                __dst.put((byte)_uid);
 
                                 goto case 2;
                             case 2:
 
-                                if (!__dst.init_fields_nulls(_hostL_transmitting_packs() != null ? 1 : 0, 2))
-                                    return false;
+
+
+                                if (!__dst.init_fields_nulls(_hostL_transmitting_packs() != null ? 1 : 0, 2)) return false;
                                 if (_hostL_related_packs() != null) __dst.set_fields_nulls(1 << 1);
-                                if (_hostR_transmitting_packs() != null)
-                                    __dst.set_fields_nulls(1 << 2);
-                                if (_hostR_related_packs() != null)
-                                    __dst.set_fields_nulls(1 << 3);
-                                if (_stages() != null)
-                                    __dst.set_fields_nulls(1 << 4);
-                                if (_name != null)
-                                    __dst.set_fields_nulls(1 << 5);
-                                if (_doc != null)
-                                    __dst.set_fields_nulls(1 << 6);
-                                if (_inline_doc != null)
-                                    __dst.set_fields_nulls(1 << 7);
+                                if (_hostR_transmitting_packs() != null) __dst.set_fields_nulls(1 << 2);
+                                if (_hostR_related_packs() != null) __dst.set_fields_nulls(1 << 3);
+                                if (_stages() != null) __dst.set_fields_nulls(1 << 4);
+                                if (_name != null) __dst.set_fields_nulls(1 << 5);
+                                if (_doc != null) __dst.set_fields_nulls(1 << 6);
+                                if (_inline_doc != null) __dst.set_fields_nulls(1 << 7);
 
                                 __dst.flush_fields_nulls();
                                 goto case 3;
                             case 3:
                                 #region hostL_transmitting_packs
 
-                                if (__dst.is_null(1))
-                                    goto case 5;
+
+                                if (__dst.is_null(1)) goto case 5;
 
                                 if (__slot.index_max_1(_hostL_transmitting_packs_len) == 0)
                                 {
@@ -856,8 +2033,7 @@ namespace org.unirail
                                     if (0 < __v)
                                     {
                                         __slot.index1 = __v += __i = __slot.index1;
-                                        for (; __i < __v; __i++)
-                                            __dst.put((ushort)_hostL_transmitting_packs(__dst, __slot, __i));
+                                        for (; __i < __v; __i++) __dst.put((ushort)_hostL_transmitting_packs(__dst, __slot, __i));
                                     }
                                     __dst.retry_at(4);
                                     return false;
@@ -869,8 +2045,8 @@ namespace org.unirail
                                 #endregion
                                 #region hostL_related_packs
 
-                                if (__dst.is_null(1 << 1))
-                                    goto case 7;
+
+                                if (__dst.is_null(1 << 1)) goto case 7;
 
                                 if (__slot.index_max_1(_hostL_related_packs_len) == 0)
                                 {
@@ -887,8 +2063,7 @@ namespace org.unirail
                                     if (0 < __v)
                                     {
                                         __slot.index1 = __v += __i = __slot.index1;
-                                        for (; __i < __v; __i++)
-                                            __dst.put((ushort)_hostL_related_packs(__dst, __slot, __i));
+                                        for (; __i < __v; __i++) __dst.put((ushort)_hostL_related_packs(__dst, __slot, __i));
                                     }
                                     __dst.retry_at(6);
                                     return false;
@@ -900,8 +2075,8 @@ namespace org.unirail
                                 #endregion
                                 #region hostR_transmitting_packs
 
-                                if (__dst.is_null(1 << 2))
-                                    goto case 9;
+
+                                if (__dst.is_null(1 << 2)) goto case 9;
 
                                 if (__slot.index_max_1(_hostR_transmitting_packs_len) == 0)
                                 {
@@ -918,8 +2093,7 @@ namespace org.unirail
                                     if (0 < __v)
                                     {
                                         __slot.index1 = __v += __i = __slot.index1;
-                                        for (; __i < __v; __i++)
-                                            __dst.put((ushort)_hostR_transmitting_packs(__dst, __slot, __i));
+                                        for (; __i < __v; __i++) __dst.put((ushort)_hostR_transmitting_packs(__dst, __slot, __i));
                                     }
                                     __dst.retry_at(8);
                                     return false;
@@ -931,8 +2105,8 @@ namespace org.unirail
                                 #endregion
                                 #region hostR_related_packs
 
-                                if (__dst.is_null(1 << 3))
-                                    goto case 11;
+
+                                if (__dst.is_null(1 << 3)) goto case 11;
 
                                 if (__slot.index_max_1(_hostR_related_packs_len) == 0)
                                 {
@@ -949,8 +2123,7 @@ namespace org.unirail
                                     if (0 < __v)
                                     {
                                         __slot.index1 = __v += __i = __slot.index1;
-                                        for (; __i < __v; __i++)
-                                            __dst.put((ushort)_hostR_related_packs(__dst, __slot, __i));
+                                        for (; __i < __v; __i++) __dst.put((ushort)_hostR_related_packs(__dst, __slot, __i));
                                     }
                                     __dst.retry_at(10);
                                     return false;
@@ -962,8 +2135,8 @@ namespace org.unirail
                                 #endregion
                                 #region stages
 
-                                if (__dst.is_null(1 << 4))
-                                    goto case 13;
+
+                                if (__dst.is_null(1 << 4)) goto case 13;
 
                                 if (__slot.index_max_1(_stages_len) == 0)
                                 {
@@ -976,41 +2149,46 @@ namespace org.unirail
                             case 12:
 
                                 for (var b = true; b;)
-                                    if (!__dst.put_bytes(_stages(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 12U : 13U))
-                                        return false;
+                                    if (!__dst.put_bytes(_stages(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 12U : 13U)) return false;
 
                                 goto case 13;
                             case 13:
                                 #endregion
                                 #region name
 
-                                if (__dst.is_null(1 << 5))
-                                    goto case 14;
+
+                                if (__dst.is_null(1 << 5)) goto case 14;
                                 if (__dst.put(_name!, 14)) goto case 14;
                                 return false;
                             case 14:
                                 #endregion
                                 #region doc
 
-                                if (__dst.is_null(1 << 6))
-                                    goto case 15;
+
+                                if (__dst.is_null(1 << 6)) goto case 15;
                                 if (__dst.put(_doc!, 15)) goto case 15;
                                 return false;
                             case 15:
                                 #endregion
                                 #region inline_doc
 
-                                if (__dst.is_null(1 << 7))
-                                    goto case 16;
+
+                                if (__dst.is_null(1 << 7)) goto case 16;
                                 if (__dst.put(_inline_doc!, 16)) goto case 16;
                                 return false;
                             case 16:
                             #endregion
 
+
+
                             default:
                                 return true;
                         }
                 }
+
+
+
+
 
                 public interface Stage : AdHoc.Transmitter.BytesSrc
                 {
@@ -1025,6 +2203,10 @@ namespace org.unirail
 
                     public ushort _uid { get; }
                     #endregion
+                    #region LR
+
+                    public bool _LR { get; }
+                    #endregion
                     #region branchesL
 
                     //Get a reference to the field data for existence and equality checks
@@ -1038,7 +2220,10 @@ namespace org.unirail
                     public struct _branchesL_
                     {
 
+
+
                         public const int ARRAY_LEN_MAX = 4095;
+
                     }
                     #endregion
                     #region branchesR
@@ -1054,7 +2239,10 @@ namespace org.unirail
                     public struct _branchesR_
                     {
 
+
+
                         public const int ARRAY_LEN_MAX = 4095;
+
                     }
                     #endregion
                     #region name
@@ -1063,16 +2251,22 @@ namespace org.unirail
                     public struct _name_
                     {
 
+
+
                         public const int STR_LEN_MAX = 255;
+
                     }
                     #endregion
                     #region doc
 
                     public string? _doc { get; }
                     public struct _doc_
-                    { //Documentation with a maximum of 65,000 characters
+                    {  //Documentation with a maximum of 65,000 characters
+
+
 
                         public const int STR_LEN_MAX = 65000;
+
                     }
                     #endregion
                     #region inline_doc
@@ -1081,9 +2275,15 @@ namespace org.unirail
                     public struct _inline_doc_
                     {
 
+
+
                         public const int STR_LEN_MAX = 255;
+
                     }
                     #endregion
+
+
+
 
                     bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                     {
@@ -1096,55 +2296,42 @@ namespace org.unirail
                                     throw new NotSupportedException();
                                 case 1:
 
-                                    if (!__dst.Allocate(4, 1))
-                                        return false;
+                                    if (!__dst.Allocate(4, 1)) return false;
                                     __dst.put((ushort)_timeout);
                                     __dst.put((ushort)_uid);
 
                                     goto case 2;
                                 case 2:
 
-                                    if (!__dst.init_fields_nulls(_branchesL() != null ? 1 : 0, 2))
-                                        return false;
-                                    if (_branchesR() != null) __dst.set_fields_nulls(1 << 1);
-                                    if (_name != null)
-                                        __dst.set_fields_nulls(1 << 2);
-                                    if (_doc != null)
-                                        __dst.set_fields_nulls(1 << 3);
-                                    if (_inline_doc != null)
-                                        __dst.set_fields_nulls(1 << 4);
+                                    if (!__dst.init_bits(1, 2)) return false;
+                                    #region LR
+                                    __dst.put(_LR);
+                                    #endregion
 
-                                    __dst.flush_fields_nulls();
                                     goto case 3;
                                 case 3:
-                                    #region branchesL
 
-                                    if (__dst.is_null(1))
-                                        goto case 5;
-
-                                    if (__slot.index_max_1(_branchesL_len) == 0)
-                                    {
-                                        if (__dst.put_val(0, 2, 5)) goto case 5;
-                                        return false;
-                                    }
-                                    if (!__dst.put_val((uint)__slot.index_max1, 2, 4)) return false;
-
+                                    __dst.end_bits();
                                     goto case 4;
                                 case 4:
 
-                                    for (var b = true; b;)
-                                        if (!__dst.put_bytes(_branchesL(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 4U : 5U))
-                                            return false;
 
+
+                                    if (!__dst.init_fields_nulls(_branchesL() != null ? 1 : 0, 4)) return false;
+                                    if (_branchesR() != null) __dst.set_fields_nulls(1 << 1);
+                                    if (_name != null) __dst.set_fields_nulls(1 << 2);
+                                    if (_doc != null) __dst.set_fields_nulls(1 << 3);
+                                    if (_inline_doc != null) __dst.set_fields_nulls(1 << 4);
+
+                                    __dst.flush_fields_nulls();
                                     goto case 5;
                                 case 5:
-                                    #endregion
-                                    #region branchesR
+                                    #region branchesL
 
-                                    if (__dst.is_null(1 << 1))
-                                        goto case 7;
 
-                                    if (__slot.index_max_1(_branchesR_len) == 0)
+                                    if (__dst.is_null(1)) goto case 7;
+
+                                    if (__slot.index_max_1(_branchesL_len) == 0)
                                     {
                                         if (__dst.put_val(0, 2, 7)) goto case 7;
                                         return false;
@@ -1155,48 +2342,68 @@ namespace org.unirail
                                 case 6:
 
                                     for (var b = true; b;)
-                                        if (!__dst.put_bytes(_branchesR(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 6U : 7U))
-                                            return false;
+                                        if (!__dst.put_bytes(_branchesL(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 6U : 7U)) return false;
 
                                     goto case 7;
                                 case 7:
                                     #endregion
+                                    #region branchesR
+
+
+                                    if (__dst.is_null(1 << 1)) goto case 9;
+
+                                    if (__slot.index_max_1(_branchesR_len) == 0)
+                                    {
+                                        if (__dst.put_val(0, 2, 9)) goto case 9;
+                                        return false;
+                                    }
+                                    if (!__dst.put_val((uint)__slot.index_max1, 2, 8)) return false;
+
+                                    goto case 8;
+                                case 8:
+
+                                    for (var b = true; b;)
+                                        if (!__dst.put_bytes(_branchesR(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 8U : 9U)) return false;
+
+                                    goto case 9;
+                                case 9:
+                                    #endregion
                                     #region name
 
-                                    if (__dst.is_null(1 << 2))
-                                        goto case 8;
-                                    if (__dst.put(_name!, 8)) goto case 8;
+
+                                    if (__dst.is_null(1 << 2)) goto case 10;
+                                    if (__dst.put(_name!, 10)) goto case 10;
                                     return false;
-                                case 8:
+                                case 10:
                                     #endregion
                                     #region doc
 
-                                    if (__dst.is_null(1 << 3))
-                                        goto case 9;
-                                    if (__dst.put(_doc!, 9)) goto case 9;
+
+                                    if (__dst.is_null(1 << 3)) goto case 11;
+                                    if (__dst.put(_doc!, 11)) goto case 11;
                                     return false;
-                                case 9:
+                                case 11:
                                     #endregion
                                     #region inline_doc
 
-                                    if (__dst.is_null(1 << 4))
-                                        goto case 10;
-                                    if (__dst.put(_inline_doc!, 10)) goto case 10;
+
+                                    if (__dst.is_null(1 << 4)) goto case 12;
+                                    if (__dst.put(_inline_doc!, 12)) goto case 12;
                                     return false;
-                                case 10:
+                                case 12:
                                 #endregion
+
+
 
                                 default:
                                     return true;
                             }
                     }
 
-                    public enum Type : ushort
-                    {
-                        Exit = 65535,
-                        None = 65534,
-                        Remaining = 65533,
-                    }
+
+
+
+                    public const ushort Exit = 65535;
 
                     public interface Branch : AdHoc.Transmitter.BytesSrc
                     {
@@ -1213,7 +2420,10 @@ namespace org.unirail
                         public struct _doc_
                         {
 
+
+
                             public const int STR_LEN_MAX = 255;
+
                         }
                         #endregion
                         #region goto_stage
@@ -1233,9 +2443,15 @@ namespace org.unirail
                         public struct _packs_
                         {
 
+
+
                             public const int ARRAY_LEN_MAX = 65535;
+
                         }
                         #endregion
+
+
+
 
                         bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                         {
@@ -1248,16 +2464,16 @@ namespace org.unirail
                                         throw new NotSupportedException();
                                     case 1:
 
-                                        if (!__dst.Allocate(4, 1))
-                                            return false;
+                                        if (!__dst.Allocate(4, 1)) return false;
                                         __dst.put((ushort)_uid);
                                         __dst.put((ushort)_goto_stage);
 
                                         goto case 2;
                                     case 2:
 
-                                        if (!__dst.init_fields_nulls(_doc != null ? 1 : 0, 2))
-                                            return false;
+
+
+                                        if (!__dst.init_fields_nulls(_doc != null ? 1 : 0, 2)) return false;
                                         if (_packs() != null) __dst.set_fields_nulls(1 << 1);
 
                                         __dst.flush_fields_nulls();
@@ -1265,16 +2481,16 @@ namespace org.unirail
                                     case 3:
                                         #region doc
 
-                                        if (__dst.is_null(1))
-                                            goto case 4;
+
+                                        if (__dst.is_null(1)) goto case 4;
                                         if (__dst.put(_doc!, 4)) goto case 4;
                                         return false;
                                     case 4:
                                         #endregion
                                         #region packs
 
-                                        if (__dst.is_null(1 << 1))
-                                            goto case 6;
+
+                                        if (__dst.is_null(1 << 1)) goto case 6;
 
                                         if (__slot.index_max_1(_packs_len) == 0)
                                         {
@@ -1291,8 +2507,7 @@ namespace org.unirail
                                             if (0 < __v)
                                             {
                                                 __slot.index1 = __v += __i = __slot.index1;
-                                                for (; __i < __v; __i++)
-                                                    __dst.put((ushort)_packs(__dst, __slot, __i));
+                                                for (; __i < __v; __i++) __dst.put((ushort)_packs(__dst, __slot, __i));
                                             }
                                             __dst.retry_at(5);
                                             return false;
@@ -1303,12 +2518,21 @@ namespace org.unirail
                                     case 6:
                                     #endregion
 
+
+
                                     default:
                                         return true;
                                 }
                         }
+
+
+
+
+
                     }
+
                 }
+
             }
             public interface Host : AdHoc.Transmitter.BytesSrc
             {
@@ -1317,7 +2541,7 @@ namespace org.unirail
                 public const int __id_ = -4;
                 #region uid
 
-                public ushort _uid { get; }
+                public byte _uid { get; }
                 #endregion
                 #region langs
 
@@ -1339,15 +2563,19 @@ namespace org.unirail
                            16 Most  Significant Bits - impl info
 
                 */
-                public ushort _pack_impl_hash_equal_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot); //Pack -> impl_hash_equal
+                public ushort _pack_impl_hash_equal_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot);//Pack -> impl_hash_equal
 
                 //Get the value of the item's Value in the Map
                 public uint _pack_impl_hash_equal_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
 
                 public interface _pack_impl_hash_equal_
-                { //Pack -> impl_hash_equal
+                {  //Pack -> impl_hash_equal
 
                     public const int TYPE_LEN_MAX = 255;
+
+
+
+
                 }
                 #endregion
                 #region default_impl_hash_equal
@@ -1365,15 +2593,19 @@ namespace org.unirail
                 //Prepare and initialize before enumerating items in the Map at a specific location of the multidimensional field
                 public void _field_impl_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
 
-                public ushort _field_impl_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot); //Field -> impl
+                public ushort _field_impl_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot);//Field -> impl
 
                 //Get the value of the item's Value in the Map
                 public Agent.Project.Host.Langs _field_impl_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
 
                 public interface _field_impl_
-                { //Field -> impl
+                {  //Field -> impl
 
                     public const int TYPE_LEN_MAX = 255;
+
+
+
+
                 }
                 #endregion
                 #region packs
@@ -1387,9 +2619,12 @@ namespace org.unirail
                 //Get the element of the collection
                 public ushort _packs(Context.Transmitter ctx, Context.Transmitter.Slot __slot, int item);
                 public struct _packs_
-                { //Local constants or enums, referred to as packs, are declared within the scope of the current host.
+                {  //Local constants or enums, referred to as packs, are declared within the scope of the current host.
+
+
 
                     public const int ARRAY_LEN_MAX = 65000;
+
                 }
                 #endregion
                 #region name
@@ -1398,16 +2633,22 @@ namespace org.unirail
                 public struct _name_
                 {
 
+
+
                     public const int STR_LEN_MAX = 255;
+
                 }
                 #endregion
                 #region doc
 
                 public string? _doc { get; }
                 public struct _doc_
-                { //Documentation with a maximum of 65,000 characters
+                {  //Documentation with a maximum of 65,000 characters
+
+
 
                     public const int STR_LEN_MAX = 65000;
+
                 }
                 #endregion
                 #region inline_doc
@@ -1416,9 +2657,15 @@ namespace org.unirail
                 public struct _inline_doc_
                 {
 
+
+
                     public const int STR_LEN_MAX = 255;
+
                 }
                 #endregion
+
+
+
 
                 bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                 {
@@ -1431,38 +2678,36 @@ namespace org.unirail
                                 throw new NotSupportedException();
                             case 1:
 
-                                if (!__dst.Allocate(8, 1))
-                                    return false;
-                                __dst.put((ushort)_uid);
+                                if (!__dst.Allocate(7, 1)) return false;
+                                __dst.put((byte)_uid);
                                 __dst.put((ushort)_langs);
                                 __dst.put((uint)_default_impl_hash_equal);
 
                                 goto case 2;
                             case 2:
 
-                                if (!__dst.init_fields_nulls(_pack_impl_hash_equal() != null ? 1 : 0, 2))
-                                    return false;
+
+
+                                if (!__dst.init_fields_nulls(_pack_impl_hash_equal() != null ? 1 : 0, 2)) return false;
                                 if (_field_impl() != null) __dst.set_fields_nulls(1 << 1);
-                                if (_packs() != null)
-                                    __dst.set_fields_nulls(1 << 2);
-                                if (_name != null)
-                                    __dst.set_fields_nulls(1 << 3);
-                                if (_doc != null)
-                                    __dst.set_fields_nulls(1 << 4);
-                                if (_inline_doc != null)
-                                    __dst.set_fields_nulls(1 << 5);
+                                if (_packs() != null) __dst.set_fields_nulls(1 << 2);
+                                if (_name != null) __dst.set_fields_nulls(1 << 3);
+                                if (_doc != null) __dst.set_fields_nulls(1 << 4);
+                                if (_inline_doc != null) __dst.set_fields_nulls(1 << 5);
 
                                 __dst.flush_fields_nulls();
                                 goto case 3;
                             case 3:
                                 #region pack_impl_hash_equal
 
-                                if (__dst.is_null(1))
-                                    goto case 8;
+
+                                if (__dst.is_null(1)) goto case 8;
 
                                 if (!__dst.Allocate(5, 3)) return false;
                                 if (__slot.no_items(_pack_impl_hash_equal_len, 255)) goto case 8;
                                 #region sending map info
+
+
 
                                 __slot.put_info();
                                 goto case 4;
@@ -1473,31 +2718,30 @@ namespace org.unirail
                                 goto case 5;
                             #region sending key
                             case 5:
-                                if (__dst.put((ushort)_pack_impl_hash_equal_NextItem_Key(__dst, __slot), 6))
-                                    goto case 6;
+                                if (__dst.put((ushort)_pack_impl_hash_equal_NextItem_Key(__dst, __slot), 6)) goto case 6;
                                 return false;
                             case 6:
                                 #endregion
                                 #region sending value
-                                if (__dst.put((uint)_pack_impl_hash_equal_Val(__dst, __slot), 7))
-                                    goto case 7;
+                                if (__dst.put((uint)_pack_impl_hash_equal_Val(__dst, __slot), 7)) goto case 7;
                                 return false;
                             case 7:
                                 #endregion
-                                if (__slot.next_index1())
-                                    goto case 5;
+                                if (__slot.next_index1()) goto case 5;
 
                                 goto case 8;
                             case 8:
                                 #endregion
                                 #region field_impl
 
-                                if (__dst.is_null(1 << 1))
-                                    goto case 13;
+
+                                if (__dst.is_null(1 << 1)) goto case 13;
 
                                 if (!__dst.Allocate(5, 8)) return false;
                                 if (__slot.no_items(_field_impl_len, 255)) goto case 13;
                                 #region sending map info
+
+
 
                                 __slot.put_info();
                                 goto case 9;
@@ -1508,27 +2752,24 @@ namespace org.unirail
                                 goto case 10;
                             #region sending key
                             case 10:
-                                if (__dst.put((ushort)_field_impl_NextItem_Key(__dst, __slot), 11))
-                                    goto case 11;
+                                if (__dst.put((ushort)_field_impl_NextItem_Key(__dst, __slot), 11)) goto case 11;
                                 return false;
                             case 11:
                                 #endregion
                                 #region sending value
-                                if (__dst.put((ushort)_field_impl_Val(__dst, __slot), 12))
-                                    goto case 12;
+                                if (__dst.put((ushort)_field_impl_Val(__dst, __slot), 12)) goto case 12;
                                 return false;
                             case 12:
                                 #endregion
-                                if (__slot.next_index1())
-                                    goto case 10;
+                                if (__slot.next_index1()) goto case 10;
 
                                 goto case 13;
                             case 13:
                                 #endregion
                                 #region packs
 
-                                if (__dst.is_null(1 << 2))
-                                    goto case 15;
+
+                                if (__dst.is_null(1 << 2)) goto case 15;
 
                                 if (__slot.index_max_1(_packs_len) == 0)
                                 {
@@ -1545,8 +2786,7 @@ namespace org.unirail
                                     if (0 < __v)
                                     {
                                         __slot.index1 = __v += __i = __slot.index1;
-                                        for (; __i < __v; __i++)
-                                            __dst.put((ushort)_packs(__dst, __slot, __i));
+                                        for (; __i < __v; __i++) __dst.put((ushort)_packs(__dst, __slot, __i));
                                     }
                                     __dst.retry_at(14);
                                     return false;
@@ -1558,33 +2798,39 @@ namespace org.unirail
                                 #endregion
                                 #region name
 
-                                if (__dst.is_null(1 << 3))
-                                    goto case 16;
+
+                                if (__dst.is_null(1 << 3)) goto case 16;
                                 if (__dst.put(_name!, 16)) goto case 16;
                                 return false;
                             case 16:
                                 #endregion
                                 #region doc
 
-                                if (__dst.is_null(1 << 4))
-                                    goto case 17;
+
+                                if (__dst.is_null(1 << 4)) goto case 17;
                                 if (__dst.put(_doc!, 17)) goto case 17;
                                 return false;
                             case 17:
                                 #endregion
                                 #region inline_doc
 
-                                if (__dst.is_null(1 << 5))
-                                    goto case 18;
+
+                                if (__dst.is_null(1 << 5)) goto case 18;
                                 if (__dst.put(_inline_doc!, 18)) goto case 18;
                                 return false;
                             case 18:
                             #endregion
 
+
+
                             default:
                                 return true;
                         }
                 }
+
+
+
+
 
                 [Flags]
                 public enum Langs : ushort
@@ -1636,7 +2882,10 @@ namespace org.unirail
                     public struct _fields_
                     {
 
+
+
                         public const int ARRAY_LEN_MAX = 65000;
+
                     }
                     #endregion
                     #region static_fields
@@ -1652,7 +2901,10 @@ namespace org.unirail
                     public struct _static_fields_
                     {
 
+
+
                         public const int ARRAY_LEN_MAX = 65000;
+
                     }
                     #endregion
                     #region name
@@ -1661,16 +2913,22 @@ namespace org.unirail
                     public struct _name_
                     {
 
+
+
                         public const int STR_LEN_MAX = 255;
+
                     }
                     #endregion
                     #region doc
 
                     public string? _doc { get; }
                     public struct _doc_
-                    { //Documentation with a maximum of 65,000 characters
+                    {  //Documentation with a maximum of 65,000 characters
+
+
 
                         public const int STR_LEN_MAX = 65000;
+
                     }
                     #endregion
                     #region inline_doc
@@ -1679,9 +2937,15 @@ namespace org.unirail
                     public struct _inline_doc_
                     {
 
+
+
                         public const int STR_LEN_MAX = 255;
+
                     }
                     #endregion
+
+
+
 
                     bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                     {
@@ -1694,16 +2958,14 @@ namespace org.unirail
                                     throw new NotSupportedException();
                                 case 1:
 
-                                    if (!__dst.Allocate(4, 1))
-                                        return false;
+                                    if (!__dst.Allocate(4, 1)) return false;
                                     __dst.put((ushort)_id);
                                     __dst.put((ushort)_uid);
 
                                     goto case 2;
                                 case 2:
 
-                                    if (!__dst.init_bits(1, 2))
-                                        return false;
+                                    if (!__dst.init_bits(1, 2)) return false;
                                     #region referred
                                     __dst.put(_referred);
                                     #endregion
@@ -1715,43 +2977,39 @@ namespace org.unirail
                                     goto case 4;
                                 case 4:
 
-                                    if (!__dst.init_fields_nulls(_parent != null ? 1 : 0, 4))
-                                        return false;
+
+
+                                    if (!__dst.init_fields_nulls(_parent != null ? 1 : 0, 4)) return false;
                                     if (_nested_max != null) __dst.set_fields_nulls(1 << 1);
-                                    if (_fields() != null)
-                                        __dst.set_fields_nulls(1 << 2);
-                                    if (_static_fields() != null)
-                                        __dst.set_fields_nulls(1 << 3);
-                                    if (_name != null)
-                                        __dst.set_fields_nulls(1 << 4);
-                                    if (_doc != null)
-                                        __dst.set_fields_nulls(1 << 5);
-                                    if (_inline_doc != null)
-                                        __dst.set_fields_nulls(1 << 6);
+                                    if (_fields() != null) __dst.set_fields_nulls(1 << 2);
+                                    if (_static_fields() != null) __dst.set_fields_nulls(1 << 3);
+                                    if (_name != null) __dst.set_fields_nulls(1 << 4);
+                                    if (_doc != null) __dst.set_fields_nulls(1 << 5);
+                                    if (_inline_doc != null) __dst.set_fields_nulls(1 << 6);
 
                                     __dst.flush_fields_nulls();
                                     goto case 5;
                                 case 5:
                                     #region parent
 
-                                    if (__dst.is_null(1))
-                                        goto case 6;
+
+                                    if (__dst.is_null(1)) goto case 6;
                                     if (__dst.put((ushort)_parent!.Value, 6)) goto case 6;
                                     return false;
                                 case 6:
                                     #endregion
                                     #region nested_max
 
-                                    if (__dst.is_null(1 << 1))
-                                        goto case 7;
+
+                                    if (__dst.is_null(1 << 1)) goto case 7;
                                     if (__dst.put((ushort)_nested_max!.Value, 7)) goto case 7;
                                     return false;
                                 case 7:
                                     #endregion
                                     #region fields
 
-                                    if (__dst.is_null(1 << 2))
-                                        goto case 9;
+
+                                    if (__dst.is_null(1 << 2)) goto case 9;
 
                                     if (__slot.index_max_1(_fields_len) == 0)
                                     {
@@ -1768,8 +3026,7 @@ namespace org.unirail
                                         if (0 < __v)
                                         {
                                             __slot.index1 = __v += __i = __slot.index1;
-                                            for (; __i < __v; __i++)
-                                                __dst.put((int)_fields(__dst, __slot, __i));
+                                            for (; __i < __v; __i++) __dst.put((int)_fields(__dst, __slot, __i));
                                         }
                                         __dst.retry_at(8);
                                         return false;
@@ -1781,8 +3038,8 @@ namespace org.unirail
                                     #endregion
                                     #region static_fields
 
-                                    if (__dst.is_null(1 << 3))
-                                        goto case 11;
+
+                                    if (__dst.is_null(1 << 3)) goto case 11;
 
                                     if (__slot.index_max_1(_static_fields_len) == 0)
                                     {
@@ -1799,8 +3056,7 @@ namespace org.unirail
                                         if (0 < __v)
                                         {
                                             __slot.index1 = __v += __i = __slot.index1;
-                                            for (; __i < __v; __i++)
-                                                __dst.put((int)_static_fields(__dst, __slot, __i));
+                                            for (; __i < __v; __i++) __dst.put((int)_static_fields(__dst, __slot, __i));
                                         }
                                         __dst.retry_at(10);
                                         return false;
@@ -1812,33 +3068,39 @@ namespace org.unirail
                                     #endregion
                                     #region name
 
-                                    if (__dst.is_null(1 << 4))
-                                        goto case 12;
+
+                                    if (__dst.is_null(1 << 4)) goto case 12;
                                     if (__dst.put(_name!, 12)) goto case 12;
                                     return false;
                                 case 12:
                                     #endregion
                                     #region doc
 
-                                    if (__dst.is_null(1 << 5))
-                                        goto case 13;
+
+                                    if (__dst.is_null(1 << 5)) goto case 13;
                                     if (__dst.put(_doc!, 13)) goto case 13;
                                     return false;
                                 case 13:
                                     #endregion
                                     #region inline_doc
 
-                                    if (__dst.is_null(1 << 6))
-                                        goto case 14;
+
+                                    if (__dst.is_null(1 << 6)) goto case 14;
                                     if (__dst.put(_inline_doc!, 14)) goto case 14;
                                     return false;
                                 case 14:
                                 #endregion
 
+
+
                                 default:
                                     return true;
                             }
                     }
+
+
+
+
 
                     public interface Field : AdHoc.Transmitter.BytesSrc
                     {
@@ -1856,9 +3118,12 @@ namespace org.unirail
                         //Get the element of the collection
                         public int _dims(Context.Transmitter ctx, Context.Transmitter.Slot __slot, int item);
                         public struct _dims_
-                        { //Dimensions
+                        {  //Dimensions
+
+
 
                             public const int ARRAY_LEN_MAX = 32;
+
                         }
                         #endregion
                         #region map_set_len
@@ -1899,8 +3164,11 @@ namespace org.unirail
                         public struct _dir_
                         {
 
+
+
                             public const sbyte MIN = -1;
                             public const sbyte MAX = 0x1;
+
                         }
                         #endregion
                         #region min_valueD
@@ -1915,10 +3183,13 @@ namespace org.unirail
 
                         public byte? _bits { get; }
                         public struct _bits_
-                        { //Can store/transfer a value in less than 7 bits
+                        {  //Can store/transfer a value in less than 7 bits
+
+
 
                             public const byte MIN = 0x1;
                             public const byte MAX = 0x7;
+
                         }
                         #endregion
                         #region null_value
@@ -1955,8 +3226,11 @@ namespace org.unirail
                         public struct _dirV_
                         {
 
+
+
                             public const sbyte MIN = -1;
                             public const sbyte MAX = 0x1;
+
                         }
                         #endregion
                         #region min_valueDV
@@ -1971,10 +3245,13 @@ namespace org.unirail
 
                         public byte? _bitsV { get; }
                         public struct _bitsV_
-                        { //Can store/transfer a value in less than 7 bits
+                        {  //Can store/transfer a value in less than 7 bits
+
+
 
                             public const byte MIN = 0x1;
                             public const byte MAX = 0x7;
+
                         }
                         #endregion
                         #region null_valueV
@@ -1993,9 +3270,12 @@ namespace org.unirail
 
                         public string? _value_string { get; }
                         public struct _value_string_
-                        { //Constant value
+                        {  //Constant value
+
+
 
                             public const int STR_LEN_MAX = 1000;
+
                         }
                         #endregion
                         #region array
@@ -2009,10 +3289,13 @@ namespace org.unirail
                         //Get the element of the collection
                         public string _array(Context.Transmitter ctx, Context.Transmitter.Slot __slot, int item);
                         public struct _array_
-                        { //Constant array values
+                        {  //Constant array values
+
+
 
                             public const int STR_LEN_MAX = 1000;
                             public const int ARRAY_LEN_MAX = 255;
+
                         }
                         #endregion
                         #region name
@@ -2021,16 +3304,22 @@ namespace org.unirail
                         public struct _name_
                         {
 
+
+
                             public const int STR_LEN_MAX = 255;
+
                         }
                         #endregion
                         #region doc
 
                         public string? _doc { get; }
                         public struct _doc_
-                        { //Documentation with a maximum of 65,000 characters
+                        {  //Documentation with a maximum of 65,000 characters
+
+
 
                             public const int STR_LEN_MAX = 65000;
+
                         }
                         #endregion
                         #region inline_doc
@@ -2039,9 +3328,15 @@ namespace org.unirail
                         public struct _inline_doc_
                         {
 
+
+
                             public const int STR_LEN_MAX = 255;
+
                         }
                         #endregion
+
+
+
 
                         bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                         {
@@ -2054,15 +3349,13 @@ namespace org.unirail
                                         throw new NotSupportedException();
                                     case 1:
 
-                                        if (!__dst.Allocate(2, 1))
-                                            return false;
+                                        if (!__dst.Allocate(2, 1)) return false;
                                         __dst.put((ushort)_exT);
 
                                         goto case 2;
                                     case 2:
 
-                                        if (!__dst.init_bits(2, 2))
-                                            return false;
+                                        if (!__dst.init_bits(2, 2)) return false;
                                         #region dir
                                         __dst.put_bits((int)(_dir == null ? 2 : (int)((sbyte)(_dir!.Value + 0x1))), 2);
                                         #endregion
@@ -2083,29 +3376,24 @@ namespace org.unirail
                                         goto case 4;
                                     case 4:
 
-                                        if (!__dst.init_fields_nulls(_dims() != null ? 1 : 0, 4))
-                                            return false;
+
+
+                                        if (!__dst.init_fields_nulls(_dims() != null ? 1 : 0, 4)) return false;
                                         if (_map_set_len != null) __dst.set_fields_nulls(1 << 1);
-                                        if (_map_set_array != null)
-                                            __dst.set_fields_nulls(1 << 2);
-                                        if (_exT_len != null)
-                                            __dst.set_fields_nulls(1 << 3);
-                                        if (_exT_array != null)
-                                            __dst.set_fields_nulls(1 << 4);
-                                        if (_inT != null)
-                                            __dst.set_fields_nulls(1 << 5);
-                                        if (_min_value != null)
-                                            __dst.set_fields_nulls(1 << 6);
-                                        if (_max_value != null)
-                                            __dst.set_fields_nulls(1 << 7);
+                                        if (_map_set_array != null) __dst.set_fields_nulls(1 << 2);
+                                        if (_exT_len != null) __dst.set_fields_nulls(1 << 3);
+                                        if (_exT_array != null) __dst.set_fields_nulls(1 << 4);
+                                        if (_inT != null) __dst.set_fields_nulls(1 << 5);
+                                        if (_min_value != null) __dst.set_fields_nulls(1 << 6);
+                                        if (_max_value != null) __dst.set_fields_nulls(1 << 7);
 
                                         __dst.flush_fields_nulls();
                                         goto case 5;
                                     case 5:
                                         #region dims
 
-                                        if (__dst.is_null(1))
-                                            goto case 7;
+
+                                        if (__dst.is_null(1)) goto case 7;
 
                                         if (__slot.index_max_1(_dims_len) == 0)
                                         {
@@ -2122,8 +3410,7 @@ namespace org.unirail
                                             if (0 < __v)
                                             {
                                                 __slot.index1 = __v += __i = __slot.index1;
-                                                for (; __i < __v; __i++)
-                                                    __dst.put((int)_dims(__dst, __slot, __i));
+                                                for (; __i < __v; __i++) __dst.put((int)_dims(__dst, __slot, __i));
                                             }
                                             __dst.retry_at(6);
                                             return false;
@@ -2135,63 +3422,64 @@ namespace org.unirail
                                         #endregion
                                         #region map_set_len
 
-                                        if (__dst.is_null(1 << 1))
-                                            goto case 8;
+
+                                        if (__dst.is_null(1 << 1)) goto case 8;
                                         if (__dst.put((uint)_map_set_len!.Value, 8)) goto case 8;
                                         return false;
                                     case 8:
                                         #endregion
                                         #region map_set_array
 
-                                        if (__dst.is_null(1 << 2))
-                                            goto case 9;
+
+                                        if (__dst.is_null(1 << 2)) goto case 9;
                                         if (__dst.put((uint)_map_set_array!.Value, 9)) goto case 9;
                                         return false;
                                     case 9:
                                         #endregion
                                         #region exT_len
 
-                                        if (__dst.is_null(1 << 3))
-                                            goto case 10;
+
+                                        if (__dst.is_null(1 << 3)) goto case 10;
                                         if (__dst.put((uint)_exT_len!.Value, 10)) goto case 10;
                                         return false;
                                     case 10:
                                         #endregion
                                         #region exT_array
 
-                                        if (__dst.is_null(1 << 4))
-                                            goto case 11;
+
+                                        if (__dst.is_null(1 << 4)) goto case 11;
                                         if (__dst.put((uint)_exT_array!.Value, 11)) goto case 11;
                                         return false;
                                     case 11:
                                         #endregion
                                         #region inT
 
-                                        if (__dst.is_null(1 << 5))
-                                            goto case 12;
+
+                                        if (__dst.is_null(1 << 5)) goto case 12;
                                         if (__dst.put((ushort)_inT!.Value, 12)) goto case 12;
                                         return false;
                                     case 12:
                                         #endregion
                                         #region min_value
 
-                                        if (__dst.is_null(1 << 6))
-                                            goto case 13;
+
+                                        if (__dst.is_null(1 << 6)) goto case 13;
                                         if (__dst.put((long)_min_value!.Value, 13)) goto case 13;
                                         return false;
                                     case 13:
                                         #endregion
                                         #region max_value
 
-                                        if (__dst.is_null(1 << 7))
-                                            goto case 14;
+
+                                        if (__dst.is_null(1 << 7)) goto case 14;
                                         if (__dst.put((long)_max_value!.Value, 14)) goto case 14;
                                         return false;
                                     case 14:
                                         #endregion
 
-                                        if (!__dst.init_fields_nulls(_min_valueD != null ? 1 : 0, 14))
-                                            return false;
+
+
+                                        if (!__dst.init_fields_nulls(_min_valueD != null ? 1 : 0, 14)) return false;
                                         if (_max_valueD != null) __dst.set_fields_nulls(1 << 1);
                                         if (_null_value != null) __dst.set_fields_nulls(1 << 2);
                                         if (_exTV != null) __dst.set_fields_nulls(1 << 3);
@@ -2205,71 +3493,72 @@ namespace org.unirail
                                     case 15:
                                         #region min_valueD
 
-                                        if (__dst.is_null(1))
-                                            goto case 16;
+
+                                        if (__dst.is_null(1)) goto case 16;
                                         if (__dst.put((ulong)BitConverter.DoubleToUInt64Bits(_min_valueD!.Value), 16)) goto case 16;
                                         return false;
                                     case 16:
                                         #endregion
                                         #region max_valueD
 
-                                        if (__dst.is_null(1 << 1))
-                                            goto case 17;
+
+                                        if (__dst.is_null(1 << 1)) goto case 17;
                                         if (__dst.put((ulong)BitConverter.DoubleToUInt64Bits(_max_valueD!.Value), 17)) goto case 17;
                                         return false;
                                     case 17:
                                         #endregion
                                         #region null_value
 
-                                        if (__dst.is_null(1 << 2))
-                                            goto case 18;
+
+                                        if (__dst.is_null(1 << 2)) goto case 18;
                                         if (__dst.put((byte)_null_value!.Value, 18)) goto case 18;
                                         return false;
                                     case 18:
                                         #endregion
                                         #region exTV
 
-                                        if (__dst.is_null(1 << 3))
-                                            goto case 19;
+
+                                        if (__dst.is_null(1 << 3)) goto case 19;
                                         if (__dst.put((ushort)_exTV!.Value, 19)) goto case 19;
                                         return false;
                                     case 19:
                                         #endregion
                                         #region exTV_len
 
-                                        if (__dst.is_null(1 << 4))
-                                            goto case 20;
+
+                                        if (__dst.is_null(1 << 4)) goto case 20;
                                         if (__dst.put((uint)_exTV_len!.Value, 20)) goto case 20;
                                         return false;
                                     case 20:
                                         #endregion
                                         #region exTV_array
 
-                                        if (__dst.is_null(1 << 5))
-                                            goto case 21;
+
+                                        if (__dst.is_null(1 << 5)) goto case 21;
                                         if (__dst.put((uint)_exTV_array!.Value, 21)) goto case 21;
                                         return false;
                                     case 21:
                                         #endregion
                                         #region inTV
 
-                                        if (__dst.is_null(1 << 6))
-                                            goto case 22;
+
+                                        if (__dst.is_null(1 << 6)) goto case 22;
                                         if (__dst.put((ushort)_inTV!.Value, 22)) goto case 22;
                                         return false;
                                     case 22:
                                         #endregion
                                         #region min_valueV
 
-                                        if (__dst.is_null(1 << 7))
-                                            goto case 23;
+
+                                        if (__dst.is_null(1 << 7)) goto case 23;
                                         if (__dst.put((long)_min_valueV!.Value, 23)) goto case 23;
                                         return false;
                                     case 23:
                                         #endregion
 
-                                        if (!__dst.init_fields_nulls(_max_valueV != null ? 1 : 0, 23))
-                                            return false;
+
+
+                                        if (!__dst.init_fields_nulls(_max_valueV != null ? 1 : 0, 23)) return false;
                                         if (_min_valueDV != null) __dst.set_fields_nulls(1 << 1);
                                         if (_max_valueDV != null) __dst.set_fields_nulls(1 << 2);
                                         if (_null_valueV != null) __dst.set_fields_nulls(1 << 3);
@@ -2283,64 +3572,64 @@ namespace org.unirail
                                     case 24:
                                         #region max_valueV
 
-                                        if (__dst.is_null(1))
-                                            goto case 25;
+
+                                        if (__dst.is_null(1)) goto case 25;
                                         if (__dst.put((long)_max_valueV!.Value, 25)) goto case 25;
                                         return false;
                                     case 25:
                                         #endregion
                                         #region min_valueDV
 
-                                        if (__dst.is_null(1 << 1))
-                                            goto case 26;
+
+                                        if (__dst.is_null(1 << 1)) goto case 26;
                                         if (__dst.put((ulong)BitConverter.DoubleToUInt64Bits(_min_valueDV!.Value), 26)) goto case 26;
                                         return false;
                                     case 26:
                                         #endregion
                                         #region max_valueDV
 
-                                        if (__dst.is_null(1 << 2))
-                                            goto case 27;
+
+                                        if (__dst.is_null(1 << 2)) goto case 27;
                                         if (__dst.put((ulong)BitConverter.DoubleToUInt64Bits(_max_valueDV!.Value), 27)) goto case 27;
                                         return false;
                                     case 27:
                                         #endregion
                                         #region null_valueV
 
-                                        if (__dst.is_null(1 << 3))
-                                            goto case 28;
+
+                                        if (__dst.is_null(1 << 3)) goto case 28;
                                         if (__dst.put((byte)_null_valueV!.Value, 28)) goto case 28;
                                         return false;
                                     case 28:
                                         #endregion
                                         #region value_int
 
-                                        if (__dst.is_null(1 << 4))
-                                            goto case 29;
+
+                                        if (__dst.is_null(1 << 4)) goto case 29;
                                         if (__dst.put((long)_value_int!.Value, 29)) goto case 29;
                                         return false;
                                     case 29:
                                         #endregion
                                         #region value_double
 
-                                        if (__dst.is_null(1 << 5))
-                                            goto case 30;
+
+                                        if (__dst.is_null(1 << 5)) goto case 30;
                                         if (__dst.put((ulong)BitConverter.DoubleToUInt64Bits(_value_double!.Value), 30)) goto case 30;
                                         return false;
                                     case 30:
                                         #endregion
                                         #region value_string
 
-                                        if (__dst.is_null(1 << 6))
-                                            goto case 31;
+
+                                        if (__dst.is_null(1 << 6)) goto case 31;
                                         if (__dst.put(_value_string!, 31)) goto case 31;
                                         return false;
                                     case 31:
                                         #endregion
                                         #region array
 
-                                        if (__dst.is_null(1 << 7))
-                                            goto case 33;
+
+                                        if (__dst.is_null(1 << 7)) goto case 33;
 
                                         if (__slot.index_max_1(_array_len) == 0)
                                         {
@@ -2353,15 +3642,15 @@ namespace org.unirail
                                     case 32:
 
                                         for (var b = true; b;)
-                                            if (!__dst.put(_array(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 32U : 33U))
-                                                return false;
+                                            if (!__dst.put(_array(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 32U : 33U)) return false;
 
                                         goto case 33;
                                     case 33:
                                         #endregion
 
-                                        if (!__dst.init_fields_nulls(_name != null ? 1 : 0, 33))
-                                            return false;
+
+
+                                        if (!__dst.init_fields_nulls(_name != null ? 1 : 0, 33)) return false;
                                         if (_doc != null) __dst.set_fields_nulls(1 << 1);
                                         if (_inline_doc != null) __dst.set_fields_nulls(1 << 2);
 
@@ -2370,33 +3659,39 @@ namespace org.unirail
                                     case 34:
                                         #region name
 
-                                        if (__dst.is_null(1))
-                                            goto case 35;
+
+                                        if (__dst.is_null(1)) goto case 35;
                                         if (__dst.put(_name!, 35)) goto case 35;
                                         return false;
                                     case 35:
                                         #endregion
                                         #region doc
 
-                                        if (__dst.is_null(1 << 1))
-                                            goto case 36;
+
+                                        if (__dst.is_null(1 << 1)) goto case 36;
                                         if (__dst.put(_doc!, 36)) goto case 36;
                                         return false;
                                     case 36:
                                         #endregion
                                         #region inline_doc
 
-                                        if (__dst.is_null(1 << 2))
-                                            goto case 37;
+
+                                        if (__dst.is_null(1 << 2)) goto case 37;
                                         if (__dst.put(_inline_doc!, 37)) goto case 37;
                                         return false;
                                     case 37:
                                     #endregion
 
+
+
                                     default:
                                         return true;
                                 }
                         }
+
+
+
+
 
                         public enum DataType : ushort
                         {
@@ -2422,13 +3717,303 @@ namespace org.unirail
                             t_uint64 = 65521,
                             t_uint8 = 65528,
                         }
+
                     }
+
+                }
+
+            }
+
+        }
+        public class RequestResult : IEquatable<RequestResult>, Communication.Transmitter.Transmittable
+        {  //The request for pending task result
+
+            public int __id => __id_;
+            public const int __id_ = 7;
+
+            public virtual void Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, this);
+            #region task
+
+            public string? task { get; set; } = null;
+
+            public struct task_
+            {
+
+
+
+                public const int STR_LEN_MAX = 255;
+
+            }
+            #endregion
+
+
+            public int GetHashCode
+            {
+                get
+                {
+                    var _hash = 3001003L;
+                    #region task
+                    _hash = HashCode.Combine(_hash, task);
+                    #endregion
+
+                    return (int)_hash;
                 }
             }
+            bool IEquatable<RequestResult>.Equals(RequestResult? _pack)
+            {
+                if (_pack == null) return false;
+
+                bool __t;
+                #region task
+                if (task == null) { if (_pack.task != null) return false; }
+                else if (_pack.task == null || !task!.Equals(_pack.task)) return false;
+                #endregion
+
+                return true;
+            }
+
+
+
+            bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
+            {
+                var __slot = __dst.slot!;
+                int __i = 0, __t = 0, __v = 0;
+                for (; ; )
+                    switch (__slot.state)
+                    {
+                        case 0:
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
+                            return false;
+
+                        case 1:
+
+
+
+                            if (!__dst.init_fields_nulls(task != null ? 1 : 0, 1)) return false;
+
+                            __dst.flush_fields_nulls();
+                            goto case 2;
+                        case 2:
+                            #region task
+
+
+                            if (__dst.is_null(1)) goto case 3;
+                            if (__dst.put(task!, 3)) goto case 3;
+                            return false;
+                        case 3:
+                        #endregion
+
+
+
+                        default:
+                            return true;
+                    }
+            }
+
+
+
+
+
+        }
+        public class Result : IEquatable<Result>, Communication.Receiver.Receivable
+        {
+
+            public int __id => __id_;
+            public const int __id_ = 10;
+            public virtual void Received(Communication.Receiver via) => Communication.Receiver.onReceive.Received(via, this);
+            #region task
+
+            public string? task { get; set; } = null;
+
+            public struct task_
+            {
+
+
+
+                public const int STR_LEN_MAX = 255;
+
+            }
+            #endregion
+            #region result
+            public byte[]? result_new(int size)
+            { //preallocate space
+                return _result = new byte[size];
+            }
+
+            public byte[]? _result;
+
+            public int result_len => _result!.Length;
+            public void result(byte[]? __src)
+            {
+
+                if (__src == null)
+                {
+                    _result = null;
+                    return;
+                }
+
+                _result = AdHoc.Resize<byte>(__src, Math.Min(__src!.Length, Agent.Result.result_.ARRAY_LEN_MAX), 0); ;
+            }
+
+            public struct result_
+            {  //3 megabytes compressed binary
+
+
+
+                public const int ARRAY_LEN_MAX = 30000000;
+
+            }
+            #endregion
+            #region info
+
+            public string? info { get; set; } = null;//Information with a maximum of 65,000 characters
+
+            public struct info_
+            {  //Information with a maximum of 65,000 characters
+
+
+
+                public const int STR_LEN_MAX = 65000;
+
+            }
+            #endregion
+
+
+            public int GetHashCode
+            {
+                get
+                {
+                    var _hash = 3001003L;
+                    #region task
+                    _hash = HashCode.Combine(_hash, task);
+                    #endregion
+                    #region result
+
+                    if (_result != null)
+                        for (int __i = 0, MAX = result_len; __i < MAX; __i++) _hash = HashCode.Combine(_hash, _result[__i]);
+                    #endregion
+                    #region info
+                    _hash = HashCode.Combine(_hash, info);
+                    #endregion
+
+                    return (int)_hash;
+                }
+            }
+            bool IEquatable<Result>.Equals(Result? _pack)
+            {
+                if (_pack == null) return false;
+
+                bool __t;
+                #region task
+                if (task == null) { if (_pack.task != null) return false; }
+                else if (_pack.task == null || !task!.Equals(_pack.task)) return false;
+                #endregion
+                #region result
+
+                if (_result != _pack._result)
+                    if (_result == null || _pack._result == null || _result!.Length != _pack._result!.Length) return false;
+                    else
+                        for (int __i = 0, MAX = result_len; __i < MAX; __i++)
+                            if (_result[__i] != _pack._result[__i]) return false;
+                #endregion
+                #region info
+                if (info == null) { if (_pack.info != null) return false; }
+                else if (_pack.info == null || !info!.Equals(_pack.info)) return false;
+                #endregion
+
+                return true;
+            }
+
+
+
+
+            bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
+            {
+                var __slot = __src.slot!;
+                int __i = 0, __t = 0, __v = 0;
+                for (; ; )
+                    switch (__slot.state)
+                    {
+                        case 0:
+
+                            if (__src.get_fields_nulls(0)) goto case 1;
+                            return false;
+                        case 1:
+                            #region task
+
+                            if (__src.is_null(1)) goto case 3;
+
+                            if (__src.try_get_string(Agent.Result.task_.STR_LEN_MAX, 2)) goto case 2;
+                            return false;
+                        case 2:
+                            task = __src.get_string();
+                            goto case 3;
+                        case 3:
+                            #endregion
+                            #region result
+
+                            if (__src.is_null(1 << 1)) goto case 6;
+
+
+                            if (__slot.get_len1(Agent.Result.result_.ARRAY_LEN_MAX, 4, 4)) goto case 4;
+                            return false;
+                        case 4:
+
+                            result_new(__slot.index_max1);
+                            if (__slot.index_max1 < 1) goto case 6;
+                            __slot._index1 = -1;
+                            goto case 5;
+                        case 5:
+
+                            if ((__t = __src.remaining) < (__i = __slot.index_max1 - __slot.index1))
+                            {
+                                if (0 < __t)
+                                {
+                                    __slot.index1 = (__t += __i = __slot.index1);
+                                    for (; __i < __t; __i++)
+                                    {
+
+                                        _result![__i] = (byte)__src.get_byte();
+                                    }
+
+                                }
+                                __src.retry_at(5);
+                                return false;
+                            }
+                            __i += __t = __slot.index1;
+                            for (; __t < __i; __t++)
+                            {
+
+                                _result![__t] = (byte)__src.get_byte();
+                            }
+
+                            goto case 6;
+                        case 6:
+                            #endregion
+                            #region info
+
+                            if (__src.is_null(1 << 2)) goto case 8;
+
+                            if (__src.try_get_string(Agent.Result.info_.STR_LEN_MAX, 7)) goto case 7;
+                            return false;
+                        case 7:
+                            info = __src.get_string();
+                            goto case 8;
+                        case 8:
+                        #endregion
+
+                        default:
+                            return true;
+                    }
+            }
+
+
+
+
         }
 
         public struct Show_Code : IEquatable<Show_Code>
-        { //Request to show entity in editor
+        {   //Request to show entity in editor
 
             public int __id => __id_;
             public const int __id_ = 11;
@@ -2436,6 +4021,8 @@ namespace org.unirail
             public uint Value = 0x0;
             public Show_Code() { }
             public Show_Code(uint src) => Value = src;
+
+
 
             public ushort idx
             {
@@ -2448,6 +4035,7 @@ namespace org.unirail
                 set => Value = (uint)(Value & 0x7_0000UL | (ulong)(value));
             }
 
+
             public Agent.Entity.Type tYpe
             {
                 get
@@ -2459,12 +4047,15 @@ namespace org.unirail
                 set => Value = (uint)(Value & 0xFFFFUL | (ulong)((byte)value) << 16);
             }
 
+
             public class Handler : ObserverCommunication.Receiver.Receivable, AdHoc.Transmitter.BytesSrc
             {
                 public int __id => 11;
                 public static readonly Handler ONE = new();
 
-                void ObserverCommunication.Receiver.Receivable.Received(ObserverCommunication.Receiver via) => ObserverCommunication.Receiver.onReceive.Received(via, (Show_Code)via.u8);
+                public virtual void Received(ObserverCommunication.Receiver via) => ObserverCommunication.Receiver.onReceive.Received(via, (Show_Code)via.u8);
+
+
 
                 bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
                 {
@@ -2474,12 +4065,12 @@ namespace org.unirail
                     {
                         case 0:
                             __dst.pull_value();
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
                             return false;
                         case 1:
                             return __dst.put_val(__dst.u8, 3, 2);
-                        default: return true;
+                        default:
+                            return true;
                     }
                 }
 
@@ -2495,7 +4086,10 @@ namespace org.unirail
                             return true;
                     }
                 }
+
             }
+
+
 
             public bool Equals(Show_Code other) => Value == other.Value;
 
@@ -2510,6 +4104,8 @@ namespace org.unirail
 
             public static implicit operator ulong(Show_Code a) => (ulong)(a.Value);
             public static implicit operator Show_Code(ulong a) => new Show_Code((uint)a);
+
+
 
             public struct Nullable : IEquatable<Nullable>
             {
@@ -2546,25 +4142,30 @@ namespace org.unirail
                 public static implicit operator Nullable(Show_Code a) => new Nullable(a);
                 public static implicit operator Nullable(uint? a) => a ?? NULL;
             }
+
         }
         public class Up_to_date : IEquatable<Up_to_date>, ObserverCommunication.Receiver.Receivable, ObserverCommunication.Transmitter.Transmittable
-        { //Request to send updated Project pack or Up_to_date if data is not changed
+        {  //Request to send updated Project pack or Up_to_date if data is not changed
 
             public int __id => __id_;
-            public const int __id_ = 10;
-            void ObserverCommunication.Receiver.Receivable.Received(ObserverCommunication.Receiver via) => ObserverCommunication.Receiver.onReceive.Received(via, this);
+            public const int __id_ = 12;
+            public virtual void Received(ObserverCommunication.Receiver via) => ObserverCommunication.Receiver.onReceive.Received(via, this);
 
-            void ObserverCommunication.Transmitter.Transmittable.Sent(ObserverCommunication.Transmitter via) => ObserverCommunication.Transmitter.onTransmit.Sent(via, this);
+            public virtual void Sent(ObserverCommunication.Transmitter via) => ObserverCommunication.Transmitter.onTransmit.Sent(via, this);
             #region info
 
-            public string? info { get; set; } = null; //Can be an updating error description
+            public string? info { get; set; } = null;//Can be an updating error description
 
             public struct info_
-            { //Can be an updating error description
+            {  //Can be an updating error description
+
+
 
                 public const int STR_LEN_MAX = 65000;
+
             }
             #endregion
+
 
             public int GetHashCode
             {
@@ -2580,22 +4181,18 @@ namespace org.unirail
             }
             bool IEquatable<Up_to_date>.Equals(Up_to_date? _pack)
             {
-                if (_pack == null)
-                    return false;
+                if (_pack == null) return false;
 
                 bool __t;
                 #region info
-                if (info == null)
-                {
-                    if (_pack.info != null)
-                        return false;
-                }
-                else if (_pack.info == null || !info!.Equals(_pack.info))
-                    return false;
+                if (info == null) { if (_pack.info != null) return false; }
+                else if (_pack.info == null || !info!.Equals(_pack.info)) return false;
                 #endregion
 
                 return true;
             }
+
+
 
             bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
             {
@@ -2605,26 +4202,28 @@ namespace org.unirail
                     switch (__slot.state)
                     {
                         case 0:
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
                             return false;
 
                         case 1:
 
-                            if (!__dst.init_fields_nulls(info != null ? 1 : 0, 1))
-                                return false;
+
+
+                            if (!__dst.init_fields_nulls(info != null ? 1 : 0, 1)) return false;
 
                             __dst.flush_fields_nulls();
                             goto case 2;
                         case 2:
                             #region info
 
-                            if (__dst.is_null(1))
-                                goto case 3;
+
+                            if (__dst.is_null(1)) goto case 3;
                             if (__dst.put(info!, 3)) goto case 3;
                             return false;
                         case 3:
                         #endregion
+
+
 
                         default:
                             return true;
@@ -2640,14 +4239,12 @@ namespace org.unirail
                     {
                         case 0:
 
-                            if (__src.get_fields_nulls(0))
-                                goto case 1;
+                            if (__src.get_fields_nulls(0)) goto case 1;
                             return false;
                         case 1:
                             #region info
 
-                            if (__src.is_null(1))
-                                goto case 3;
+                            if (__src.is_null(1)) goto case 3;
 
                             if (__src.try_get_string(Agent.Up_to_date.info_.STR_LEN_MAX, 2)) goto case 2;
                             return false;
@@ -2661,1113 +4258,17 @@ namespace org.unirail
                             return true;
                     }
             }
-        }
-        public class Result : IEquatable<Result>, Communication.Receiver.Receivable
-        {
 
-            public int __id => __id_;
-            public const int __id_ = 1;
-            void Communication.Receiver.Receivable.Received(Communication.Receiver via) => Communication.Receiver.onReceive.Received(via, this);
-            #region task
 
-            public string? task { get; set; } = null;
 
-            public struct task_
-            {
 
-                public const int STR_LEN_MAX = 255;
-            }
-            #endregion
-            #region result
-            public byte[]? result_new(int size)
-            { //preallocate space
-                return _result = new byte[size];
-            }
-
-            public byte[]? _result;
-
-            public int result_len => _result!.Length;
-            public void result(byte[]? __src)
-            {
-
-                if (__src == null)
-                {
-                    _result = null;
-                    return;
-                }
-
-                _result = AdHoc.Resize<byte>(__src, Math.Min(__src!.Length, Agent.Result.result_.ARRAY_LEN_MAX), 0);
-                ;
-            }
-
-            public struct result_
-            { //3 megabytes compressed binary
-
-                public const int ARRAY_LEN_MAX = 30000000;
-            }
-            #endregion
-            #region info
-
-            public string? info { get; set; } = null; //Information with a maximum of 65,000 characters
-
-            public struct info_
-            { //Information with a maximum of 65,000 characters
-
-                public const int STR_LEN_MAX = 65000;
-            }
-            #endregion
-
-            public int GetHashCode
-            {
-                get
-                {
-                    var _hash = 3001003L;
-                    #region task
-                    _hash = HashCode.Combine(_hash, task);
-                    #endregion
-                    #region result
-
-                    if (_result != null)
-                        for (int __i = 0, MAX = result_len; __i < MAX; __i++)
-                            _hash = HashCode.Combine(_hash, _result[__i]);
-                    #endregion
-                    #region info
-                    _hash = HashCode.Combine(_hash, info);
-                    #endregion
-
-                    return (int)_hash;
-                }
-            }
-            bool IEquatable<Result>.Equals(Result? _pack)
-            {
-                if (_pack == null)
-                    return false;
-
-                bool __t;
-                #region task
-                if (task == null)
-                {
-                    if (_pack.task != null)
-                        return false;
-                }
-                else if (_pack.task == null || !task!.Equals(_pack.task))
-                    return false;
-                #endregion
-                #region result
-
-                if (_result != _pack._result)
-                    if (_result == null || _pack._result == null || _result!.Length != _pack._result!.Length)
-                        return false;
-                    else
-                        for (int __i = 0, MAX = result_len; __i < MAX; __i++)
-                            if (_result[__i] != _pack._result[__i])
-                                return false;
-                #endregion
-                #region info
-                if (info == null)
-                {
-                    if (_pack.info != null)
-                        return false;
-                }
-                else if (_pack.info == null || !info!.Equals(_pack.info))
-                    return false;
-                #endregion
-
-                return true;
-            }
-
-            bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
-            {
-                var __slot = __src.slot!;
-                int __i = 0, __t = 0, __v = 0;
-                for (; ; )
-                    switch (__slot.state)
-                    {
-                        case 0:
-
-                            if (__src.get_fields_nulls(0))
-                                goto case 1;
-                            return false;
-                        case 1:
-                            #region task
-
-                            if (__src.is_null(1))
-                                goto case 3;
-
-                            if (__src.try_get_string(Agent.Result.task_.STR_LEN_MAX, 2)) goto case 2;
-                            return false;
-                        case 2:
-                            task = __src.get_string();
-                            goto case 3;
-                        case 3:
-                            #endregion
-                            #region result
-
-                            if (__src.is_null(1 << 1))
-                                goto case 6;
-
-                            if (__slot.get_len1(Agent.Result.result_.ARRAY_LEN_MAX, 4, 4)) goto case 4;
-                            return false;
-                        case 4:
-
-                            result_new(__slot.index_max1);
-                            if (__slot.index_max1 < 1) goto case 6;
-                            __slot._index1 = -1;
-                            goto case 5;
-                        case 5:
-
-                            if ((__t = __src.remaining) < (__i = __slot.index_max1 - __slot.index1))
-                            {
-                                if (0 < __t)
-                                {
-                                    __slot.index1 = (__t += __i = __slot.index1);
-                                    for (; __i < __t; __i++)
-                                    {
-
-                                        _result![__i] = (byte)__src.get_byte();
-                                    }
-                                }
-                                __src.retry_at(5);
-                                return false;
-                            }
-                            __i += __t = __slot.index1;
-                            for (; __t < __i; __t++)
-                            {
-
-                                _result![__t] = (byte)__src.get_byte();
-                            }
-
-                            goto case 6;
-                        case 6:
-                            #endregion
-                            #region info
-
-                            if (__src.is_null(1 << 2))
-                                goto case 8;
-
-                            if (__src.try_get_string(Agent.Result.info_.STR_LEN_MAX, 7)) goto case 7;
-                            return false;
-                        case 7:
-                            info = __src.get_string();
-                            goto case 8;
-                        case 8:
-                        #endregion
-
-                        default:
-                            return true;
-                    }
-            }
-        }
-
-        public struct Version : IEquatable<Version>
-        {
-
-            public int __id => __id_;
-            public const int __id_ = 13;
-
-            public uint uid = 0; //Unique identifier for the version
-
-            public Version() { }
-            public Version(uint src) => uid = src;
-
-            public class Handler : AdHoc.Receiver.BytesDst, Communication.Transmitter.Transmittable
-            {
-                public int __id => 13;
-                public static readonly Handler ONE = new();
-
-                void Communication.Transmitter.Transmittable.Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, (Version)via.u8);
-
-                bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
-                {
-                    var __slot = __dst.slot!;
-                    ulong _bits;
-                    switch (__slot.state)
-                    {
-                        case 0:
-                            __dst.pull_value();
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
-                            return false;
-                        case 1:
-                            return __dst.put((uint)__dst.u8, 123);
-
-                        default: return true;
-                    }
-                }
-
-                bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
-                {
-                    var __slot = __src.slot!;
-                    switch (__slot.state)
-                    {
-                        case 0:
-                            return __src.get_uint_u8(123);
-
-                        default:
-                            return true;
-                    }
-                }
-            }
-
-            public bool Equals(Version other) => uid == other.uid;
-
-            public static bool operator ==(Version? a, Version? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.uid == b!.Value.uid);
-            public static bool operator !=(Version? a, Version? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.uid != b!.Value.uid);
-
-            public override bool Equals(object? other) => other is Version p && p.uid == uid;
-            public override int GetHashCode() => uid.GetHashCode();
-
-            public static implicit operator uint(Version a) => a.uid;
-            public static implicit operator Version(uint a) => new Version(a);
-
-            public static implicit operator ulong(Version a) => (ulong)(a.uid);
-            public static implicit operator Version(ulong a) => new Version((uint)a);
-
-            public struct Nullable : IEquatable<Nullable>
-            {
-                public Nullable() { }
-                public Nullable(ulong value) => this.value = value;
-                public Nullable(Version value) => Value = value;
-
-                public ulong value = NULL;
-
-                public Version Value
-                {
-                    get => new Version((uint)(value));
-                    set => this.value = (ulong)value.uid;
-                }
-
-                public bool hasValue => value != NULL;
-                public void to_null() => value = NULL;
-
-                public const ulong NULL = (ulong)0x1_0000_0000;
-
-                public bool Equals(Nullable other) => value == other.value;
-
-                public static bool operator ==(Nullable? a, Nullable? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.value == b!.Value.value);
-                public static bool operator !=(Nullable? a, Nullable? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.value != b!.Value.value);
-
-                public static bool operator ==(Nullable a, Version b) => a.value == (ulong)b.uid;
-                public static bool operator !=(Nullable a, Version b) => a.value != (ulong)b.uid;
-                public static bool operator ==(Version a, Nullable b) => (ulong)a.uid == b.value;
-                public static bool operator !=(Version a, Nullable b) => (ulong)a.uid != b.value;
-                public override bool Equals(object? other) => other is Nullable p && p.value == value;
-                public override int GetHashCode() => value.GetHashCode();
-                public static implicit operator ulong(Nullable a) => a.value;
-                public static implicit operator Nullable(ulong a) => new Nullable(a);
-                public static implicit operator Nullable(Version a) => new Nullable(a);
-            }
-        }
-        public class Signup : IEquatable<Signup>, Communication.Transmitter.Transmittable
-        {
-
-            public int __id => __id_;
-            public const int __id_ = 12;
-
-            void Communication.Transmitter.Transmittable.Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, this);
-            #region oauth
-            public byte[]? oauth_new(int size)
-            { //preallocate space
-                return _oauth = new byte[size];
-            }
-
-            public byte[]? _oauth;
-
-            public int oauth_len => _oauth!.Length;
-            public void oauth(byte[]? __src)
-            {
-
-                if (__src == null)
-                {
-                    _oauth = null;
-                    return;
-                }
-
-                _oauth = AdHoc.Resize<byte>(__src, Math.Min(__src!.Length, Agent.Signup.oauth_.ARRAY_LEN_MAX), 0);
-                ;
-            }
-
-            public struct oauth_
-            { //OAuth token with a maximum of 50 characters
-
-                public const int ARRAY_LEN_MAX = 50;
-            }
-            #endregion
-
-            public int GetHashCode
-            {
-                get
-                {
-                    var _hash = 3001003L;
-                    #region oauth
-
-                    if (_oauth != null)
-                        for (int __i = 0, MAX = oauth_len; __i < MAX; __i++)
-                            _hash = HashCode.Combine(_hash, _oauth[__i]);
-                    #endregion
-
-                    return (int)_hash;
-                }
-            }
-            bool IEquatable<Signup>.Equals(Signup? _pack)
-            {
-                if (_pack == null)
-                    return false;
-
-                bool __t;
-                #region oauth
-
-                if (_oauth != _pack._oauth)
-                    if (_oauth == null || _pack._oauth == null || _oauth!.Length != _pack._oauth!.Length)
-                        return false;
-                    else
-                        for (int __i = 0, MAX = oauth_len; __i < MAX; __i++)
-                            if (_oauth[__i] != _pack._oauth[__i])
-                                return false;
-                #endregion
-
-                return true;
-            }
-
-            bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
-            {
-                var __slot = __dst.slot!;
-                int __i = 0, __t = 0, __v = 0;
-                for (; ; )
-                    switch (__slot.state)
-                    {
-                        case 0:
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
-                            return false;
-
-                        case 1:
-
-                            if (!__dst.init_fields_nulls(_oauth != null ? 1 : 0, 1))
-                                return false;
-
-                            __dst.flush_fields_nulls();
-                            goto case 2;
-                        case 2:
-                            #region oauth
-
-                            if (__dst.is_null(1))
-                                goto case 4;
-
-                            if (__slot.index_max_1(_oauth!.Length) == 0)
-                            {
-                                if (__dst.put_val(0, 1, 4)) goto case 4;
-                                return false;
-                            }
-                            if (!__dst.put_val((uint)__slot.index_max1, 1, 3)) return false;
-
-                            goto case 3;
-                        case 3:
-
-                            if ((__v = __dst.remaining) < (__i = __slot.index_max1 - __slot.index1))
-                            {
-                                if (0 < __v)
-                                {
-                                    __slot.index1 = __v += __i = __slot.index1;
-                                    for (; __i < __v; __i++)
-                                        __dst.put((byte)_oauth![__i]);
-                                }
-                                __dst.retry_at(3);
-                                return false;
-                            }
-                            __i += __v = __slot.index1;
-                            for (; __v < __i; __v++) __dst.put((byte)_oauth![__v]);
-                            goto case 4;
-                        case 4:
-                        #endregion
-
-                        default:
-                            return true;
-                    }
-            }
-        }
-        public class RequestResult : IEquatable<RequestResult>, Communication.Transmitter.Transmittable
-        { //The request for pending task result
-
-            public int __id => __id_;
-            public const int __id_ = 6;
-
-            void Communication.Transmitter.Transmittable.Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, this);
-            #region task
-
-            public string? task { get; set; } = null;
-
-            public struct task_
-            {
-
-                public const int STR_LEN_MAX = 255;
-            }
-            #endregion
-
-            public int GetHashCode
-            {
-                get
-                {
-                    var _hash = 3001003L;
-                    #region task
-                    _hash = HashCode.Combine(_hash, task);
-                    #endregion
-
-                    return (int)_hash;
-                }
-            }
-            bool IEquatable<RequestResult>.Equals(RequestResult? _pack)
-            {
-                if (_pack == null)
-                    return false;
-
-                bool __t;
-                #region task
-                if (task == null)
-                {
-                    if (_pack.task != null)
-                        return false;
-                }
-                else if (_pack.task == null || !task!.Equals(_pack.task))
-                    return false;
-                #endregion
-
-                return true;
-            }
-
-            bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
-            {
-                var __slot = __dst.slot!;
-                int __i = 0, __t = 0, __v = 0;
-                for (; ; )
-                    switch (__slot.state)
-                    {
-                        case 0:
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
-                            return false;
-
-                        case 1:
-
-                            if (!__dst.init_fields_nulls(task != null ? 1 : 0, 1))
-                                return false;
-
-                            __dst.flush_fields_nulls();
-                            goto case 2;
-                        case 2:
-                            #region task
-
-                            if (__dst.is_null(1))
-                                goto case 3;
-                            if (__dst.put(task!, 3)) goto case 3;
-                            return false;
-                        case 3:
-                        #endregion
-
-                        default:
-                            return true;
-                    }
-            }
-        }
-        public interface Layout : ObserverCommunication.Receiver.Receivable, ObserverCommunication.Transmitter.Transmittable
-        {
-
-            int AdHoc.Receiver.BytesDst.__id => __id_;
-            int AdHoc.Transmitter.BytesSrc.__id => __id_;
-            public const int __id_ = 9;
-            void ObserverCommunication.Receiver.Receivable.Received(ObserverCommunication.Receiver via) => ObserverCommunication.Receiver.onReceive.Received(via, this);
-
-            void ObserverCommunication.Transmitter.Transmittable.Sent(ObserverCommunication.Transmitter via) => ObserverCommunication.Transmitter.onTransmit.Sent(via, this);
-            #region split
-
-            public byte _split { get; set; }
-            #endregion
-            #region host_packs
-            protected Layout.View _host_packs_new_item(AdHoc.Receiver scope) => (Layout.View)scope.Allocate(Layout.View.__id_)!;
-
-            public Agent.Layout.View? _host_packs { get; set; }
-            #endregion
-            #region pack_fields
-            protected Layout.View _pack_fields_new_item(AdHoc.Receiver scope) => (Layout.View)scope.Allocate(Layout.View.__id_)!;
-
-            public Agent.Layout.View? _pack_fields { get; set; }
-            #endregion
-            #region channels_id2xy
-
-            //Create a new field. Allocate the field collection to be populated.
-            public void _channels_id2xy_new(Context.Receiver ctx, Context.Receiver.Slot __slot, int items_count);
-
-            //Get a reference to the field data for existence and equality checks
-            public object? _channels_id2xy();
-
-            //Get the number of items in the Map at the specific location of the multidimensional field
-            public int _channels_id2xy_len { get; }
-
-            //Put the Key and the Value to the Map at the specific location of the multidimensional field
-            public void _channels_id2xy(Context.Receiver ctx, Context.Receiver.Slot __slot, uint key, Agent.Layout.XY value);
-
-            //Prepare and initialize before enumerating items in the Map at a specific location of the multidimensional field
-            public void _channels_id2xy_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
-
-            public uint _channels_id2xy_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
-
-            //Get the value of the item's Value in the Map
-            public Agent.Layout.XY _channels_id2xy_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
-
-            public interface _channels_id2xy_
-            {
-
-                public const int TYPE_LEN_MAX = 255;
-            }
-            #endregion
-
-            bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
-            {
-                var __slot = __dst.slot!;
-                int __i = 0, __t = 0, __v = 0;
-                for (; ; )
-                    switch (__slot.state)
-                    {
-                        case 0:
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
-                            return false;
-
-                        case 1:
-
-                            if (!__dst.Allocate(1, 1))
-                                return false;
-                            __dst.put((byte)_split);
-
-                            goto case 2;
-                        case 2:
-
-                            if (!__dst.init_fields_nulls(_host_packs != null ? 1 : 0, 2))
-                                return false;
-                            if (_pack_fields != null) __dst.set_fields_nulls(1 << 1);
-                            if (_channels_id2xy() != null)
-                                __dst.set_fields_nulls(1 << 2);
-
-                            __dst.flush_fields_nulls();
-                            goto case 3;
-                        case 3:
-                            #region host_packs
-
-                            if (__dst.is_null(1))
-                                goto case 4;
-                            if (__dst.put_bytes(_host_packs!, 4)) goto case 4;
-                            return false;
-                        case 4:
-                            #endregion
-                            #region pack_fields
-
-                            if (__dst.is_null(1 << 1))
-                                goto case 5;
-                            if (__dst.put_bytes(_pack_fields!, 5)) goto case 5;
-                            return false;
-                        case 5:
-                            #endregion
-                            #region channels_id2xy
-
-                            if (__dst.is_null(1 << 2))
-                                goto case 10;
-
-                            if (!__dst.Allocate(5, 5)) return false;
-                            if (__slot.no_items(_channels_id2xy_len, 255)) goto case 10;
-                            #region sending map info
-
-                            __slot.put_info();
-                            goto case 6;
-                        case 6:
-                            #endregion
-
-                            _channels_id2xy_Init(__dst, __slot);
-                            goto case 7;
-                        #region sending key
-                        case 7:
-                            if (__dst.put((uint)_channels_id2xy_NextItem_Key(__dst, __slot), 8))
-                                goto case 8;
-                            return false;
-                        case 8:
-                            #endregion
-                            #region sending value
-                            if (__dst.put((ulong)(ulong)_channels_id2xy_Val(__dst, __slot), 9))
-                                goto case 9;
-                            return false;
-                        case 9:
-                            #endregion
-                            if (__slot.next_index1())
-                                goto case 7;
-
-                            goto case 10;
-                        case 10:
-                        #endregion
-
-                        default:
-                            return true;
-                    }
-            }
-
-            bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
-            {
-                var __slot = __src.slot!;
-                int __i = 0, __t = 0, __v = 0;
-                for (; ; )
-                    switch (__slot.state)
-                    {
-                        case 0:
-
-                            if (!__src.has_1bytes(1))
-                                return false;
-                            _split = (byte)__src.get_byte();
-                            goto case 2; //leap
-                        case 1:
-                            _split = (byte)__src.get_byte_();
-                            goto case 2;
-                        case 2:
-
-                            if (__src.get_fields_nulls(2))
-                                goto case 3;
-                            return false;
-                        case 3:
-                            #region host_packs
-
-                            if (__src.is_null(1))
-                                goto case 5;
-
-                            {
-                                var val = __src.try_get_bytes(_host_packs_new_item(__src), 4);
-                                if (val == null) return false;
-                                _host_packs = val;
-                            }
-                            goto case 5; //leap
-                        case 4:
-                            _host_packs = __slot.get_bytes<Agent.Layout.View>();
-                            goto case 5;
-                        case 5:
-                            #endregion
-                            #region pack_fields
-
-                            if (__src.is_null(1 << 1))
-                                goto case 7;
-
-                            {
-                                var val = __src.try_get_bytes(_pack_fields_new_item(__src), 6);
-                                if (val == null) return false;
-                                _pack_fields = val;
-                            }
-                            goto case 7; //leap
-                        case 6:
-                            _pack_fields = __slot.get_bytes<Agent.Layout.View>();
-                            goto case 7;
-                        case 7:
-                            #endregion
-                            #region channels_id2xy
-
-                            if (__src.is_null(1 << 2))
-                                goto case 13;
-
-                            if (__slot.try_get_info(7) && __slot.try_items_count(Agent.Layout._channels_id2xy_.TYPE_LEN_MAX, 8)) goto case 8;
-                            return false;
-                        case 8:
-
-                            _channels_id2xy_new(__src, __slot, __v = __slot.items_count(Agent.Layout._channels_id2xy_.TYPE_LEN_MAX));
-
-                            if (__v == 0) goto case 13;
-
-                            if (__slot.leap()) goto case 13;
-
-                            goto case 9;
-                        case 9:
-                            #region receiving key
-
-                            if (!__src.has_4bytes(10))
-                                return false;
-                            __slot._ulong = (uint)__src.get_uint();
-                            goto case 11; //leap
-                        case 10:
-                            __slot._ulong = (uint)__src.get_uint_();
-                            goto case 11;
-                        case 11:
-                            #endregion
-                            #region receiving value
-
-                            if (!__src.has_8bytes(12))
-                                return false;
-
-                            _channels_id2xy(__src, __slot, (uint)__slot._ulong, new Agent.Layout.XY((ulong)__src.get_ulong()));
-                            if (__slot.next_index1()) goto case 9;
-
-                            goto case 13; //leap
-                        case 12:
-
-                            _channels_id2xy(__src, __slot, (uint)__slot._ulong, new Agent.Layout.XY((ulong)__src.get_ulong_()));
-                            if (__slot.next_index1()) goto case 9;
-
-                            goto case 13;
-                        case 13:
-                        #endregion
-                        #endregion
-
-                        default:
-                            return true;
-                    }
-            }
-
-            public interface View : AdHoc.Receiver.BytesDst, AdHoc.Transmitter.BytesSrc
-            {
-
-                int AdHoc.Receiver.BytesDst.__id => __id_;
-                int AdHoc.Transmitter.BytesSrc.__id => __id_;
-                public const int __id_ = -7;
-                #region X
-
-                public int _X { get; set; }
-                #endregion
-                #region Y
-
-                public int _Y { get; set; }
-                #endregion
-                #region zoom
-
-                public float _zoom { get; set; }
-                #endregion
-                #region id2xy
-
-                //Create a new field. Allocate the field collection to be populated.
-                public void _id2xy_new(Context.Receiver ctx, Context.Receiver.Slot __slot, int items_count);
-
-                //Get a reference to the field data for existence and equality checks
-                public object? _id2xy();
-
-                //Get the number of items in the Map at the specific location of the multidimensional field
-                public int _id2xy_len { get; }
-
-                //Put the Key and the Value to the Map at the specific location of the multidimensional field
-                public void _id2xy(Context.Receiver ctx, Context.Receiver.Slot __slot, uint key, Agent.Layout.XY value);
-
-                //Prepare and initialize before enumerating items in the Map at a specific location of the multidimensional field
-                public void _id2xy_Init(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
-
-                public uint _id2xy_NextItem_Key(Context.Transmitter ctx, Context.Transmitter.Slot __slot); //Fast access to info by ID
-
-                //Get the value of the item's Value in the Map
-                public Agent.Layout.XY _id2xy_Val(Context.Transmitter ctx, Context.Transmitter.Slot __slot);
-
-                public interface _id2xy_
-                { //Fast access to info by ID
-
-                    public const int TYPE_LEN_MAX = 255;
-                }
-                #endregion
-
-                bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
-                {
-                    var __slot = __dst.slot!;
-                    int __i = 0, __t = 0, __v = 0;
-                    for (; ; )
-                        switch (__slot.state)
-                        {
-                            case 0:
-                                throw new NotSupportedException();
-                            case 1:
-
-                                if (!__dst.Allocate(12, 1))
-                                    return false;
-                                __dst.put((int)_X);
-                                __dst.put((int)_Y);
-                                __dst.put((uint)BitConverter.SingleToUInt32Bits(_zoom));
-
-                                goto case 2;
-                            case 2:
-
-                                if (!__dst.init_fields_nulls(_id2xy() != null ? 1 : 0, 2))
-                                    return false;
-
-                                __dst.flush_fields_nulls();
-                                goto case 3;
-                            case 3:
-                                #region id2xy
-
-                                if (__dst.is_null(1))
-                                    goto case 8;
-
-                                if (!__dst.Allocate(5, 3)) return false;
-                                if (__slot.no_items(_id2xy_len, 255)) goto case 8;
-                                #region sending map info
-
-                                __slot.put_info();
-                                goto case 4;
-                            case 4:
-                                #endregion
-
-                                _id2xy_Init(__dst, __slot);
-                                goto case 5;
-                            #region sending key
-                            case 5:
-                                if (__dst.put((uint)_id2xy_NextItem_Key(__dst, __slot), 6))
-                                    goto case 6;
-                                return false;
-                            case 6:
-                                #endregion
-                                #region sending value
-                                if (__dst.put((ulong)(ulong)_id2xy_Val(__dst, __slot), 7))
-                                    goto case 7;
-                                return false;
-                            case 7:
-                                #endregion
-                                if (__slot.next_index1())
-                                    goto case 5;
-
-                                goto case 8;
-                            case 8:
-                            #endregion
-
-                            default:
-                                return true;
-                        }
-                }
-
-                bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
-                {
-                    var __slot = __src.slot!;
-                    int __i = 0, __t = 0, __v = 0;
-                    for (; ; )
-                        switch (__slot.state)
-                        {
-                            case 0:
-
-                                if (!__src.has_4bytes(1))
-                                    return false;
-                                _X = (int)__src.get_int();
-                                goto case 2; //leap
-                            case 1:
-                                _X = (int)__src.get_int_();
-                                goto case 2;
-                            case 2:
-
-                                if (!__src.has_4bytes(3))
-                                    return false;
-                                _Y = (int)__src.get_int();
-                                goto case 4; //leap
-                            case 3:
-                                _Y = (int)__src.get_int_();
-                                goto case 4;
-                            case 4:
-
-                                if (!__src.has_4bytes(5))
-                                    return false;
-                                _zoom = (float)BitConverter.UInt32BitsToSingle((uint)(__src.get_uint()));
-                                goto case 6; //leap
-                            case 5:
-                                _zoom = (float)BitConverter.UInt32BitsToSingle((uint)(__src.get_uint_()));
-                                goto case 6;
-                            case 6:
-
-                                if (__src.get_fields_nulls(6))
-                                    goto case 7;
-                                return false;
-                            case 7:
-                                #region id2xy
-
-                                if (__src.is_null(1))
-                                    goto case 13;
-
-                                if (__slot.try_get_info(7) && __slot.try_items_count(Agent.Layout.View._id2xy_.TYPE_LEN_MAX, 8)) goto case 8;
-                                return false;
-                            case 8:
-
-                                _id2xy_new(__src, __slot, __v = __slot.items_count(Agent.Layout.View._id2xy_.TYPE_LEN_MAX));
-
-                                if (__v == 0) goto case 13;
-
-                                if (__slot.leap()) goto case 13;
-
-                                goto case 9;
-                            case 9:
-                                #region receiving key
-
-                                if (!__src.has_4bytes(10))
-                                    return false;
-                                __slot._ulong = (uint)__src.get_uint();
-                                goto case 11; //leap
-                            case 10:
-                                __slot._ulong = (uint)__src.get_uint_();
-                                goto case 11;
-                            case 11:
-                                #endregion
-                                #region receiving value
-
-                                if (!__src.has_8bytes(12))
-                                    return false;
-
-                                _id2xy(__src, __slot, (uint)__slot._ulong, new Agent.Layout.XY((ulong)__src.get_ulong()));
-                                if (__slot.next_index1()) goto case 9;
-
-                                goto case 13; //leap
-                            case 12:
-
-                                _id2xy(__src, __slot, (uint)__slot._ulong, new Agent.Layout.XY((ulong)__src.get_ulong_()));
-                                if (__slot.next_index1()) goto case 9;
-
-                                goto case 13;
-                            case 13:
-                            #endregion
-                            #endregion
-
-                            default:
-                                return true;
-                        }
-                }
-            }
-
-            public struct XY : IEquatable<XY>
-            {
-
-                public int __id => __id_;
-                public const int __id_ = -8;
-
-                public ulong Value = 0x0;
-                public XY() { }
-                public XY(ulong src) => Value = src;
-
-                public int x
-                {
-                    get
-                    {
-                        var _inT = (Value & 0xFFFF_FFFFUL);
-                        return (int)((long)_inT - 0x8000_0000L);
-                    }
-
-                    set => Value = (ulong)(Value & 0xFFFF_FFFF_0000_0000UL | (ulong)((uint)(value + 0x8000_0000L)));
-                }
-
-                public int y
-                {
-                    get
-                    {
-                        var _inT = (Value >> 32 & 0xFFFF_FFFFUL);
-                        return (int)((long)_inT - 0x8000_0000L);
-                    }
-
-                    set => Value = (ulong)(Value & 0xFFFF_FFFFUL | (ulong)((uint)(value + 0x8000_0000L)) << 32);
-                }
-
-                public class Handler : AdHoc.Receiver.BytesDst, AdHoc.Transmitter.BytesSrc
-                {
-                    public int __id => -8;
-                    public static readonly Handler ONE = new();
-
-                    bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
-                    {
-                        var __slot = __dst.slot!;
-                        ulong _bits;
-                        switch (__slot.state)
-                        {
-                            case 0:
-                                __dst.pull_value();
-                                throw new NotSupportedException();
-                            case 1:
-                                return __dst.put_val(__dst.u8, 8, 2);
-                            default:
-                                return true;
-                        }
-                    }
-
-                    bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
-                    {
-                        var __slot = __src.slot!;
-                        switch (__slot.state)
-                        {
-                            case 0:
-                                return __src.try_get8(8, 1);
-
-                            default:
-                                return true;
-                        }
-                    }
-                }
-
-                public bool Equals(XY other) => Value == other.Value;
-
-                public static bool operator ==(XY? a, XY? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.Value == b!.Value.Value);
-                public static bool operator !=(XY? a, XY? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.Value != b!.Value.Value);
-
-                public override bool Equals(object? other) => other is XY p && p.Value == Value;
-                public override int GetHashCode() => Value.GetHashCode();
-
-                public static implicit operator ulong(XY a) => a.Value;
-                public static implicit operator XY(ulong a) => new XY(a);
-            }
-        }
-
-        public struct Login : IEquatable<Login>
-        {
-
-            public int __id => __id_;
-            public const int __id_ = 8;
-
-            public ulong uid = 0; //Unique identifier for the login
-
-            public Login() { }
-            public Login(ulong src) => uid = src;
-
-            public class Handler : AdHoc.Receiver.BytesDst, Communication.Transmitter.Transmittable
-            {
-                public int __id => 8;
-                public static readonly Handler ONE = new();
-
-                void Communication.Transmitter.Transmittable.Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, (Login)via.u8);
-
-                bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
-                {
-                    var __slot = __dst.slot!;
-                    ulong _bits;
-                    switch (__slot.state)
-                    {
-                        case 0:
-                            __dst.pull_value();
-                            if (__dst.put_val(__id_, 1, 1))
-                                goto case 1;
-                            return false;
-                        case 1:
-                            return __dst.put((ulong)__dst.u8, 123);
-
-                        default: return true;
-                    }
-                }
-
-                bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
-                {
-                    var __slot = __src.slot!;
-                    switch (__slot.state)
-                    {
-                        case 0:
-                            return __src.get_ulong_u8(123);
-
-                        default:
-                            return true;
-                    }
-                }
-            }
-
-            public bool Equals(Login other) => uid == other.uid;
-
-            public static bool operator ==(Login? a, Login? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.uid == b!.Value.uid);
-            public static bool operator !=(Login? a, Login? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.uid != b!.Value.uid);
-
-            public override bool Equals(object? other) => other is Login p && p.uid == uid;
-            public override int GetHashCode() => uid.GetHashCode();
-
-            public static implicit operator ulong(Login a) => a.uid;
-            public static implicit operator Login(ulong a) => new Login(a);
         }
         public class Info : IEquatable<Info>, Communication.Receiver.Receivable
         {
 
             public int __id => __id_;
-            public const int __id_ = 0;
-            void Communication.Receiver.Receivable.Received(Communication.Receiver via) => Communication.Receiver.onReceive.Received(via, this);
+            public const int __id_ = 4;
+            public virtual void Received(Communication.Receiver via) => Communication.Receiver.onReceive.Received(via, this);
             #region task
 
             public string? task { get; set; } = null;
@@ -3775,19 +4276,26 @@ namespace org.unirail
             public struct task_
             {
 
+
+
                 public const int STR_LEN_MAX = 255;
+
             }
             #endregion
             #region info
 
-            public string? info { get; set; } = null; //Information with a maximum of 65,000 characters
+            public string? info { get; set; } = null;//Information with a maximum of 65,000 characters
 
             public struct info_
-            { //Information with a maximum of 65,000 characters
+            {  //Information with a maximum of 65,000 characters
+
+
 
                 public const int STR_LEN_MAX = 65000;
+
             }
             #endregion
+
 
             public int GetHashCode
             {
@@ -3806,31 +4314,23 @@ namespace org.unirail
             }
             bool IEquatable<Info>.Equals(Info? _pack)
             {
-                if (_pack == null)
-                    return false;
+                if (_pack == null) return false;
 
                 bool __t;
                 #region task
-                if (task == null)
-                {
-                    if (_pack.task != null)
-                        return false;
-                }
-                else if (_pack.task == null || !task!.Equals(_pack.task))
-                    return false;
+                if (task == null) { if (_pack.task != null) return false; }
+                else if (_pack.task == null || !task!.Equals(_pack.task)) return false;
                 #endregion
                 #region info
-                if (info == null)
-                {
-                    if (_pack.info != null)
-                        return false;
-                }
-                else if (_pack.info == null || !info!.Equals(_pack.info))
-                    return false;
+                if (info == null) { if (_pack.info != null) return false; }
+                else if (_pack.info == null || !info!.Equals(_pack.info)) return false;
                 #endregion
 
                 return true;
             }
+
+
+
 
             bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
             {
@@ -3841,14 +4341,12 @@ namespace org.unirail
                     {
                         case 0:
 
-                            if (__src.get_fields_nulls(0))
-                                goto case 1;
+                            if (__src.get_fields_nulls(0)) goto case 1;
                             return false;
                         case 1:
                             #region task
 
-                            if (__src.is_null(1))
-                                goto case 3;
+                            if (__src.is_null(1)) goto case 3;
 
                             if (__src.try_get_string(Agent.Info.task_.STR_LEN_MAX, 2)) goto case 2;
                             return false;
@@ -3859,8 +4357,7 @@ namespace org.unirail
                             #endregion
                             #region info
 
-                            if (__src.is_null(1 << 1))
-                                goto case 5;
+                            if (__src.is_null(1 << 1)) goto case 5;
 
                             if (__src.try_get_string(Agent.Info.info_.STR_LEN_MAX, 4)) goto case 4;
                             return false;
@@ -3874,6 +4371,220 @@ namespace org.unirail
                             return true;
                     }
             }
+
+
+
+
+        }
+        public class Signup : IEquatable<Signup>, Communication.Transmitter.Transmittable
+        {
+
+            public int __id => __id_;
+            public const int __id_ = 6;
+
+            public virtual void Sent(Communication.Transmitter via) => Communication.Transmitter.onTransmit.Sent(via, this);
+            #region oauth
+            public byte[]? oauth_new(int size)
+            { //preallocate space
+                return _oauth = new byte[size];
+            }
+
+            public byte[]? _oauth;
+
+            public int oauth_len => _oauth!.Length;
+            public void oauth(byte[]? __src)
+            {
+
+                if (__src == null)
+                {
+                    _oauth = null;
+                    return;
+                }
+
+                _oauth = AdHoc.Resize<byte>(__src, Math.Min(__src!.Length, Agent.Signup.oauth_.ARRAY_LEN_MAX), 0); ;
+            }
+
+            public struct oauth_
+            {  //OAuth token with a maximum of 50 characters
+
+
+
+                public const int ARRAY_LEN_MAX = 50;
+
+            }
+            #endregion
+
+
+            public int GetHashCode
+            {
+                get
+                {
+                    var _hash = 3001003L;
+                    #region oauth
+
+                    if (_oauth != null)
+                        for (int __i = 0, MAX = oauth_len; __i < MAX; __i++) _hash = HashCode.Combine(_hash, _oauth[__i]);
+                    #endregion
+
+                    return (int)_hash;
+                }
+            }
+            bool IEquatable<Signup>.Equals(Signup? _pack)
+            {
+                if (_pack == null) return false;
+
+                bool __t;
+                #region oauth
+
+                if (_oauth != _pack._oauth)
+                    if (_oauth == null || _pack._oauth == null || _oauth!.Length != _pack._oauth!.Length) return false;
+                    else
+                        for (int __i = 0, MAX = oauth_len; __i < MAX; __i++)
+                            if (_oauth[__i] != _pack._oauth[__i]) return false;
+                #endregion
+
+                return true;
+            }
+
+
+
+            bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
+            {
+                var __slot = __dst.slot!;
+                int __i = 0, __t = 0, __v = 0;
+                for (; ; )
+                    switch (__slot.state)
+                    {
+                        case 0:
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
+                            return false;
+
+                        case 1:
+
+
+
+                            if (!__dst.init_fields_nulls(_oauth != null ? 1 : 0, 1)) return false;
+
+                            __dst.flush_fields_nulls();
+                            goto case 2;
+                        case 2:
+                            #region oauth
+
+
+                            if (__dst.is_null(1)) goto case 4;
+
+                            if (__slot.index_max_1(_oauth!.Length) == 0)
+                            {
+                                if (__dst.put_val(0, 1, 4)) goto case 4;
+                                return false;
+                            }
+                            if (!__dst.put_val((uint)__slot.index_max1, 1, 3)) return false;
+
+                            goto case 3;
+                        case 3:
+
+                            if ((__v = __dst.remaining) < (__i = __slot.index_max1 - __slot.index1))
+                            {
+                                if (0 < __v)
+                                {
+                                    __slot.index1 = __v += __i = __slot.index1;
+                                    for (; __i < __v; __i++) __dst.put((byte)_oauth![__i]);
+                                }
+                                __dst.retry_at(3);
+                                return false;
+                            }
+                            __i += __v = __slot.index1;
+                            for (; __v < __i; __v++) __dst.put((byte)_oauth![__v]);
+                            goto case 4;
+                        case 4:
+                        #endregion
+
+
+
+                        default:
+                            return true;
+                    }
+            }
+
+
+
+
+
+        }
+
+        public struct Invitation : IEquatable<Invitation>
+        {
+
+            public int __id => __id_;
+            public const int __id_ = 3;
+
+            public ulong uid = 0;//Unique identifier for the invitation
+
+            public Invitation() { }
+            public Invitation(ulong src) => uid = src;
+
+
+
+
+
+
+            public class Handler : Communication.Receiver.Receivable, AdHoc.Transmitter.BytesSrc
+            {
+                public int __id => 3;
+                public static readonly Handler ONE = new();
+
+                public virtual void Received(Communication.Receiver via) => Communication.Receiver.onReceive.Received(via, (Invitation)via.u8);
+
+
+
+                bool AdHoc.Transmitter.BytesSrc.__get_bytes(AdHoc.Transmitter __dst)
+                {
+                    var __slot = __dst.slot!;
+                    ulong _bits;
+                    switch (__slot.state)
+                    {
+                        case 0:
+                            __dst.pull_value();
+                            if (__dst.put_val(__id_, 1, 1)) goto case 1;
+                            return false;
+                        case 1:
+                            return __dst.put((ulong)__dst.u8, 123);
+
+                        default:
+                            return true;
+                    }
+                }
+
+                bool AdHoc.Receiver.BytesDst.__put_bytes(AdHoc.Receiver __src)
+                {
+                    var __slot = __src.slot!;
+                    switch (__slot.state)
+                    {
+                        case 0:
+                            return __src.get_ulong_u8(123);
+
+                        default:
+                            return true;
+                    }
+                }
+
+            }
+
+
+
+            public bool Equals(Invitation other) => uid == other.uid;
+
+            public static bool operator ==(Invitation? a, Invitation? b) => a.HasValue == b.HasValue && (!a.HasValue || a!.Value.uid == b!.Value.uid);
+            public static bool operator !=(Invitation? a, Invitation? b) => a.HasValue != b.HasValue || (a.HasValue && a!.Value.uid != b!.Value.uid);
+
+            public override bool Equals(object? other) => other is Invitation p && p.uid == uid;
+            public override int GetHashCode() => uid.GetHashCode();
+
+            public static implicit operator ulong(Invitation a) => a.uid;
+            public static implicit operator Invitation(ulong a) => new Invitation(a);
+
+
+
         }
         namespace Entity
         {
@@ -3888,6 +4599,8 @@ namespace org.unirail
             }
 
         }
+
+
 
         public interface Communication
         {
@@ -3909,8 +4622,8 @@ namespace org.unirail
 
             public class Transmitter : AdHoc.Transmitter, AdHoc.Transmitter.EventsHandler
             {
-                #region> Transmitter code
-                #endregion> ÿ.Transmitter
+                #region > Transmitter code
+                #endregion > ā.Transmitter
                 public Network.TCP<Communication.Transmitter, Communication.Receiver>.Channel? channel;
 
                 public Transmitter() : base(null)
@@ -3920,26 +4633,26 @@ namespace org.unirail
                 }
                 public void onSending(Transmitter dst, BytesSrc src)
                 {
-                    #region> on Sending
+                    #region > on Sending
                     var r = channel!.receiver!;
                     if (r.curr_stage.on_transmitting(src.__id) == Stage.ERROR)
                     {
                         channel.Close_and_dispose();
                         throw new Exception($"At stage: {r.curr_stage.name}, sending an unexpected packet with id: {src.__id}, name: {src.GetType().FullName}, detected.");
                     }
-                    #endregion> ÿ.Transmitter.Sending
+                    #endregion > ā.Transmitter.Sending
                 }
 
                 public void onSent(Transmitter dst, BytesSrc src)
                 {
-                    #region> on Sent
+                    #region > on Sent
                     var r = channel!.receiver!;
                     if ((r.curr_stage = (r.prev_stage = r.curr_stage).on_transmitting(src.__id)) == Stage.ERROR)
                     {
                         channel.Close_and_dispose();
                         throw new Exception($"At stage: {r.prev_stage.name}, sending an unexpected packet with id: {src.__id}, name: {src.GetType().FullName}, detected.");
                     }
-                    #endregion> ÿ.Transmitter.Sent
+                    #endregion > ā.Transmitter.Sent
                     ((Transmittable)src).Sent(this);
                 }
 
@@ -3970,6 +4683,7 @@ namespace org.unirail
                             public void Sent(Communication.Transmitter via, Login pack) { }
                             public void Sent(Communication.Transmitter via, RequestResult pack) { }
                             public void Sent(Communication.Transmitter via, Version pack) { }
+
                         }
 
                         static readonly Stub STUB = new();
@@ -3981,11 +4695,14 @@ namespace org.unirail
                 public bool send(RequestResult pack) => base.send(pack);
                 public bool send(Login pack) => base.send(Login.Handler.ONE, pack);
                 public bool send(Project pack) => base.send(pack);
+
             }
+
+
 
             public class Receiver : AdHoc.Receiver, AdHoc.Receiver.EventsHandler
             {
-                #region> Receiver code
+                #region > Receiver code
                 public Stage prev_stage = Stages.O;
                 public Stage curr_stage = Stages.O;
 
@@ -3995,7 +4712,7 @@ namespace org.unirail
                     prev_stage = Stages.O;
                     curr_stage = Stages.O;
                 }
-                #endregion> ÿ.Receiver
+                #endregion > ā.Receiver
                 public readonly Network.TCP<Communication.Transmitter, Communication.Receiver>.Channel channel;
 
                 public Receiver() : base(null, 1)
@@ -4026,129 +4743,124 @@ namespace org.unirail
                             public void Received(Communication.Receiver via, Invitation pack) { }
                             public void Received(Communication.Receiver via, Info pack) { }
                             public void Received(Communication.Receiver via, Result pack) { }
+
                         }
 
                         static readonly Stub STUB = new();
                     }
                 }
 
-                public static _Allocator allocator = _Allocator.DEFAULT;
-                public override BytesDst Allocate(int id) => id switch
-                {
-                    Info.__id_ => allocator.new_Info(),
-                    Invitation.__id_ => Invitation.Handler.ONE,
-                    Layout.__id_ => allocator.new_Layout(),
-                    Result.__id_ => allocator.new_Result(),
-                    Show_Code.__id_ => Show_Code.Handler.ONE,
-                    Up_to_date.__id_ => allocator.new_Up_to_date(),
-                    Layout.View.__id_ => allocator.new_Layout_View(),
-                    Layout.XY.__id_ => Layout.XY.Handler.ONE,
-                    _ => throw new Exception("Received a packet with unknown id:" + id)
-                };
 
                 public override BytesDst Receiving(int id)
                 {
-                    #region> on receiving
+                    #region > on receiving
                     if ((curr_stage = (prev_stage = curr_stage).on_receiving(id)) == Stage.ERROR)
                     {
                         channel.Close_and_dispose();
                         throw new Exception($"At stage:{prev_stage.name}, receiving an unexpected pack with id:{id}, detected");
                     }
-                    #endregion> ÿ.Receiver.receiving
-                    return Allocate(id);
+                    #endregion > ā.Receiver.receiving
+                    return id switch
+                    {
+                        Info.__id_ => _Allocator.DEFAULT.new_Info(this),
+                        Invitation.__id_ => Invitation.Handler.ONE,
+                        Result.__id_ => _Allocator.DEFAULT.new_Result(this),
+                        _ => throw new Exception("Received a packet with unknown id:" + id)
+                    };
                 }
 
                 public void onReceived(Receiver src, BytesDst dst)
                 {
-                    #region> on received
+                    #region > on received
                     if (curr_stage == Stage.EXIT) channel.Close_and_dispose();
-                    #endregion> ÿ.Receiver.received
+                    #endregion > ā.Receiver.received
                     ((Receivable)dst).Received(this);
                 }
             }
 
             public interface Stages
             {
-                public static readonly AdHoc.Stage Start = new(0, "Start", TimeSpan.FromSeconds(12),
+                public static readonly AdHoc.Stage Start = new(2, "Start", TimeSpan.FromSeconds(12),
+                                    on_transmitting:
+                                    id => id switch
+                                    {
+                                        Agent.Version.__id_ => VersionMatching,
 
-                                                               on_transmitting: id => id switch
-                                                               {
-                                                                   Agent.Version.__id_ => VersionMatching,
+                                        _ => AdHoc.Stage.ERROR
+                                    }
 
-                                                                   _ => AdHoc.Stage.ERROR
-                                                               }
+                            );
+                public static readonly AdHoc.Stage VersionMatching = new(3, "VersionMatching", TimeSpan.FromSeconds(65535),
+                                on_receiving:
+                                id => id switch
+                                {
+                                    Agent.Info.__id_ => AdHoc.Stage.EXIT,
+                                    Agent.Invitation.__id_ => Login,
 
-                );
-                public static readonly AdHoc.Stage VersionMatching = new(1, "VersionMatching", TimeSpan.FromSeconds(65535),
+                                    _ => AdHoc.Stage.ERROR
+                                }
 
-                                                                         on_receiving: id => id switch
-                                                                         {
-                                                                             Agent.Info.__id_ => AdHoc.Stage.EXIT,
-                                                                             Agent.Invitation.__id_ => Login,
+                    );
+                public static readonly AdHoc.Stage Login = new(4, "Login", TimeSpan.FromSeconds(65535),
+                            on_transmitting:
+                            id => id switch
+                            {
+                                Agent.Login.__id_ or
+Agent.Signup.__id_ => LoginResponse,
 
-                                                                             _ => AdHoc.Stage.ERROR
-                                                                         }
+                                _ => AdHoc.Stage.ERROR
+                            }
 
-                );
-                public static readonly AdHoc.Stage Login = new(2, "Login", TimeSpan.FromSeconds(65535),
+                    );
+                public static readonly AdHoc.Stage LoginResponse = new(5, "LoginResponse", TimeSpan.FromSeconds(12),
+                                on_receiving:
+                                id => id switch
+                                {
+                                    Agent.Info.__id_ => AdHoc.Stage.EXIT,
+                                    Agent.Invitation.__id_ => TodoJobRequest,
 
-                                                               on_transmitting: id => id switch
-                                                               {
-                                                                   Agent.Login.__id_ or
-                                                                       Agent.Signup.__id_ => LoginResponse,
+                                    _ => AdHoc.Stage.ERROR
+                                }
 
-                                                                   _ => AdHoc.Stage.ERROR
-                                                               }
+                    );
+                public static readonly AdHoc.Stage TodoJobRequest = new(6, "TodoJobRequest", TimeSpan.FromSeconds(12),
+                            on_transmitting:
+                            id => id switch
+                            {
+                                Agent.RequestResult.__id_ or
+Agent.Project.__id_ => Project,
+                                Agent.Proto.__id_ => Proto,
 
-                );
-                public static readonly AdHoc.Stage LoginResponse = new(3, "LoginResponse", TimeSpan.FromSeconds(12),
+                                _ => AdHoc.Stage.ERROR
+                            }
 
-                                                                       on_receiving: id => id switch
-                                                                       {
-                                                                           Agent.Info.__id_ => AdHoc.Stage.EXIT,
-                                                                           Agent.Invitation.__id_ => TodoJobRequest,
+                    );
+                public static readonly AdHoc.Stage Project = new(7, "Project", TimeSpan.FromSeconds(65535),
+                                on_receiving:
+                                id => id switch
+                                {
+                                    Agent.Info.__id_ or
+Agent.Result.__id_ => AdHoc.Stage.EXIT,
 
-                                                                           _ => AdHoc.Stage.ERROR
-                                                                       }
+                                    _ => AdHoc.Stage.ERROR
+                                }
 
-                );
-                public static readonly AdHoc.Stage TodoJobRequest = new(4, "TodoJobRequest", TimeSpan.FromSeconds(12),
+                    );
+                public static readonly AdHoc.Stage Proto = new(8, "Proto", TimeSpan.FromSeconds(65535),
+                                on_receiving:
+                                id => id switch
+                                {
+                                    Agent.Info.__id_ or
+Agent.Result.__id_ => AdHoc.Stage.EXIT,
 
-                                                                        on_transmitting: id => id switch
-                                                                        {
-                                                                            Agent.RequestResult.__id_ or
-                                                                                Agent.Project.__id_ => Project,
-                                                                            Agent.Proto.__id_ => Proto,
+                                    _ => AdHoc.Stage.ERROR
+                                }
 
-                                                                            _ => AdHoc.Stage.ERROR
-                                                                        }
+                    );
 
-                );
-                public static readonly AdHoc.Stage Project = new(5, "Project", TimeSpan.FromSeconds(65535),
-
-                                                                 on_receiving: id => id switch
-                                                                 {
-                                                                     Agent.Info.__id_ or
-                                                                         Agent.Result.__id_ => AdHoc.Stage.EXIT,
-
-                                                                     _ => AdHoc.Stage.ERROR
-                                                                 }
-
-                );
-                public static readonly AdHoc.Stage Proto = new(6, "Proto", TimeSpan.FromSeconds(65535),
-
-                                                               on_receiving: id => id switch
-                                                               {
-                                                                   Agent.Info.__id_ or
-                                                                       Agent.Result.__id_ => AdHoc.Stage.EXIT,
-
-                                                                   _ => AdHoc.Stage.ERROR
-                                                               }
-
-                );
-
-                public static readonly AdHoc.Stage O = Start; //Init Stage
+                public static readonly AdHoc.Stage O = Start;//Init Stage
             }
+
         }
 
         public interface ObserverCommunication
@@ -4171,8 +4883,8 @@ namespace org.unirail
 
             public class Transmitter : AdHoc.Transmitter, AdHoc.Transmitter.EventsHandler
             {
-                #region> Transmitter code
-                #endregion> Ā.Transmitter
+                #region > Transmitter code
+                #endregion > Ă.Transmitter
                 public Network.TCP<ObserverCommunication.Transmitter, ObserverCommunication.Receiver>.Channel? channel;
 
                 public Transmitter() : base(null)
@@ -4182,18 +4894,18 @@ namespace org.unirail
                 }
                 public void onSending(Transmitter dst, BytesSrc src)
                 {
-                    #region> on Sending
+                    #region > on Sending
                     if (ObserverCommunication.Receiver.curr_stage.on_transmitting(src.__id) == Stage.ERROR)
                         AdHocAgent.exit($"At stage: {ObserverCommunication.Receiver.curr_stage.name}, sending an unexpected packet with id: {src.__id}, name: {src.GetType().FullName}, detected.");
-                    #endregion> Ā.Transmitter.Sending
+                    #endregion > Ă.Transmitter.Sending
                 }
 
                 public void onSent(Transmitter dst, BytesSrc src)
                 {
-                    #region> on Sent
+                    #region > on Sent
                     if ((ObserverCommunication.Receiver.curr_stage = (ObserverCommunication.Receiver.prev_stage = ObserverCommunication.Receiver.curr_stage).on_transmitting(src.__id)) == Stage.ERROR)
                         AdHocAgent.exit($"At stage: {ObserverCommunication.Receiver.prev_stage.name}, sending an unexpected packet with id: {src.__id}, name: {src.GetType().FullName}, detected.");
-                    #endregion> Ā.Transmitter.Sent
+                    #endregion > Ă.Transmitter.Sent
                     ((Transmittable)src).Sent(this);
                 }
 
@@ -4209,28 +4921,29 @@ namespace org.unirail
                     void Sent(ObserverCommunication.Transmitter via);
                     interface Handler
                     {
-                        void Sent(ObserverCommunication.Transmitter via, Layout pack);
                         void Sent(ObserverCommunication.Transmitter via, Project pack);
                         void Sent(ObserverCommunication.Transmitter via, Up_to_date pack);
 
                         class Stub : Handler
                         {
-                            public void Sent(ObserverCommunication.Transmitter via, Layout pack) { }
                             public void Sent(ObserverCommunication.Transmitter via, Project pack) { }
                             public void Sent(ObserverCommunication.Transmitter via, Up_to_date pack) { }
+
                         }
 
                         static readonly Stub STUB = new();
                     }
                 }
-                public bool send(Layout pack) => base.send(pack);
                 public bool send(Project pack) => base.send(pack);
                 public bool send(Up_to_date pack) => base.send(pack);
+
             }
+
+
 
             public class Receiver : AdHoc.Receiver, AdHoc.Receiver.EventsHandler
             {
-                #region> Receiver code
+                #region > Receiver code
                 public static Stage curr_stage = Stages.O; // exist only one Observer instance
                 public static Stage prev_stage = Stages.O; // exist only one Observer instance
 
@@ -4239,7 +4952,7 @@ namespace org.unirail
                     base.Close();
                     curr_stage = Stages.O;
                 }
-                #endregion> Ā.Receiver
+                #endregion > Ă.Receiver
                 public readonly Network.TCP<ObserverCommunication.Transmitter, ObserverCommunication.Receiver>.Channel channel;
 
                 public Receiver() : base(null, 1)
@@ -4262,126 +4975,260 @@ namespace org.unirail
                     public interface Handler
                     {
                         void Received(ObserverCommunication.Receiver via, Show_Code pack);
-                        void Received(ObserverCommunication.Receiver via, Layout pack);
                         void Received(ObserverCommunication.Receiver via, Up_to_date pack);
 
                         class Stub : Handler
                         {
                             public void Received(ObserverCommunication.Receiver via, Show_Code pack) { }
-                            public void Received(ObserverCommunication.Receiver via, Layout pack) { }
                             public void Received(ObserverCommunication.Receiver via, Up_to_date pack) { }
+
                         }
 
                         static readonly Stub STUB = new();
                     }
                 }
 
-                public static _Allocator allocator = _Allocator.DEFAULT;
-                public override BytesDst Allocate(int id) => id switch
-                {
-                    Info.__id_ => allocator.new_Info(),
-                    Invitation.__id_ => Invitation.Handler.ONE,
-                    Layout.__id_ => allocator.new_Layout(),
-                    Result.__id_ => allocator.new_Result(),
-                    Show_Code.__id_ => Show_Code.Handler.ONE,
-                    Up_to_date.__id_ => allocator.new_Up_to_date(),
-                    Layout.View.__id_ => allocator.new_Layout_View(),
-                    Layout.XY.__id_ => Layout.XY.Handler.ONE,
-                    _ => throw new Exception("Received a packet with unknown id:" + id)
-                };
 
                 public override BytesDst Receiving(int id)
                 {
-                    #region> on receiving
+                    #region > on receiving
                     if ((curr_stage = (prev_stage = curr_stage).on_receiving(id)) == Stage.ERROR)
                         AdHocAgent.exit($"At stage:{prev_stage.name}, receiving an unexpected pack with id:{id}, detected");
-                    #endregion> Ā.Receiver.receiving
-                    return Allocate(id);
+                    #endregion > Ă.Receiver.receiving
+                    return id switch
+                    {
+                        Show_Code.__id_ => Show_Code.Handler.ONE,
+                        Up_to_date.__id_ => _Allocator.DEFAULT.new_Up_to_date(this),
+                        _ => throw new Exception("Received a packet with unknown id:" + id)
+                    };
                 }
 
                 public void onReceived(Receiver src, BytesDst dst)
                 {
-                    #region> on received
-                    #endregion> Ā.Receiver.received
+                    #region > on received
+                    #endregion > Ă.Receiver.received
                     ((Receivable)dst).Received(this);
                 }
             }
 
             public interface Stages
             {
-                public static readonly AdHoc.Stage Start = new(7, "Start", TimeSpan.FromSeconds(65535),
+                public static readonly AdHoc.Stage Start = new(9, "Start", TimeSpan.FromSeconds(65535),
+                                    on_transmitting:
+                                    id => id switch
+                                    {
+                                        Agent.Project.__id_ => Operate,
 
-                                                               on_transmitting: id => id switch
-                                                               {
-                                                                   Agent.Layout.__id_ => Layout,
-                                                                   Agent.Project.__id_ => Operate,
+                                        _ => AdHoc.Stage.ERROR
+                                    }
 
-                                                                   _ => AdHoc.Stage.ERROR
-                                                               }
+                            );
+                public static readonly AdHoc.Stage Operate = new(10, "Operate", TimeSpan.FromSeconds(65535),
+                                on_receiving:
+                                id => id switch
+                                {
+                                    Agent.Up_to_date.__id_ => RefreshProject,
+                                    Agent.Show_Code.__id_ => Operate,
 
-                );
-                public static readonly AdHoc.Stage Layout = new(8, "Layout", TimeSpan.FromSeconds(65535),
+                                    _ => AdHoc.Stage.ERROR
+                                }
 
-                                                                on_transmitting: id => id switch
-                                                                {
-                                                                    Agent.Project.__id_ => Operate,
+                    );
+                public static readonly AdHoc.Stage RefreshProject = new(11, "RefreshProject", TimeSpan.FromSeconds(65535),
+                            on_transmitting:
+                            id => id switch
+                            {
+                                Agent.Project.__id_ or
+Agent.Up_to_date.__id_ => Operate,
 
-                                                                    _ => AdHoc.Stage.ERROR
-                                                                }
+                                _ => AdHoc.Stage.ERROR
+                            }
 
-                );
-                public static readonly AdHoc.Stage Operate = new(9, "Operate", TimeSpan.FromSeconds(65535),
+                    );
 
-                                                                 on_receiving: id => id switch
-                                                                 {
-                                                                     Agent.Up_to_date.__id_ => RefreshProject,
-                                                                     Agent.Show_Code.__id_ or
-                                                                         Agent.Layout.__id_ => Operate,
-
-                                                                     _ => AdHoc.Stage.ERROR
-                                                                 }
-
-                );
-                public static readonly AdHoc.Stage RefreshProject = new(10, "RefreshProject", TimeSpan.FromSeconds(65535),
-
-                                                                        on_transmitting: id => id switch
-                                                                        {
-                                                                            Agent.Project.__id_ or
-                                                                                Agent.Up_to_date.__id_ => Operate,
-
-                                                                            _ => AdHoc.Stage.ERROR
-                                                                        }
-
-                );
-
-                public static readonly AdHoc.Stage O = Start; //Init Stage
+                public static readonly AdHoc.Stage O = Start;//Init Stage
             }
+
         }
+
+        public interface SaveLayout_UID
+        {
+            public static Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.Channel new_TCP_channel(Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver> host)
+            {
+                var channel = new Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.Channel(host);
+                _ = new Transmitter(channel);
+                _ = new Receiver(channel);
+                return channel;
+            }
+
+            public static Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.WebSocket new_WebSocket_channel(Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver> host)
+            {
+                var channel = new Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.WebSocket(host);
+                _ = new Transmitter(channel);
+                _ = new Receiver(channel);
+                return channel;
+            }
+
+            public class Transmitter : AdHoc.Transmitter, AdHoc.Transmitter.EventsHandler
+            {
+                #region > Transmitter code
+                #endregion > ÿ.Transmitter
+                public Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.Channel? channel;
+
+                public Transmitter() : base(null)
+                {
+                    channel = null;
+                    handler = this;
+                }
+                public void onSending(Transmitter dst, BytesSrc src)
+                {
+                    #region > on Sending
+                    #endregion > ÿ.Transmitter.Sending
+                }
+
+                public void onSent(Transmitter dst, BytesSrc src)
+                {
+                    #region > on Sent
+                    #endregion > ÿ.Transmitter.Sent
+                    ((Transmittable)src).Sent(this);
+                }
+
+                public Transmitter(Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.Channel channel, int power_of_2_sending_queue_size = 5) : base(null)
+                {
+                    (this.channel = channel).transmitter = this;
+                    handler = this;
+                }
+
+                public static Transmittable.Handler onTransmit = Transmittable.Handler.STUB;
+                public interface Transmittable : BytesSrc
+                {
+                    void Sent(SaveLayout_UID.Transmitter via);
+                    interface Handler
+                    {
+                        void Sent(SaveLayout_UID.Transmitter via, UID pack);
+
+                        class Stub : Handler
+                        {
+                            public void Sent(SaveLayout_UID.Transmitter via, UID pack) { }
+
+                        }
+
+                        static readonly Stub STUB = new();
+                    }
+                }
+                public bool send(UID pack) => base.send(pack);
+
+            }
+
+
+
+            public class Receiver : AdHoc.Receiver, AdHoc.Receiver.EventsHandler
+            {
+                #region > Receiver code
+                #endregion > ÿ.Receiver
+                public readonly Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.Channel channel;
+
+                public Receiver() : base(null, 1)
+                {
+                    handler = this;
+                    channel = null;
+                }
+
+                public Receiver(Network.TCP<SaveLayout_UID.Transmitter, SaveLayout_UID.Receiver>.Channel channel) : base(null, 1)
+                {
+                    handler = this;
+                    (this.channel = channel).receiver = this;
+                }
+
+                public static Receivable.Handler onReceive = Receivable.Handler.STUB;
+                public interface Receivable : BytesDst
+                {
+                    protected internal void Received(SaveLayout_UID.Receiver via);
+
+                    public interface Handler
+                    {
+                        void Received(SaveLayout_UID.Receiver via, UID pack);
+
+                        class Stub : Handler
+                        {
+                            public void Received(SaveLayout_UID.Receiver via, UID pack) { }
+
+                        }
+
+                        static readonly Stub STUB = new();
+                    }
+                }
+
+
+                public override BytesDst Receiving(int id)
+                {
+                    #region > on receiving
+                    #endregion > ÿ.Receiver.receiving
+                    return id switch
+                    {
+                        UID.__id_ => _Allocator.DEFAULT.new_UID(this),
+                        _ => throw new Exception("Received a packet with unknown id:" + id)
+                    };
+                }
+
+                public void onReceived(Receiver src, BytesDst dst)
+                {
+                    #region > on received
+                    #endregion > ÿ.Receiver.received
+                    ((Receivable)dst).Received(this);
+                }
+            }
+
+            public interface Stages
+            {
+                public static readonly AdHoc.Stage Start = new(0, "Start", TimeSpan.FromSeconds(65535),
+                                    on_transmitting:
+                                    id => id switch
+                                    {
+                                        Agent.UID.__id_ => Start,
+
+                                        _ => AdHoc.Stage.ERROR
+                                    }
+                                ,
+                                        on_receiving:
+                                        id => id switch
+                                        {
+                                            Agent.UID.__id_ => Start,
+
+                                            _ => AdHoc.Stage.ERROR
+                                        }
+
+                            );
+
+                public static readonly AdHoc.Stage O = Start;//Init Stage
+            }
+
+        }
+
 
     }
     public class _Allocator
     {
 
-        public Func<Agent.Project.Channel.Stage.Branch> new_Project_Channel_Stage_Branch = () => throw new Exception("The producer of Agent.Project.Channel.Stage.Branch is not assigned");
-        public Func<Agent.Project.Channel> new_Project_Channel = () => throw new Exception("The producer of Agent.Project.Channel is not assigned");
-        public Func<Agent.Project.Host.Pack.Field> new_Project_Host_Pack_Field = () => throw new Exception("The producer of Agent.Project.Host.Pack.Field is not assigned");
-        public Func<Agent.Project.Host> new_Project_Host = () => throw new Exception("The producer of Agent.Project.Host is not assigned");
-        public Func<Agent.Info> new_Info = () => new Agent.Info();
-        public Func<Agent.Invitation.Handler> new_Invitation = () => Agent.Invitation.Handler.ONE;
-        public Func<Agent.Layout> new_Layout = () => throw new Exception("The producer of Agent.Layout is not assigned");
-        public Func<Agent.Login.Handler> new_Login = () => Agent.Login.Handler.ONE;
-        public Func<Agent.Project.Host.Pack> new_Project_Host_Pack = () => throw new Exception("The producer of Agent.Project.Host.Pack is not assigned");
-        public Func<Agent.Project> new_Project = () => throw new Exception("The producer of Agent.Project is not assigned");
-        public Func<Agent.Proto> new_Proto = () => new Agent.Proto();
-        public Func<Agent.RequestResult> new_RequestResult = () => new Agent.RequestResult();
-        public Func<Agent.Result> new_Result = () => new Agent.Result();
-        public Func<Agent.Show_Code.Handler> new_Show_Code = () => Agent.Show_Code.Handler.ONE;
-        public Func<Agent.Signup> new_Signup = () => new Agent.Signup();
-        public Func<Agent.Project.Channel.Stage> new_Project_Channel_Stage = () => throw new Exception("The producer of Agent.Project.Channel.Stage is not assigned");
-        public Func<Agent.Up_to_date> new_Up_to_date = () => new Agent.Up_to_date();
-        public Func<Agent.Version.Handler> new_Version = () => Agent.Version.Handler.ONE;
-        public Func<Agent.Layout.View> new_Layout_View = () => throw new Exception("The producer of Agent.Layout.View is not assigned");
-        public Func<Agent.Layout.XY.Handler> new_Layout_XY = () => Agent.Layout.XY.Handler.ONE;
+        public Func<AdHoc.Receiver, Agent.Project.Channel.Stage.Branch> new_Project_Channel_Stage_Branch = (srs) => throw new Exception("The producer of Agent.Project.Channel.Stage.Branch is not assigned");
+        public Func<AdHoc.Receiver, Agent.Project.Channel> new_Project_Channel = (srs) => throw new Exception("The producer of Agent.Project.Channel is not assigned");
+        public Func<AdHoc.Receiver, Agent.Project.Host.Pack.Field> new_Project_Host_Pack_Field = (srs) => throw new Exception("The producer of Agent.Project.Host.Pack.Field is not assigned");
+        public Func<AdHoc.Receiver, Agent.Project.Host> new_Project_Host = (srs) => throw new Exception("The producer of Agent.Project.Host is not assigned");
+        public Func<AdHoc.Receiver, Agent.Info> new_Info = (srs) => new Agent.Info();
+        public Func<AdHoc.Receiver, Agent.Invitation.Handler> new_Invitation = (srs) => Agent.Invitation.Handler.ONE;
+        public Func<AdHoc.Receiver, Agent.Login.Handler> new_Login = (srs) => Agent.Login.Handler.ONE;
+        public Func<AdHoc.Receiver, Agent.Project.Host.Pack> new_Project_Host_Pack = (srs) => throw new Exception("The producer of Agent.Project.Host.Pack is not assigned");
+        public Func<AdHoc.Receiver, Agent.Project> new_Project = (srs) => throw new Exception("The producer of Agent.Project is not assigned");
+        public Func<AdHoc.Receiver, Agent.Proto> new_Proto = (srs) => new Agent.Proto();
+        public Func<AdHoc.Receiver, Agent.RequestResult> new_RequestResult = (srs) => new Agent.RequestResult();
+        public Func<AdHoc.Receiver, Agent.Result> new_Result = (srs) => new Agent.Result();
+        public Func<AdHoc.Receiver, Agent.Show_Code.Handler> new_Show_Code = (srs) => Agent.Show_Code.Handler.ONE;
+        public Func<AdHoc.Receiver, Agent.Signup> new_Signup = (srs) => new Agent.Signup();
+        public Func<AdHoc.Receiver, Agent.Project.Channel.Stage> new_Project_Channel_Stage = (srs) => throw new Exception("The producer of Agent.Project.Channel.Stage is not assigned");
+        public Func<AdHoc.Receiver, Agent.UID> new_UID = (srs) => new Agent.UID();
+        public Func<AdHoc.Receiver, Agent.Up_to_date> new_Up_to_date = (srs) => new Agent.Up_to_date();
+        public Func<AdHoc.Receiver, Agent.Version.Handler> new_Version = (srs) => Agent.Version.Handler.ONE;
+
 
         public _Allocator CopyTo(_Allocator dst)
         {
@@ -4391,7 +5238,6 @@ namespace org.unirail
             dst.new_Project_Host = new_Project_Host;
             dst.new_Info = new_Info;
             dst.new_Invitation = new_Invitation;
-            dst.new_Layout = new_Layout;
             dst.new_Login = new_Login;
             dst.new_Project_Host_Pack = new_Project_Host_Pack;
             dst.new_Project = new_Project;
@@ -4401,14 +5247,14 @@ namespace org.unirail
             dst.new_Show_Code = new_Show_Code;
             dst.new_Signup = new_Signup;
             dst.new_Project_Channel_Stage = new_Project_Channel_Stage;
+            dst.new_UID = new_UID;
             dst.new_Up_to_date = new_Up_to_date;
             dst.new_Version = new_Version;
-            dst.new_Layout_View = new_Layout_View;
-            dst.new_Layout_XY = new_Layout_XY;
 
             return dst;
         }
         public static readonly _Allocator DEFAULT = new();
     }
+
 
 }

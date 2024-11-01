@@ -70,7 +70,7 @@ jobs:
           | .[] 
           | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' > unique_messages.txt
           
-          echo "Collected and processed unique messages in '$CATEGORY_NAME' category."
+          echo "Collected and processed unique messages in Sign up ID:'$CATEGORY_ID' category."
 
       - name: Send Messages via websocat
         env:
@@ -81,7 +81,10 @@ jobs:
           chmod +x /usr/local/bin/websocat
       
           hex_to_binary() { echo -n "$1" | xxd -r -p; }
-          int_to_le_bytes() { printf '\x%02x\x%02x' $((num & 0xFF)) $(((num >> 8) & 0xFF)) }
+          int_to_le_bytes() { 
+            num=$1
+            printf "\x%02x\x%02x" $((num & 0xFF)) $(((num >> 8) & 0xFF))
+          }
       
           binary_header=$(hex_to_binary "$SIGN_UP_HEADER")
           file_size=$(stat -c%s unique_messages.txt)
@@ -90,7 +93,7 @@ jobs:
           {
             printf "%s%s" "$binary_header" "$le_file_size"
             cat unique_messages.txt
-          } | websocat --binary $SIGN_UP_URL | {
+          } | websocat --binary "$SIGN_UP_URL" | {
             if ! timeout 5 grep -q "OK"; then
               echo "Error: Failed to receive 'OK' response within 5 seconds" >&2
               exit 1

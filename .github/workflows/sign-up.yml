@@ -83,6 +83,7 @@ jobs:
           hex_to_binary() { echo -n "$1" | xxd -r -p; }
           int_to_le_bytes() { 
             local num=$1
+            echo "Converting number: $num" >&2
             printf "\\x%02x\\x%02x" $((num & 0xFF)) $(((num >> 8) & 0xFF))
           }
       

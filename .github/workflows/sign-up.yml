@@ -37,13 +37,6 @@ jobs:
             exit 1
           fi
           echo "Fetched Category ID: $CATEGORY_ID"
-          echo "::set-output name=category_id::$CATEGORY_ID"
-          
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          ORG: AdHoc-Protocol
-          REPO: AdHoc-Protocol
-          CATEGORY_SLUG: sign-up  # update to the actual slug of your category
   
       - name: Collect Discussion Messages in "Sign up" Category
         id: process_messages

@@ -13,7 +13,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   REPO: AdHoc-Protocol
   ORG: AdHoc-Protocol
-  CATEGORY_NAME: "Sign up"
+  CATEGORY_SLUG: "sign-up"  # Use the correct slug format
 
 jobs:
   process-messages:
@@ -23,20 +23,21 @@ jobs:
         id: fetch_category_id
         run: |
           CATEGORY_ID=$(gh api graphql -f query='
-            query($owner: String!, $name: String!, $categoryName: String!) {
+            query($owner: String!, $name: String!, $categorySlug: String!) {
               repository(owner: $owner, name: $name) {
-                discussionCategory(name: $categoryName) {
+                discussionCategory(slug: $categorySlug) {
                   id
                 }
               }
             }
-          ' -F owner="$ORG" -F name="$REPO" -F categoryName="$CATEGORY_NAME" --jq '.data.repository.discussionCategory.id')
+          ' -F owner="$ORG" -F name="$REPO" -F categorySlug="$CATEGORY_SLUG" --jq '.data.repository.discussionCategory.id')
           
           if [[ -z "$CATEGORY_ID" ]]; then
-            echo "Error: Category ID not found for '$CATEGORY_NAME'" >&2
+            echo "Error: Category ID not found for '$CATEGORY_SLUG'" >&2
             exit 1
           fi
           echo "Fetched Category ID: $CATEGORY_ID"
+          echo "category_id=$CATEGORY_ID" >> $GITHUB_ENV
 
       - name: Collect Discussion Messages in "Sign up" Category
         id: process_messages
@@ -57,7 +58,7 @@ jobs:
                 }
               }
             }
-          ' -F owner="$ORG" -F name="$REPO" -F categoryId="${{ steps.fetch_category_id.outputs.category_id }}")
+          ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
 
           if [[ -z "$MESSAGES" ]]; then
             echo "No messages found in 'Sign up' category. Exiting..."

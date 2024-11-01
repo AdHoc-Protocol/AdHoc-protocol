@@ -13,7 +13,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   REPO: AdHoc-Protocol
   ORG: AdHoc-Protocol
-  CATEGORY_NAME: "Sign up"
+  CATEGORY_SLUG: "Sign up"
 
 jobs:
   process-messages:

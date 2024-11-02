@@ -79,25 +79,13 @@ jobs:
         run: |
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
-          hex_to_binary() {
-            local hex_string="$1"
-            local binary_string=""
-            for ((i=0; i<${#hex_string}; i+=2)); do
-              local byte="${hex_string:$i:2}"
-              binary_string+=$(printf "\x$byte")
-            done
-            echo -ne "$binary_string"
-          }
           
-          binary_header=$(hex_to_binary "$SIGN_UP_HEADER")
+          echo -n "$SIGN_UP_HEADER" | xxd -r -p > "$binary_header_tmp"
           file_size=$(stat -c%s unique_messages.txt)
-          le_file_size=$(printf "%04x" "$file_size")
+          printf "%02x%02x" $((file_size & 0xFF)) $((file_size >> 8 & 0xFF)) | xxd -r -p >> "$binary_header_tmp"
+          cat unique_messages.txt >> "$binary_header_tmp"
 
-          {
-              printf "%s" "$binary_header"
-              printf "%s" "$le_file_size"
-              cat unique_messages.txt
-          } | websocat --binary "$SIGN_UP_URL" | {
+          websocat --binary "$SIGN_UP_URL" < "$binary_header_tmp" | {
               if ! timeout 5 grep -q "OK"; then
                   echo "Error: Failed to receive 'OK' response within 5 seconds" >&2
                   exit 1

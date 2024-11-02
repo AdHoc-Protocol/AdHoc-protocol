@@ -84,7 +84,7 @@ jobs:
                
           binary_header=$(hex_to_binary "$SIGN_UP_HEADER")
           file_size=$(stat -c%s unique_messages.txt)
-          le_file_size=$(printf "\\x%02x\\x%02x" $((file_size & 0xFF)) $(((file_size >> 8) & 0xFF)))
+          le_file_size=$(echo -n $file_size | xxd -r -l 2 -e)
       
           {
             printf "%s%s" "$binary_header" "$le_file_size"

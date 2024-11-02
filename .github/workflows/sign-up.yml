@@ -79,9 +79,19 @@ jobs:
         run: |
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
-          echo "SIGN_UP_HEADER: '$SIGN_UP_HEADER'" >&2
+         
           binary_header=$(echo -n "$SIGN_UP_HEADER" | xxd -r -p)
+          if [ -z "$binary_header" ]; then
+            echo "Error: Failed to convert SIGN_UP_HEADER to binary." >&2
+            exit 1
+          fi
+          
           file_size=$(stat -c%s unique_messages.txt)
+          if [ ! -s unique_messages.txt ]; then
+            echo "Error: unique_messages.txt is empty or does not exist." >&2
+            exit 1
+          fi
+          
           le_file_size=$(printf "%04x" "$file_size" | xxd -r -p -l 2)
       
           {

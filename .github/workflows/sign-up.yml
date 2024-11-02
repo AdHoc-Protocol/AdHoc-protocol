@@ -76,6 +76,7 @@ jobs:
         env:
           SIGN_UP_URL: ${{ secrets.SIGN_UP_URL }}
           SIGN_UP_HEADER: ${{ secrets.SIGN_UP_HEADER }}
+          SIGN_UP_OK: ${{ secrets.SIGN_UP_OK }}
         run: |
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat

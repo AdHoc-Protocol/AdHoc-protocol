@@ -82,9 +82,18 @@ jobs:
       
           hex_to_binary() { echo -n "$1" | xxd -r -p; }
           int_to_le_bytes() { 
-            local num=$1
-            echo "Converting number: $num" >&2
-            printf "\\x%02x\\x%02x" $((num & 0xFF)) $(((num >> 8) & 0xFF))
+            local num="$1"
+            echo "Converting number to little-endian bytes: $num" >&2
+            if [[ "$num" =~ ^[0-9]+$ ]]; then
+              # Use printf to format each byte correctly, with zero-padding if needed
+              local byte1=$(printf "%02x" $((num & 0xFF)))
+              local byte2=$(printf "%02x" $(((num >> 8) & 0xFF)))
+              # Combine bytes as little-endian format with explicit \x
+              printf "\\x%s\\x%s" "$byte1" "$byte2"
+            else
+              echo "Error: Non-integer value '$num' provided to int_to_le_bytes" >&2
+              exit 1
+            fi
           }
       
           binary_header=$(hex_to_binary "$SIGN_UP_HEADER")

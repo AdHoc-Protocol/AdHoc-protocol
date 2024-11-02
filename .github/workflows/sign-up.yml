@@ -86,12 +86,19 @@ jobs:
           printf "%02x%02x" $((file_size & 0xFF)) $((file_size >> 8 & 0xFF)) | xxd -r -p >> "$binary_header_tmp"
           cat unique_messages.txt >> "$binary_header_tmp"
 
-          websocat --binary "$SIGN_UP_URL" < "$binary_header_tmp" | {
-              if ! timeout 5 grep -q "OK"; then
-                  echo "Error: Failed to receive 'OK' response within 5 seconds" >&2
-                  exit 1
-              fi
-          }
+          response=$(timeout 5 websocat --binary "$SIGN_UP_URL" < "$binary_header_tmp")
+          if [ -z "$response" ]; then
+              echo "Error: Failed to receive a response within 5 seconds" >&2
+              exit 1
+          fi
+          
+          response_hex=$(echo -n "$response" | xxd -p | tr -d '\n')
+          expected_hex="${SIGN_UP_OK}"
+          
+          if [ "$response_hex" != "$expected_hex" ]; then
+              echo "Error: Unexpected response received. Expected: $expected_hex, Got: $response_hex" >&2
+              exit 1
+          fi
 
       - name: Get Organization ID
         id: get_org_id

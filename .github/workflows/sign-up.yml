@@ -96,7 +96,7 @@ jobs:
           expected_hex="${SIGN_UP_OK}"
           
           if [ "$response_hex" != "$expected_hex" ]; then
-              echo "Error: Unexpected response received. Expected: $expected_hex, Got: $response_hex" >&2
+              echo "Error: Unexpected response received. Expected:$expected_hex, Got:$response_hex". >&2
               exit 1
           fi
 

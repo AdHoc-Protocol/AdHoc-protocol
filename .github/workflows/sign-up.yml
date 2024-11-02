@@ -85,11 +85,11 @@ jobs:
             local num="$1"
             echo "Converting number to little-endian bytes: $num" >&2
             if [[ "$num" =~ ^[0-9]+$ ]]; then
-              # Use printf to format each byte correctly, with zero-padding if needed
+              # Format each byte as hexadecimal without directly using \x in printf
               local byte1=$(printf "%02x" $((num & 0xFF)))
               local byte2=$(printf "%02x" $(((num >> 8) & 0xFF)))
-              # Combine bytes as little-endian format with explicit \x
-              printf "\\x%s\\x%s" "$byte1" "$byte2"
+              # Use echo -e with escape sequences at the end to output the combined bytes
+              echo -ne "\\x$byte1\\x$byte2"
             else
               echo "Error: Non-integer value '$num' provided to int_to_le_bytes" >&2
               exit 1

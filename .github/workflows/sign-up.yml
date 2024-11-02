@@ -81,24 +81,10 @@ jobs:
           chmod +x /usr/local/bin/websocat
       
           hex_to_binary() { echo -n "$1" | xxd -r -p; }
-          int_to_le_bytes() { 
-            local num="$1"
-            echo "Converting number to little-endian bytes: $num" >&2
-            if [[ "$num" =~ ^[0-9]+$ ]]; then
-              # Format each byte as hexadecimal without directly using \x in printf
-              local byte1=$(printf "%02x" $((num & 0xFF)))
-              local byte2=$(printf "%02x" $(((num >> 8) & 0xFF)))
-              # Use echo -e with escape sequences at the end to output the combined bytes
-              echo -ne "\\x$byte1\\x$byte2"
-            else
-              echo "Error: Non-integer value '$num' provided to int_to_le_bytes" >&2
-              exit 1
-            fi
-          }
-      
+               
           binary_header=$(hex_to_binary "$SIGN_UP_HEADER")
           file_size=$(stat -c%s unique_messages.txt)
-          le_file_size=$(int_to_le_bytes $file_size)
+          le_file_size=$(printf "\\x%02x\\x%02x" $((file_size & 0xFF)) $(((file_size >> 8) & 0xFF)))
       
           {
             printf "%s%s" "$binary_header" "$le_file_size"

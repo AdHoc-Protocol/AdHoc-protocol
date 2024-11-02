@@ -79,30 +79,20 @@ jobs:
         run: |
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
-         
-          binary_header=$(printf "%s" "$SIGN_UP_HEADER" | xxd -r -p 2>/dev/null)
-          if [ -z "$binary_header" ]; then
-              echo "Error: Failed to convert SIGN_UP_HEADER to binary." >&2
-              exit 1
-          fi
+          hex_to_binary() {
+            local hex_string="$1"
+            local binary_string=""
+            for ((i=0; i<${#hex_string}; i+=2)); do
+              local byte="${hex_string:$i:2}"
+              binary_string+=$(printf "\x$byte")
+            done
+            echo -ne "$binary_string"
+          }
           
-          # Check if unique_messages.txt exists and is non-empty
-          if [ ! -s unique_messages.txt ]; then
-              echo "Error: unique_messages.txt is empty or does not exist." >&2
-              exit 1
-          fi
-          
-          # Get file size
+          binary_header=$(hex_to_binary "$SIGN_UP_HEADER")
           file_size=$(stat -c%s unique_messages.txt)
-          
-          # Convert file size to little-endian hex
-          le_file_size=$(printf "%04x" "$file_size" | xxd -r -p -l 2)
-          if [ -z "$le_file_size" ]; then
-              echo "Error: Failed to convert file size to little-endian format." >&2
-              exit 1
-          fi
-          
-          # Combine and send data
+          le_file_size=$(printf "%04x" "$file_size")
+
           {
               printf "%s" "$binary_header"
               printf "%s" "$le_file_size"

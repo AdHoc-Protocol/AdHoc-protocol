@@ -80,9 +80,9 @@ jobs:
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
       
-          binary_header=$(echo -n "$SIGN_UP_HEADER" | tr -d ' ' | xxd -r -p)
+          binary_header=$(echo -n "$SIGN_UP_HEADER" | xxd -r -p)
           file_size=$(stat -c%s unique_messages.txt)
-          le_file_size=$(echo -n $file_size | xxd -r -l 2 -e)
+          le_file_size=$(printf "%04x" "$file_size" | xxd -r -p -l 2)
       
           {
             printf "%s%s" "$binary_header" "$le_file_size"

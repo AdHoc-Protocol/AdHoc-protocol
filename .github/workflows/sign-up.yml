@@ -79,7 +79,8 @@ jobs:
         run: |
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
-          
+
+          binary_header_tmp=$(mktemp) 
           echo -n "$SIGN_UP_HEADER" | xxd -r -p > "$binary_header_tmp"
           file_size=$(stat -c%s unique_messages.txt)
           printf "%02x%02x" $((file_size & 0xFF)) $((file_size >> 8 & 0xFF)) | xxd -r -p >> "$binary_header_tmp"

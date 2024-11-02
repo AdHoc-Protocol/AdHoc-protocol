@@ -80,32 +80,38 @@ jobs:
           wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
           chmod +x /usr/local/bin/websocat
          
-          binary_header=$(echo -n "$SIGN_UP_HEADER" | xxd -r -p)
+          binary_header=$(printf "%s" "$SIGN_UP_HEADER" | xxd -r -p 2>/dev/null)
           if [ -z "$binary_header" ]; then
-            echo "Error: Failed to convert SIGN_UP_HEADER to binary." >&2
-            exit 1
+              echo "Error: Failed to convert SIGN_UP_HEADER to binary." >&2
+              exit 1
           fi
           
-          file_size=$(stat -c%s unique_messages.txt)
+          # Check if unique_messages.txt exists and is non-empty
           if [ ! -s unique_messages.txt ]; then
-            echo "Error: unique_messages.txt is empty or does not exist." >&2
-            exit 1
+              echo "Error: unique_messages.txt is empty or does not exist." >&2
+              exit 1
           fi
           
+          # Get file size
+          file_size=$(stat -c%s unique_messages.txt)
+          
+          # Convert file size to little-endian hex
           le_file_size=$(printf "%04x" "$file_size" | xxd -r -p -l 2)
           if [ -z "$le_file_size" ]; then
-            echo "Error: Failed to convert file size to little-endian format." >&2
-            exit 1
-          fi
-
-          {
-            printf "%s%s" "$binary_header" "$le_file_size"
-            cat unique_messages.txt
-          } | websocat --binary "$SIGN_UP_URL" | {
-            if ! timeout 5 grep -q "OK"; then
-              echo "Error: Failed to receive 'OK' response within 5 seconds" >&2
+              echo "Error: Failed to convert file size to little-endian format." >&2
               exit 1
-            fi
+          fi
+          
+          # Combine and send data
+          {
+              printf "%s" "$binary_header"
+              printf "%s" "$le_file_size"
+              cat unique_messages.txt
+          } | websocat --binary "$SIGN_UP_URL" | {
+              if ! timeout 5 grep -q "OK"; then
+                  echo "Error: Failed to receive 'OK' response within 5 seconds" >&2
+                  exit 1
+              fi
           }
 
       - name: Get Organization ID

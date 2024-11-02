@@ -92,7 +92,7 @@ jobs:
             exit 1
           fi
           
-          le_file_size=$(printf "%d" "$file_size" | xxd -r -l 2 -e)
+          le_file_size=$(printf "%04x" "$file_size" | xxd -r -p -l 2)
           if [ -z "$le_file_size" ]; then
             echo "Error: Failed to convert file size to little-endian format." >&2
             exit 1

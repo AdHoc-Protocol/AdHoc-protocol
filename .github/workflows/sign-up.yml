@@ -93,7 +93,11 @@ jobs:
           fi
           
           le_file_size=$(printf "%04x" "$file_size" | xxd -r -p -l 2)
-      
+          if [ -z "$le_file_size" ]; then
+            echo "Error: Failed to convert file size to little-endian format." >&2
+            exit 1
+          fi
+
           {
             printf "%s%s" "$binary_header" "$le_file_size"
             cat unique_messages.txt

@@ -186,6 +186,8 @@ jobs:
 
       - name: Delete Processed Messages
         if: ${{ success() }}
+        env:
+          CATEGORY_ID: ${{ env.category_id }}
         run: |
           while IFS=',' read -r login _; do
             echo "Fetching all messages for user: $login in category $CATEGORY_ID"
@@ -221,4 +223,4 @@ jobs:
               ' -F id="$id" || echo "Failed to delete message with ID: $id for user: $login"
               sleep 1  # Optional: delay to handle rate limits
             done
-          done < unique_messages.txt       
+          done < unique_messages.txt

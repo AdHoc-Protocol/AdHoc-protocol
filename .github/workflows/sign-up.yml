@@ -188,21 +188,27 @@ jobs:
         if: ${{ success() }}
         run: |
           while IFS=',' read -r login _; do
-            echo "Fetching all messages for user: $login"
+            echo "Fetching all messages for user: $login in category $CATEGORY_ID"
        
-            # Fetch all discussion messages for the user
-            MESSAGE_IDS=$(gh api graphql -f query='
-              query($repository: String!, $owner: String!, $login: String!) {
+            # Fetch all discussion messages in the specified category
+            DISCUSSIONS=$(gh api graphql -f query='
+              query($repository: String!, $owner: String!, $categoryId: ID!) {
                 repository(name: $repository, owner: $owner) {
-                  discussions(first: 100, filterBy: {createdBy: $login}) {
+                  discussions(first: 100, categoryId: $categoryId) {
                     nodes {
                       id
+                      author {
+                        login
+                      }
                     }
                   }
                 }
               }
-            ' -F repository="$REPOSITORY" -F owner="$OWNER" -F login="$login" --jq '.data.repository.discussions.nodes | .[] | .id')
-       
+            ' -F repository="$REPOSITORY" -F owner="$OWNER" -F categoryId="$CATEGORY_ID")
+
+            # Filter discussion IDs by the current user login
+            MESSAGE_IDS=$(echo "$DISCUSSIONS" | jq -r --arg login "$login" '.data.repository.discussions.nodes | map(select(.author.login == $login)) | .[] | .id')
+
             # Delete each message by the user
             for id in $MESSAGE_IDS; do
               echo "Deleting message with ID: $id for user: $login"
@@ -215,5 +221,4 @@ jobs:
               ' -F id="$id" || echo "Failed to delete message with ID: $id for user: $login"
               sleep 1  # Optional: delay to handle rate limits
             done
-          done < unique_messages.txt
-       
+          done < unique_messages.txt       

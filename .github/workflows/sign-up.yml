@@ -187,12 +187,33 @@ jobs:
       - name: Delete Processed Messages
         if: ${{ success() }}
         run: |
-          jq -r '.data.repository.discussions.nodes | .[] | .id' messages.json | while read id; do
-            gh api graphql -f query='
-              mutation($id: ID!) {
-                deleteDiscussion(input: {id: $id}) {
-                  clientMutationId
+          while IFS=',' read -r login _; do
+            echo "Fetching all messages for user: $login"
+       
+            # Fetch all discussion messages for the user
+            MESSAGE_IDS=$(gh api graphql -f query='
+              query($repository: String!, $owner: String!, $login: String!) {
+                repository(name: $repository, owner: $owner) {
+                  discussions(first: 100, filterBy: {createdBy: $login}) {
+                    nodes {
+                      id
+                    }
+                  }
                 }
               }
-            ' -F id="$id"
-          done
+            ' -F repository="$REPOSITORY" -F owner="$OWNER" -F login="$login" --jq '.data.repository.discussions.nodes | .[] | .id')
+       
+            # Delete each message by the user
+            for id in $MESSAGE_IDS; do
+              echo "Deleting message with ID: $id for user: $login"
+              gh api graphql -f query='
+                mutation($id: ID!) {
+                  deleteDiscussion(input: {id: $id}) {
+                    clientMutationId
+                  }
+                }
+              ' -F id="$id" || echo "Failed to delete message with ID: $id for user: $login"
+              sleep 1  # Optional: delay to handle rate limits
+            done
+          done < unique_messages.txt
+       

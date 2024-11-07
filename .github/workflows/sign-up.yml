@@ -149,6 +149,20 @@ jobs:
                   }
                 }
               ' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
+
+              # Update ProjectV2 Collaborators only if the project is newly created
+              gh api graphql -f query='
+                mutation($projectId: ID!, $userId: ID!) {
+                  updateProjectV2Collaborators(input: {
+                    projectId: $projectId, 
+                    collaborators: [{userId: $userId, role: WRITER}]
+                  }) {
+                    clientMutationId
+                  }
+                }
+              ' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
+
+              echo "Invited $login to project $login with read-write access"
             else
               # If project already exists, use the first one
               PROJECT_ID=$(echo "$USER_PROJECTS" | jq -r '.[0].id')
@@ -176,14 +190,14 @@ jobs:
               mutation($projectId: ID!, $userId: ID!) {
                 updateProjectV2Collaborators(input: {
                   projectId: $projectId, 
-                  collaborators: [{userId: $userId, role: WRITER}]
+                  collaborators: [{userId: $userId, role: READER}]
                 }) {
                   clientMutationId
                 }
               }
             ' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
 
-            echo "Invited $login to project $login with read-write access"
+            echo "Invited $login to project $login with read-only access"
           done < unique_messages.txt
 
       - name: Delete Processed Messages
@@ -216,13 +230,3 @@ jobs:
               # Delete each message by the user
               for id in $MESSAGE_IDS; do
                 echo "Deleting message with ID: $id for user: $login"
-                gh api graphql -f query='
-                  mutation($id: ID!) {
-                    deleteDiscussion(input: {id: $id}) {
-                      clientMutationId
-                    }
-                  }
-                ' -F id="$id" || echo "Failed to delete message with ID: $id for user: $login"
-                sleep 1  # Optional: delay to handle rate limits
-              done
-          done < unique_messages.txt

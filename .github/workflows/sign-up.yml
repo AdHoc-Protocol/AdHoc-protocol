@@ -176,7 +176,7 @@ jobs:
               mutation($projectId: ID!, $userId: ID!) {
                 updateProjectV2Collaborators(input: {
                   projectId: $projectId, 
-                  collaborators: [{userId: $userId, role: READER}]
+                  collaborators: [{userId: $userId, role: WRITER}]
                 }) {
                   clientMutationId
                 }

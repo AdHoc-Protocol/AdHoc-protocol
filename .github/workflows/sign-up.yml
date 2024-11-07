@@ -149,44 +149,41 @@ jobs:
                   }
                 }
               ' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
-          	  else
-            		# If project already exists, use the first one
-            		PROJECT_ID=$(echo "$USER_PROJECTS" | jq -r '.[0].id')
-            		echo "Project for $login already exists, skipping creation. Using existing project ID: $PROJECT_ID"
-          	  fi
-
-              gh api graphql -f query='
-                mutation($projectId: ID!, $title: String!) {
-                  addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
-                    clientMutationId
-                  }
-                }' -F projectId="$PROJECT_ID" -F title="$id"
-
-              # Get USER_ID from GitHub API
-              USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
-                query($login: String!) {
-                  user(login: $login) {
-                    id
-                  }
-                }
-              ' -F login="$login" --jq '.data.user.id')
-              
-              # Update ProjectV2 Collaborators
-              gh api graphql -f query='
-                mutation($projectId: ID!, $userId: ID!) {
-                  updateProjectV2Collaborators(input: {
-                    projectId: $projectId, 
-                    collaborators: [{userId: $userId, role: READER}]
-                  }) {
-                    clientMutationId
-                  }
-                }
-              ' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
-
-              echo "Invited $login to project $login with read-write access"
             else
-              echo "Project for $login already exists, skipping..."
+              # If project already exists, use the first one
+              PROJECT_ID=$(echo "$USER_PROJECTS" | jq -r '.[0].id')
+              echo "Project for $login already exists, skipping creation. Using existing project ID: $PROJECT_ID"
             fi
+
+            gh api graphql -f query='
+              mutation($projectId: ID!, $title: String!) {
+                addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
+                  clientMutationId
+                }
+              }' -F projectId="$PROJECT_ID" -F title="$id"
+
+            # Get USER_ID from GitHub API
+            USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
+              query($login: String!) {
+                user(login: $login) {
+                  id
+                }
+              }
+            ' -F login="$login" --jq '.data.user.id')
+            
+            # Update ProjectV2 Collaborators
+            gh api graphql -f query='
+              mutation($projectId: ID!, $userId: ID!) {
+                updateProjectV2Collaborators(input: {
+                  projectId: $projectId, 
+                  collaborators: [{userId: $userId, role: READER}]
+                }) {
+                  clientMutationId
+                }
+              }
+            ' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
+
+            echo "Invited $login to project $login with read-write access"
           done < unique_messages.txt
 
       - name: Delete Processed Messages

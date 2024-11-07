@@ -153,6 +153,15 @@ jobs:
                 }
               ' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
           
+              # Get USER_ID from GitHub API
+              USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
+                query($login: String!) {
+                  user(login: $login) {
+                    id
+                  }
+                }
+              ' -F login="$login" --jq '.data.user.id')
+            
               # Update ProjectV2 Collaborators only if the project is newly created
               gh api graphql -f query='
                 mutation($projectId: ID!, $userId: ID!) {
@@ -183,28 +192,6 @@ jobs:
                 }
               }' -F projectId="$PROJECT_ID" -F title="$id"
           
-            # Get USER_ID from GitHub API
-            USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
-              query($login: String!) {
-                user(login: $login) {
-                  id
-                }
-              }
-            ' -F login="$login" --jq '.data.user.id')
-          
-            # Update ProjectV2 Collaborators
-            gh api graphql -f query='
-              mutation($projectId: ID!, $userId: ID!) {
-                updateProjectV2Collaborators(input: {
-                  projectId: $projectId, 
-                  collaborators: [{userId: $userId, role: READER}]
-                }) {
-                  clientMutationId
-                }
-              }
-            ' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
-          
-            echo "Invited $login to project $login with read-only access"
           done < unique_messages.txt
 
       - name: Delete Processed Messages

@@ -120,13 +120,15 @@ jobs:
               query($organization: String!, $login: String!) {
                 organization(login: $organization) {
                   projectsV2(first: 1, query: $login) {
-                    totalCount
+                    nodes {
+                      id
+                    }
                   }
                 }
               }
-            ' -F organization="$ORG" -F login="$login" --jq '.data.organization.projectsV2.totalCount')
-
-            if [[ "$USER_PROJECTS" == "0" ]]; then
+            ' -F organization="$ORG" -F login="$login" --jq '.data.organization.projectsV2.nodes')
+          
+            if [[ -z "$USER_PROJECTS" ]]; then
               echo "Creating new project for $login..."
               PROJECT_ID=$(gh api graphql -f query='
                 mutation($ownerId: ID!, $title: String!) {
@@ -136,8 +138,8 @@ jobs:
                     }
                   }
                 }
-              ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" --jq '.data.createProjectV2.projectV2.id')
-
+              ' -F ownerId="O_kgDOBtiZHw" -F title="$login" --jq '.data.createProjectV2.projectV2.id')
+          
               README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
               
               gh api graphql -f query='
@@ -149,7 +151,7 @@ jobs:
                   }
                 }
               ' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
-
+          
               # Update ProjectV2 Collaborators only if the project is newly created
               gh api graphql -f query='
                 mutation($projectId: ID!, $userId: ID!) {
@@ -161,21 +163,21 @@ jobs:
                   }
                 }
               ' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
-
+          
               echo "Invited $login to project $login with read-write access"
             else
               # If project already exists, use the first one
               PROJECT_ID=$(echo "$USER_PROJECTS" | jq -r '.[0].id')
               echo "Project for $login already exists, skipping creation. Using existing project ID: $PROJECT_ID"
             fi
-
+          
             gh api graphql -f query='
               mutation($projectId: ID!, $title: String!) {
                 addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
                   clientMutationId
                 }
               }' -F projectId="$PROJECT_ID" -F title="$id"
-
+          
             # Get USER_ID from GitHub API
             USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
               query($login: String!) {
@@ -196,7 +198,7 @@ jobs:
                 }
               }
             ' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
-
+          
             echo "Invited $login to project $login with read-only access"
           done < unique_messages.txt
 

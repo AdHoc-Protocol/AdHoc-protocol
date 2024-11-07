@@ -232,3 +232,13 @@ jobs:
               # Delete each message by the user
               for id in $MESSAGE_IDS; do
                 echo "Deleting message with ID: $id for user: $login"
+                gh api graphql -f query='
+                  mutation($id: ID!) {
+                    deleteDiscussion(input: {id: $id}) {
+                      clientMutationId
+                    }
+                  }
+                ' -F id="$id" || echo "Failed to delete message with ID: $id for user: $login"
+                sleep 1  # Optional: delay to handle rate limits
+              done
+          done < unique_messages.txt

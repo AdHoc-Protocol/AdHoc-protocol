@@ -66,9 +66,12 @@ jobs:
           fi
 
           echo "$MESSAGES" | jq -r '.data.repository.discussions.nodes 
-          | unique_by(.author.login) 
-          | .[] 
-          | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.id)"' > unique_messages.txt
+            | unique_by(.author.login) 
+            | .[] 
+            | "\(.author.login), \(.author.url), \(.author.avatarUrl), "' | 
+          while IFS= read -r line; do
+          echo "${line}$(uuidgen)";
+          done > unique_messages.txt
           
           echo "Collected and processed unique messages in Sign up ID:'$CATEGORY_ID' category."
 

@@ -68,7 +68,7 @@ jobs:
           echo "$MESSAGES" | jq -r '.data.repository.discussions.nodes 
             | unique_by(.author.login) 
             | .[] 
-            | "\(.author.login), \(.author.url), \(.author.avatarUrl), "' | 
+            | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.author.id), \((.author.createdAt | fromdateiso8601 * 1000 | floor))"' |
           while IFS= read -r line; do
           echo "${line}$(uuidgen)";
           done > unique_messages.txt

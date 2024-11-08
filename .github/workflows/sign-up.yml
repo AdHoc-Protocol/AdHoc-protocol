@@ -68,7 +68,7 @@ jobs:
           echo "$MESSAGES" | jq -r '.data.repository.discussions.nodes 
             | unique_by(.author.login) 
             | .[] 
-            | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.author.login)"' |
+            | "\(.author.login), \(.author.url), \(.author.avatarUrl)"' |
           while IFS= read -r line; do
               login=$(echo "$line" | cut -d',' -f1)
               # Fetch USER_ID and createdAt from GitHub API in one call

@@ -135,7 +135,7 @@ jobs:
 
       - name: Process Unique Messages
         run: |
-          while IFS=',' read -r login url avatarUrl id; do
+          while IFS=',' read -r login url avatarUrl user_id user_createdAt uuid; do
             USER_PROJECTS=$(gh api graphql -f query='
               query($organization: String!, $login: String!) {
                 organization(login: $organization) {
@@ -210,7 +210,7 @@ jobs:
                 addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
                   clientMutationId
                 }
-              }' -F projectId="$PROJECT_ID" -F title="$id"
+              }' -F projectId="$PROJECT_ID" -F title="$uuid"
           
           done < unique_messages.txt
 

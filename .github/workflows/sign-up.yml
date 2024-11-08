@@ -68,11 +68,28 @@ jobs:
           echo "$MESSAGES" | jq -r '.data.repository.discussions.nodes 
             | unique_by(.author.login) 
             | .[] 
-            | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.author.id), \((.author.createdAt | fromdateiso8601 * 1000 | floor))"' |
+            | "\(.author.login), \(.author.url), \(.author.avatarUrl), \(.author.login)"' |
           while IFS= read -r line; do
-          echo "${line}$(uuidgen)";
-          done > unique_messages.txt
+              login=$(echo "$line" | jq -r '.author.login')
+              # Fetch USER_ID and createdAt from GitHub API in one call
+              USER_DATA=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
+                query($login: String!) {
+                  user(login: $login) {
+                    id
+                    createdAt
+                  }
+                }
+              ' -F login="$login" --jq '.data.user')
           
+              USER_ID=$(echo "$USER_DATA" | jq -r '.id')
+              CREATED_AT=$(echo "$USER_DATA" | jq -r '.createdAt')
+          
+              # Convert createdAt to Unix milliseconds
+              CREATED_AT_MS=$(date -d "$CREATED_AT" +%s%3N)
+          
+              # Append USER_ID and createdAt in Unix milliseconds
+              echo "${line}, ${USER_ID}, ${CREATED_AT_MS}, $(uuidgen)"
+          done > unique_messages.txt          
           echo "Collected and processed unique messages in Sign up ID:'$CATEGORY_ID' category."
 
       - name: Send Messages via websocat

@@ -88,8 +88,6 @@ jobs:
               echo "${login}, ${url}, ${avatarUrl}, ${USER_ID}, ${CREATED_AT_MS}, $(uuidgen)"
           done > unique_messages.txt          
           
-          cat unique_messages.txt
-          
           while IFS=',' read -r login url avatarUrl user_id created_at_ms uuid; do
             echo -n "$uuid" | tr -d '-' | xxd -r -p
             printf "%016x" "$created_at_ms" | xxd -r -p

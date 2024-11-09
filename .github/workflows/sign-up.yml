@@ -83,12 +83,12 @@ jobs:
               CREATED_AT=$(echo "$USER_DATA" | jq -r '.createdAt')
               CREATED_AT_MS=$(date -d "$CREATED_AT" +%s%3N)
           
-              echo "${line}, ${USER_ID}, ${CREATED_AT_MS}, $(uuidgen)"
+              echo "${login}, ${url}, ${avatarUrl}, ${USER_ID}, ${CREATED_AT_MS}, $(uuidgen)"
           done > unique_messages.txt          
           
-          while IFS=',' read -r login url avatarUrl user_id user_createdAt uuid; do
+          while IFS=',' read -r login url avatarUrl user_id created_at_ms uuid; do
             echo -n "$uuid" | tr -d '-' | xxd -r -p
-            printf "%016x" "$user_createdAt" | xxd -r -p
+            printf "%016x" "$created_at_ms" | xxd -r -p
             echo -n "$user_id" && printf '\0'
             echo -n "$login" && printf '\0'
           done < unique_messages.txt > binary_send

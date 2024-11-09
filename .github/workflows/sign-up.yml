@@ -41,6 +41,8 @@ jobs:
 
       - name: Collect Discussion Messages in "Sign up" Category
         id: process_messages
+        env:
+          CATEGORY_ID: ${{ env.category_id }}
         run: |
           MESSAGES=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
@@ -87,9 +89,6 @@ jobs:
           done > unique_messages.txt          
           
           while IFS=',' read -r login url avatarUrl user_id created_at_ms uuid; do
-            echo "UUID: $uuid"
-            echo "Created At (ms): $created_at_ms"
-
             echo -n "$uuid" | tr -d '-' | xxd -r -p
             printf "%016x" "$created_at_ms" | xxd -r -p
             echo -n "$user_id" && printf '\0'

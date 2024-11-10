@@ -89,8 +89,8 @@ jobs:
           done > unique_messages.txt          
           
           while IFS=',' read -r login url avatarUrl user_id created_at_ms uuid; do
-            echo -n "$uuid" | tr -d '-' | xxd -r -p | rev
-            printf "%016x" "$created_at_ms" | xxd -r -p | rev
+            echo -n "$uuid" | tr -d '-' | xxd -r -p
+            printf "%016x" "$created_at_ms" | xxd -r -p
             echo -n "$user_id" && printf '\0'
             echo -n "$login" && printf '\0'
           done < unique_messages.txt > binary_send

@@ -254,8 +254,9 @@ namespace org.unirail
 
             public interface EventsHandler
             {
+                // Callback triggered once enough bytes are received from the external layer to identify the packet type.
                 void onReceiving(Receiver src, BytesDst dst) { }
-
+                // Callback triggered once a packet is fully received and ready for dispatch to the internal layer.
                 void onReceived(Receiver src, BytesDst dst) { }
             }
 
@@ -1451,8 +1452,11 @@ namespace org.unirail
 
             public interface EventsHandler
             {
+                // Callback triggered after a packet is pulled from the sending queue, before sending from the internal (INT) to the external (EXT) layer.
                 void onSending(Transmitter dst, BytesSrc src) { }
 
+                // Callback triggered after a packet is sent from the INT to the EXT layer.
+                // Note: This does not guarantee that all bytes of the packet have been transmitted by the socket.
                 void onSent(Transmitter dst, BytesSrc src) { }
             }
 
@@ -2957,6 +2961,75 @@ namespace org.unirail
 
             // Return the current state (partial character and shift) for potential continuation
             return s << 16 | ch;
+        }
+
+        public static uint[] boyer_moore_pattern(string src)
+        {
+            var ret = new uint[src.Length];
+            for (var i = src.Length; -1 < --i;)
+                if (ret[i] == 0)
+                    for (int ii = i, ch = src[i], p = i << 8 | ch; -1 < ii; ii--)
+                        if (src[ii] == ch)
+                            ret[ii] = (uint)p;
+            return ret;
+        }
+
+        // Case-sensitive
+        public static int boyer_moore_ASCII_Case_sensitive(byte[] bytes, uint[] pattern) //return pattern's last byte position in the `bytes`
+        {
+            for (int len = pattern.Length, i = len - 1, max = bytes.Length - len + 1; i < max;)
+            {
+                for (var j = len; -1 < --j;)
+                {
+                    var p = pattern[j];
+
+                    if ((byte)p == bytes[i + j]) continue; // Compare characters
+
+                    // Use the last occurrence to determine how far to skip
+                    var last = p >>> 8; // Extract last occurrence position
+                    i += (int)Math.Max(1, j - last);
+                    goto next;
+                }
+
+                return i; //return found pattern's last byte position in the `bytes`
+            next:;
+            }
+
+            return -1; // Pattern not found
+        }
+
+        // Case-insensitive
+        public static int boyer_moore_ASCII_Case_insensitive(byte[] bytes, uint[] pattern) //return pattern's last byte position in the `bytes`
+        {
+            for (int len = pattern.Length, i = len - 1, max = bytes.Length - len + 1; i < max;)
+            {
+                for (var j = len; -1 < --j;)
+                {
+                    var p = pattern[j];
+
+                    switch ((sbyte)p - bytes[i + j])
+                    {
+                        case 0:
+                            continue;
+                        case 32:
+                            if ('a' <= p) continue;
+                            break;
+                        case -32:
+                            if ('A' <= p) continue;
+                            break;
+                    }
+
+                    // Use the last occurrence to determine how far to skip
+                    var last = p >>> 8; // Extract last occurrence position
+                    i += (int)Math.Max(1, j - last);
+                    goto next;
+                }
+
+                return i; //return found pattern's last byte position in the `bytes`
+            next:;
+            }
+
+            return -1; // Pattern not found
         }
     }
 }

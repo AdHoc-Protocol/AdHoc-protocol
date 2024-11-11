@@ -42,13 +42,22 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using org.unirail.Agent;
+using org.unirail.Agent.AdHocProtocol.LayoutFile_;
+using Project = org.unirail.Agent.AdHocProtocol.Agent_.Project;
 
 // Microsoft.CodeAnalysis >>>> https://docs.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.semanticmodel?view=roslyn-dotnet-3.11.0
 namespace org.unirail
 {
     public class ProjectImpl : Entity, Project
     {
-        public readonly Dictionary<ISymbol, ChannelImpl.NamedPackSet> named_packs = new(SymbolEqualityComparer.Default); //Group related packets under a descriptive name
+        public void for_packs_in_scope(uint depth, Action<HostImpl.PackImpl> dst)
+        {
+            foreach (var entity in entities.Values.Where(e => e.in_project == this && (0 < depth || e.in_host == null)))
+                if (entity is HostImpl.PackImpl pack && pack.is_transmittable)
+                    dst(pack);
+        }
+
+        public static readonly Dictionary<ISymbol, ChannelImpl.NamedPackSet> named_packs = new(SymbolEqualityComparer.Default); //Group related packets under a descriptive name
 
 
         public Dictionary<string, Type> types; //runtime reflection types
@@ -141,7 +150,7 @@ namespace org.unirail
                                     HasDocs_instance = new ChannelImpl.StageImpl(project, compilation, node); //host stage
                                     break;
                                 case "_":
-                                    project.named_packs.Add(symbol, new ChannelImpl.NamedPackSet(project, compilation, node)); //set of packs
+                                    named_packs.Add(symbol, new ChannelImpl.NamedPackSet(project, compilation, node)); //set of packs
                                     HasDocs_instance = null;
                                     break;
                                 default:
@@ -163,8 +172,18 @@ namespace org.unirail
                 var symbol = model.GetDeclaredSymbol(node)!;
                 var interfaces = symbol.Interfaces;
 
-                if (entities[symbol.ContainingType] is ProjectImpl && 0 < interfaces.Length && interfaces[0].Name.Equals("Host"))
-                    HasDocs_instance = new HostImpl(project, compilation, node); //host
+                if (entities[symbol.ContainingType] is ProjectImpl && 0 < interfaces.Length)
+                    switch (interfaces[0].Name)
+                    {
+                        case "Host":
+                        case "Modify":
+                            HasDocs_instance = new HostImpl(project, compilation, node); //host
+                            break;
+
+                        default:
+                            AdHocAgent.exit($"Unknown struct {symbol} entity type. If it is a Host, it should extend 'org.unirail.Meta.Host'. If it is a Host Modifier, it should extend 'org.unirail.Meta.Modify'.");
+                            break;
+                    }
                 else
                     HasDocs_instance = new HostImpl.PackImpl(project, compilation, node); //constants set
 
@@ -209,10 +228,8 @@ namespace org.unirail
             public override void VisitTrivia(SyntaxTrivia trivia)
             {
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
-                {
                     if (HasDocs_instance != null && HasDocs_instance.line_in_src_code == trivia.GetLocation().GetMappedLineSpan().StartLinePosition.Line + 1)
                         HasDocs_instance._inline_doc += trivia.ToString().Trim('\r', '\n', '\t', ' ', '/');
-                }
 
                 base.VisitTrivia(trivia);
             }
@@ -327,7 +344,7 @@ namespace org.unirail
 
         public readonly Dictionary<INamedTypeSymbol, int> pack_id_info = new(SymbolEqualityComparer.Default); //saved in source file packs ids
 
-        //calling only on root project
+        //calling only on the root project
         //                                                                                                    imported_projects_pack_id_info - pack_id_info from other included projects
         public ISet<HostImpl.PackImpl> read_packs_id_info_and_write_update(IEnumerable<ProjectImpl> imported_projects)
         {
@@ -336,9 +353,9 @@ namespace org.unirail
                         .Where(ch => hosts[ch._hostL].included && hosts[ch._hostR].included)
                         .SelectMany(ch => ch.stages)
                         .SelectMany(stage => stage.branchesL.Concat(stage.branchesR))
-                        .SelectMany(branch => branch.packs).ToHashSet(); //packs collector collect valid transmittable packs
+                        .SelectMany(branch => branch.packs).ToHashSet(); //pack collector collect valid transmittable packs
 
-            // Check for correct usage of empty packs as type.
+            // Check for the correct usage of empty packs as type.
             #region Validate empty packs
             foreach (var pack in project.all_packs.Where(pack => pack.fields.Count == 0)) // Empty packs: packs without fields.
             {
@@ -355,25 +372,20 @@ namespace org.unirail
                     fld.switch_to_boolean();
                 }
 
+                if (used) AdHocAgent.LOG.Warning("Pack {Pack} is empty and, as a field datatype, is therefore redundant. References to it will be replaced with a boolean.", pack.symbol);
+                if (packs.Contains(pack)) continue; // If pack is transmittable
 
-                if (packs.Contains(pack)) // If pack is transmittable
-                {
-                    if (used) AdHocAgent.LOG.Warning("Pack {Pack} is empty and, as field datatype, it is useless. The reference to it will be replaced with boolean", pack.symbol);
-                    continue;
-                }
 
                 //NOT transmittable
 
-                if (pack._static_fields_.Count == 0) //NOT transmittable and no any constants
+                if (pack._static_fields_.Count == 0) //pack is neither transmittable nor a set of constants.`
                 {
-                    if (used) AdHocAgent.LOG.Warning("Pack {Pack} is empty and, as field datatype, it is useless. The reference to it will be replaced with boolean", pack.symbol);
                     pack._id = 0; //mark to delete
                     continue;
                 }
 
                 //NOT transmittable constants set
-                if (used) AdHocAgent.LOG.Warning("Pack {Pack} is empty and, as field datatype, it is useless. The reference to it will be replaced with boolean", pack.symbol);
-                pack._id = (ushort)Project.Host.Pack.Field.DataType.t_constants; //switch use as constants set
+                pack._id = (ushort)Project.Host.Pack.Field.DataType.t_constants; //Switch to using pack as a set of constants.
                 project.constants_packs.Add(pack);
             }
             #endregion
@@ -434,7 +446,7 @@ namespace org.unirail
 
             void write_updated_uid(StreamWriter _file, string _source_code, List<(int, ulong)> updated_uid)
             {
-                foreach (var (pos, uid) in updated_uid.OrderBy((b) => b.Item1))
+                foreach (var (pos, uid) in updated_uid.OrderBy(b => b.Item1))
                 {
                     _file.Write(_source_code[top..pos]);
                     _file.Write("/*");
@@ -474,11 +486,15 @@ namespace org.unirail
 
             if (update_packs_id_info)
             {
-                if (packs_id_info_start == -1) packs_id_info_start = packs_id_info_end; //no saved packs id info in source file
+                if (packs_id_info_start == -1)//no saved packs id info in the source file
+                {
+                    file.Write("/**\n");
+                    file.Write(source_code[..packs_id_info_end]);
+                }
+                else
+                    file.Write(source_code[..source_code.LastIndexOf('\n', packs_id_info_end)]);//trim last */
 
-
-                file.Write(source_code[..packs_id_info_start]);
-                file.Write("/**\n");
+                //packs without saved info
                 foreach (var pack in included_packs
                                      .Where(pack => !pack_id_info.TryGetValue(pack.symbol!, out var id) &&
                                                     !imported_projects_pack_id_info.TryGetValue(pack.symbol!, out id) || pack._id != id).OrderBy(pack => long_full_path(pack)))
@@ -598,6 +614,21 @@ namespace org.unirail
                 Thread.Sleep(1);                                                                                                         // Ensure unique UIDs by delaying 1ms between assignments
             }
 
+            foreach (var prj in projects.Skip(1))
+            {
+                new HostImpl.PackImpl(prj, prj.symbol, prj._name)
+                {
+                    _doc = prj._doc,
+                    _inline_doc = prj._inline_doc
+                }; //virtual pack for imported project
+                foreach (var host in prj.hosts)
+                    new HostImpl.PackImpl(prj, host.symbol, host._name + "_")
+                    { //slitely change the name
+                        _doc = host._doc,
+                        _inline_doc = host._inline_doc
+                    };
+            }
+
             #region process project's imports
             var once = new HashSet<object>(20);
             root_project.Init(once);
@@ -606,7 +637,7 @@ namespace org.unirail
             var typedefs = root_project.all_packs.Where(pack => pack.is_typedef).Distinct().ToArray(); //preserve
             root_project.all_packs.RemoveAll(pack => pack.is_typedef);
 
-            //all constants pack, enums  in the root project are included by default
+            //all constants-packs, enums  in the root project are included by default
             foreach (var pack in root_project.constants_packs) pack._included = true;
 
 
@@ -639,6 +670,8 @@ namespace org.unirail
 
                 if (exit) AdHocAgent.exit("Correct detected problems and restart", 45);
 
+
+                if (exit) AdHocAgent.exit("Fix the problem and retry.");
                 // Remove from host's scopes: packs registered on project scope
                 foreach (var host in root_project.hosts)
                     host.packs.RemoveAll(pack => root_project.constants_packs.Contains(pack));
@@ -737,7 +770,7 @@ namespace org.unirail
             packs.UnionWith(root_project.constants_packs.Where(c => c.included)); //add included enums & constants sets to the packs
 
 
-            //include packs that are not transmited but build a namespaces hierarchy
+            //include packs that are not transmitted but build a namespace hierarchy
             foreach (var p in packs.ToArray())
                 for (var pack = p; pack.parent_entity is HostImpl.PackImpl parent_pack; pack = parent_pack)
                     if (packs.Add(parent_pack))
@@ -934,15 +967,7 @@ Please rename duplicate nested types.");
 
                     void check_duplicate(string prefix, IEnumerable<Entity> set)
                     {
-                        var error = "";
-                        foreach (var i in set.GroupBy(c => c._name).Where(g => 1 < g.Count()))
-                        {
-                            using var en = i.GetEnumerator();
-                            while (en.MoveNext())
-                                error += en.Current.symbol! + "\n";
-
-                            error += "\n";
-                        }
+                        var error = set.GroupBy(c => c._name).Where(g => 1 < g.Count()).Aggregate("", (current, i) => current + (string.Join("\n", i.Select(e => e.symbol)) + "\n"));
 
                         if (error != "")
                             AdHocAgent.exit($"The following {prefix} have duplicate names: \n{error}This is unacceptable. Please resolve the issue.");
@@ -960,6 +985,22 @@ Please rename duplicate nested types.");
                     all_packs.AddNew(prj.all_packs);
                 }
 
+            foreach (var host in hosts) //process host modification
+            {
+                var modify_host = host.modify_host;
+                if (modify_host == null) continue;
+                modify_host._langs |= host._langs;
+                foreach (var (K, V) in host.field_impl)
+                    if (!modify_host.field_impl.TryAdd(K, V))
+                        modify_host.field_impl[K] = V;
+
+                foreach (var (K, V) in host.pack_impl)
+                    if (!modify_host.pack_impl.TryAdd(K, V))
+                        modify_host.pack_impl[K] = V;
+            }
+
+            hosts.RemoveAll(host => host.modify_host != null); //remove all host modifier
+
             once.Clear();
             start();
             foreach (var pack in named_packs.Values) pack.Init(once);
@@ -975,11 +1016,10 @@ Please rename duplicate nested types.");
                     ch.Init(once);
 
 
-            once.Clear(); // Each stage is processed only once, as there are no cycle-referencing dependencies.
+            once.Clear(); // Stages are processed only once, as there are no cycle-referencing dependencies.
             start();
             foreach (var st in channels.SelectMany(ch => ch.stages).ToArray())
                 st.Init(once);
-
 
             once.Clear();
             start();
@@ -997,7 +1037,7 @@ Please rename duplicate nested types.");
             List<Entity> unassigned = [];
             HashSet<ulong> assigned = [];
 
-            void set_persistant_uid(IEnumerable<Entity> entities) // Our goal is to minimize the UID, to reduce the footprint in the source code
+            void set_persistent_uid(IEnumerable<Entity> entities) // Our goal is to minimize the UID, to reduce the footprint in the source code
             {
                 var uid = 0U;
 
@@ -1016,15 +1056,19 @@ Please rename duplicate nested types.");
                 unassigned.Clear();
             }
 
-            set_persistant_uid(hosts);
-            set_persistant_uid(channels);
-            set_persistant_uid(all_packs.Concat(constants_packs));
+            set_persistent_uid(hosts);
+            set_persistent_uid(channels);
+
+            foreach (var p in projects_root.constants_packs.Where(p => p.is_virtual_for_project_or_host))
+                p.uid = entities[p.symbol!].uid; //apply virtual pack UID from the real entity it represents project/host.
+
+            set_persistent_uid(all_packs.Concat(constants_packs));
 
             List<ChannelImpl.BranchImpl> unassigned_ = [];
 
             foreach (var stages in channels.Select(channel => channel.stages))
             {
-                set_persistant_uid(stages);
+                set_persistent_uid(stages);
 
                 foreach (var stage in stages)
                 {
@@ -1046,11 +1090,13 @@ Please rename duplicate nested types.");
             }
         }
 
+        //    pos, in the source file
+        //     ↓     uid
         List<(int, ulong)> updated_uid = [];
 
-        public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once) => false;
+        public override bool Init_As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once) => false;
 
-        public override void modify(ISymbol by_what, bool add, HashSet<object> once)
+        public override void modify(ISymbol by_what, bool add, uint depth, HashSet<object> once)
         {
             if (entities.TryGetValue(by_what, out var value)) //project's entity
                 switch (value)
@@ -1139,7 +1185,7 @@ Please rename duplicate nested types.");
         public Project.Host.Pack.Field _fields(Context.Transmitter ctx, Context.Transmitter.Slot slot, int d) => fields[d];
 
 
-        public readonly List<HostImpl.PackImpl> all_packs = [];
+        public readonly List<HostImpl.PackImpl> all_packs = []; //eventually only transmittable packs
         public readonly List<HostImpl.PackImpl> constants_packs = []; //enums + constant sets
 
 
@@ -1162,17 +1208,18 @@ Please rename duplicate nested types.");
 
         public Project.Channel _channels(Context.Transmitter ctx, Context.Transmitter.Slot slot, int d) => channels[d];
 
-        public void Sent(Communication.Transmitter via)
-        {
-            new FileInfo(AdHocAgent.provided_path).IsReadOnly = true;                        //+ delete old files - mark:  the file was sent
-            var result_output_folder = Path.Combine(AdHocAgent.destination_dir_path, _name); // destination_dir_path/project_name
-            if (Directory.Exists(result_output_folder))
-                Directory.Delete(result_output_folder, true);
-        }
+
 
 
         public class HostImpl : Entity, Project.Host
         {
+            public void for_packs_in_scope(uint depth, Action<PackImpl> dst)
+            {
+                foreach (var entity in entities.Values.Where(e => e.in_host == this && (0 < depth || e.parent_entity == this)))
+                    if (entity is PackImpl pack && pack.is_transmittable)
+                        dst(pack);
+            }
+
             public byte _uid => (byte)uid;
             public Project.Host.Langs _langs { get; set; }
 
@@ -1183,6 +1230,10 @@ Please rename duplicate nested types.");
                 _default_impl_hash_equal = 0xFFFF_FFFF; // Default: Automatically generate hash code and equals methods implementation. One bit per language.
                 project.hosts.Add(this);
             }
+
+            public HostImpl? modify_host => symbol!.Interfaces[0].Name == "Modify" && 0 < symbol!.Interfaces[0].TypeArguments.Length ?
+                                                (HostImpl)entities[symbol!.Interfaces[0].TypeArguments[0]] :
+                                                null;
 
             #region pack_impl_hash_equal
             public readonly Dictionary<ISymbol, uint> pack_impl = new(SymbolEqualityComparer.Default); //pack -> impl information
@@ -1227,7 +1278,7 @@ Please rename duplicate nested types.");
             public Project.Host.Langs _field_impl_Val(Context.Transmitter ctx, Context.Transmitter.Slot slot) => field_impl_enum.Current.Value;
             #endregion
 
-            public List<PackImpl> packs = []; // Host-dedicated packs
+            public List<PackImpl> packs = []; // Host-dedicated constants packs
 
             public object? _packs() => 0 < packs.Count ?
                                            packs :
@@ -1236,9 +1287,9 @@ Please rename duplicate nested types.");
             public int _packs_len => packs.Count;
             public ushort _packs(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => (ushort)packs[item].idx;
 
-            public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once) => false;
-            protected override void Collect_Modification(Entity target, HashSet<object> once) { }
-            public override void modify(ISymbol by_what, bool add, HashSet<object> once) { }
+            public override bool Init_As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once) => false;
+            protected override void Init_Collect_Modification(Entity target, HashSet<object> once) { }
+            public override void modify(ISymbol by_what, bool add, uint depth, HashSet<object> once) { }
 
             public static void init(ProjectImpl project) //host
             {
@@ -1269,15 +1320,22 @@ Please rename duplicate nested types.");
 
             public class PackImpl : Entity, Project.Host.Pack
             {
-                public ushort _uid => (ushort)uid;
-                public ushort _id { get; set; }
-
-                public virtual ushort? _parent => parent_entity switch
+                public void for_packs_in_scope(uint depth, Action<PackImpl> dst, ISymbol pack_set)
                 {
-                    PackImpl pack => (ushort)pack.idx,
-                    HostImpl host => (ushort?)project.constants_packs.Find(pack => equals(pack.symbol!, host.symbol!))?.idx, //the parent is fake "port" pack
-                    _ => null
-                };
+                    if (depth == 0)
+                        if (!is_transmittable)
+                            AdHocAgent.LOG.Warning("Adding a non-transmittable pack {pack} to the set of packs {this} has been detected and will be ignored.", symbol, pack_set);
+                        else
+                            dst(this);
+                    else
+                        foreach (var entity in entities.Values.Where(e => e.parent_entity == this))
+                            if (entity is PackImpl pack && pack.is_transmittable)
+                                dst(pack);
+                }
+
+                public ushort _uid => (ushort)uid;
+                public ushort _id { get; set; } //pack id
+
 
                 public ushort? _nested_max { get; set; }
                 public bool _referred { get; set; }
@@ -1307,6 +1365,7 @@ Please rename duplicate nested types.");
 
                 private EnumDeclarationSyntax? enum_node;
                 public bool is_calculate_enum_type => enum_node!.BaseList == null; //user does not explicitly assign enum type (int by default)
+
 
                 public bool is_enum => enum_node != null;
                 public bool is_constants_set => _id == (int)Project.Host.Pack.Field.DataType.t_constants;
@@ -1348,14 +1407,18 @@ Please rename duplicate nested types.");
                 }
                 #endregion
 
-                public PackImpl(ProjectImpl project, INamedTypeSymbol? symbol, string name) : base(project, null) // Container pack from port to provide parent-children path for packs declared inside
+                public bool is_virtual_for_project_or_host => origin == this;                                                    //Virtual pack for imported projects or hosts
+                public bool is_virtual_for_host => is_virtual_for_project_or_host && !equals(project.symbol, symbol); // Virtual pack for host
+
+                public PackImpl(ProjectImpl project, INamedTypeSymbol? symbol, string name) : base(project, null) // Virtual pack for imported projects and hosts to represent hierarchy
                 {
-                    _name = name; //for name in path only
-                    this.symbol = symbol;
+                    _name = name;   //for name in path only
+                    this.symbol = symbol; // will have project's or host's symbol
 
                     _id = (int)Project.Host.Pack.Field.DataType.t_constants; // Container pack
                     _included = true;
-                    project.constants_packs.Add(this); // register
+                    origin = this;                              //mark it is virtual
+                    projects_root.constants_packs.Insert(0, this); // register in the root project at start and not register in the Entity.entities
                 }
 
                 internal void related_packs(ISet<PackImpl> dst) //collect subpacks into dst ALSO incude ENUMS
@@ -1640,7 +1703,7 @@ Please rename duplicate nested types.");
                 }
 
 
-                public override void modify(ISymbol by_what, bool add, HashSet<object> once)
+                public override void modify(ISymbol by_what, bool add, uint depth, HashSet<object> once)
                 {
                     if (raw_fields.TryGetValue(by_what, out var by_fld)) apply(by_fld);
                     else if (entities.TryGetValue(by_what, out var value) && value is PackImpl by_pack)
@@ -1955,7 +2018,7 @@ Please rename duplicate nested types.");
                                 _value_bytes = 4;
                                 break;
                             case SpecialType.System_UInt32:
-                                _value_int = (long?)constant;
+                                _value_int = (uint?)constant;
                                 exT_primitive = inT = (int)Project.Host.Pack.Field.DataType.t_uint32;
                                 _value_bytes = 4;
                                 break;
@@ -1965,7 +2028,7 @@ Please rename duplicate nested types.");
                                 _value_bytes = 8;
                                 break;
                             case SpecialType.System_UInt64:
-                                _value_int = (long?)constant;
+                                _value_int = (long?)(ulong?)constant;
                                 exT_primitive = inT = (int)Project.Host.Pack.Field.DataType.t_uint64;
                                 _value_bytes = 8;
                                 break;
@@ -2793,7 +2856,7 @@ Please rename duplicate nested types.");
             public Project.Channel.Stage _stages(Context.Transmitter ctx, Context.Transmitter.Slot slot, int item) => stages[item];
 
 
-            public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
+            public override bool Init_As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
             {
                 foreach (var modified_channel in this_modified.Select(s => s.TypeArguments[0])) //normally only one modified channel
                     foreach (var stage in symbol!.GetTypeMembers())                             //stages declared in this channel body
@@ -2812,7 +2875,7 @@ Please rename duplicate nested types.");
                         target_channel.hostR = (HostImpl)entities[I.TypeArguments[2]];
                     }
 
-                    Collect_Modification(target_channel, once);
+                    Init_Collect_Modification(target_channel, once);
                     return true;
                 }
 
@@ -2828,7 +2891,7 @@ Please rename duplicate nested types.");
                     //
                     //  case
                     modifier = true;
-                    Collect_Modification(entities[stage.TypeArguments[0].OriginalDefinition.ContainingType], once);
+                    Init_Collect_Modification(entities[stage.TypeArguments[0].OriginalDefinition.ContainingType], once);
                     return true;
                 }
 
@@ -2836,32 +2899,8 @@ Please rename duplicate nested types.");
                 hostL = (HostImpl)entities[i.TypeArguments[0]];
                 hostR = (HostImpl)entities[i.TypeArguments[1]];
 
-                if (stages.Count != 0) return false;
-
-                //This communication channel has a completely empty body. Constructing the one default channel's stage: 'Init'.
-
-                var one_stage = new StageImpl(project) { _name = "Init" };
-
-                one_stage.branchesL.Add(new BranchImpl(project)
-                {
-                    packs = projects_root.all_packs.Where(pack =>
-                                                          {
-                                                              var host = pack.in_host;
-                                                              return host == null || host == hostL;
-                                                          }).ToList(),
-                    goto_stage = one_stage
-                });
-
-                one_stage.branchesR.Add(new BranchImpl(project)
-                {
-                    packs = projects_root.all_packs.Where(pack =>
-                                                          {
-                                                              var host = pack.in_host;
-                                                              return host == null || host == hostR;
-                                                          }).ToList(),
-                    goto_stage = one_stage
-                });
-                stages.Add(one_stage);
+                if (stages.Count == 0)
+                    AdHocAgent.exit($"Channel {symbol} does not have any stages. Please add a stage and restart.");
                 return false;
             }
 
@@ -2882,7 +2921,7 @@ Please rename duplicate nested types.");
                 else if (!add) stages.RemoveAt(i);
             }
 
-            public override void modify(ISymbol by_what, bool add, HashSet<object> once)
+            public override void modify(ISymbol by_what, bool add, uint depth, HashSet<object> once)
             {
                 bool SwapHosts;
 
@@ -2926,7 +2965,6 @@ Please rename duplicate nested types.");
                                                                  }).ToList();
                 #endregion
                 #region merge branches with same goto stage
-
                 void merge_same_goto_stage_branches(List<BranchImpl> brs)
                 {
                     foreach (var g in brs.GroupBy(br => br.goto_stage!.symbol, SymbolEqualityComparer.Default).Where(g => 1 < g.Count()).ToArray())
@@ -2983,16 +3021,26 @@ Please rename duplicate nested types.");
                         packs.Remove(pack);
                 }
 
-                public override void modify(ISymbol by_what, bool add, HashSet<object> once)
+                public override void modify(ISymbol by_what, bool add, uint depth, HashSet<object> once)
                 {
+                    if (named_packs.TryGetValue(by_what, out var nps))
+                    {
+                        foreach (var pack in nps.packs)
+                            apply(pack, add);
+                        return;
+                    }
+
                     if (entities.TryGetValue(by_what, out var value))
                         switch (value)
                         {
-                            case HostImpl.PackImpl pack:
-                                apply(pack, add);
+                            case ProjectImpl prj:
+                                prj.for_packs_in_scope(depth, pack => apply(pack, add));
                                 return;
-                            case NamedPackSet nps:
-                                foreach (var pack in nps.packs) apply(pack, add);
+                            case HostImpl host:
+                                host.for_packs_in_scope(depth, pack => apply(pack, add));
+                                return;
+                            case HostImpl.PackImpl pack:
+                                pack.for_packs_in_scope(depth, _pack => apply(_pack, add), symbol!);
                                 return;
                         }
 
@@ -3046,11 +3094,11 @@ Please rename duplicate nested types.");
                 // pass to Init Modify<ModifiedStage>
                 public IEnumerable<INamedTypeSymbol> by_parent_channel_modify => symbol!.OriginalDefinition.ContainingType.Interfaces.Where(I => I.isModify());
 
-                public override bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
+                public override bool Init_As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
                 {
-                    if (base.As_Modifier_Dispatch_Modifications_On_Targets(once)) return true; //direct modification of other stages
+                    if (base.Init_As_Modifier_Dispatch_Modifications_On_Targets(once)) return true; //direct modification of other stages
 
-                    Collect_Modification(this, once); //just build self
+                    Init_Collect_Modification(this, once); //just build self
 
                     if (by_parent_channel_modify.Any()) //and cast to target channels
                         foreach (var what_modify in by_parent_channel_modify)
@@ -3059,10 +3107,10 @@ Please rename duplicate nested types.");
                     return true;
                 }
 
-                public override void modify(ISymbol by_what, bool add, HashSet<object> once) { }
+
                 public bool _LR => branchesR == branchesL;
 
-                protected override void Collect_Modification(Entity target, HashSet<object> once)
+                protected override void Init_Collect_Modification(Entity target, HashSet<object> once)
                 {
                     var target_stage = (StageImpl)target;
 
@@ -3106,7 +3154,7 @@ Please rename duplicate nested types.");
                                             if (stage_sym.isMeta())
                                             {
                                                 if (stage_sym.Name == "X") //maybe this is the replaceable goto stage
-                                                    scan((INamedTypeSymbol)stage_sym, (t) => (!entities.TryGetValue(t, out var entity) || entity is not StageImpl st) || (update_from_goto_stage = st) == null);
+                                                    scan((INamedTypeSymbol)stage_sym, t => (!entities.TryGetValue(t, out var entity) || entity is not StageImpl st) || (update_from_goto_stage = st) == null);
                                             }
                                             else if (stage_sym.Name != "Exit")
                                                 if (entities[stage_sym] is StageImpl st)
@@ -3153,62 +3201,56 @@ Please rename duplicate nested types.");
                                         else if (t.IsKind(SyntaxKind.SingleLineCommentTrivia)) branch._doc += get_doc(t);
                                     #endregion
 
-                                    // fill branch
-                                    foreach (var generic in item.DescendantNodes().OfType<GenericNameSyntax>().First().TypeArgumentList.Arguments)
+                                    void apply(HostImpl.PackImpl _pack, bool add)
                                     {
-                                        var sym = model.GetSymbolInfo(generic).Symbol!;
-                                        var del = sym.isMeta() && sym.Name == "X";
-
-                                        scan((INamedTypeSymbol)sym, s =>
-                                                                    {
-                                                                        if (s.isMeta())
-                                                                        {
-                                                                            if (s.Name != "Exit") return true;
-                                                                            Exit ??= new StageImpl(projects[0])
-                                                                            {
-                                                                                symbol = (INamedTypeSymbol?)s
-                                                                            };
-
-                                                                            if (!modifier) branch.goto_stage = Exit;
-                                                                        }
-                                                                        else if (project.named_packs.TryGetValue(s, out var nps))
-                                                                            if (del)
-                                                                                branch.packs.RemoveAll(p => nps.packs.Any(pp => equals(p.symbol, pp.symbol)));
-                                                                            else
-                                                                                branch.packs.AddRange(nps.packs.Where(p => !branch.packs.Any(pp => equals(p.symbol, pp.symbol))));
-                                                                        else
-                                                                            switch (entities[s])
-                                                                            {
-                                                                                case HostImpl.PackImpl pack:
-
-                                                                                    if (!pack.is_transmittable) // Exclude non-transmittable enums and constants, as they are included in every host's scope.
-                                                                                    {
-                                                                                        AdHocAgent.LOG.Error("The {pack} (like:{line}) on the stage {stage} is not transmittable.",
-                                                                                                             pack, generic.GetLocation().GetLineSpan().StartLinePosition.Line + 1, symbol);
-                                                                                        AdHocAgent.exit("Delete the pack and restart");
-                                                                                    }
-
-                                                                                    if (del)
-                                                                                        branch.packs.RemoveAll(p => equals(p.symbol, pack.symbol));
-                                                                                    else if (branch.packs.All(p => !equals(p.symbol, pack.symbol)))
-                                                                                        branch.packs.Add(pack);
-
-                                                                                    break;
-
-                                                                                case StageImpl stage:                          //branch goto target stage
-                                                                                    if (!modifier) branch.goto_stage = stage; //modifier do it upper, differently
-                                                                                    break;
-                                                                                default:
-
-                                                                                    AdHocAgent.LOG.Error("Unexpected item {item} (like:{line}) in the {stage} declaration",
-                                                                                                         s, generic.GetLocation().GetLineSpan().StartLinePosition.Line + 1, symbol);
-                                                                                    AdHocAgent.exit("Fix the problem and restart.");
-                                                                                    break;
-                                                                            }
-
-                                                                        return true;
-                                                                    });
+                                        if (!add)
+                                            branch.packs.RemoveAll(p => equals(p.symbol, _pack.symbol));
+                                        else if (branch.packs.All(p => !equals(p.symbol, _pack.symbol)))
+                                            branch.packs.Add(_pack);
                                     }
+
+                                    modify_by_extends(item, true, (sym, sn, add, depth) =>
+                                                                  {
+                                                                      if (sym.isMeta())
+                                                                      {
+                                                                          if (sym.Name != "Exit") return;
+                                                                          Exit ??= new StageImpl(projects[0])
+                                                                          {
+                                                                              symbol = (INamedTypeSymbol?)sym
+                                                                          };
+
+                                                                          if (!modifier) branch.goto_stage = Exit;
+                                                                      }
+                                                                      else if (named_packs.TryGetValue(sym, out var nps))
+                                                                          if (!add)
+                                                                              branch.packs.RemoveAll(p => nps.packs.Any(pp => equals(p.symbol, pp.symbol)));
+                                                                          else
+                                                                              branch.packs.AddRange(nps.packs.Where(p => !branch.packs.Any(pp => equals(p.symbol, pp.symbol))));
+                                                                      else
+                                                                          switch (entities[sym])
+                                                                          {
+                                                                              case ProjectImpl prj:
+                                                                                  prj.for_packs_in_scope(depth, pack => apply(pack, add));
+                                                                                  break;
+                                                                              case HostImpl host:
+                                                                                  host.for_packs_in_scope(depth, pack => apply(pack, add));
+                                                                                  break;
+                                                                              case HostImpl.PackImpl pack:
+                                                                                  pack.for_packs_in_scope(depth, _pack => apply(_pack, add), symbol!);
+                                                                                  return;
+
+                                                                              case StageImpl stage:                          //branch goto target stage
+                                                                                  if (!modifier) branch.goto_stage = stage; //modifier do it upper, differently
+                                                                                  break;
+                                                                              default:
+
+                                                                                  AdHocAgent.LOG.Error("Unexpected item {item} (like:{line}) in the {stage} declaration",
+                                                                                                       sym, sn.GetLocation().GetLineSpan().StartLinePosition.Line + 1, symbol);
+                                                                                  AdHocAgent.exit("Fix the problem and restart.");
+                                                                                  break;
+                                                                          }
+                                                                  });
+
 
                                     continue;
                                 }
@@ -3220,6 +3262,9 @@ Please rename duplicate nested types.");
                         }
                     }
                 }
+
+                public override void modify(ISymbol by_what, bool add, uint depth, HashSet<object> once) { }
+
 
                 private ushort timeout = 0xFFFF;
 
@@ -3280,7 +3325,7 @@ Please rename duplicate nested types.");
                 public StageImpl? goto_stage; //if null Exit stage
 
                 public ushort _goto_stage => goto_stage == StageImpl.Exit ?
-                                                 (ushort)Project.Channel.Stage.Exit :
+                                                 Project.Channel.Stage.Exit :
                                                  (ushort)goto_stage!.idx;
 
 
@@ -3423,8 +3468,8 @@ Please rename duplicate nested types.");
 
             char_in_source_code = node.GetLocation().SourceSpan.Start;
 
-
-            var trivias = node.GetLeadingTrivia();
+            //To exclude lines like <see cref='Metrics.Login' id='14'/> from the collected documentation
+            var trivias = node.GetLeadingTrivia().Where(t => t.GetStructure() is DocumentationCommentTriviaSyntax dt && dt.Content.All(xml => xml is not XmlEmptyElementSyntax));
 
             var doc = trivias.Aggregate("", (current, trivia) => current + get_doc(trivia));
 
@@ -3525,7 +3570,18 @@ Please rename duplicate nested types.");
 
         public BaseTypeDeclarationSyntax? node;
 
-        public Entity? parent_entity => entities.GetValueOrDefault(symbol!.OriginalDefinition.ContainingType);
+        public Entity? parent_entity => symbol!.OriginalDefinition.ContainingType == null ?
+                                            null :
+                                            entities.GetValueOrDefault(symbol!.OriginalDefinition.ContainingType);
+
+        public virtual ushort? _parent => parent_entity switch
+        {
+            ProjectImpl.HostImpl.PackImpl pack => (ushort)pack.idx,
+            _ =>
+                parent_entity == null || project == ProjectImpl.projects_root ?
+                    null :
+                    (ushort?)ProjectImpl.projects_root.constants_packs.Find(p => equals(p.symbol!, parent_entity.symbol!))?.idx, //the parent is fake pack
+        };
 
         public ProjectImpl in_project
         {
@@ -3558,19 +3614,12 @@ Please rename duplicate nested types.");
         {
             get
             {
-                if (this is ProjectImpl)
-                    return this == project ?
-                               "" :
-                               symbol!.ToString() ?? "";
+                if (this == ProjectImpl.projects_root) return "";
+                if (this is ProjectImpl) return _name;
 
-                var path = _name;
-                for (var e = parent_entity; ; path = e._name + "." + path, e = e.parent_entity)
-                    if (e is ProjectImpl)
-                        return (e == project //root project
-                                    ?
-                                    "" :
-                                    e.symbol + "." //full path
-                               ) + path;
+                return parent_entity == null ?
+                           _name :
+                           parent_entity.full_path + "." + _name;
             }
         }
 
@@ -3586,9 +3635,9 @@ Please rename duplicate nested types.");
         //Identify and mark the scope of entities requiring re-initialization due to a detected cyclic dependency.
         private uint _inited = int.MaxValue;
 
-        private static bool cyclic = false; //If a cyclic dependency is detected during initialization, re-initialization is required.
-        private static uint inited_seed = 0;
-        private static uint fix_inited_seed = 0;
+        private static bool cyclic; //If a cyclic dependency is detected during initialization, re-initialization is required.
+        private static uint inited_seed;
+        private static uint fix_inited_seed;
 
         public static void start()
         {
@@ -3608,13 +3657,17 @@ Please rename duplicate nested types.");
 
         public void set_inited() => _inited = ++inited_seed;
 
-        public IEnumerable<INamedTypeSymbol> this_modified => symbol!.Interfaces.Where(I => I.isModify());
+        public IEnumerable<INamedTypeSymbol> this_modified => symbol == null ? //if this is the virtual Stage created for channels without a body
+                                                                  Array.Empty<INamedTypeSymbol>() :
+                                                                  symbol.Interfaces.Where(I => I.isModify());
 
         public virtual void Init(HashSet<object> once)
         {
             if (inited || !once.Add(this) && (cyclic = true)) return; //Ensure the entity is initialized only once and prevent re-entry caused by cyclic references.
 
-            if (!As_Modifier_Dispatch_Modifications_On_Targets(once)) Collect_Modification(this, once);
+            if (symbol != null)
+                if (!Init_As_Modifier_Dispatch_Modifications_On_Targets(once))
+                    Init_Collect_Modification(this, once);
 
             once.Remove(this);
             set_inited(); //Only from this point is the entity fully initialized
@@ -3622,19 +3675,19 @@ Please rename duplicate nested types.");
 
         public bool modifier;
 
-        public virtual bool As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
+        public virtual bool Init_As_Modifier_Dispatch_Modifications_On_Targets(HashSet<object> once)
         {
             foreach (var m in this_modified)
             {
                 modifier = true;
-                Collect_Modification(entities[m.TypeArguments[0]], once);
+                Init_Collect_Modification(entities[m.TypeArguments[0]], once);
             }
 
             return modifier;
         }
 
 
-        protected virtual void Collect_Modification(Entity target, HashSet<object> once)
+        protected virtual void Init_Collect_Modification(Entity target, HashSet<object> once)
         {
             //   UP
             //   |
@@ -3646,39 +3699,39 @@ Please rename duplicate nested types.");
                                          .OfType<DocumentationCommentTriviaSyntax>())
                 foreach (var see in comment.DescendantNodes()
                                            .OfType<XmlCrefAttributeSyntax>())
-                    target.modify(model.GetSymbolInfo(see.Cref).Symbol!, see.Parent!.Parent!.DescendantNodes().FirstOrDefault(t => see.Span.End < t.Span.Start)?.ToString().Trim()[0] != '-', once);
+                    target.modify(model.GetSymbolInfo(see.Cref).Symbol!, see.Parent!.Parent!.DescendantNodes().FirstOrDefault(t => see.Span.End < t.Span.Start)?.ToString().Trim()[0] != '-', 0, once);
 
             //left -> right
 
             if (node!.BaseList == null) return;
 
             foreach (var item in node!.BaseList!.Types)
-            {
-                void modify_from(SyntaxNode entity, bool add)
-                {
-                    var str = entity.ToString();
-
-                    if (str.StartsWith("_<")) //list
-                    {
-                        foreach (var arg in entity.DescendantNodes().OfType<GenericNameSyntax>())
-                            foreach (var t in arg.TypeArgumentList.Arguments)
-                                modify_from(t, true);
-                    }
-                    else if (str.StartsWith("X<")) //delete list
-                        foreach (var arg in entity.DescendantNodes().OfType<GenericNameSyntax>())
-                            foreach (var t in arg.TypeArgumentList.Arguments)
-                                modify_from(t, false);
-                    else if (!str.StartsWith("Modify<") && !str.StartsWith("ChannelFor<"))
-                        target.modify(model.GetTypeInfo(entity is SimpleBaseTypeSyntax sbt ?
-                                                            sbt.Type :
-                                                            entity).Type!, add, once);
-                }
-
-                modify_from(item, true);
-            }
+                modify_by_extends(item, true, (sym, sn, add, depth) => target.modify(sym, add, depth, once));
         }
 
-        public abstract void modify(ISymbol by_what, bool add, HashSet<object> once);
+        protected void modify_by_extends(SyntaxNode sn, bool add, Action<ISymbol, SyntaxNode, bool, uint> modify)
+        {
+            var str = sn.ToString();
+            if (str.StartsWith("_<") ||          //list items
+                !(add = !str.StartsWith("X<"))) //list to delete items
+                foreach (var arg in sn.DescendantNodes().OfType<GenericNameSyntax>())
+                    foreach (var t in arg.TypeArgumentList.Arguments)
+                        modify_by_extends(t, add, modify);
+            else if (!str.StartsWith("Modify<") &&
+                     !str.StartsWith("ChannelFor<"))
+                modify(model.GetTypeInfo(sn is SimpleBaseTypeSyntax sbt ?
+                                             sbt.Type :
+                                             sn).Type!, sn, add, str[0] == '@' ?
+                                                                     1U :
+                                                                     0);
+        }
+
+        //                  pack: pack self,
+        //                  project/host: packs declared within the body
+        //depth ==1 -> if(by_what) is
+        //                  pack:packs declared within the body,
+        //                  project/host: all transmittable packs recursively, including packs throughout the hierarchical structure
+        public abstract void modify(ISymbol by_what, bool add, uint depth, HashSet<object> once);
 
         public Entity(ProjectImpl prj, CSharpCompilation? compilation, BaseTypeDeclarationSyntax? node) : base(prj, node == null ?
                                                                                                                         "" :
@@ -3717,7 +3770,8 @@ Please rename duplicate nested types.");
         {
             get
             {
-                var span = symbol!.Locations[0].SourceSpan;
+                if (symbol == null) return -1;
+                var span = symbol.Locations[0].SourceSpan;
                 return span.Start + span.Length;
             }
         }
@@ -3799,7 +3853,7 @@ Please rename duplicate nested types.");
             if (!update_info)
             {
                 var reader = new SaveLayout_UID.Receiver();
-                _Allocator.DEFAULT.new_UID = (src) => new UID_Impl(); //switch UID_Info allocator to Info
+                _Allocator.DEFAULT.new_AdHocProtocol_LayoutFile__UID = src => new UID_Impl(); //switch UID_Info allocator to Info
 
                 var len = layout_file.Read(buffer, 0, buffer.Length);
                 do
@@ -3872,7 +3926,11 @@ Please rename duplicate nested types.");
 
 
             //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@===================================  Unique Indexing the packs diagram
-            uint pack_path(ProjectImpl.HostImpl.PackImpl pack) => (uint)(pack.project.uid << 16 | //1byte
+            uint pack_path(ProjectImpl.HostImpl.PackImpl pack) => (uint)((
+                                                                             pack.is_virtual_for_host ? //add special to prevent clash
+                                                                                 pack.uid + 1 :
+                                                                                 0) << 24 | //1 byte
+                                                                         pack.project.uid << 16 | //1byte
                                                                          pack.uid);               //2byte
 
             new_uid = 0U;
@@ -4057,7 +4115,7 @@ Please rename duplicate nested types.");
 
             var writer = new SaveLayout_UID.Transmitter();
 
-            writer.subscribeOnNewBytesToTransmitArrive((src) =>
+            writer.subscribeOnNewBytesToTransmitArrive(src =>
                                                        {
                                                            for (var len = src.Read(buffer, 0, buffer.Length); 0 < len; len = src.Read(buffer, 0, buffer.Length))
                                                                layout_file!.Write(buffer, 0, len);

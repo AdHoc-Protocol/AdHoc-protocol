@@ -35,7 +35,7 @@
 using System;
 using System.Collections.Generic;
 using Agent = org.unirail.Agent;
-using Entity = org.unirail.Agent.Entity;
+using AdHocProtocol = org.unirail.Agent.AdHocProtocol;
 
 using org.unirail.collections;
 

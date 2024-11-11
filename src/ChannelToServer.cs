@@ -40,13 +40,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Tommy;
 using org.unirail.Agent;
-using Version = org.unirail.Agent.Version;
+using org.unirail.Agent.AdHocProtocol.Agent_;
+using org.unirail.Agent.AdHocProtocol.Server_;
+using Tommy;
+using Version = org.unirail.Agent.AdHocProtocol.Agent_.Version;
 
 namespace org.unirail
 {
-    public class ChannelToServer : Communication.Receiver.Receivable.Handler
+    public class ChannelToServer : Communication.Receiver.Receivable.Handler, Communication.Transmitter.Transmittable.Handler
     {
         private static ProjectImpl? project;
 
@@ -65,79 +67,9 @@ namespace org.unirail
         }
 
 
-        #region refresh Authorization Code
-        public static ulong? AuthorizationCode()
-        {
-            if (!AdHocAgent.app_props.HasKey("PersonalAdHocSecretAuthorizationCode")) return null;
-            var current = AdHocAgent.app_props["PersonalAdHocSecretAuthorizationCode"].AsString;
-
-
-            try { return ulong.Parse(current, NumberStyles.HexNumber); }
-            catch (Exception ex)
-            {
-                AdHocAgent.LOG.Error("The file {app_props_file}  contains wrong `PersonalAdHocSecretAuthorizationCode` do you want update it? Enter 'N' - if no and exit.", AdHocAgent.app_props_file);
-                switch (Console.Read())
-                {
-                    case 'N':
-                    case 'n':
-                        AdHocAgent.exit("Bye", -1);
-                        return null;
-                    default:
-                        return null;
-                }
-            }
-        }
-
-        static readonly byte[] close_browser_bytes = Encoding.ASCII.GetBytes("<script>window.close();</script>");
-
-        public static string? updatePersonalAdHocSecretAuthorizationCode()
-        {
-            var adhoc_id = AdHocAgent.app_props["adhoc_id"].AsString.Value;
-
-            //https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps#1-request-a-users-github-identity
-            var url = $"https://github.com/login/oauth/authorize?client_id={adhoc_id}&scope={HttpUtility.UrlEncode("read:user user:email", Encoding.UTF8)}";
-
-            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
-            AdHocAgent.LOG.Information("Authorization. Open browser {0} and accept security request... Waiting for GITHUB reply...", url);
-
-            var oauth = "";
-            try
-            {
-                var listener = new HttpListener();
-                listener.Prefixes.Add("http://localhost:9000/");
-                listener.IgnoreWriteExceptions = true; //ignore "The specified network name is no longer available"
-                listener.Start();
-
-                var ctx = listener.GetContext(); //block
-
-                oauth = ctx.Request.QueryString["code"];
-                var resp = ctx.Response;
-                resp.ContentType = "text/html";
-                resp.ContentEncoding = Encoding.ASCII;
-                resp.ContentLength64 = close_browser_bytes.LongLength;
-
-                resp.OutputStream.Write(close_browser_bytes);
-                resp.OutputStream.Close();
-            }
-            catch (Exception e)
-            {
-                AdHocAgent.LOG.Error(e, "Error while updatePersonalAdHocSecretAuthorizationCode");
-                throw;
-            }
-
-            if (oauth == null) AdHocAgent.LOG.Error("Authorization failure");
-            return oauth;
-        }
-        #endregion
-
-        static ulong? login;
-        static string? oauth;
-
         private static void Start()
         {
-            if ((login = AuthorizationCode()) == null && (oauth = updatePersonalAdHocSecretAuthorizationCode()) == null) return;
-
-            Start(() => to_server!.send(new Version(VER))); //inform server about client version
+            Start(() => to_server!.send(new Version(VER))); //inform server about the client version
         }
 
 
@@ -236,48 +168,68 @@ namespace org.unirail
         public static Communication.Transmitter? to_server;
 
 
-        static ChannelToServer() { Communication.Receiver.onReceive = new ChannelToServer(); }
-
-        public void Received(Communication.Receiver via, Invitation invitation) //server invite agent to upload client task
+        static ChannelToServer()
         {
-            if (via.curr_stage == Communication.Stages.Login) //the server and client protocol versions are matching
-            {
-                if (login == null)
-                    Start(() => to_server!.send(new Signup { _oauth = Encoding.ASCII.GetBytes(oauth!) }));
-                else
-                    Start(() => to_server!.send(new Login { uid = login.Value }));
-
-                return;
-            }
-
-            if (via.curr_stage == Communication.Stages.TodoJobRequest)
-            {
-                //invitation may contains new user id
-                if (AdHocAgent.app_props.HasKey("PersonalAdHocSecretAuthorizationCode"))
-                {
-                    var current = AuthorizationCode();
-                    if (current != null && current.Value == invitation.uid) goto code_ok;
-                    AdHocAgent.app_props["PersonalAdHocSecretAuthorizationCode"].AsString.Value = invitation.uid.ToString("X");
-                }
-                else AdHocAgent.app_props.Add("PersonalAdHocSecretAuthorizationCode", new TomlString { Value = invitation.uid.ToString("X") });
-
-                var writer = File.CreateText(AdHocAgent.app_props_file);
-                AdHocAgent.app_props.WriteTo(writer);
-                writer.Flush();
-                writer.Close();
-
-            code_ok:
-
-                if (proto == null)
-                    if (AdHocAgent.provided_path.EndsWith(".cs"))
-                        /*if (new FileInfo(AdHocAgent.provided_path).IsReadOnly) //task was uploaded, requesting result
-                            Channel.send(new RequestResult() { task = AdHocAgent.task });
-                        else*/
-                        to_server.send(project ?? ProjectImpl.init());
-                    else AdHocAgent.exit("Unsupported file type: " + AdHocAgent.provided_path, -1);
-                else to_server.send(proto);
-            }
+            var THIS = new ChannelToServer();
+            Communication.Transmitter.onTransmit = THIS;
+            Communication.Receiver.onReceive = THIS;
         }
+
+        public void Sent(Communication.Transmitter via, Version pack) { }
+        public void Sent(Communication.Transmitter via, Login pack) { }
+
+        public void Received_AdHocProtocol_Server__Invitation(Communication.Receiver via)
+        {
+            if (via.curr_stage == Communication.Stages.Login) //server invites agent to upload a client task
+            {
+                AdHocAgent.PersonalVolatileUUID(out var hi, out var lo);                //get personal volatile UUID
+                Start(() => to_server!.send(new Login { uuid_hi = hi, uuid_lo = lo })); //send login
+            }
+            else uploadTask();
+        }
+
+        void uploadTask()
+        {
+            if (proto == null)
+                if (AdHocAgent.provided_path.EndsWith(".cs")) to_server!.send(project ?? ProjectImpl.init());
+                else AdHocAgent.exit("Unsupported file type: " + AdHocAgent.provided_path, -1);
+            else
+                to_server!.send(proto);
+        }
+
+        private ulong new_uuid_hi = 0;
+        private ulong new_uuid_lo = 0;
+        private bool update_uuid = false;
+
+        public void Received(Communication.Receiver via, InvitationUpdate pack)
+        {
+            new_uuid_hi = pack.uuid_hi; //temporary fixing updated personal volatile uuid data
+            new_uuid_lo = pack.uuid_lo;
+            update_uuid = true;
+            uploadTask();
+        }
+
+        public void Sent(Communication.Transmitter via, Project pack)
+        {
+            new FileInfo(AdHocAgent.provided_path).IsReadOnly = true;                            //+ delete old files - mark:  the file was sent
+            var result_output_folder = Path.Combine(AdHocAgent.destination_dir_path, pack!._name); // destination_dir_path/project_name
+            if (Directory.Exists(result_output_folder))
+                Directory.Delete(result_output_folder, true);
+
+            if (!update_uuid) return;
+            //Update only once both the server and agent have confirmed the UUID update, ensuring no interruptions in the connection that could disrupt the process.
+            update_uuid = false;
+            AdHocAgent.updatePersonalVolatileUUID(new_uuid_hi, new_uuid_lo);
+        }
+
+        public void Sent(Communication.Transmitter via, Proto pack)
+        {
+            if (!update_uuid) return;
+            //Update only once both the server and agent have confirmed the UUID update, ensuring no interruptions in the connection that could disrupt the process.
+            update_uuid = false;
+            AdHocAgent.updatePersonalVolatileUUID(new_uuid_hi, new_uuid_lo);
+        }
+
 
         public void Received(Communication.Receiver via, Result pack)
         {
@@ -316,7 +268,7 @@ namespace org.unirail
             AdHocAgent.exit("Here is the result of the .proto format conversion: " + AdHocAgent.destination_dir_path, 0);
         }
 
-        public void Received(Communication.Receiver via, Agent.Info pack)
+        public void Received(Communication.Receiver via, Info pack)
         {
             if (via.curr_stage == Communication.Stages.VersionMatching) //the agent and server have incompatible protocol versions
             {
@@ -328,11 +280,11 @@ namespace org.unirail
                 via.channel.Close();
 
                 AdHocAgent.LOG.Error("{}", pack.info);
-                if (!pack.info.Contains("PersonalAdHocSecretAuthorizationCode")) return;
+                if (!pack.info.Contains("PersonalVolatileUUID")) return;
 
                 Task.Run(() => //===================== NEVER BLOCK IN HANDLERS !!!!
                          {
-                             AdHocAgent.LOG.Error("Do you want to try re-authorization? Enter 'N' - if no and exit");
+                             AdHocAgent.LOG.Error("Do you want to try re-connect? Enter 'N' - if no and exit");
                              switch (Console.Read())
                              {
                                  case 'N':
@@ -340,7 +292,6 @@ namespace org.unirail
                                      AdHocAgent.exit("Bye", -1);
                                      return;
                                  default:
-                                     updatePersonalAdHocSecretAuthorizationCode();
                                      return;
                              }
                          });
@@ -353,7 +304,5 @@ namespace org.unirail
         private const uint VER = 1; //version
 
         private const string INFO_MARK = "///" + "\uFFFF"; //generated section mark
-
-        //public static Memory<byte> get_global_settings(string key)=>  AdHoc.value($"{key}.unirail.org") ;
     }
 }

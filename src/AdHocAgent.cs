@@ -41,13 +41,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Serilog;
-using Serilog.Core;
-using Tommy;
-using org.unirail.Agent;
-using Serilog.Events;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using org.unirail.Agent;
+using org.unirail.Agent.AdHocProtocol.Agent_;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Tommy;
 
 //https://github.com/dezhidki/Tommy
 
@@ -78,13 +79,6 @@ namespace org.unirail
                                             .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message} in {FileLine}\n")
                                             .CreateLogger();
 
-
-        public static async void update_app_props_file()
-        {
-            await using var writer = File.CreateText(app_props_file);
-            app_props.WriteTo(writer);
-            await writer.FlushAsync();
-        }
 
         public static string app_props_file
         {
@@ -171,7 +165,7 @@ namespace org.unirail
                  or
                  file.proto file
                  or
-                 folder.proto directory to translate into Adhoc format
+                 folder.proto directory to translate into AdHoc format
 
                 if description_file.cs has references to other files, next arguments should be paths to:
                 the .csproj project files, that conains references information, and/or paths to referensed files
@@ -193,7 +187,7 @@ namespace org.unirail
         {
             Console.OutputEncoding = Encoding.UTF8; // !!!!!!!!!!!!!!!!!!!! damn, every .NET console application must start with that !!!!!!!!!!!
 
-            using (var _7z = new Process())
+            using (var _7z = new Process()) //check that 7z is or
             {
                 _7z.StartInfo = new ProcessStartInfo //ensure check
                 {
@@ -212,13 +206,18 @@ namespace org.unirail
                     throw new Exception("7z command is not available or failed to execute. Please ensure 7-Zip is installed and added to the system PATH.");
             }
 
-
             if (paths.Length == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("AdHocAgent utility");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(" accepts the following command-line input:");
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("\t\tUUID   ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Save the provided personal, volatile UUID to the AdHocAgent.toml configuration file.");
+
 
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("  The first argument is the path to the task file:");
@@ -257,7 +256,7 @@ namespace org.unirail
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("\t\t.proto");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("- or path to a directory, indicates that the file(s) is in Protocol Buffers format and will be sent to the server for conversion to Adhoc protocol description format.");
+                Console.WriteLine("- or path to a directory, indicates that the file(s) is in Protocol Buffers format and will be sent to the server for conversion to AdHoc protocol description format.");
                 Console.WriteLine("\t\tThe second argument can be a path to a directory containing additional imported `.proto` files.");
 
 
@@ -309,6 +308,15 @@ namespace org.unirail
                 return;
             }
 
+            if (!paths[0].Contains('.')) //UUID
+            {
+                Guid.Parse(paths[0]); // Attempt to parse provided string into a GUID
+
+                updatePersonalVolatileUUID(paths[0]);
+                LOG.Information("Volatile personal UUID updated successfully!");
+                return;
+            }
+
             if (paths[0].EndsWith(".md")) //  repeat only the deployment process according to instructions in the .md file, already received source files in the `working directory`
             {
                 provided_path = paths[0];
@@ -323,6 +331,9 @@ namespace org.unirail
                 await ChannelToObserver.Start();
                 return;
             }
+
+            if (!app_props.HasKey("PersonalVolatileUUID"))
+                exit($"Cannot find your personal volatile UUID in the {app_props_file} file. Please request and apply one according to the instructions in the manual https://github.com/AdHoc-Protocol/AdHoc-protocol.");
 
 
             is_testing = paths[0].EndsWith("!");
@@ -485,7 +496,7 @@ namespace org.unirail
                 {
                     task = task,
                     name = Path.GetFileName(provided_path),
-                    _proto = zip(bytes, Path.GetFileName(provided_path)[0..^6])
+                    _proto = zip(bytes, Path.GetFileName(provided_path)[..^6])
                 });
             }
             else if (!Directory.Exists(provided_path))
@@ -569,7 +580,7 @@ namespace org.unirail
         public static string destination_dir_path = Directory.GetCurrentDirectory();
 
         public static string raw_files_dir_path => Path.Combine(destination_dir_path, Path.GetFileName(provided_path)[..^3]);
-        public static Lazy<string> layout = new(() => AdHocAgent.raw_files_dir_path + ".layout"); // path to the layout file
+        public static Lazy<string> layout = new(() => raw_files_dir_path + ".layout"); // path to the layout file
 
         public static int exit(string banner, int code = 1)
         {
@@ -624,7 +635,7 @@ namespace org.unirail
                 }
 
 
-                public bool skipped = false;
+                public bool skipped;
                 public (Regex, string[])[]? targets;
 
                 public List<string>? report;
@@ -740,7 +751,7 @@ namespace org.unirail
 
             public static void redeploy(string deployment_instructions_file)
             {
-                raw_files_dir_path = provided_path[..^"Deployment.md".Length]; //cut 'Deployment.md'  and get directory with source files
+                raw_files_dir_path = provided_path[..^".md".Length]; //cut '.md'  and get directory with source files
                 if (!Directory.Exists(raw_files_dir_path) && !Directory.Exists(raw_files_dir_path = Path.Join(Directory.GetCurrentDirectory(), Path.GetFileName(raw_files_dir_path))))
                     exit($"Cannot find source folder {Path.GetFileName(raw_files_dir_path)} at {Path.GetDirectoryName(provided_path)} and at working directory {Directory.GetCurrentDirectory()} redeploy process canceled");
 
@@ -751,7 +762,7 @@ namespace org.unirail
             {
                 Deployment.raw_files_dir_path = raw_files_dir_path;
 
-                var deployment_instructions_file_name = Path.GetFileName(raw_files_dir_path) + "Deployment.md"; //cut `.cs`
+                var deployment_instructions_file_name = Path.GetFileName(raw_files_dir_path) + ".md"; //cut `.cs`
 
                 //looking for deployment instructions file
 
@@ -797,6 +808,18 @@ This file is crucial for managing the deployment process. ✅⛔✔️ ✖️ �
      ```shell
      AdHocAgent ""{deployment_instructions_file_path}""
      ```
+
+
+If a path starts with one of the following prefixes:
+- `/InCPP/`
+- `/InCS/`
+- `/InGO/`
+- `/InJAVA/`
+- `/InRS/`
+- `/InTS/`
+
+it indicates that the path is relative to the root of the folder containing the received files.
+
 Formatting:
   
 ```regexp
@@ -838,7 +861,7 @@ astyle  --style=allman
 
 To format C# files with `dotnet format` use the command in format `before and after deployment execution`
 ```shell
-[before deployment](dotnet format ""C:/My Deployment/folder/MyProject/InCS/My Host2"" )
+[before deployment](dotnet format ""/InCS/Host_in_C#"" )
 ```
 
 ```regexp
@@ -965,7 +988,7 @@ After making the necessary modifications, you can rerun the deployment process b
                     var key = Key_path_segment.Match(match.Groups[2].Captures[0].Value).Groups[0].Value.Replace('\\', '/').Replace(">", "").Trim(); //Paths with whitespaces must be enclosed in <>
                     if (receiver_files_lines.TryGetValue(key, out var info))
                     {
-                        //- 📁[InCS](/AdHocTMP/AdhocProtocol/InCS) ✅ copy full structure [](/AdHoc/Protocol/Generated/InCS)
+                        //- 📁[InCS](/AdHocTMP/AdHocProtocol/InCS) ✅ copy full structure [](/AdHoc/Protocol/Generated/InCS)
                         //           <--------- head ------------> <------------------- customization --------------------->
                         var head = match.Groups[2].Captures[0];
                         info.customization = match.ToString()[(head.Index + head.Length + 1 - match.Index)..]; //backup line customization
@@ -1306,8 +1329,33 @@ After making the necessary modifications, you can rerun the deployment process b
             return Start_and_wait(exe, args, WorkingDirectory);
         }
 
+        // Regular expression to match quoted paths or paths without spaces
+        private static readonly Regex paths = new("(\".*?\"\\s*)|(\\S+\\s*)", RegexOptions.Compiled);
+
+        static readonly Regex root_path = new(@"^\""?[\\/](InCPP|InCS|InGO|InJAVA|InRS|InTS)[\\/]", RegexOptions.Compiled);
+
+
         public static string Start_and_wait(string exe, string args, string WorkingDirectory)
         {
+            args = string.Join("", paths.Matches(args)
+                                        .Select(match => match.Value)
+                                        .Select(s =>
+                                                {
+                                                    if (File.Exists(s) || Directory.Exists(s) || !root_path.IsMatch(s)) return s;
+
+                                                    var to = Path.DirectorySeparatorChar;
+                                                    var from = Path.DirectorySeparatorChar == '/' ?
+                                                                   '\\' :
+                                                                   '/';
+
+                                                    var ret = Path.Join(raw_files_dir_path.Replace("\"", "").Replace(from, to), s.Replace("\"", "").Replace(from, to));
+                                                    return ret.Contains(' ') ?
+                                                               "\"" + ret + "\"" :
+                                                               ret;
+                                                }
+                                               ));
+
+
             var startInfo = new ProcessStartInfo
             {
                 FileName = exe,
@@ -1386,6 +1434,62 @@ After making the necessary modifications, you can rerun the deployment process b
             // Note: If execution reaches here, it means both attempts failed on the first iteration
             // and succeeded on the second iteration. This case is not explicitly handled.
             return exe + " " + args;
+        }
+
+        private const string HEX = "0123456789abcdef";
+
+        public static void updatePersonalVolatileUUID(ulong uuid_hi, ulong uuid_lo)
+        {
+            var chars = new char[32]; // 32 hex digits
+
+            for (var i = 15; -1 < i; i--)
+            {
+                chars[i] = HEX[(int)(uuid_hi & 0xF)];
+                uuid_hi >>= 4;
+            }
+
+            for (var i = 31; 15 < i; i--)
+            {
+                chars[i] = HEX[(int)(uuid_lo & 0xF)];
+                uuid_lo >>= 4;
+            }
+
+            updatePersonalVolatileUUID(new string(chars));
+        }
+
+        public static void updatePersonalVolatileUUID(string UUID)
+        {
+            if (app_props.HasKey("PersonalVolatileUUID")) // Update
+                app_props["PersonalVolatileUUID"].AsString.Value = UUID;
+            else
+                app_props.Add("PersonalVolatileUUID", new TomlString { Value = UUID }); //add
+
+            using var writer = File.CreateText(app_props_file);
+            app_props.WriteTo(writer);
+        }
+
+        public static void PersonalVolatileUUID(out ulong uuid_hi, out ulong uuid_lo)
+        {
+            var uuid = app_props["PersonalVolatileUUID"].AsString!.Value;
+
+            uuid_lo = 0;
+            uuid_hi = 0;
+
+            for (int i = 0, ch, n = 0; i < uuid.Length; i++)
+                if ((ch = uuid[i]) != '-')
+                {
+                    if ('0' <= ch && ch <= '9') ch -= '0';      // Convert '0'-'9' to 0-9
+                    else if ('a' <= ch && ch <= 'f') ch -= 'a' - 10; // Convert 'a'-'f' to 10-15
+                    else if ('A' <= ch && ch <= 'F') ch -= 'A' - 10; // Convert 'A'-'F' to 10-15
+
+
+                    if (n < 16)
+                        uuid_hi = (uuid_hi << 4) | (uint)ch;
+                    else
+                        uuid_lo = (uuid_lo << 4) | (uint)ch;
+
+                    n++;
+                }
         }
     }
 }

@@ -32,17 +32,16 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using org.unirail.Agent;
-using Type = org.unirail.Agent.Entity.Type;
+using org.unirail.Agent.AdHocProtocol.Observer_;
+using Type = org.unirail.Agent.AdHocProtocol.Observer_.Entity.Type;
 
 namespace org.unirail
 {

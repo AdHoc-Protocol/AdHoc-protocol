@@ -10,12 +10,12 @@ existing solutions with new data structures or message types.
 
 This is where Domain-Specific Languages (DSLs) for protocol description come in. These declarative languages allow you to define your data structures and communication protocols once, then automatically generate implementation code for any supported language. This approach offers several key benefits:
 
-Reduced development time   
-Fewer bugs and compatibility issues   
-Consistent implementation across platforms   
-Easier maintenance and updates   
+* Reduced development time
+* Fewer bugs and compatibility issues
+* Consistent implementation across platforms
+* Easier maintenance and updates
 
-Many established frameworks already utilize this approach, including:  
+Many established frameworks already utilize this approach, including:
 
 - [Protocol Buffers](https://developers.google.com/protocol-buffers/docs/overview)
 - [Cap’n Proto](https://capnproto.org/language.html)
@@ -26,9 +26,48 @@ Many established frameworks already utilize this approach, including:
 - [Apache Avro](https://avro.apache.org/docs/1.8.2/idl.html)
 
 However, after careful evaluation of existing solutions, we identified opportunities for improvement.
-This led to the development of AdHoc protocol - our next-generation code generator designed to overcome common limitations. AdHoc currently supports C#, Java, and TypeScript, with 
-plans to expand to C++, Rust, and Go. It seamlessly handles the translation between binary data streams and structured packages in your application, 
+This led to the development of AdHoc protocol — a next-generation code generator designed to overcome common limitations.AdHoc currently supports C#, Java, and TypeScript, with
+plans to expand to C++, Rust, and Go. It seamlessly handles the translation between binary data streams and structured packages in your application,
 making cross-language communication effortless.
+
+The AdHoc code generator is crafted for **data-oriented applications** requiring high performance, with efficient handling of structured binary data across network
+communication and custom storage formats. Its design is ideal for applications that demand fast data throughput with minimal resource consumption, allowing more users to be
+served on the same hardware. Here’s where it excels:
+
+1. **Best Fit: Data-Intensive Applications**  
+   This solution is especially suited for:
+	- **Financial Trading**: Real-time handling of high-frequency data packets with low latency.
+	- **Customer Relationship Management (CRM)**: Processing substantial datasets for customer and transactional data.
+	- **Enterprise Resource Planning (ERP)**: Supporting high-volume updates in logistics, inventory, and other real-time processes.
+	- **Game Servers**: Managing real-time communication and state synchronization between players in multiplayer online games with minimal latency.
+	- **IoT Systems**: Handling large-scale sensor data streams with high throughput and low latency.
+	- **Real-Time Analytics Platforms**: Processing large amounts of data in real time, such as monitoring and analyzing system logs or sensor data, where low latency and
+	  high throughput are essential.
+	- **Streaming Media Services**: Delivering high-quality, low-latency audio or video streams, ensuring smooth, uninterrupted delivery to users.
+	- **Telecommunications Systems**: Managing communication data for high-volume call routing, message delivery, and network state monitoring in real time.
+	- **Autonomous Vehicles**: Handling data from various sensors and communication systems, requiring fast and efficient transmission of data packets between components
+	  for decision-making.
+   
+   Applications in these areas require **optimized binary protocols** that can manage complex data transactions while minimizing memory and CPU usage. The efficient data
+2. handling enables these applications to **serve more users on the same hardware**, enhancing scalability and cost-efficiency.
+
+2. **Network Communication and Custom Storage**  
+   The generated code can be employed for high-performance network communication between applications or microservices, ensuring fast, reliable data exchange with
+3. reduced computational overhead. Additionally, it supports **custom binary file storage formats** that are compact and efficient, further reducing memory usage and
+4. improving retrieval speed.
+
+3. **Performance Benefits**  
+   By leveraging binary protocols, this solution offers:
+	- **Reduced Memory and CPU Usage**: Optimized data formats mean lower resource consumption, allowing a single server to handle a higher number of simultaneous users.
+	- **Faster Serialization/Deserialization**: Less processing time for data transformations.
+	- **Improved Network Efficiency**: Smaller data packets translate to reduced transfer times and enhanced throughput.
+
+4. **When to Consider Other Solutions**  
+   Applications that are primarily **text-based or content-oriented**, such as blogs, content management systems, or document storage, may not gain significant benefits
+5. from binary protocols. In these cases, standard formats like JSON or XML often meet requirements effectively without the complexity of a binary format.
+   
+   Additionally, for **simple or low-performance use cases**, where data volume and speed are not critical factors, traditional data formats may be more straightforward to
+6. implement and maintain.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/a15016a6-ac05-4d66-8798-4a7188bf24c5)
 
@@ -36,18 +75,18 @@ The **AdHoc** generator offers a comprehensive set of features:
 
 - Support for bitfields.
 - Handling of standard and nullable primitive data types.
-- If all the field data of a pack fits within 8 bytes, it will be represented as a `long` primitive, thereby 
+- If all the field data of a pack fits within 8 bytes, it will be represented as a `long` primitive, thereby
   reducing garbage collection overhead.
 - Support for data types like strings, maps, sets, and arrays.
 - Allows multidimensional arrays with constant/fixed/variable dimensions as field types.
 - Supports nested packs and enums.
 - Handles both standard and flags-like enums.
-- Fields can use enum and  reference to a pack data types.
+- Fields can use enum and reference to a pack data types.
 - Defines constants at both host and packet levels.
-- Each entity can import(inherit) or subtract(remove) properties of others, allowing for flexible composition. 
-  The system handles circular references and supports multiple inheritance.
+- Each entity can import(inherit) or subtract(remove) properties of others, allowing for flexible composition.
+  The system handles pack circular references and supports multiple inheritance.
   Additionally, reused entities can be modified to meet the specific requirements of the new project.
-- Projects can be composed of other projects or selectively import specific parts, such as channels,  constants or substruct a pack. 
+- Projects can be composed of other projects or selectively import specific parts, such as channels, constants or substruct a pack.
 - Channels can be constructed from channels or their segments, such as stages or branches.
 - Packs can import or subtract individual fields or all fields of other packs.
 - Implements compression using the [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding algorithm.
@@ -61,12 +100,11 @@ The code generated by the AdHoc generator can be used to handle network communic
 between applications or microservices and to create custom file storage formats for
 application data.
 
+The **AdHoc Code Generator** is a [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service) platform that provides cloud-based code generation services.
 
-> [!IMPORTANT]  
-> **[The little-endian format is used for data representation on the wire.](https://news.ycombinator.com/item?id=25611514)**
-
-The AdHoc code generator is a Software as a Service ([**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service)) and
-provides its services online.
+First, you'll need a personal [UUID](#uuid).
+Why UUID?
+The use of a UUID, rather than a login and password, allows users to automate code generation and embed the **AdHocAgent** utility into their code delivery process.
 
 To start using the AdHoc code generator, follow these steps:
 
@@ -109,7 +147,8 @@ AdHocAgent is a command-line utility designed to streamline your project workflo
 2. Downloading generated results
 3. Deploying your project
 4. View your project structure as a diagram
-5. Upload `.proto` files to convert into AdHoc protocol description format 
+5. Upload `.proto` files to convert into AdHoc protocol description format
+6. Retain and update user `UUID`
 
 It accepts the following input:
 
@@ -222,6 +261,33 @@ This feature is particularly useful for debugging deployments.
 The `AdHocAgent` utility will search for the `AdHocAgent.toml` file in its directory.
 If the file is not found, the utility will generate a template that you can update with the required information.
 
+## UUID
+
+To get your first `volatile` [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) or to recover one, follow these steps:
+
+1. Sign in to your GitHub account.
+2. Go to the [Sign-Up Discussion](https://github.com/orgs/AdHoc-Protocol/discussions/categories/sign-up) and post a message.
+
+After your request is processed (when the post disappears), a bot will automatically create a new **private** project for you [here](https://github.com/orgs/AdHoc-Protocol/projects).
+This project will track your code generation history and provide helpful messages with details about any issues and their resolutions.
+
+In the project, you will find a task with your UUID:   
+![image](https://github.com/user-attachments/assets/b1789e7e-3ca3-4442-839b-aca172babf4e)
+
+Copy the UUID and once run the **AdHocAgent** utility.
+
+```shell
+AdHocAgent 100b9fd2-e593-485b-a2fe-9b9c82bc1e3f
+```
+
+The utility will save the `volatile UUID` in the `AdHocAgent.toml` configuration file.
+
+> [!NOTE]  
+> The utility may automatically renew your UUID during new code generation requests, so you cannot reuse it.
+> To ensure consistency, retain and reuse your `AdHocAgent.toml` file where the updated UUID will be stored.
+> If your UUID is rejected, you must manually repeat the process to acquire a new one.
+
+
 > [!NOTE]
 > When run without arguments, the AdHocAgent utility displays the command-line help and generates a `protocol description file` template.
 
@@ -230,65 +296,65 @@ If the file is not found, the utility will generate a template that you can upda
 The embedded [Continuous deployment](https://en.wikipedia.org/wiki/Continuous_deployment) system relies on a `deployment instructions file` to deploy the received source code into the target project folders.  
 A typical layout for received files might resemble the following:
 
-- 📁[InCS](/C:/Received/AdhocProtocol/InCS)
-	- 📁[Agent](file:/C:/Received/AdhocProtocol/InCS/Agent)
-		- 📁[gen](/C:/Received/AdhocProtocol/InCS/Agent/gen)
-			- ＃[Agent.cs](D:/AdHocTMP/AdhocProtocol/InCS/Agent/gen/Agent.cs)
-			- ＃[Context.cs](/C:/Received/AdhocProtocol/InCS/Agent/gen/Context.cs)
-		- 📁[lib](/C:/Received/AdhocProtocol/InCS/Agent/lib)
-			- ＃[AdHoc.cs](/C:/Received/AdhocProtocol/InCS/Agent/lib/AdHoc.cs)
-			- 📁[collections](/C:/Received/AdhocProtocol/InCS/Agent/lib/collections)
-				- ＃[BitList.cs](/C:/Received/AdhocProtocol/InCS/Agent/lib/collections/BitList.cs)
-				- ＃[RingBuffer.cs](/C:/Received/AdhocProtocol/InCS/Agent/lib/collections/RingBuffer.cs)
-			- ＃[Network.cs](/C:/Received/AdhocProtocol/InCS/Agent/lib/Network.cs)
-		- 📄[Project.csproj](/C:/Received/AdhocProtocol/InCS/Agent/Project.csproj)
-- 📁[InJAVA](/C:/Received/AdhocProtocol/InJAVA)
-	- 📁[Server](/C:/Received/AdhocProtocol/InJAVA/Server)
-		- 📁[collections](/C:/Received/AdhocProtocol/InJAVA/Server/collections)
-			- 📁[org](/C:/Received/AdhocProtocol/InJAVA/Server/collections/org)
-				- 📁[unirail](/C:/Received/AdhocProtocol/InJAVA/Server/collections/org/unirail)
-					- 📁[collections](/C:/Received/AdhocProtocol/InJAVA/Server/collections/org/unirail/collections)
-						- ☕[Array.java](/C:/Received/AdhocProtocol/InJAVA/Server/collections/org/unirail/collections/Array.java)
-						- ☕[BitList.java](/C:/Received/AdhocProtocol/InJAVA/Server/collections/org/unirail/collections/BitList.java)
-						- ☕[BitsList.java](/C:/Received/AdhocProtocol/InJAVA/Server/collections/org/unirail/collections/BitsList.java)
-					- ☕[JsonWriter.java](/C:/Received/AdhocProtocol/InJAVA/Server/collections/org/unirail/JsonWriter.java)
-		- 📁[demo](/C:/Received/AdhocProtocol/InJAVA/Server/demo)
-			- 📁[org](/C:/Received/AdhocProtocol/InJAVA/Server/demo/org)
-				- 📁[unirail](/C:/Received/AdhocProtocol/InJAVA/Server/demo/org/unirail)
-					- ☕[ServerImpl.java](/C:/Received/AdhocProtocol/InJAVA/Server/demo/org/unirail/ServerImpl.java)
-		- 📁[gen](/C:/Received/AdhocProtocol/InJAVA/Server/gen)
-			- 📁[org](/C:/Received/AdhocProtocol/InJAVA/Server/gen/org)
-				- 📁[unirail](/C:/Received/AdhocProtocol/InJAVA/Server/gen/org/unirail)
-					- ☕[Context.java](/C:/Received/AdhocProtocol/InJAVA/Server/gen/org/unirail/Context.java)
-					- ☕[Server.java](/C:/Received/AdhocProtocol/InJAVA/Server/gen/org/unirail/Server.java)
-		- 📁[lib](/C:/Received/AdhocProtocol/InJAVA/Server/lib)
-			- 📁[org](/C:/Received/AdhocProtocol/InJAVA/Server/lib/org)
-				- 📁[unirail](/C:/Received/AdhocProtocol/InJAVA/Server/lib/org/unirail)
-					- ☕[AdHoc.java](/C:/Received/AdhocProtocol/InJAVA/Server/lib/org/unirail/AdHoc.java)
-					- ☕[Network.java](/C:/Received/AdhocProtocol/InJAVA/Server/lib/org/unirail/Network.java)
-- 📁[InTS](/C:/Received/AdhocProtocol/InTS)
-	- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer)
-		- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts)
-		- 📁[gen](/C:/Received/AdhocProtocol/InTS/Observer/gen)
-			- 🌀[Context.ts](/C:/Received/AdhocProtocol/InTS/Observer/gen/Context.ts)
-			- 🌀[Observer.ts](/C:/Received/AdhocProtocol/InTS/Observer/gen/Observer.ts)
-		- 📁[lib](/C:/Received/AdhocProtocol/InTS/Observer/lib)
-			- 🌀[AdHoc.ts](/C:/Received/AdhocProtocol/InTS/Observer/lib/AdHoc.ts)
-			- 📁[collections](/C:/Received/AdhocProtocol/InTS/Observer/lib/collections)
-				- 🌀[BigInt64List.ts](/C:/Received/AdhocProtocol/InTS/Observer/lib/collections/BigInt64List.ts)
-				- 🌀[Uint8List.ts](/C:/Received/AdhocProtocol/InTS/Observer/lib/collections/Uint8List.ts)
-				- 🌀[Uint8NullList.ts](/C:/Received/AdhocProtocol/InTS/Observer/lib/collections/Uint8NullList.ts)
-			- 🌀[Network.ts](/C:/Received/AdhocProtocol/InTS/Observer/lib/Network.ts)
-		- {}[package.json](/C:/Received/AdhocProtocol/InTS/Observer/package.json)
-		- {}[tsconfig.json](/C:/Received/AdhocProtocol/InTS/Observer/tsconfig.json)
+- 📁[InCS](/C:/Received/AdHocProtocol/InCS)
+	- 📁[Agent](file:/C:/Received/AdHocProtocol/InCS/Agent)
+		- 📁[gen](/C:/Received/AdHocProtocol/InCS/Agent/gen)
+			- ＃[Agent.cs](D:/AdHocTMP/AdHocProtocol/InCS/Agent/gen/Agent.cs)
+			- ＃[Context.cs](/C:/Received/AdHocProtocol/InCS/Agent/gen/Context.cs)
+		- 📁[lib](/C:/Received/AdHocProtocol/InCS/Agent/lib)
+			- ＃[AdHoc.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/AdHoc.cs)
+			- 📁[collections](/C:/Received/AdHocProtocol/InCS/Agent/lib/collections)
+				- ＃[BitList.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/collections/BitList.cs)
+				- ＃[RingBuffer.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/collections/RingBuffer.cs)
+			- ＃[Network.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/Network.cs)
+		- 📄[Project.csproj](/C:/Received/AdHocProtocol/InCS/Agent/Project.csproj)
+- 📁[InJAVA](/C:/Received/AdHocProtocol/InJAVA)
+	- 📁[Server](/C:/Received/AdHocProtocol/InJAVA/Server)
+		- 📁[collections](/C:/Received/AdHocProtocol/InJAVA/Server/collections)
+			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org)
+				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail)
+					- 📁[collections](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections)
+						- ☕[Array.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections/Array.java)
+						- ☕[BitList.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections/BitList.java)
+						- ☕[BitsList.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections/BitsList.java)
+					- ☕[JsonWriter.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/JsonWriter.java)
+		- 📁[demo](/C:/Received/AdHocProtocol/InJAVA/Server/demo)
+			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/demo/org)
+				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/demo/org/unirail)
+					- ☕[ServerImpl.java](/C:/Received/AdHocProtocol/InJAVA/Server/demo/org/unirail/ServerImpl.java)
+		- 📁[gen](/C:/Received/AdHocProtocol/InJAVA/Server/gen)
+			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org)
+				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org/unirail)
+					- ☕[Context.java](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org/unirail/Context.java)
+					- ☕[Server.java](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org/unirail/Server.java)
+		- 📁[lib](/C:/Received/AdHocProtocol/InJAVA/Server/lib)
+			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org)
+				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org/unirail)
+					- ☕[AdHoc.java](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org/unirail/AdHoc.java)
+					- ☕[Network.java](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org/unirail/Network.java)
+- 📁[InTS](/C:/Received/AdHocProtocol/InTS)
+	- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer)
+		- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
+		- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
+			- 🌀[Context.ts](/C:/Received/AdHocProtocol/InTS/Observer/gen/Context.ts)
+			- 🌀[Observer.ts](/C:/Received/AdHocProtocol/InTS/Observer/gen/Observer.ts)
+		- 📁[lib](/C:/Received/AdHocProtocol/InTS/Observer/lib)
+			- 🌀[AdHoc.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/AdHoc.ts)
+			- 📁[collections](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections)
+				- 🌀[BigInt64List.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections/BigInt64List.ts)
+				- 🌀[Uint8List.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections/Uint8List.ts)
+				- 🌀[Uint8NullList.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections/Uint8NullList.ts)
+			- 🌀[Network.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/Network.ts)
+		- {}[package.json](/C:/Received/AdHocProtocol/InTS/Observer/package.json)
+		- {}[tsconfig.json](/C:/Received/AdHocProtocol/InTS/Observer/tsconfig.json)
 
 > [!TIP]  
 > Switch from Markdown preview to Markdown source to view detailed formatting
 
 This tree view has been taken from autogenerated deployment instructions file.
 
-This `deployment instructions file` should be named using the `protocol description file name` followed by `Deployment.md`  
-For example, if the protocol description file is named `AdhocProtocol.cs`, the instruction file should be named `AdhocProtocolDeployment.md`.
+This `deployment instructions file` should be named using the `protocol description file name` followed by `.md`  
+For example, if the protocol description file is named `AdHocProtocol.cs`, the instruction file should be named `AdHocProtocol.md`.
 
 The AdHocAgent utility will search for this instruction file in the following locations:
 
@@ -303,9 +369,9 @@ In that case, you will need to edit the file and provide the correct `deployment
 `Destination Paths` specify the target locations for received files or folders.
 You can add `target path(s)` at the end of any folder or file line using the following syntax:
 
-- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer) [\.(jpg|png|gif)$](/path/to/folder) [](/path/to/folder2)
-	- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts) [](/path/to/folder3)
-	- 📁[gen](/C:/Received/AdhocProtocol/InTS/Observer/gen) [\.cpp$](/path/to/folder3)
+- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [\.(jpg|png|gif)$](/path/to/folder) [](/path/to/folder2)
+	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) [](/path/to/folder3)
+	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen) [\.cpp$](/path/to/folder3)
 
 > [!TIP]  
 > Switch from Markdown preview to Markdown source to view detailed formatting.
@@ -320,56 +386,56 @@ If the link ends with '/', the received item will be copied into the specified p
 
 For a folder:
 
-- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer) [](/path/to/parent_folder/)
+- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/parent_folder/)
   
-  `/C:/Received/AdhocProtocol/InTS/Observer` will be copied inside `/path/to/parent_folder` as `/path/to/parent_folder/Observer`.
+  `/C:/Received/AdHocProtocol/InTS/Observer` will be copied inside `/path/to/parent_folder` as `/path/to/parent_folder/Observer`.
 
 For a file:
 
-- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts) [](/path/to/parent_folder/)
+- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) [](/path/to/parent_folder/)
   
-  `/C:/Received/AdhocProtocol/InTS/Observer/demo.ts` will be copied inside `/path/to/parent_folder` as `/path/to/parent_folder/demo.ts`.
+  `/C:/Received/AdHocProtocol/InTS/Observer/demo.ts` will be copied inside `/path/to/parent_folder` as `/path/to/parent_folder/demo.ts`.
 
 **Copying with a new name:**  
 If the link doesn't end with '/', the item will be copied with the specified name.
 
 For a folder:
 
-- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer) [](/path/to/NewName)
-  `/C:/Received/AdhocProtocol/InTS/Observer` will be copied as `/path/to/NewName`.
+- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/NewName)
+  `/C:/Received/AdHocProtocol/InTS/Observer` will be copied as `/path/to/NewName`.
 
 For a file:
 
-- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts) [](/path/to/NewName.ts)
+- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) [](/path/to/NewName.ts)
   
-  `/C:/Received/AdhocProtocol/InTS/Observer/demo.ts` will be copied as `/path/to/NewName.ts`.
+  `/C:/Received/AdHocProtocol/InTS/Observer/demo.ts` will be copied as `/path/to/NewName.ts`.
 
 If no `destination` is specified for files/subfolders, they inherit the parent folder's destination:
 
-- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer) [\.cpp$](/path/to/folder) [](/path/to/folder2)
-	- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts)
-	- 📁[gen](/C:/Received/AdhocProtocol/InTS/Observer/gen)
+- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [\.cpp$](/path/to/folder) [](/path/to/folder2)
+	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
+	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
 
 Use an empty target link `[]()` or `⛔` to skip a file/folder:
 
-- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer) [](/path/to/folder)
-	- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts) ⛔
-	- 📁[gen](/C:/Received/AdhocProtocol/InTS/Observer/gen) []()
+- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/folder)
+	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) ⛔
+	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen) []()
 
 Specify a [ regular expression](#regular-expression-patterns-for-file-path-matching) on folder lines to select multiple files:
 
-- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer) [](/path/to/folder) [\.(jpg|png|gif)$](/path/to/folder)
-	- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts)
-	- 📁[gen](/C:/Received/AdhocProtocol/InTS/Observer/gen)
+- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/folder) [\.(jpg|png|gif)$](/path/to/folder)
+	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
+	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
 
 > [!TIP]  
 > Switch from Markdown preview to Markdown source to view detailed formatting.
 
 You can add notes or comments (without line breaks) on any line:
 
-- 📁[Observer](/C:/Received/AdhocProtocol/InTS/Observer)  ✅ copy full tree structure. [](/path/to/folder) Filtered [\.(jpg|png|gif)$](/path/to/folder)
-	- 🌀[demo.ts](/C:/Received/AdhocProtocol/InTS/Observer/demo.ts)
-	- 📁[gen](/C:/Received/AdhocProtocol/InTS/Observer/gen)
+- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer)  ✅ copy full tree structure. [](/path/to/folder) Filtered [\.(jpg|png|gif)$](/path/to/folder)
+	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
+	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
 
 #### Regular Expression Patterns for File Path Matching
 
@@ -419,6 +485,19 @@ A `Deployment Instructions` file can include multiple `Execution Instructions` a
 
 `Execution Instructions` are executed in the order they appear in the instruction file.
 
+#### Root Path
+
+If a path starts with one of the following prefixes:
+
+- `/InCPP/`
+- `/InCS/`
+- `/InGO/`
+- `/InJAVA/`
+- `/InRS/`
+- `/InTS/`
+
+it indicates that the path is relative to the root of the folder containing the received files.
+
 #### File Path Placeholder
 
 The `FILE_PATH` placeholder in an `Execution Instruction` will be replaced with the actual file path during execution.
@@ -465,8 +544,9 @@ clang-format -i -style="{ColumnLimit: 0,IndentWidth: 4,
    ```
 
 To format C# files with `dotnet format` use the command in format [before and after deployment execution](#before-and-after-deployment-execution)
+
 ```shell
-[before deployment](dotnet format "C:/My Deployment/folder/MyProject/InCS/My Host2" )
+[before deployment](dotnet format "/InCS/Host_in_C#" )
 ```
 
 To format TypeScript files using prettier:
@@ -687,7 +767,7 @@ For example: `AdHocAgent.exe /dir/minimal_descr_file.cs?`. Running this command 
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/acc420a1-b2bf-4579-9ee6-5336ad155d4f)
 </details>
-To upload a file and obtain the generated source code, you can utilize the AdHocAgent utility by providing the path to it, for example: `AdHocAgent.exe /dir/minimal_descr_file.cs`. 
+To upload a file and get the generated source code, you can use the AdHocAgent utility by providing the path to it, for example, `AdHocAgent.exe /dir/minimal_descr_file.cs`. 
 This command will upload the file and initiate the process of generating the source code based on the contents of the specified file.
 
 # Protocol description file format
@@ -727,7 +807,7 @@ namespace com.my.company // Your company's namespace. This is required.
 
 The **AdHoc protocol** not only defines the data for passing information, which includes packets and fields, but it also
 incorporates features to describe the complete
-network topology. This entails providing information about hosts, channels, and their interconnections.
+network topology. This entails information about hosts, channels, and their interconnections.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>For instance, let's consider the following `protocol description file`:</u></b></summary>
@@ -877,6 +957,7 @@ namespace com.my.company2 // Your company namespace. Required!
     }
 }
 ```
+
 </details>
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>and if you observe it with AdHocAgent utility viewer you may see the following</u></b></summary>  
@@ -897,9 +978,10 @@ These numbers help in identifying and tracking the packets within the system.
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/51163c18-3b49-4f4f-adea-c3450c0fe01c)
 
 
+> [!NOTE]  
+> A project can function as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing packet hierarchy.
 
 ### Extend other Project
-
 
 You can create a protocol description project by importing enums, constant sets, channels, or other projects.
 
@@ -931,11 +1013,11 @@ interface MyProject : OtherProjects, MoreProjects
 To import only specific enums, constant sets, channels, list them in the project's XML documentation using the `<see cref="entity"/>+` attribute:
 
 ```csharp
-/// <see cref="SomeProject.Pack"/>+
-/// <see cref="FromProjects.Channel"/>+
-interface MyProject : OtherProjects, MoreProjects
-{
-}
+	/// <see cref="SomeProject.Pack"/>+
+	/// <see cref="FromProjects.Channel"/>+
+	interface MyProject : OtherProjects, MoreProjects
+	{
+	}
 ```
 
 > [!NOTE]  
@@ -943,14 +1025,13 @@ interface MyProject : OtherProjects, MoreProjects
 > You cannot import `Stages` this way.
 
 > [!NOTE]  
->**To import a host from another project, reference the host as the endpoint within the project's channels.**  
->**To import a pack from another project, reference the pack in a branch of a stage within the project's channels.**
+> To import a **host** from another project, reference the host as the endpoint within the project's channels.  
+> To import a **pack** from another project, reference the pack in a branch of a stage within the project's channels.
 
 [Learn how to modify imported packs](#modify-imported-packs).  
 [Learn how to modify imported channels](#modify-imported-channels).
 
-
- For example, the protocol description in [`AdhocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdhocProtocol.cs) defines public, external communications. However, on the **Server** side, the backend infrastructure requires an internal communication protocol to handle tasks such as:
+For example, the protocol description in [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) defines public, external communications. However, on the **Server** side, the backend infrastructure requires an internal communication protocol to handle tasks such as:
 
 - Distributing workloads
 - Sending and receiving metrics
@@ -962,16 +1043,16 @@ interface MyProject : OtherProjects, MoreProjects
 1. **Create a Separate `Backend` Protocol Description**  
    This option is viable if you do not plan to pass packets through both protocols.
 
-2. **Extend the Existing `AdhocProtocol` Description**  
-   This approach is suitable if you want to combine both protocols in a single `Server` host. 
-   The example below demonstrates how to extend the `AdhocProtocol` to include backend-specific protocol details.
+2. **Extend the Existing `AdHocProtocol` Description**  
+   This approach is suitable if you want to combine both protocols in a single `Server` host.
+   The example below demonstrates how to extend the `AdHocProtocol` to include backend-specific protocol details.
    
    ```csharp
    using org.unirail.Meta;
 
    namespace org.unirail
    {
-       public interface AdhocProtocolWithBackend : AdhocProtocol 
+       public interface AdHocProtocolWithBackend : AdHocProtocol 
        {
            // Backend-specific protocol details can be added here
        }
@@ -984,7 +1065,7 @@ The `Backend` protocol description may look like this:
 using org.unirail.Meta;
 
 namespace org.unirail {
-    public interface AdhocProtocolWithBackend : AdhocProtocol {
+    public interface AdHocProtocolWithBackend : AdHocProtocol {
 
         ///<see cref="InCS"/>
         struct Metrics : Host { }
@@ -1069,7 +1150,8 @@ namespace org.unirail {
     }
 }
 ```
-In this example, the `AdhocProtocolWithBackend` protocol description import all entities from `AdhocProtocol` and introduces several components:
+
+In this example, the `AdHocProtocolWithBackend` protocol description import all entities from `AdHocProtocol` and introduces several components:
 
 - **Hosts**:
 	- Two new hosts have been defined: `Metrics`, implemented in **C#**, and `Authorizer`, implemented in **Java**.
@@ -1081,6 +1163,10 @@ In this example, the `AdhocProtocolWithBackend` protocol description import all 
 - **Channels**:
 	- `ChannelToMetrics` connects the `Server` and `Metrics`.
 	- `ChannelToAuthorizer` connects the `Server` and `Authorizer`.
+
+> [!IMPORTANT]
+> If your solution requires working with multiple protocols, you cannot easily combine their generated protocol-processing code within the same VM instance
+> due to `lib` **org.unirail** namespace clashes. To resolve this, assign each project’s `lib` to a distinct namespace.
 
 ## Hosts
 
@@ -1126,18 +1212,37 @@ AdHocAgent utility could be read the `Server` configuration in this manner..
 
 </details>
 
-> [!IMPORTANT]  
-> All packs explicitly referenced in the documentation of the host declaration will be included in the host, even if they are not transmittable or receivable.
-> This is useful for generating utility packs.
+
+> [!NOTE]  
+> A host can serve as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the host's internal packet hierarchy.
+
+### Modify Imported Hosts
+
+You can adjust the language implementation configuration of imported `hosts`. For example:
+
+```csharp
+/**
+<see cref='InJAVA'/>
+<see cref='Pack'/>
+<see cref='InJAVA'/>-- 
+*/
+struct ModifyServer : Modify<Server> { }
+```
+
+In this example, we add information to the imported host `Server`, imply that `Pack` should be fully implemented in Java.
 
 ## Packs
 
-Packs are the smallest units of transmittable information, defined using a C# `class`. Pack declarations can be nested and placed anywhere within a project’s scope. 
+Packs are the smallest units of transmittable information, defined using a C# `class`. Pack declarations can be nested and placed anywhere within a project’s scope.
+
+> [!NOTE]  
+> A pack can function as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the pack's internal hierarchy of packs.
+
 The `fields` in a pack's class represent the data it transmits.
 
 Constant and static fields define constants within a pack's scope. A pack can be empty; in this case, its transmission is the only information it conveys.
 
-To include or inherit **all fields** from other packs, add the `<see cref='Full.Path.To.Pack_or_field'/>+` line in the target pack’s XML documentation, 
+To include or inherit **all fields** from other packs, add the `<see cref='Full.Path.To.Pack_or_field'/>+` line in the target pack’s XML documentation,
 or use C# class inheritance. To inherit fields from multiple packs, use the `org.unirail.Meta._<>` wrapper.
 
 Individual fields can be _inherited_ or _embedded_ by adding the `<see cref="Full.Path.To.OtherPack.AddField"/>+` comment in the target pack's XML documentation.
@@ -1164,7 +1269,7 @@ namespace com.my.company2 {
         ///<see cref = 'InJAVA'/>
         struct Server : Host {
             ///<see cref="AnyPacksFields"/> Embeds all fields from AnyPacksFields.
-            ///<see cref="AnyPacksFields.client_hashcode"/> but excludes the client_hashcode field from AnyPacksFields.
+            ///<see cref="AnyPacksFields.client_hashcode"/> but excludes the `client_hashcode` field from AnyPacksFields.
             class ServerPack { } // Packets that the Server can create and send through this port
         }
 
@@ -1207,7 +1312,6 @@ Container packs are non-transmittable structures designed to organize other pack
 - Declared using a C# `struct`
 - Dedicated to structuring and grouping related packs
 - Can contain constants declared with `const` or `static` fields
-
 
 ### Modify Imported Packs
 
@@ -1382,40 +1486,45 @@ The constants defined in the root description file are propagated to all hosts.
 
 `Enums` and all constants are replicated on every host and are not transmitted during communication.
 They serve as local copies of the constant values and are available for reference and use within the respective host's scope.
+
 ### Modify Enums and Constants
+
 Enums and constants can be modified like a [simple pack](#modify-imported-packs), **but the modifier is discarded after the modification is applied.**
 
 ## Channels
 
-In the **AdHoc protocol**, channels act as communication pathways connecting hosts. They are declared using a C# `interface` and, like hosts, 
-are defined directly within the project’s scope.
-
-A channel's `interface` must extends the built-in `org.unirail.Meta.ChannelFor<HostA, HostB>` interface and specifies the two hosts it connects as generic parameters.
+In the **AdHoc protocol**, channels serve as communication pathways connecting hosts. They are declared using a C# `interface` and, like hosts,
+are defined directly within the project’s body. Channels must extend the built-in `org.unirail.Meta.ChannelFor<HostA, HostB>` interface and specify
+the two hosts they connect as generic parameters.
 
 Example:
 
 ```csharp
-interface Communication : ChannelFor<Client, Server> { }
+using org.unirail.Meta;
+
+namespace com.company{
+    public interface MyProject{
+        ....
+        ...
+        interface Communication : ChannelFor<Client, Server>{ }
+    }
+}
 ```
 
 ![image](https://github.com/user-attachments/assets/dd47301d-4f2b-4648-ab1b-8f00f40ce271)
 
-
-- A channel with an empty body **__(not recommended)__** allows hosts to **send** all packets declared within their body to the host at the other end of the channel.
-Packets declared outside any host's scope but within the project are shared among all hosts, enabling any host to **transmit**
-these packets as if they were declared within their own body.
-
-- To clearly define which packets are sent through the channel, their order, and the responses, the channel's `interface`
+To clearly define which packets are sent through the channel, their order, and the responses, the channel's `interface`
 body should include [`stages`](#stages) and [`branches`](#branches). These elements specify the data flow logic between the connected hosts.
-
 
 A channel can import content from other channels by extending them. To swap the content hosts being imported,
 wrap the importing channel with built-in `org.unirail.Meta.SwapHosts<Channel>`.
 
 For example:
+
 ```csharp
 interface CommunicationChannel : ChannelFor<Server, Client>, SomeCommunicationChannel, SwapHosts<TheChannel> { }
 ```
+
 Implementation:
 
 The AdHoc protocol implementation features channels designed to connect the EXTernal network with the INTernal host. Each channel comprises processing layers,
@@ -1429,15 +1538,18 @@ internal and external aspects.
 
 </details>
 
+> [!IMPORTANT]  
+> **[The little-endian format is used for data representation on the wire.](https://news.ycombinator.com/item?id=25611514)**
+
 ### Stages
 
 Stages within a channel represent the channel's distinct processing states.
 
-Each stage is declared within the channel scope using a C# `interface` construction, where the `interface` name becomes the stage name. 
+Each stage is declared within the channel scope using a C# `interface` construction, where the `interface` name becomes the stage name.
 The topmost stage, known as the "**init**" stage, represents the initial state.
 To collect the stages of a channel, initiate a traversal from the **init** stage. Any stages that are not reachable from **init** will be disregarded.
 
-A stage extends the built-in interfaces `org.unirail.Meta.L`, `org.unirail.Meta.R` or `org.unirail.Meta.LR`. Here, `L` and `R` represent the left and right hosts, respectively, 
+A stage extends the built-in interfaces `org.unirail.Meta.L`, `org.unirail.Meta.R` or `org.unirail.Meta.LR`. Here, `L` and `R` represent the left and right hosts, respectively,
 while `LR` denotes both hosts in the channel declaration to which the stage belongs.
 
 The declaration of branches begins immediately after denote host side.
@@ -1452,20 +1564,21 @@ It is possible for only one side to have the capability to send packets.
 > A short `block comment` with some symbols `/*įĂ*/` represents auto-sets
 > unique
 > identifiers.
-> These identifiers are utilized to identify entities. Therefore, you can relocate or rename entities, but the
+> These identifiers are used to identify entities. Therefore, you can relocate or rename entities, but the
 > identifier will remain unchanged.
 > It is important to never edit or clone this identifier.
 
 #### Branches
 
-After referencing a host side (`L`, `R`, or `LR`), `sending` packets are organized into multiple `branches`. A `branch` consists of a list of `sending` packets 
+After referencing a host side (`L`, `R`, or `LR`), `sending` packets are organized into multiple `branches`. A `branch` consists of a list of `sending` packets
 and may optionally include a reference to the target `stage`, which the host will transition to after sending any packet from the list.
 
 - If the target `stage` is a reference to the built-in `org.unirail.Meta.Exit`, the receiving host will terminate the connection after receiving any packet from the branch.
 - If a branch does not explicitly reference a target `stage`, it implicitly references its own stage — the stage to which the branch belongs.
   This implies that the current stage is permanent.
 
-For example, this ( the branch implicitly references to the self stage `Login`): 
+For example, this ( the branch implicitly references to the self stage `Login`):
+
 ```csharp
 interface Login /*ā*/ : L,
                         _< /*Ă*/
@@ -1474,7 +1587,9 @@ interface Login /*ā*/ : L,
                         >
             { }
 ```
+
 is tha sames as this  ( the branch explicitly references to the self stage `Login`) :
+
 ```csharp
 interface Login /*ā*/ : L,
                         _< /*Ă*/
@@ -1485,9 +1600,10 @@ interface Login /*ā*/ : L,
             { }
 ```
 
-- If a channel's hosts have the same branch layout, use `LR` to prevent duplicate declarations.
+- If a channel's hosts have the same branches layout, use `LR` to avoid duplicate declarations.
 
 Use `LR`
+
 ```csharp
 interface Start  : LR,
                     _< 
@@ -1496,7 +1612,9 @@ interface Start  : LR,
                     >
                     { };
 ```
+
 instead of:
+
 ```csharp
 interface Start  : L,
                     _< 
@@ -1511,24 +1629,56 @@ interface Start  : L,
                     { };
 ```
 
-#### Named packs set
+#### Named Pack Sets
 
-If you recognize a recurring pattern in the use of a set of packets, you can create a `named set of packets` and refer to 
-that set by name.
+When you identify a recurring pattern in a set of packets, you can create a **named set of transmittable packets** and reference that set by name.   
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/8637f064-75e7-4ab0-8c66-c7625a7aa813)  
+Prefixing a reference to a pack with **`@`** includes all transmittable packs declared within the pack body.
 
-This approach simplifies referencing and enhances the reusability of packet sets throughout your code.
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/8637f064-75e7-4ab0-8c66-c7625a7aa813)
+```csharp
+interface Start : LR,
+                  _< 
+                      @Pack1,
+                      Pack12
+                  >
+                  { };
+```
 
-`Named packet sets` can be declared anywhere in your `project` and may contain references to individual `packets` as
-well as other `named packet sets`.
+**Named packet sets** can be declared anywhere within your project and may contain references to individual pack, other named packet sets, projects, or hosts.
+
+##### Project/Host as a Named Pack Set
+
+A project or host can function as a **named pack set** and be used accordingly. When referenced directly, it implies a collection of transmittable packs declared within the body.
+
+```csharp
+interface Start : LR,
+                  _< 
+                      Project,
+                      Host,
+                  >
+                  { };
+```
+
+Prefixing a reference with **`@`** adds all transmittable packs recursively, including packs throughout the hierarchical structure.
+
+```csharp
+interface Start : LR,
+                  _< 
+                      @Project,
+                      @Host
+                  >
+                  { };
+```
+
+This approach simplifies referencing and enhances the reusability of packet sets throughout your protocol description.
 
 #### Timeout
 
-The `Timeout` is the built-in  attribute on a stage that sets the maximum duration it can remain active in seconds. 
+The `Timeout` is the built-in attribute on a stage that sets the maximum duration it can remain active in seconds.
 If this attribute is not specified, the stage can persist indefinitely.
 
-Let's examine the practical use of the communication flow in the 
-[`AdhocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/acfc582c971914a4a86f3458d4b85a141a787d3c/AdhocProtocol.cs#L443) protocol description file. 
+Let's examine the practical use of the communication flow in the
+[`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/acfc582c971914a4a86f3458d4b85a141a787d3c/AdHocProtocol.cs#L443) protocol description file.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -1540,30 +1690,27 @@ Let's examine the practical use of the communication flow in the
 To view the communication flow diagram in the **Observer**, follow these steps:
 
 Run the **AdHocAgent** Utility using the following command:
-   
+
    ```cmd
-      AdHocAgent.exe /path/to/AdhocProtocol.cs
+      AdHocAgent.exe /path/to/AdHocProtocol.cs
    ```
 
 Once the diagram opens, right-click on a channel link. Resize the opened channels window to display all channels.
 
 
 > [!NOTE]
-> The code generated for each stage is provided as a reference. It does not impose any constraints on the package flow. 
+> The code generated for each stage is provided as a reference. It does not impose any constraints on the package flow.
 > Developers have full flexibility to adapt and integrate this code into their implementations according to their specific needs and requirements.
-> For a practical usage example, you can search for `Communication.Stages` in the 
-> [ChannelToServer.cs](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/src/ChannelToServer.cs) file of the AdHoc Protocol GitHub repository. 
-
+> For a practical usage example, you can search for `Communication.Stages` in the
+> [ChannelToServer.cs](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/src/ChannelToServer.cs) file of the AdHoc Protocol GitHub repository.
 
 ### Modify imported channels and their internal components.
 
-
 You can modify the configuration of imported `channels` and their internal components, including `stages`, `named packs sets`, and `branches`.
 
-- To modify `channels` or `stages`, replicate the original layout of the targets with custom names and, 
-  extend the built-in `org.unirail.Meta.Modify<TargetEntity>` or `org.unirail.Meta.Modify<TargetChannel, HostA, HostB>` if you also want to modify channel's hosts. 
+- To modify `channels` or `stages`, replicate the original layout of the targets with custom names and,
+  extend the built-in `org.unirail.Meta.Modify<TargetEntity>` or `org.unirail.Meta.Modify<TargetChannel, HostA, HostB>` if you also want to modify channel's hosts.
 - To delete imported `channel` or `stage`, reference it using an XML comment `/// <see cref="Delete.Channel"/>-` in the project declaration.
-
 
 > [!NOTE]  
 > Modified target branches are identified by their corresponding transition `Stage`.
@@ -1586,7 +1733,7 @@ In this example, `Agent.Login`, `Agent.Signup`, and `Login` will be removed from
 - To add a new entity to a `branch`, reference the new entity as you would when declare branches.
 
 > [!NOTE]  
->If a branch you want to modify does not explicitly reference a target `Stage` (imply a self-referencing, permanent stage), you must reference it in modifier explicitly 
+> If a branch you want to modify does not explicitly reference a target `Stage` (imply a self-referencing, permanent stage), you must reference it in modifier explicitly
 > to modify the branch's target `Stage`..
 
 For example:
@@ -1611,10 +1758,10 @@ interface UpdateLogin : Modify<Login>,
                         >
             { }
 ```
+
 This code modifies the branch's target stage from `Login` to `Update_to_stage` by making the reference explicit.
 
-
-For example, suppose you import all entities from [`AdhocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdhocProtocol.cs) but need to modify the inherited `Communication` channel:
+For example, suppose you import all entities from [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) but need to modify the inherited `Communication` channel:
 
 ```csharp
 interface Communication : ChannelFor<Agent, Server> { ... }
@@ -1623,21 +1770,21 @@ interface Communication : ChannelFor<Agent, Server> { ... }
 To modify the `Communication` channel, follow this approach:
 
 ```csharp
-interface UpdateCommunication : Modify<AdhocProtocol.Communication> {
-    interface Change_Info_Result : Modify<AdhocProtocol.Communication.Info_Result>,
+interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
+    interface Change_Info_Result : Modify<AdHocProtocol.Communication.Info_Result>,
                                    _<
                                       X<Server.Info>
                                    > { }
 
     [Timeout(30)]
-    interface Updated_Start : Modify<AdhocProtocol.Communication.Start>,
+    interface Updated_Start : Modify<AdHocProtocol.Communication.Start>,
                               L,
                               _<
-	                              X<AdhocProtocol.Communication.VersionMatching>, // delete goto stage VersionMatching
+	                              X<AdHocProtocol.Communication.VersionMatching>, // delete goto stage VersionMatching
 	                              NewStage // set new goto stage
                               > { }
 
-    interface UpdatedVersionMatching : Modify<AdhocProtocol.Communication.VersionMatching>,
+    interface UpdatedVersionMatching : Modify<AdHocProtocol.Communication.VersionMatching>,
                                        R,
                                        _<
 	                                       X<Server.Invitation>,
@@ -1657,10 +1804,6 @@ In this example, the following changes are made to the `Communication` channel:
 - The `VersionMatching` transition stage is replaced by a new `NewStage`.
 - In the `VersionMatching` stage, the `Invitation` pack is removed, and a new `Authorizer` pack is added.
 - Set new Timeout on the `Start` stage
-
-
-
-
 
 # Fields
 

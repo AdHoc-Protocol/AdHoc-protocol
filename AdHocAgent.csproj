@@ -27,6 +27,7 @@
       </EmbeddedResource>
       <Compile Remove="Templates\ProtocolDescription.cs" />
       <EmbeddedResource Include="Templates\ProtocolDescription.cs" />
+      <Compile Remove="AdHocProtocol.cs" />
     </ItemGroup>
 
     <ItemGroup>

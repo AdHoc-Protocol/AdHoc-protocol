@@ -171,6 +171,7 @@ namespace org.unirail
         public interface LR { } // Represents branches of both the left and right hosts
 
 
+
         public interface Exit { } //Exit stage
 
         //Multidimensional field.
@@ -187,8 +188,6 @@ namespace org.unirail
 
         public interface SwapHosts<Channel> { }
 
-        //Update _1 on _2
-        public interface U<_1, _2> { }
 
         //Delete items
         public interface X<_1> { }
@@ -210,6 +209,8 @@ namespace org.unirail
         public interface X<_1, _2, _3, _4, _5, _6, _7, _8, _9> { }
 
         public interface X<_1, _2, _3, _4, _5, _6, _7, _8, _9, _10> { }
+
+        public interface __<SRC> { }
 
 
         //wrapper that let use non-interface-based entities (class/struct/enums)

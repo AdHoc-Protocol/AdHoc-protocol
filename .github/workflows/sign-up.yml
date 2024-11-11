@@ -8,7 +8,7 @@ on:
 concurrency:
   group: "single-instance"
   cancel-in-progress: false
-  
+
 env:
   GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   REPO: AdHoc-Protocol
@@ -139,7 +139,7 @@ jobs:
               ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" --jq '.data.createProjectV2.projectV2.id')
 
               README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
-              
+          
               gh api graphql -f query='
                 mutation($projectId: ID!, $readme: String!) {
                   updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
@@ -165,7 +165,7 @@ jobs:
                   }
                 }
               ' -F login="$login" --jq '.data.user.id')
-              
+          
               # Update ProjectV2 Collaborators
               gh api graphql -f query='
                 mutation($projectId: ID!, $userId: ID!) {

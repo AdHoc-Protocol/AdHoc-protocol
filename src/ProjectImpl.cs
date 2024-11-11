@@ -486,13 +486,13 @@ namespace org.unirail
 
             if (update_packs_id_info)
             {
-                if (packs_id_info_start == -1)//no saved packs id info in the source file
+                if (packs_id_info_start == -1) //no saved packs id info in the source file
                 {
                     file.Write("/**\n");
                     file.Write(source_code[..packs_id_info_end]);
                 }
                 else
-                    file.Write(source_code[..source_code.LastIndexOf('\n', packs_id_info_end)]);//trim last */
+                    file.Write(source_code[..source_code.LastIndexOf('\n', packs_id_info_end)]); //trim last */
 
                 //packs without saved info
                 foreach (var pack in included_packs
@@ -1040,6 +1040,13 @@ Please rename duplicate nested types.");
             void set_persistent_uid(IEnumerable<Entity> entities) // Our goal is to minimize the UID, to reduce the footprint in the source code
             {
                 var uid = 0U;
+                foreach (var pks in entities.GroupBy(e => e.uid)
+                                            .Where(g => g.Count() > 1))
+                {
+                    var list = pks.Aggregate("", (current, pk) => current + pk.full_path + "  line:" + pk.line_in_src_code + "     ");
+                    AdHocAgent.LOG.Warning("Duplicate entities detected: {List} with the same UID = {Id}. This may have been accidentally copied. Please delete the duplicate assignment.", list, "/*" + pks.Key.to_base256_chars() + "*/");
+                    AdHocAgent.exit("", 66);
+                }
 
                 foreach (var entity in entities.Where(e => e.origin == null)) // Exclude clones and include only items belonging to this project
                     if (entity.uid == ulong.MaxValue) unassigned.Add(entity);
@@ -1207,8 +1214,6 @@ Please rename duplicate nested types.");
                                           channels;
 
         public Project.Channel _channels(Context.Transmitter ctx, Context.Transmitter.Slot slot, int d) => channels[d];
-
-
 
 
         public class HostImpl : Entity, Project.Host
@@ -3801,6 +3806,12 @@ Please rename duplicate nested types.");
         }
 
         private const int base256 = 0xFF;
+
+        public static string to_base256_chars(this ulong src)
+        {
+            var chars = new char[5];
+            return new string(chars, 0, src.to_base256_chars(chars));
+        }
 
         public static int to_base256_chars(this ulong src, char[] dst)
         {

@@ -49,7 +49,9 @@ namespace org.unirail{
         <see cref = 'Server.Info'            id = '4'/>
         <see cref = 'Server.Invitation'      id = '3'/>
         <see cref = 'Server.Result'          id = '10'/>
-    */
+		<see cref = 'Server.InvitationUpdate'    id = '6'/>
+	*/
+	
     public interface AdHocProtocol /*ǫſǇĲ*/ :
         _<
             AdHocProtocol.Agent.Project.Host.Pack.Field.DataType //propagate DataType constants set to all hosts
@@ -84,7 +86,7 @@ namespace org.unirail{
             public class Invitation /*Ă*/{
             }
 
-            public class InvitationUpdate /*Ă*/{ //Invitation with update
+            public class InvitationUpdate/*Č*/ { //Invitation with update
                 public ulong uuid_hi;      // Higher bits of the login UUID (128-bit identifier split across two 64-bit values)
                 public ulong uuid_lo;      // Lower bits of the login UUID
             }

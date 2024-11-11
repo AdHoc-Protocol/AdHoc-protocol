@@ -229,7 +229,7 @@ namespace org.unirail
 
                             continue;
                     }
-                    await using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Observer." + filename))
+                    await using( var stream = new FileStream(@"D:\AdHoc\Observer\Observer\" + filename, FileMode.Open, FileAccess.Read) ) // System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Observer." + filename))
                     {
                         if (stream == null)
                         {

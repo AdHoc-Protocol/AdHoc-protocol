@@ -1040,7 +1040,7 @@ Please rename duplicate nested types.");
             void set_persistent_uid(IEnumerable<Entity> entities) // Our goal is to minimize the UID, to reduce the footprint in the source code
             {
                 var uid = 0U;
-                foreach (var pks in entities.GroupBy(e => e.uid)
+                foreach (var pks in entities.Where(e => e.uid < ulong.MaxValue).GroupBy(e => e.uid)
                                             .Where(g => g.Count() > 1))
                 {
                     var list = pks.Aggregate("", (current, pk) => current + pk.full_path + "  line:" + pk.line_in_src_code + "     ");
@@ -1067,9 +1067,10 @@ Please rename duplicate nested types.");
             set_persistent_uid(channels);
 
             foreach (var p in projects_root.constants_packs.Where(p => p.is_virtual_for_project_or_host))
-                p.uid = entities[p.symbol!].uid; //apply virtual pack UID from the real entity it represents project/host.
+                p.uid = 0xFFFF - entities[p.symbol!].uid; //apply virtual pack UID from the real entity it represents project/host.
+                                                          //      0xFFFF - UID  : because the host is converting to `a packet`. This may result in a UID conflict with other real packets.
 
-            set_persistent_uid(all_packs.Concat(constants_packs));
+            set_persistent_uid(all_packs.Concat(constants_packs).Where(p => !p.is_typedef));
 
             List<ChannelImpl.BranchImpl> unassigned_ = [];
 
@@ -3564,7 +3565,10 @@ Please rename duplicate nested types.");
             };
         }
 
-        public int line_in_src_code => symbol!.Locations[0].GetLineSpan().StartLinePosition.Line + 1;
+        public int line_in_src_code => symbol == null ?
+                                           -1 :
+                                           symbol!.Locations[0].GetLineSpan().StartLinePosition.Line + 1;
+
         public ISymbol? symbol;
     }
 

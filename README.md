@@ -1551,6 +1551,7 @@ To collect the stages of a channel, initiate a traversal from the **init** stage
 
 A stage extends the built-in interfaces `org.unirail.Meta.L`, `org.unirail.Meta.R` or `org.unirail.Meta.LR`. Here, `L` and `R` represent the left and right hosts, respectively,
 while `LR` denotes both hosts in the channel declaration to which the stage belongs.
+<img width="1573" height="2388" alt="image" src="https://github.com/user-attachments/assets/6f0a858f-7362-4514-88b1-93ff712f691c" />
 
 The declaration of branches begins immediately after denote host side.
 

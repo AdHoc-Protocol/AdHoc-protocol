@@ -1524,6 +1524,7 @@ For example:
 ```csharp
 interface CommunicationChannel : ChannelFor<Server, Client>, SomeCommunicationChannel, SwapHosts<TheChannel> { }
 ```
+<img width="1120" height="2392" alt="image" src="https://github.com/user-attachments/assets/3b059e62-6fb3-482a-b6d3-1ba56ef8af56" />
 
 Implementation:
 

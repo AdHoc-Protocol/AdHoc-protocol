@@ -50,11 +50,15 @@ jobs:
       - name: Publish
         run: dotnet publish --configuration Release --output ${{ github.workspace }}/publish
 
-      - name: Archive artifacts
-        # Use a single, cross-platform step for zipping
-        run: |
-          tar -a -c -f ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip -C ${{ github.workspace }}/publish .
+      - name: Archive artifacts (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: tar -a -c -f ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip -C ${{ github.workspace }}/publish .
         shell: bash
+
+      - name: Archive artifacts (Windows)
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path ${{ github.workspace }}\publish\* -DestinationPath ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip
+        shell: powershell
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

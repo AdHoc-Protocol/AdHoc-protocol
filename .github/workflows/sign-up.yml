@@ -66,7 +66,6 @@ jobs:
           CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
         run: |
           # This single, efficient query gets all unique users and all required data fields.
-          # This avoids making separate API calls for each user's details later on.
           USERS_PAYLOAD=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
@@ -103,12 +102,10 @@ jobs:
   process:
     runs-on: ubuntu-latest
     needs: [setup, discover]
-    # Only run this job if the 'discover' job found users to process.
     if: needs.discover.outputs.user_count > 0
     strategy:
       fail-fast: false # Allows other users to continue processing even if one fails.
       matrix:
-        # Create a parallel job for each user found in the 'discover' job.
         user: ${{ fromJson(needs.discover.outputs.users_json) }}
 
     steps:
@@ -148,14 +145,14 @@ jobs:
           echo "✓ Successfully registered (HTTP $http_status). Now provisioning project."
 
           # 3. Check for and provision a GitHub Project for the user
-          USER_PROJECTS=$(gh api graphql -f query='
+          PROJECT_ID=$(gh api graphql -f query='
             query($org: String!, $login: String!) {
               organization(login: $org) {
                 projectsV2(first: 1, query: $login) { nodes { id } }
               }
-            }' -F org="$ORG" -F login="$USER_LOGIN" --jq '.data.organization.projectsV2.nodes')
+            }' -F org="$ORG" -F login="$USER_LOGIN" --jq '.data.organization.projectsV2.nodes | .[0]?.id')
 
-          if [[ "$USER_PROJECTS" == "[]" || -z "$USER_PROJECTS" ]]; then
+          if [[ -z "$PROJECT_ID" || "$PROJECT_ID" == "null" ]]; then
             echo "Creating new project for $USER_LOGIN..."
             PROJECT_ID=$(gh api graphql -f query='
               mutation($ownerId: ID!, $title: String!) {
@@ -166,7 +163,6 @@ jobs:
           
             README_CONTENT="# [$USER_LOGIN]($USER_URL)  \n\n![Avatar]($USER_AVATAR_URL)"
           
-            # Update README, set to private, and invite user in two mutations
             gh api graphql -f query='
               mutation($projectId: ID!, $readme: String!) {
                 updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
@@ -181,9 +177,8 @@ jobs:
                   collaborators: [{userId: $userId, role: WRITER}]
                 }) { clientMutationId }
               }' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
-            echo "✓ Invited $USER_LOGIN to new project with read-write access."
+            echo "✓ Invited $USER_LOGIN to new project with write access."
           else
-            PROJECT_ID=$(echo "$USER_PROJECTS" | jq -r '.[0].id')
             echo "Project already exists. Using existing project ID: $PROJECT_ID"
           fi
           
@@ -199,10 +194,9 @@ jobs:
   # Job 4: Clean up all discussions after processing is complete.
   cleanup:
     runs-on: ubuntu-latest
-    needs: [setup, process]
-    # This job runs only if the discovery and processing jobs succeeded.
-    # It will not run if 'discover' found no users, because 'process' will be skipped.
-    if: always() && needs.process.result == 'success'
+    needs: [setup, discover, process]
+    # This job runs only if discovery and processing succeeded.
+    if: always() && needs.discover.result == 'success' && needs.process.result == 'success'
     steps:
       - name: Delete All Processed Sign-up Discussions
         env:

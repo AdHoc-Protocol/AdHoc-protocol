@@ -3,407 +3,766 @@
 <head>
     <meta charset="UTF-8">
     <title>AdHoc protocol diagram</title>
-    <!--    never change  style order    -->
-    <style id="shared-css">
-
-        .InCPP {
-            font-weight: bold;
-            background-color: #004481;
-            color: white;
-            text-wrap: wrap;
-        }
-
-        .InRS {
-            font-weight: bold;
-            background-color: #ee4d02;
-            color: white;
-            /*https://js.cytoscape.org/#style/labels*/
-            text-wrap: wrap;
-
-        }
-
-        .InJAVA {
-            font-weight: bold;
-            background-color: #007698;
-            color: #f68f1e;
-            text-wrap: wrap;
-        }
-
-        .InCS {
-            font-weight: bold;
-            background-color: #652772;
-            color: white;
-            text-wrap: wrap;
-        }
-
-        .InGO {
-            font-weight: bold;
-            background-color: #28b7a9;
-            color: white;
-            text-wrap: wrap;
-        }
-
-        .InTS {
-            font-weight: bold;
-            background-color: #2f74bf;
-            color: white;
-            text-wrap: wrap;
-
-        }
-
-    </style>
-
-    <style id="channels-css">
-        /*probably take a look at https://github.com/saadeghi/daisyui/blob/master/src/theming/themes.js*/
-        .channel {
-            /*https://js.cytoscape.org/#style/node-body*/
-            width: 5px;
-            /*https://js.cytoscape.org/#style/labels*/
-            text-outline-color: yellow;
-            text-outline-width: 1;
-            font-weight: bold;
-            background-color: steelblue;
-        }
-
-        .packA {
-            border-color: black;
-            background-color: lightsalmon;
-        }
-
-        .packB {
-
-            border-color: black;
-            background-color: lightblue;
-        }
-
-        .init_stage {
-            /*https://js.cytoscape.org/#style/node-body*/
-            border-width: 0;
-            background-opacity: 0;
-            /*https://js.cytoscape.org/#style/labels*/
-            color: black;
-            text-outline-color: white;
-
-            text-outline-width: 3;
-            font-weight: bold;
-        }
-
-        .stage {
-            /*https://js.cytoscape.org/#style/node-body*/
-            border-width: 0;
-            background-opacity: 0;
-            /*https://js.cytoscape.org/#style/labels*/
-            font-weight: bold;
-        }
-
-        .stage_body {
-            /*https://js.cytoscape.org/#style/node-body*/
-            border-width: 1;
-            background-color: #00abd6
-        }
-
-        .branch_body {
-            /*https://js.cytoscape.org/#style/node-body*/
-            border-width: 1;
-            background-color: #525ff3
-        }
-
-        .pack {
-
-            border-style: solid;
-            border-color: black;
-        }
-
-    </style>
-
-    <style id="host_packs-css">
-        .host {
-            text-outline-color: greenyellow;
-            text-outline-width: 2;
-
-            font-weight: bold;
-        }
-
-        .channel {
-            text-outline-color: yellow;
-            text-outline-width: 2;
-            width: 5px;
-            font-weight: bold;
-        }
-    </style>
-    <style id="pack_fields-css">
-
-
-        .pack {
-            font-weight: bold;
-        }
-
-        .pack_top_container {
-            text-outline-color: lightgray;
-            text-outline-width: 2;
-        }
-
-        .empty_pack {
-            font-weight: bold;
-            text-outline-width: 0;
-        }
-
-
-        .field {
-            border-color: black;
-        }
-    </style>
 
     <style>
+        :root {
+            --background: #f0f0f0;
+            --text-color: #333;
+            --popup-bg: #ffffff;
+            --popup-border: #ccc;
+            --header-bg: #2196F3;
+            --header-text: #fff;
+            --splitter-bg: #666;
+            --input-bg: #fff;
+            --input-text: #333;
+            --input-border: #000;
+            --button-bg: #f0f0f0;
+            --button-text: #333;
+            --button-border: #ccc;
+            --sticker-bg: #ffffe0;
+            --sticker-border: #d2d2a0;
+            --sticker-header-bg: #f2f2b0;
+            --sticker-input-bg: transparent;
+            --sticker-input-border: #ccc;
+            --doc-title-color: #0366d6;
+            --doc-title-border: #eaecef;
+            --doc-param-color: #e36209;
+            --doc-separator-color: #6a737d;
+            --code-bg: rgba(27, 31, 35, 0.05);
+            --code-text: #24292e;
+            --code-block-bg: #f6f8fa;
+            --code-block-border: #e1e4e8;
+            --error-bg: #fffbdd;
+            --error-border: #ffb900;
+            --error-text: #333;
+            --validation-banner-bg: #d32f2f;
+            --menu-hover-bg: var(--header-bg);
+            --menu-hover-text: var(--header-text);
+            /* NEW: Tooltip Colors (C# Docs Light Theme) */
+            --tooltip-bg: #ffffff;
+            --tooltip-border: #e1e1e1;
+            --tooltip-text: #1e1e1e;
+            --tooltip-header-bg: #f5f5f5;
+            --tooltip-header-text: #005a9e;
+            --tooltip-shadow: rgba(0, 0, 0, 0.1);
+
+            --background-color-primary: var(--background);
+            --background-color-secondary: var(--popup-bg);
+            --border-color: var(--popup-border);
+        }
+
+        body.dark-theme {
+            --background: #2a2a2a;
+            --text-color: #e0e0e0;
+            --popup-bg: #37474f;
+            --popup-border: #546e7a;
+            --header-bg: #0d47a1;
+            --splitter-bg: #ffd700;
+            --input-bg: #424242;
+            --input-text: #f5f5f5;
+            --input-border: #616161;
+            --button-bg: #555;
+            --button-text: #fff;
+            --button-border: #777;
+            --sticker-bg: #4a4a4a;
+            --sticker-border: #666;
+            --sticker-header-bg: #3a3a3a;
+            --sticker-input-bg: #2a2a2a;
+            --sticker-input-border: #555;
+            --doc-title-color: #58a6ff;
+            --doc-title-border: #30363d;
+            --doc-param-color: #f9826c;
+            --doc-separator-color: #8b949e;
+            --code-bg: rgba(110, 118, 129, 0.4);
+            --code-text: #c9d1d9;
+            --code-block-bg: #161b22;
+            --code-block-border: #30363d;
+            --error-bg: #3e3312;
+            --error-border: #c29400;
+            --error-text: #e6c883;
+            --validation-banner-bg: #e53935;
+            --ck-color-base-background: var(--sticker-bg);
+            --ck-color-base-border: var(--sticker-border);
+            --ck-color-text: var(--text-color);
+            --ck-color-base-action: var(--doc-title-color);
+            --ck-color-focus-border: var(--doc-title-color);
+            --ck-custom-background: var(--sticker-bg);
+            --ck-color-toolbar-background: var(--sticker-header-bg);
+            --ck-color-toolbar-border: var(--sticker-border);
+            --ck-color-button-default-background: transparent;
+            --ck-color-button-default-hover-background: rgba(255, 255, 255, 0.1);
+            --ck-color-button-default-active-background: rgba(255, 255, 255, 0.2);
+            --ck-color-button-on-background: rgba(255, 255, 255, 0.15);
+            --ck-color-button-on-hover-background: rgba(255, 255, 255, 0.25);
+            --ck-color-button-on-active-background: rgba(255, 255, 255, 0.3);
+            --ck-color-button-disabled-background: transparent;
+            --ck-color-button-default-color: var(--text-color);
+            --ck-color-button-on-color: var(--text-color);
+            --ck-color-button-disabled-color: #999;
+            --ck-icon-color: var(--text-color);
+            --ck-color-dropdown-panel-background: var(--sticker-header-bg);
+            --ck-color-dropdown-panel-border: var(--sticker-border);
+            --ck-color-input-background: var(--input-bg);
+            --ck-color-input-border: var(--input-border);
+            --ck-color-input-text: var(--input-text);
+            --ck-color-editable-background: var(--sticker-bg);
+            --ck-color-editable-focus-background: var(--sticker-bg);
+            --menu-hover-bg: var(--doc-title-color);
+            --menu-hover-text: #ffffff;
+            /* NEW: Tooltip Colors (C# Docs Dark Theme) */
+            --tooltip-bg: #2d2d30;
+            --tooltip-border: #434346;
+            --tooltip-text: #d4d4d4;
+            --tooltip-header-bg: #3c3c3c;
+            --tooltip-header-text: #9cdcfe;
+            --tooltip-shadow: rgba(0, 0, 0, 0.4);
+
+            --background-color-primary: var(--background);
+            --background-color-secondary: var(--popup-bg);
+            --border-color: var(--popup-border);
+        }
+
+        body.dark-theme .ck-editor__editable_inline {
+            color: var(--text-color);
+        }
 
         html, body {
-
             height: 100%;
-            background: #414141; /*background color of the observer*/
+            margin: 0;
+            padding: 0;
         }
 
         body {
             overflow-y: hidden;
+            font-family: sans-serif;
+            background: var(--background);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
         }
 
-    </style>
+        .info-popup {
+            display: none;
+            padding: 5px;
+            background: var(--popup-bg);
+            border: 1px solid var(--popup-border);
+            overflow: hidden;
+            resize: both;
+            min-width: 150px;
+            min-height: 100px;
+        }
 
+        #channels_container {
+            /* This is now just a hidden placeholder, so it doesn't need flex properties here */
+        }
+
+        .view-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .theme-switch {
+            /* This is the base style for all theme switchers */
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            cursor: pointer;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: background-color 0.4s;
+        }
+
+        .slider::before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.4s;
+        }
+
+        .slider svg {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            transition: opacity 0.3s ease;
+        }
+
+        .sun-icon {
+            left: 7px;
+            opacity: 1;
+            color: #f39c12;
+        }
+
+        .moon-icon {
+            right: 7px;
+            opacity: 0;
+            color: #f1c40f;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider::before {
+            transform: translateX(26px);
+        }
+
+        input:checked + .slider .moon-icon {
+            opacity: 1;
+        }
+
+        input:checked + .slider .sun-icon {
+            opacity: 0;
+        }
+
+        input[type="search"] {
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 2px solid var(--input-border);
+        }
+
+        button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--button-border);
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        /* --- Colorful Hue Slider Styles --- */
+        .hue-slider {
+            visibility: hidden;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            z-index: 10;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: linear-gradient(90deg, hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%), hsl(360, 100%, 50%));
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .hue-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+            margin-top: -5px;
+        }
+
+        .hue-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-theme .hue-slider::-webkit-slider-thumb {
+            background: #e0e0e0;
+            border-color: #546e7a;
+        }
+
+        body.dark-theme .hue-slider::-moz-range-thumb {
+            background: #e0e0e0;
+            border-color: #546e7a;
+        }
+
+        /* --- STICKERS --- */
+        #sticker_editor {
+            display: flex;
+            flex-direction: column;
+            resize: both;
+            overflow: hidden;
+            min-width: 450px;
+            min-height: 300px;
+            background-color: var(--sticker-bg);
+            border: 1px solid var(--sticker-border);
+        }
+
+        .static-sticker {
+            z-index: 10;
+            position: absolute;
+            width: 250px;
+            height: 150px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            pointer-events: all;
+            resize: both;
+            overflow: hidden;
+            min-width: 150px;
+            min-height: 30px;
+            background-color: var(--sticker-bg);
+            border: 1px solid var(--sticker-border);
+            color: var(--text-color);
+        }
+
+        .sticker-header {
+            background-color: var(--sticker-header-bg);
+            border-bottom: 1px solid var(--sticker-border);
+            height: 30px;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px 0 10px;
+            flex-shrink: 0;
+        }
+
+        .static-sticker.highlighted {
+            box-shadow: 0 0 15px 5px rgba(0, 150, 255, 0.7);
+            outline: 3px solid rgba(0, 150, 255, 0.7);
+        }
+
+        .sticker-name-display,
+        .sticker-editor-title {
+            flex-grow: 1;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sticker-controls {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sticker-controls button {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 5px;
+            opacity: 0.7;
+            font-weight: bold;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sticker-color-btn {
+            font-size: 16px !important;
+        }
+
+        .sticker-controls button:hover {
+            opacity: 1;
+        }
+
+        .sticker-delete-btn:hover {
+            color: #e53935;
+        }
+
+        body.dark-theme .sticker-delete-btn:hover {
+            color: #ef5350;
+        }
+
+        .sticker-name-input {
+            width: calc(100% - 10px);
+            margin: 5px;
+            padding: 4px;
+            border-radius: 3px;
+            border: 1px solid var(--sticker-input-border);
+            color: var(--text-color);
+            background: var(--input-bg);
+            flex-shrink: 0;
+        }
+
+        .sticker-name-input.invalid-name {
+            border: 2px solid red !important;
+            outline: none;
+        }
+
+        .sticker-content {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: var(--sticker-bg);
+            color: var(--text-color);
+            min-height: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            transition: opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+        }
+
+        .editor-validation-banner {
+            background-color: var(--validation-banner-bg);
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.9em;
+            font-weight: bold;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            flex-shrink: 0;
+        }
+
+        .editor-validation-banner.show {
+            opacity: 1;
+        }
+
+
+        #sticker_editor .ckeditor-editor {
+            flex: 1 1 auto;
+            overflow: auto;
+            min-height: 0;
+        }
+
+        .static-sticker.collapsed .sticker-content {
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            pointer-events: none;
+        }
+
+        .static-sticker.collapsed {
+            resize: none;
+        }
+
+        .sticker-content img {
+            max-width: 100%;
+            height: auto;
+        }
+
+
+        .save-prompt-popup {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            display: none;
+            background-color: var(--popup-bg);
+            color: var(--text-color);
+            border: 1px solid var(--popup-border);
+        }
+
+        .save-prompt-popup .popup-message {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .save-prompt-popup .popup-buttons button {
+            margin: 0 10px;
+            padding: 8px 16px;
+            min-width: 80px;
+        }
+
+        .sticker-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* --- NEW: TOOLTIP STYLES --- */
+        #tooltip {
+            position: fixed;
+            display: none;
+            max-width: 450px;
+            min-width: 250px;
+            padding: 0;
+            background-color: var(--tooltip-bg);
+            border: 1px solid var(--tooltip-border);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px var(--tooltip-shadow);
+            z-index: 10002;
+            pointer-events: none; /* Important: tooltip should not block mouse events */
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--tooltip-text);
+        }
+
+        .tooltip-header {
+            padding: 8px 12px;
+            background-color: var(--tooltip-header-bg);
+            color: var(--tooltip-header-text);
+            font-weight: bold;
+            border-bottom: 1px solid var(--tooltip-border);
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .tooltip-header span[onclick] {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .tooltip-content {
+            padding: 12px;
+            white-space: pre-wrap; /* Preserve formatting and line breaks */
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .tooltip-content .doc-container {
+            font-family: sans-serif;
+            white-space: normal;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+            background-color: var(--background-color-secondary, var(--popup-bg));
+            border: 1px solid var(--border-color, var(--popup-border));
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            padding: 0;
+        }
+
+        .sidebar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100%;
+            background-color: var(--background-color-primary, var(--background));
+            border-right: 1px solid var(--border-color, var(--popup-border));
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            position: relative; /* For positioning children */
+            padding: 60px 10px 10px 10px;
+            border-bottom: 1px solid var(--border-color, var(--popup-border));
+        }
+
+        .sidebar-search {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            box-sizing: border-box;
+        }
+
+        .sidebar-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        /* --- Tree View Styles --- */
+        .tree-view {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tree-view ul {
+            list-style: none;
+            padding-left: 20px;
+            display: none; /* Collapsed by default */
+        }
+
+        .tree-view li .tree-item.expanded + ul {
+            display: block; /* Expanded */
+        }
+
+        .tree-view .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tree-view .tree-item:hover {
+            background-color: var(--menu-hover-bg);
+            color: var(--menu-hover-text);
+        }
+
+        .tree-view .tree-item.expandable::before {
+            content: '▶';
+            margin-right: 8px;
+            font-size: 0.8em;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tree-view .tree-item.expandable.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        .tree-view .tree-icon {
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-controls {
+            padding: 10px;
+            border-top: 1px solid var(--border-color, var(--popup-border));
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* space between controls */
+        }
+
+        /* Styles for smaller theme switcher in sidebar header */
+        .sidebar-header .theme-switch {
+            width: 30px;
+            height: 17px;
+        }
+        .sidebar-header .theme-switch .slider {
+            border-radius: 17px;
+        }
+        .sidebar-header .theme-switch .slider::before {
+            height: 13px;
+            width: 13px;
+            left: 2px;
+            bottom: 2px;
+        }
+        .sidebar-header .theme-switch input:checked + .slider::before {
+            transform: translateX(13px);
+        }
+        .sidebar-header .theme-switch .slider svg {
+            width: 10px;
+            height: 10px;
+        }
+        .sidebar-header .theme-switch .sun-icon {
+            left: 3px;
+        }
+        .sidebar-header .theme-switch .moon-icon {
+            right: 3px;
+        }
+    </style>
 </head>
 <body>
-
-<input id="search_input"
-       oninput="this.style.width = 5 + this.value.length + 'ch';"
-       type="search"
-       style="font-size:20px; border:2px solid black; position: absolute; z-index: 1; visibility: hidden; display: block;  min-width: 10ch; "
-       list="search_input_list"/>
-
-<datalist id="search_input_list"></datalist>
-
-<div id="project_info"
-     style="visibility: hidden;
-     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
-
-    <div class="div_header"
-         style="cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
-
-    <div id="project_doc"
-         style="white-space: pre;font-family: monospace"></div>
-    <button id="save_layout">Save layout</button>
-</div>
-
-<div id="channel_info"
-     style="visibility: hidden;
-     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
-
-    <div class="div_header"
-         style="cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
-
-    <div id="channel_doc"
-         style="white-space: pre;font-family: monospace"></div>
-
-    <div id="channel_role"
-         style="white-space: pre;"></div>
-
-    <div id="channel_path"></div>
-
-</div>
-
-<div id="host_info"
-     style="visibility: hidden;
-     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
-
-    <div class="div_header"
-         style="cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
-
-    <div id="host_doc"
-         style="white-space: pre;font-family: monospace"></div>
-
-    <div id="host_role"
-         style="white-space: pre;"></div>
-
-    <div id="host_path"></div>
-
-</div>
+<!-- UI Elements -->
 
 
-<div id="pack_info"
-     style="visibility: hidden;
-     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
-
-    <div class="div_header"
-         style="cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;"></div>
-
-    <div id="pack_doc"
-         style="white-space: pre;font-family: monospace"></div>
-
-    <div id="pack_role"
-         style="white-space: pre;"></div>
-
-    <div id="pack_path"></div>
-
-</div>
-
-<div id="lang_info"
-     style="visibility: hidden;
-     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
-
-    <div class="div_header"
-         style="cursor: move; font-weight: bold; padding: 5px;align-content: center;"></div>
-
-    <div id="lang_doc"
-         style="white-space: pre;font-size: large"></div>
-
-    <div id="lang_role"
-         style="white-space: pre;"></div>
-
-    <div id="lang_path"></div>
-
-</div>
-
-
-<div id="field_info"
-     style="visibility: hidden;
-     display: block; padding: 5px; background: #06d6a0; overflow:hidden;  resize: both;">
-
-    <div class="div_header"
-         style="cursor: move; padding: 5px;align-content: center; background-color: #2196F3;  color: #fff;">4
+<div id="sticker_editor" style="visibility: hidden; position: fixed; z-index: 10000;">
+    <div class="sticker-header">
+        <span class="sticker-editor-title">Sticker Editor</span>
+        <div class="sticker-controls">
+            <button class="sticker-color-btn" title="Change color">&#127912;</button>
+            <input type="color" class="sticker-color-input" style="position: absolute; visibility: hidden;">
+            <button class="sticker-close-btn" title="Close editor">&times;</button>
+        </div>
     </div>
-
-    <div id="field_doc"
-         style="white-space: pre;font-family: monospace">
-
-        <b>Full path:</b>
-        <div id="field_path"></div>
-    </div>
-    <div id="field_role"></div>
-
+    <input type="text" class="sticker-name-input" placeholder="Enter a unique sticker name...">
+    <div class="editor-validation-banner"></div>
+    <div class="ckeditor-editor"></div>
 </div>
 
-<div id="channels"
-     style="
-     visibility: hidden;
-     padding: 5px;
-     background: #06d6a0;
-     overflow:hidden;
-     resize: both;
-     display: flex;
-     flex-direction: column;
-	">
-    <div class="div_header"
-         style="
-         cursor: move;
-         padding: 5px;
-         align-content: center;
-         background-color: #2196F3;
-         color: #fff;
-         flex: 0 0 auto;
-        ">Channel's internal dataflow
-    </div>
 
-    <div id="div_body"
-         style="flex: 1 1 auto; height: 100% "></div>
+<div id="sticker" class="static-sticker" style="visibility: hidden;">
+    <div class="sticker-header">
+        <span class="sticker-name-display">Sticker name</span>
+        <div class="sticker-controls">
+            <button class="sticker-color-btn" title="Change color">&#127912;</button>
+            <input type="color" class="sticker-color-input" style="position: absolute; visibility: hidden;">
+            <button class="sticker-expand-btn" title="Collapse sticker">&#9660;</button> <!-- Down Arrow -->
+            <button class="sticker-delete-btn" title="Delete sticker">&times;</button>
+        </div>
+    </div>
+    <div class="sticker-content"></div>
 </div>
 
-<div id="host_packs"
-     style="
-     left: 0;
-        top: 0;
-        height: 100%;
-        width: 50%;
-        position: absolute;"></div>
-<div id="pack_fields"
-     style="
-        top: 0;
-        left: 50%;
-        width: 50%;
-        height: 100%;
-        position: absolute;"></div>
-<div id="splitter"
-     style="
-        top: 0;
-        left: 50%;
-        width: 5px;
-        height: 100%;
-        position: absolute;
-        cursor: ew-resize;
-        background-color: gold;"></div>
+
+<!-- SAVE CONFIRMATION POPUP -->
+<div id="save-prompt-template" class="save-prompt-popup">
+    <p class="popup-message">You have unsaved changes. Do you want to save them?</p>
+    <div class="popup-buttons">
+        <button class="popup-save-btn">Save</button>
+        <button class="popup-discard-btn">Discard</button>
+    </div>
+</div>
+
+<!-- DELETE CONFIRMATION POPUP -->
+<div id="delete-prompt-template" class="save-prompt-popup">
+    <p class="popup-message">Do you want to delete this sticker?</p>
+    <div class="popup-buttons">
+        <button class="popup-delete-btn">Delete</button>
+        <button class="popup-cancel-btn">Cancel</button>
+    </div>
+</div>
+
+<!-- NEW: GENERIC TOOLTIP ELEMENT -->
+<div id="tooltip">
+    <div class="tooltip-header"></div>
+    <div class="tooltip-content"></div>
+</div>
+
+<!-- Main Panes with NEW Structure -->
+<div id="host_packs_container" style="left: 0; top: 0; height: 100%; width: 100%; position: absolute;" class="view-container">
+    <div id="host_packs_wrapper" style="position: relative; width: 100%; height: 100%; overflow: hidden;">
+        <div id="host_packs" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+        <div class="sticker-container"></div>
+    </div>
+    <input type="range" min="0" max="360" value="200" class="hue-slider" id="host_packs_hue_slider" title="Change Palette Hue">
+</div>
+
+<!-- Error Banner -->
+<div id="error_banner" class="FadeOut"></div>
 
 
-<div id="error_banner"
-     class="FadeOut"
-     style="
-            position: fixed;
-            font-size: 1vw;
-            top: 50%;
-            left: 50%;
-            white-space: pre;
-            transform:  translate(-50%, -50%) rotate(-45deg);
-            color: red;
-            visibility: hidden;
-     display: block;
-                opacity: 0;
-		"></div>
 
-<script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', () => {
-
-        document.getElementById('splitter')
-            .addEventListener('mousedown',
-                mousedown => {
-                    const splitter = mousedown.target
-                    const R = splitter.previousElementSibling;
-                    const L = R.previousElementSibling;
-                    const w = splitter.getBoundingClientRect().width * 2
-
-                    const W = splitter.parentElement.getBoundingClientRect().width
-
-                    function splitterDragging(mousemove) {
-                        const L_width = (mousemove.clientX - w) * 100 / W
-                        L.style.width = R.style.left = splitter.style.left = `${L_width}%`;
-                        R.style.width = `${100 - L_width}%`;
-                    }
-
-                    function stopSplitterDragging(mouseup) {
-                        document.removeEventListener('mousemove', splitterDragging);// Remove the handlers of `mousemove` and `mouseup`
-                        document.removeEventListener('mouseup', stopSplitterDragging);
-                    }
-
-                    document.addEventListener('mousemove', splitterDragging);
-                    document.addEventListener('mouseup', stopSplitterDragging);
-                });
-
-
-        for (const div of document.getElementsByClassName('div_header'))  //draggable headers
-            div.addEventListener('mousedown',
-                mousedown => {
-                    mousedown.preventDefault();
-                    let x = mousedown.clientX;
-                    let y = mousedown.clientY;
-
-                    function dragDIV(e) {
-                        e.preventDefault();
-                        const dx = x - e.clientX;
-                        const dy = y - e.clientY;
-                        x = e.clientX;
-                        y = e.clientY;
-
-                        const p = div.parentNode
-                        p.style.top = (p.offsetTop - dy) + "px";
-                        p.style.left = (p.offsetLeft - dx) + "px";
-                        const onshift = p['onshift']
-                        if (onshift) onshift(dx, dy)
-                    }
-
-                    function stopDragDIV() {
-                        document.removeEventListener('mousemove', dragDIV);
-                        document.removeEventListener('mouseup', stopDragDIV);
-                    }
-
-                    document.addEventListener('mousemove', dragDIV);
-                    document.addEventListener('mouseup', stopDragDIV);
-                });
-    });
-</script>
 
 <script src="observer.js"></script>
 </body>

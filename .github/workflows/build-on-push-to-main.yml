@@ -1,77 +1,90 @@
-name: Build AdHocAgent on push to the main + Release if V tag
+# A more concise and descriptive name for the workflow
+name: Build and Release
 
 on:
   push:
     branches: [ "main" ]
     tags:
-      - 'v[0-9]*'
+      - 'v[0-9]+.[0-9]+.[0-9]+' # More specific tag pattern for semantic versioning (e.g., v1.2.3)
+  pull_request:
+    branches: [ "main" ]
+
+# Concurrency control to cancel redundant builds on the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Set default permissions to be read-only for security
+permissions:
+  contents: read
 
 jobs:
   build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
+
+    # Centralize environment variables for the job
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_VERSION: '8.0.x'
+      PROJECT_NAME: 'AdHocAgent' # Use a variable for the project name
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          # Fetch all history for release notes generation
           fetch-depth: 0
-      - name: Set up .NET 8.0
+
+      - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
       - name: Build
         run: dotnet build --configuration Release
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
       - name: Publish
         run: dotnet publish --configuration Release --output ${{ github.workspace }}/publish
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      - name: Zip publish directory (Windows)
-        if: runner.os == 'Windows'
+
+      - name: Archive artifacts
+        # Use a single, cross-platform step for zipping
         run: |
-          Compress-Archive -Path "${{ github.workspace }}\publish\*" -DestinationPath "${{ github.workspace }}\AdHocAgent-${{ runner.os }}.zip"
-      - name: Zip publish directory (Unix)
-        if: runner.os != 'Windows'
-        run: |
-          cd ${{ github.workspace }}/publish
-          zip -r ../AdHocAgent-${{ runner.os }}.zip .
-      - name: Upload zipped artifacts
-        uses: actions/upload-artifact@v3
+          tar -a -c -f ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip -C ${{ github.workspace }}/publish .
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: AdHocAgent-${{ runner.os }}
-          path: ${{ github.workspace }}/AdHocAgent-${{ runner.os }}.zip
+          name: ${{ env.PROJECT_NAME }}-${{ runner.os }}
+          path: ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip
+          retention-days: 7 # Keep artifacts for a reasonable time
 
   create-github-release:
-    name: Release on V tag
-    runs-on: ubuntu-latest
-    needs: build
+    name: Create GitHub Release
     if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    
+    # Grant write permissions only to this job
     permissions:
       contents: write
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Download Windows artifact
-        uses: actions/download-artifact@v3
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
         with:
-          name: AdHocAgent-Windows
-          path: ./
-      - name: Download macOS artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: AdHocAgent-macOS
-          path: ./
-      - name: Download Linux artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: AdHocAgent-Linux
-          path: ./
-      - name: Create Release
-        run: |
-          gh release create ${{ github.ref_name }} --generate-notes
-          gh release upload ${{ github.ref_name }} AdHocAgent-*.zip
+          # No name downloads all artifacts from the run
+          path: artifacts/
+
+      - name: Create Release and Upload Assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            --generate-notes \
+            --title "${{ github.ref_name }}" \
+            artifacts/AdHocAgent-*/*.zip

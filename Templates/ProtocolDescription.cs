@@ -6,17 +6,17 @@ namespace com.my.company // The namespace for your company's project. Required!
     {
         class CommonPacket{ } // Represents a common empty packet used across different hosts
 
-        /// <see cref="InTS"/>-   // Generates an abstract version of the corresponding TypeScript code
-        /// <see cref="InCS"/>    // Generates the concrete implementation in C#
-        /// <see cref="InJAVA"/>  // Generates the concrete implementation in Java
+        /// <see cref="InTS"/>-  Generates an abstract code in   TypeScript
+        /// <see cref="InCS"/>   Generates implementated code in C#
+        /// <see cref="InJAVA"/> Generates implementated code in Java
         struct Server : Host // Defines the server-side host and generates platform-specific code
         {
             public class PacketToClient{ } // Represents an empty packet to be sent from the server to the client
         }
 
-        /// <see cref="InTS"/>    // Generates the concrete implementation in TypeScript
-        /// <see cref="InCS"/>-   // Generates an abstract version of the corresponding C# code
-        /// <see cref="InJAVA"/>  // Generates the concrete implementation in Java
+        /// <see cref="InTS"/>   Generates implementated code in TypeScript
+        /// <see cref="InCS"/>-  Generates an abstract code in   C#
+        /// <see cref="InJAVA"/> Generates implementated code in Java
         struct Client : Host // Defines the client-side host and generates platform-specific code
         {
             public class PacketToServer{ } // Represents an empty packet to be sent from the client to the server

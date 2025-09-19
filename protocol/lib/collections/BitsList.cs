@@ -1,34 +1,19 @@
-//  MIT License
+//Copyright 2025 Chikirev Sirguy, Unirail Group
 //
-//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
-//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
-//  GitHub Repository: https://github.com/AdHoc-Protocol
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
 //
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files (the "Software"), to use,
-//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-//  the Software, and to permit others to do so, under the following conditions:
+//    http://www.apache.org/licenses/LICENSE-2.0
 //
-//  1. The above copyright notice and this permission notice must be included in all
-//     copies or substantial portions of the Software.
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
 //
-//  2. Users of the Software must provide a clear acknowledgment in their user
-//     documentation or other materials that their solution includes or is based on
-//     this Software. This acknowledgment should be prominent and easily visible,
-//     and can be formatted as follows:
-//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
-//     (https://github.com/AdHoc-Protocol)."
-//
-//  3. If you modify the Software and distribute it, you must include a prominent notice
-//     stating that you have changed the Software.
-//
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
-//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//  SOFTWARE.
+//For inquiries, please contact: al8v5C6HU4UtqE9@gmail.com
+//GitHub Repository: https://github.com/AdHoc-Protocol
 
 using System;
 using System.Collections;
@@ -38,622 +23,1024 @@ using System.Text;
 
 namespace org.unirail.collections;
 
-public interface BitsList<T> where T : struct
+///<summary>
+///Interface for a bit-packed list implementation that stores primitives with value in range 0..0xEF in a space-efficient manner
+///using an array of ulongs. Each item occupies a fixed number of (1..7)bits , specified at creation.
+///</summary>
+public interface BitsList<T>
+    where T : struct
 {
-    public static ulong mask(int bits) => (1UL << bits) - 1;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static uint size(uint src) => src >> 3;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static int index(uint item_Xbits) => (int)(item_Xbits >> LEN);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static int bit(uint item_Xbits) => (int)(item_Xbits & MASK);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    private static byte to_byte(T src) => Unsafe.As<T, byte>(ref src);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    private static T from_byte(byte src) => Unsafe.As<byte, T>(ref src);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    private static T from_byte(ulong src) => from_byte((byte)src);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    private static T from_byte(long src) => from_byte((byte)src);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T value(ulong src, int bit, ulong mask) => from_byte(src >> bit & mask);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T value(ulong prev, ulong next, int bit, int bits, ulong mask) => from_byte(((next & BitsList<T>.mask(bit + bits - BITS)) << BITS - bit | prev >> bit) & mask);
-
-    public const int LEN = 6;
-    public const int BITS = 1 << LEN;
-    public const uint MASK = BITS - 1;
-
-    static int len4bits(uint bits) => (int)((bits + BITS) >> LEN);
-
-
-    abstract class R : ICloneable, IEquatable<R>
+    ///<summary>
+    ///Abstract base class for BitsList, providing core functionality for a list of bit-packed integers.
+    ///Each item occupies a fixed number of (1..7) bits, defined at construction, stored in an array of ulongs.
+    ///</summary>
+    public abstract class R : ICloneable, IReadOnlyList<T>, IEquatable<R>
     {
-        protected ulong[] values = Array.Empty<ulong>();
-        public int Count { get; protected set; }
+        ///<summary>
+        ///Array storing the bit-packed data.
+        ///</summary>
+        protected ulong[] values = [];
 
-        protected ulong mask;
-        public readonly int bits;
+        ///<summary>
+        ///Converts a struct of type T to a byte.
+        ///</summary>
+        ///<param name="src">The source struct.</param>
+        ///<returns>The byte representation of the struct.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private static byte ToByte(T src) => Unsafe.As<T, byte>(ref src);
+
+        ///<summary>
+        ///Converts a byte to a struct of type T.
+        ///</summary>
+        ///<param name="src">The source byte.</param>
+        ///<returns>The struct representation of the byte.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        protected static T FromByte(byte src) => Unsafe.As<byte, T>(ref src);
+
+        ///<summary>
+        ///Converts a ulong to a struct of type T by casting to byte.
+        ///</summary>
+        ///<param name="src">The source ulong.</param>
+        ///<returns>The struct representation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private static T FromByte(ulong src) => FromByte((byte)src);
+
+        ///<summary>
+        ///Converts a long to a struct of type T by casting to byte.
+        ///</summary>
+        ///<param name="src">The source long.</param>
+        ///<returns>The struct representation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private static T FromByte(long src) => FromByte((byte)src);
+
+        ///<summary>
+        ///Extracts a value of type T from a ulong at a given bit position using a mask.
+        ///</summary>
+        ///<param name="src">The source ulong.</param>
+        ///<param name="bit">The starting bit position.</param>
+        ///<param name="mask">The mask to apply.</param>
+        ///<returns>The extracted value of type T.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public static T GetValue(ulong src, int bit, ulong mask) => FromByte(src >> bit & mask);
+
+        ///<summary>
+        ///Extracts a value of type T from two consecutive ulongs, handling cases where the value spans across ulong boundaries.
+        ///</summary>
+        ///<param name="prev">The previous ulong element.</param>
+        ///<param name="next">The next ulong element.</param>
+        ///<param name="bit">The starting bit position in the previous ulong.</param>
+        ///<param name="bits">The number of bits to extract.</param>
+        ///<param name="mask">The mask to apply to the extracted bits.</param>
+        ///<returns>The extracted value of type T.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public static T GetValue(ulong prev, ulong next, int bit, int bits, ulong mask) => FromByte(((next & Mask(bit + bits - BITS)) << BITS - bit | prev >> bit) & mask);
+
+        ///<summary>
+        ///Number of items currently stored in the list.
+        ///</summary>
+        protected int count = 0;
+
+        ///<summary>
+        ///Mask to isolate the bits of each item.
+        ///</summary>
+        protected internal readonly ulong mask;
+
+        ///<summary>
+        ///Number of bits per item (1 to 7).
+        ///</summary>
+        public readonly byte bitsPerItem;
+
+        ///<summary>
+        ///Default value used when extending the list.
+        ///</summary>
         public readonly T default_value;
 
-        protected R(int bits_per_item)
+        ///<summary>
+        ///The value representing null for this bit list.
+        ///</summary>
+        public T null_val { get; protected set; } //The value representing null
+
+        ///<summary>
+        ///Constructs an empty BitsList with the specified number of bits per item and a default value of 0.
+        ///</summary>
+        ///<param name="bitsPerItem">The number of bits per item, must be between 1 and 7 (inclusive).</param>
+        ///<exception cref="ArgumentOutOfRangeException">Thrown if bitsPerItem is not between 1 and 7.</exception>
+        protected R(byte bitsPerItem)
         {
-            mask = mask(bits = bits_per_item);
+            if (bitsPerItem < 1 || bitsPerItem > 7)
+                throw new ArgumentOutOfRangeException(nameof(bitsPerItem), $"Bits per item must be between 1 and 7.");
+
+            mask = Mask(this.bitsPerItem = bitsPerItem);
             default_value = default;
         }
 
-        protected R(int bits_per_item, int length)
+        ///<summary>
+        ///Constructs a BitsList with the specified bits per item and initial capacity.
+        ///Initializes with zero size and a default value of 0.
+        ///</summary>
+        ///<param name="bitsPerItem">Number of bits per item (1 to 7).</param>
+        ///<param name="length">Initial capacity in items.</param>
+        protected R(byte bitsPerItem, uint length) : this(bitsPerItem) { values = new ulong[LengthForBits(length * this.bitsPerItem)]; }
+
+        ///<summary>
+        ///Constructs a BitsList with specified bits per item, default value, and size.
+        ///Populates the list with the default value if non-zero.
+        ///</summary>
+        ///<param name="bitsPerItem">Number of bits per item (1 to 7).</param>
+        ///<param name="defaultValue">Default value for items.</param>
+        ///<param name="size">Initial size in items.</param>
+        protected R(byte bitsPerItem, T defaultValue, int size) : this(bitsPerItem, (uint)size)
         {
-            mask = mask(bits = bits_per_item);
-            values = new ulong[len4bits((uint)(length * bits))];
-            default_value = default;
+            default_value = defaultValue;
+            count = Math.Max(0, size); //Ensure size is not negative
+
+            if (ToByte(default_value) != 0)
+                for (var i = 0; i < count; i++)
+                    Set_(this, (uint)i, defaultValue); //Initialize with default value if it's not zero
         }
 
+        ///<summary>
+        ///Returns the number of items in the list.
+        ///</summary>
+        public int Count => count;
 
-        protected R(int bits_per_item, T default_value, int Count)
-        {
-            mask = mask(bits = bits_per_item);
-            this.Count = Math.Abs(Count);
-            values = new ulong[len4bits((uint)(this.Count * bits))];
-            if (to_byte(this.default_value = default_value) == 0) return;
-            for (var i = 0; i < Count; i++) append(this, i, default_value);
-        }
+        ///<summary>
+        ///Returns the current capacity of the list in items.
+        ///</summary>
+        public int Capacity() => (values.Length << LEN) / bitsPerItem;
 
-        public int Capacity() => values.Length * BITS / bits;
-
-        // Adjusts the length of the storage array based on the number of items.
-        // If 0 < items , it adjusts the storage space according to the 'items' parameter.
-        // If items < 0, it cleans up and allocates -items space.
+        ///<summary>
+        ///Adjusts the storage capacity of the list.
+        ///If <paramref name="items"/> is greater than 0, sets the capacity to at least <paramref name="items"/>, trimming excess if necessary.
+        ///If <paramref name="items"/> is less than or equal to 0, clears the list and optionally allocates initial capacity for <code>-items</code> items if -items > 0.
+        ///</summary>
+        ///<param name="items">Desired capacity in items. If negative, the absolute value is used for initial capacity after clearing if greater than zero. If zero, clears and sets capacity to zero.</param>
         protected void Capacity(int items)
         {
-            if (0 < items) // If positive, adjust the array size to fit the specified number of items.
+            if (0 < items)
             {
-                if (items < Count) Count = items; // Adjust the size if items are less than the current size.
-
-                Array.Resize(ref values, len4bits((uint)(items * bits)));
-                return;
+                if (items < count)
+                    count = items;
+                var newLength = LengthForBits((uint)(items * bitsPerItem));
+                if (values.Length != newLength)
+                    Array.Resize(ref values, (int)newLength);
             }
-
-            // If negative, clear the array and allocate space for the absolute value of items.
-            var new_values_length = len4bits((uint)(-items * bits));
-
-            if (values.Length != new_values_length)
+            else
             {
-                // Allocate new space or set it to an empty array if new length is 0.
-                values = new_values_length == 0 ?
-                    Array.Empty<ulong>() :
-                    new ulong[new_values_length];
-
-                Count = 0;
-                return;
+                var newLength = LengthForBits((uint)(-items * bitsPerItem));
+                if (values.Length != newLength)
+                {
+                    values = newLength == 0 ? [] : new ulong[newLength];
+                    count = 0;
+                }
+                else
+                    Clear();
             }
-
-            clear(); // Clear the array.
         }
 
-        protected void clear()
+        ///<summary>
+        ///Clears all items in the list by setting their bits to zero and resets the size to 0.
+        ///</summary>
+        protected void Clear()
         {
-            Array.Fill(values, 0UL, 0, Math.Min(index((uint)(bits * Count)), values.Length - 1));
-            Count = 0;
+            if (0 < count)
+                Array.Fill(values, 0UL, 0, BitList.R.Len4Bits(count * bitsPerItem));
+            count = 0;
         }
 
-        public bool isEmpty() => Count == 0;
+        ///<summary>
+        ///Checks if the list is empty.
+        ///</summary>
+        ///<returns><code>true</code> if the list has no items, <code>false</code> otherwise.</returns>
+        public bool IsEmpty() => count == 0;
 
         public override int GetHashCode()
         {
+            if (count == 0)
+                return 149989999;
             var hash = HashCode.Combine(149989999, Count);
-            var i = index((uint)Count);
-            hash = HashCode.Combine(hash, values[i] & (1UL << bit((uint)Count)) - 1);
-            while (-1 < --i) hash = HashCode.Combine(hash, values[i]);
+            var i = Index(Count * bitsPerItem);
+            if (i < values.Length)
+                hash = HashCode.Combine(hash, values[i] & Mask(Bit(Count * bitsPerItem)));
+            while (--i >= 0)
+                hash = HashCode.Combine(hash, values[i]); //Hash the rest of the ulong array
             return hash;
         }
 
+        public override bool Equals(object? other) => other != null && GetType() == other.GetType() && Equals((R)other);
 
-        public override bool Equals(object? other) => other != null && Equals(other as R);
-
+        ///<summary>
+        ///Determines whether the specified <see cref="R"/> is equal to the current <see cref="R"/>.
+        ///</summary>
+        ///<param name="other">The <see cref="R"/> to compare with the current <see cref="R"/>.</param>
+        ///<returns><code>true</code> if the specified <see cref="R"/> is equal to the current <see cref="R"/>; otherwise, <code>false</code>.</returns>
         public bool Equals(R? other)
         {
-            if (other == null || other.Count != Count) return false;
+            if (other == this)
+                return true;
+            if (other == null || other.count != count)
+                return false;
+            if (count == 0)
+                return true;
 
-            var i = index((uint)Count);
-            var mask = (1UL << bit((uint)Count)) - 1;
-            return (values[i] & mask) == (other.values[i] & mask) &&
-                   new Span<ulong>(values, 0, i).SequenceEqual(new Span<ulong>(other.values, 0, i));
+            var lastLongIndex = Index(count * bitsPerItem);
+            var lastMask = Mask(Bit(count * bitsPerItem));
+            if (values.Length > lastLongIndex && other.values.Length > lastLongIndex && (values[lastLongIndex] & lastMask) != (other.values[lastLongIndex] & lastMask))
+                return false;
+            for (var i = lastLongIndex - 1; i >= 0; i--)
+                if (values[i] != other.values[i])
+                    return false;
+
+            return true;
         }
 
-        public T Get() => this[Count - 1];
+        ///<summary>
+        ///Retrieves the value of the last item in the list.
+        ///</summary>
+        ///<returns>The value of the last item as a <typeparamref name="T"/>.</returns>
+        ///<exception cref="IndexOutOfRangeException">Thrown if the list is empty.</exception>
+        public T GetLast() => this[Count - 1];
 
+        T IReadOnlyList<T>.this[int index] => Get(index);
+
+        ///<summary>
+        ///Retrieves the value at the specified index.
+        ///</summary>
+        ///<param name="item">The index of the item (0 to <see cref="Count"/>-1).</param>
+        ///<returns>The value at the specified index as a <typeparamref name="T"/>.</returns>
+        ///<exception cref="IndexOutOfRangeException">Thrown if <paramref name="item"/> is out of bounds.</exception>
+        public T Get(int item) => this[item];
+
+        ///<summary>
+        ///Gets the item at the specified index.
+        ///</summary>
+        ///<param name="item">The index of the item to access.</param>
+        ///<returns>The item at the specified index.</returns>
+        ///<exception cref="IndexOutOfRangeException">Thrown if <paramref name="item"/> is out of bounds.</exception>
         public virtual T this[int item]
         {
             get
             {
-                var _index = (uint)index((uint)(item *= bits));
-                var _bit = bit((uint)item);
-                return BITS < _bit + bits ?
-                    value(values[_index], values[_index + 1], _bit, bits, mask) :
-                    value(values[_index], _bit, mask);
+                if (item < 0 || count <= item)
+                    throw new IndexOutOfRangeException($"Index {item} is out of range [0, {count})");
+                var bitPosition = item * bitsPerItem;
+                var index = Index(bitPosition);
+                var bitOffset = Bit(bitPosition);
+                return BITS < bitOffset + bitsPerItem ? GetValue(values[index], values[index + 1], bitOffset, bitsPerItem, mask) : GetValue(values[index], bitOffset, mask);
             }
-            set => throw new NotImplementedException();
+            set => throw new NotImplementedException("BitsList.R is readonly");
         }
 
-        protected static void add(R dst, long src) => append(dst, dst.Count, from_byte(src));
+        ///<summary>
+        ///Adds a value to the end of the list.
+        ///</summary>
+        ///<param name="dst">The <see cref="R"/> instance to modify.</param>
+        ///<param name="src">The value to add.</param>
+        protected static void Add(R dst, T src) => Set1(dst, dst.count, src);
 
-        protected static void add(R dst, T src) => append(dst, dst.Count, src);
-
-        protected static void add(R dst, int item, T value)
+        ///<summary>
+        ///Adds a value at the specified index, shifting subsequent elements to the right.
+        ///Extends the list if the index equals the current size; otherwise, inserts within the list.
+        ///</summary>
+        ///<param name="dst">The <see cref="R"/> instance to modify.</param>
+        ///<param name="item">The index to insert at (0 to <see cref="Count"/>).</param>
+        ///<param name="value">The value to insert.</param>
+        ///<exception cref="IndexOutOfRangeException">Thrown if <paramref name="item"/> is less than 0.</exception>
+        protected static void Add(R dst, int item, T value)
         {
-            if (dst.Count == item)
+            if (item < 0)
+                throw new IndexOutOfRangeException("Index cannot be negative.");
+            if (dst.count < item)
             {
-                append(dst, item, value);
+                Set1(dst, item, value); //Extend list if item is beyond current count
                 return;
             }
 
-            if (dst.Count < item)
-            {
-                set1(dst, item, value);
-                return;
-            }
+            dst.values = BitList.RW.ShiftLeft(dst.values, item * dst.bitsPerItem, dst.count * dst.bitsPerItem, dst.bitsPerItem, true);
+            dst.count++;
+            Set1(dst, item, value);
+        }
 
-            var p = (uint)(item * dst.bits);
-            item = index(p);
-            var src = dst.values;
-            var dst_ = dst.values;
-            if (dst.Capacity() * BITS < p) dst.Capacity(-Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits(p)));
-            var v = to_byte(value) & dst.mask;
-            var _bit = bit(p);
-            if (0 < _bit)
+        ///<summary>
+        ///Protected static method to set a range of items from an array of type T starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The array of type T values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<T> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, src[i]);
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from a byte array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The byte array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<byte> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from a sbyte array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The sbyte array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<sbyte> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from a ushort array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The ushort array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<ushort> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from a short array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The short array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<short> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from an int array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The int array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<int> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from a uint array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The uint array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<uint> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from a long array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The long array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<long> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Protected static method to set a range of items from a ulong array starting at a given index.
+        ///</summary>
+        ///<param name="dst">The destination R instance.</param>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The ulong array of values to set.</param>
+        protected static void Set(R dst, int from, ReadOnlySpan<ulong> src)
+        {
+            for (var i = 0; i < src.Length; i++)
+                Set1(dst, from + i, FromByte(src[i]));
+        }
+
+        ///<summary>
+        ///Sets a value at the specified index, extending the list if necessary.
+        ///If the index is beyond the current size, fills intervening positions with the default value.
+        ///</summary>
+        ///<param name="dst">The <see cref="R"/> instance to modify.</param>
+        ///<param name="item">The index to set (0 to <see cref="Count"/>).</param>
+        ///<param name="src">The value to set.</param>
+        protected static void Set1(R dst, int item, T src)
+        {
+            var valueByte = ToByte(src);
+            var maskedValue = valueByte & dst.mask;
+            var totalBits = item * dst.bitsPerItem;
+
+            if (item < dst.count)
             {
-                var i = src[item];
-                var k = BITS - _bit;
-                if (k < dst.bits)
+                var index = Index(totalBits);
+                var bit = Bit(totalBits);
+                var hi = BITS - bit;
+
+                if (hi < dst.bitsPerItem)
                 {
-                    dst_[item] = i << k >> k | v << _bit;
-                    v = v >> k | i >> _bit << dst.bits - k;
+                    var mask = ~0UL << bit;
+                    dst.values[index] = dst.values[index] & ~mask | maskedValue << bit;
+                    var bitsInNextUlong = dst.bitsPerItem - hi;
+                    dst.values[index + 1] = dst.values[index + 1] & ~Mask(bitsInNextUlong) | maskedValue >> hi;
                 }
                 else
                 {
-                    dst_[item] = i << k >> k | v << _bit | i >> _bit << _bit + dst.bits;
-                    v = i >> _bit + dst.bits | src[item + 1] << k - dst.bits & dst.mask;
+                    var mask = dst.mask << bit;
+                    dst.values[index] = dst.values[index] & ~mask | maskedValue << bit;
                 }
-
-                item++;
-            }
-
-            dst.Count++;
-            for (var max = len4bits((uint)(dst.Count * dst.bits)); ;)
-            {
-                var i = src[item];
-                dst_[item] = i << dst.bits | v;
-                if (max < ++item) break;
-                v = i >> BITS - dst.bits;
-            }
-        }
-
-
-        protected static void set(R dst, int from, params T[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, src[i]);
-        }
-
-        protected static void set(R dst, int from, params byte[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set(R dst, int from, params sbyte[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set(R dst, int from, params ushort[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set(R dst, int from, params short[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set(R dst, int from, params int[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set(R dst, int from, params uint[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set(R dst, int from, params long[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set(R dst, int from, params ulong[] src)
-        {
-            for (var i = src.Length; -1 < --i;) set1(dst, from + i, from_byte(src[i]));
-        }
-
-        protected static void set1(R dst, int item, T src)
-        {
-            var total_bits = (uint)(item * dst.bits);
-            if (item < dst.Count)
-            {
-                var _index = index(total_bits);
-                var _bit = bit(total_bits);
-                var k = BITS - _bit;
-
-                var v = to_byte(src) & dst.mask;
-                var i = dst.values[_index];
-
-                if (k < dst.bits)
-                {
-                    dst.values[_index] = i << k >> k | v << _bit;
-                    dst.values[_index + 1] = dst.values[_index + 1] >> dst.bits - k << dst.bits - k | v >> k;
-                }
-                else dst.values[_index] = ~(~0UL >> BITS - dst.bits << _bit) & i | v << _bit;
 
                 return;
             }
 
-            if (dst.Capacity() <= item) dst.Capacity(Math.Max(dst.Capacity() + dst.Capacity() / 2, len4bits((uint)(total_bits + dst.bits))));
-            if (to_byte(dst.default_value) != 0)
-                for (var t = dst.Count; t < item; t++)
-                    append(dst, item, dst.default_value);
-            append(dst, item, src);
-            dst.Count = item + 1;
+            if (dst.Capacity() <= item)
+                dst.Capacity((int)Math.Max(dst.Capacity() * 3 / 2, LengthForBits(totalBits + dst.bitsPerItem) * BITS / dst.bitsPerItem)); //Ensure capacity in items
+            if (ToByte(dst.default_value) != 0)
+                for (var i = dst.count; i < item; i++)
+                    Set_(dst, (uint)i, dst.default_value);
+
+            Set_(dst, (uint)item, src);
+            dst.count = item + 1;
         }
 
-        private static void append(R dst, int item, T src)
+        ///<summary>
+        ///Appends a value at the specified index.
+        ///Handles cases where the value spans two ulongs.
+        ///</summary>
+        ///<param name="dst">The <see cref="R"/> instance to modify.</param>
+        ///<param name="item">The index to append at.</param>
+        ///<param name="src">The value to append.</param>
+        private static void Set_(R dst, uint item, T src)
         {
-            var v = to_byte(src) & dst.mask;
+            var valueByte = ToByte(src);
+            var maskedValue = valueByte & dst.mask;
 
-            var p = (uint)(item * dst.bits);
-            int index = BitsList<T>.index(p),
-                bit = BitsList<T>.bit(p);
+            var bitPosition = (int)item * dst.bitsPerItem;
+            var index = Index(bitPosition);
+            var bitOffset = Bit(bitPosition);
+            var bitsRemainingInUlong = BITS - bitOffset;
 
-            var k = BITS - bit;
-            var i = dst.values[index];
-
-            if (k < dst.bits)
+            if (bitsRemainingInUlong < dst.bitsPerItem)
             {
-                dst.values[index] = i << k >> k | v << bit;
-                dst.values[index + 1] = v >> k;
+                var maskForFirstUlong = ~0UL << bitOffset;
+                dst.values[index] = dst.values[index] & ~maskForFirstUlong | maskedValue << bitOffset;
+                var bitsInNextUlong = dst.bitsPerItem - bitsRemainingInUlong;
+                dst.values[index + 1] = dst.values[index + 1] & ~Mask(bitsInNextUlong) | maskedValue >> bitsRemainingInUlong;
             }
             else
-                dst.values[index] = ~(~0UL << bit) & i | v << bit;
+            {
+                var maskForUlong = dst.mask << bitOffset;
+                dst.values[index] = dst.values[index] & ~maskForUlong | maskedValue << bitOffset;
+            }
         }
 
-        protected static void removeAt(R dst, int item)
+        ///<summary>
+        ///Removes an item at the specified index, shifting subsequent elements to the left.
+        ///If the index is the last item, simply reduces the size unless the default value requires clearing.
+        ///</summary>
+        ///<param name="dst">The <see cref="R"/> instance to modify.</param>
+        ///<param name="item">The index to remove (0 to <see cref="Count"/>-1).</param>
+        protected static void RemoveAt(R dst, int item)
         {
-            if (item + 1 == dst.Count)
+            if (item < 0 || item >= dst.count)
+                throw new IndexOutOfRangeException($"Index {item} is out of range [0, {dst.count})");
+
+            if (item == dst.count - 1)
             {
-                if (to_byte(dst.default_value) == 0) append(dst, item, default); //zeroed place
-                dst.Count--;
+                if (ToByte(dst.default_value) == 0)
+                    Set_(dst, (uint)item, default);
+                dst.count--;
                 return;
             }
 
-            var _index = index((uint)(item *= dst.bits));
-            var _bit = bit((uint)item);
-
-            var k = BITS - _bit;
-            var i = dst.values[_index];
-
-            if (_index + 1 == dst.Capacity())
-            {
-                if (_bit == 0) dst.values[_index] = i >> dst.bits;
-                else if (k < dst.bits) dst.values[_index] = i << k >> k;
-                else if (dst.bits < k) dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit;
-
-                dst.Count--;
-                return;
-            }
-
-            if (_bit == 0) dst.values[_index] = i >>= dst.bits;
-            else if (k < dst.bits)
-            {
-                var ii = dst.values[_index + 1];
-                dst.values[_index] = i << k >> k | ii >> _bit + dst.bits - BITS << _bit;
-                dst.values[++_index] = i = ii >> dst.bits;
-            }
-            else if (dst.bits < k)
-                if (_index + 1 == dst.values.Length)
-                {
-                    dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit;
-                    dst.Count--;
-                    return;
-                }
-                else
-                {
-                    var ii = dst.values[_index + 1];
-
-                    dst.values[_index] = i << k >> k | i >> _bit + dst.bits << _bit | ii << BITS - dst.bits;
-                    dst.values[++_index] = i = ii >> dst.bits;
-                }
-
-            for (var max = dst.Count * dst.bits >> LEN; _index < max;)
-            {
-                var ii = dst.values[_index + 1];
-                dst.values[_index] = i << dst.bits >> dst.bits | ii << BITS - dst.bits;
-                dst.values[++_index] = i = ii >> dst.bits;
-            }
-
-            dst.Count--;
+            BitList.RW.ShiftRight(dst.values, dst.values, item * dst.bitsPerItem, dst.count * dst.bitsPerItem, dst.bitsPerItem, true);
+            dst.count--;
         }
 
         public object Clone()
         {
-            var dst = (R)MemberwiseClone();
-            dst.values = (ulong[])values.Clone();
-            return dst;
+            try
+            {
+                var dst = (R)MemberwiseClone();
+                if (dst.Capacity() > 0)
+                    dst.values = (ulong[])values.Clone();
+                return dst;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null!;
+            }
         }
 
         public override string ToString() => ToString(null).ToString();
 
+        ///<summary>
+        ///Appends a string representation of the BitList to the provided StringBuilder.
+        ///If null StringBuilder is provided, a new one will be created.
+        ///</summary>
+        ///<param name="dst">The StringBuilder to append to, or null to create a new one.</param>
+        ///<returns>The StringBuilder containing the string representation.</returns>
         public StringBuilder ToString(StringBuilder? dst)
         {
-            if (dst == null) dst = new StringBuilder(Count * 4);
-            else dst.EnsureCapacity(dst.Length + Count * 4);
-            var src = values[(uint)0];
-            for (int bp = 0, max = Count * bits, i = 1; bp < max; bp += bits, i++)
+            if (dst == null)
+                dst = new StringBuilder(Count * 4); //Initialize StringBuilder if null, estimate capacity
+            else
+                dst.EnsureCapacity(dst.Length + Count * 4); //Ensure capacity
+
+            var currentULong = values.Length > 0 ? values[0] : 0; //Avoid index out of range if values is empty
+
+            for (int itemIndex = 0, bitPosition = 0; itemIndex < Count; itemIndex++, bitPosition += bitsPerItem)
             {
-                var _bit = bit((uint)bp);
-                var index1 = (uint)(index((uint)bp) + 1);
-                var _value = BITS < _bit + bits ?
-                    value(src, src = values[index1], _bit, bits, mask) :
-                    value(src, _bit, mask);
-                dst.Append(_value).Append('\t');
-                if (i % 10 == 0) dst.Append('\t').Append(i / 10 * 10).Append('\n');
+                var bitOffset = Bit(bitPosition);
+                var nextULongIndex = Index(bitPosition) + 1;
+                var itemValue = BITS < bitOffset + bitsPerItem ? GetValue(currentULong, nextULongIndex < values.Length ? values[nextULongIndex] : 0, bitOffset, bitsPerItem, mask) //Handle boundary and array bounds
+                                                               : GetValue(currentULong, bitOffset, mask);
+
+                dst.Append(itemValue).Append('\t');
+                if ((itemIndex + 1) % 10 == 0)
+                    dst.Append('\t').Append((itemIndex + 1) / 10 * 10).Append('\n');
+                if (BITS < bitOffset + bitsPerItem && nextULongIndex < values.Length)
+                    currentULong = values[nextULongIndex]; //Update currentULong if needed and within bounds
             }
 
             return dst;
         }
 
-        public int indexOf(T value)
+        ///<summary>
+        ///Finds the index of the first occurrence of a specified value in the list.
+        ///</summary>
+        ///<param name="value">The value to search for.</param>
+        ///<returns>The index of the first occurrence of <paramref name="value"/> if found; otherwise, -1.</returns>
+        public int IndexOf(T value)
         {
-            for (int item = 0, max = Count * bits; item < max; item += bits)
-                if (value.Equals(this[item]))
-                    return item / bits;
-            return -1;
-        }
-
-        public int lastIndexOf(T value) => lastIndexOf(Count, value);
-
-        public int lastIndexOf(int from, T value)
-        {
-            for (var i = Math.Min(from, Count); -1 < --i;)
-                if (value.Equals(this[i]))
+            var v = (byte)(ToByte(value) & mask);
+            for (var i = 0; i < count; i++)
+                if (v == ToByte(this[i]))
                     return i;
             return -1;
         }
 
-        protected static bool remove(R dst, T value)
-        {
-            var ret = false;
-            for (var i = dst.Count; -1 < (i = dst.lastIndexOf(i, value));)
-            {
-                ret = true;
-                removeAt(dst, i);
-            }
+        ///<summary>
+        ///Finds the index of the last occurrence of a specified value in the list.
+        ///</summary>
+        ///<param name="value">The value to search for.</param>
+        ///<returns>The index of the last occurrence of <paramref name="value"/> if found; otherwise, -1.</returns>
+        public int LastIndexOf(T value) => LastIndexOf(count - 1, value);
 
-            return ret;
+        ///<summary>
+        ///Finds the index of the last occurrence of a specified value in the list within the range of elements up to the specified index.
+        ///</summary>
+        ///<param name="from">The zero-based starting index of the backward search.</param>
+        ///<param name="value">The value to search for.</param>
+        ///<returns>The index of the last occurrence of <paramref name="value"/> if found; otherwise, -1.</returns>
+        public int LastIndexOf(int from, T value)
+        {
+            var v = (byte)(ToByte(value) & mask);
+            for (var i = Math.Min(from, count - 1); 0 <= i; i--)
+                if (v == ToByte(this[i]))
+                    return i;
+            return -1;
         }
 
+        ///<summary>
+        ///Removes all occurrences of the specified value from the list.
+        ///</summary>
+        ///<param name="dst">The <see cref="R"/> instance to modify.</param>
+        ///<param name="value">The value to remove.</param>
+        protected static void Remove(R dst, T value)
+        {
+            for (var i = dst.count; -1 < (i = dst.LastIndexOf(i, value));)
+                RemoveAt(dst, i);
+        }
+
+        ///<summary>
+        ///Checks if the list contains the specified value.
+        ///</summary>
+        ///<param name="value">The value to check for.</param>
+        ///<returns><code>true</code> if the value is present, <code>false</code> otherwise.</returns>
+        public bool Contains(T value) => IndexOf(value) != -1;
+
+        ///<summary>
+        ///Converts the list to an array of <typeparamref name="T"/>.
+        ///</summary>
+        ///<param name="dst">The destination array. If null or insufficient, a new array is created.</param>
+        ///<returns>An array of <typeparamref name="T"/> containing all values, or an empty array if the list is empty.</returns>
         public T[] ToArray(T[]? dst)
         {
-            if (Count == 0) return null;
-            if (dst == null || dst.Length < Count) dst = new T[Count];
-            for (int item = 0, max = Count * bits; item < max; item += bits)
-                dst[item / bits] = this[item];
+            if (count == 0)
+                return [];        //Return empty array instead of null
+            dst ??= new T[count]; //Create new array if dst is null or too small
+            if (dst.Length < count)
+                dst = new T[count]; //Ensure dst is large enough
+
+            for (var i = 0; i < count; i++)
+                dst[i] = Get(i);
             return dst;
         }
 
-        public bool Contains(T item) => -1 < indexOf(item);
+        public void CopyTo(T[] dst, int dstIndex)
+        {
+            ArgumentNullException.ThrowIfNull(dst);
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual((uint)dstIndex, (uint)dst.Length);
+            if (dst.Length - dstIndex < Count)
+                throw new ArgumentException("Destination array is not long enough.");
 
-        public int IndexOf(T item) => indexOf(item);
+            for (var i = 0; i < count; i++)
+            {
+                dst[dstIndex + i] = Get(i);
+            }
+        }
 
+        ///<summary>
+        ///Creates a mask with the specified number of least significant bits set to 1.
+        ///Example: <code>Mask(3)</code> returns <code>0b111</code> (7 in decimal).
+        ///</summary>
+        ///<param name="bits">Number of bits for the mask, ranging from 0 to 7.</param>
+        ///<returns>A <see cref="ulong"/> mask with the specified bits set.</returns>
+        public static ulong Mask(int bits) => (1UL << bits) - 1;
 
-        public Enumerator GetEnumerator() => new Enumerator(this);
+        ///<summary>
+        ///Computes the array index for a given bit position.
+        ///Since each <see cref="ulong"/> holds BITS bits, the index is calculated as <code>bit_position / BITS</code>.
+        ///</summary>
+        ///<param name="bitPosition">The bit position in the array.</param>
+        ///<returns>The index of the <see cref="ulong"/> containing the bit.</returns>
+        protected static int Index(int bitPosition) => bitPosition >> LEN; //Using LEN constant
+
+        ///<summary>
+        ///Computes the bit offset within a <see cref="ulong"/> for a given bit position.
+        ///This is the remainder when <paramref name="bitPosition"/> is divided by BITS.
+        ///</summary>
+        ///<param name="bitPosition">The bit position in the array.</param>
+        ///<returns>The bit offset (0 to 63) within the <see cref="ulong"/>.</returns>
+        protected static int Bit(int bitPosition) => bitPosition & MASK; //Using MASK constant
+
+        ///<summary>
+        ///Extracts a value from a <see cref="ulong"/> starting at a specified bit position.
+        ///The value is isolated using the provided mask.
+        ///</summary>
+        ///<param name="src">Source <see cref="ulong"/> value containing the bits.</param>
+        ///<param name="bit">Starting bit position within the <see cref="ulong"/> (0 to 63).</param>
+        ///<param name="mask">Mask to isolate the desired bits.</param>
+        ///<returns>The extracted value as a <see cref="byte"/>.</returns>
+        protected static byte GetByteValue(ulong src, int bit, ulong mask) => (byte)(src >> bit & mask);
+
+        ///<summary>
+        ///Extracts a value spanning two <see cref="ulong"/>s starting at a specified bit position.
+        ///used when the value crosses the boundary between two <see cref="ulong"/>s.
+        ///</summary>
+        ///<param name="prev">Previous <see cref="ulong"/> value.</param>
+        ///<param name="next">Next <see cref="ulong"/> value.</param>
+        ///<param name="bit">Starting bit position in <paramref name="prev"/> (0 to 63).</param>
+        ///<param name="bits">Number of bits to extract.</param>
+        ///<param name="mask">Mask to isolate the desired bits.</param>
+        ///<returns>The extracted value as a <see cref="byte"/>.</returns>
+        protected static byte GetByteValue(ulong prev, ulong next, int bit, int bits, ulong mask) => (byte)(((next & Mask(bit + bits - BITS)) << BITS - bit | prev >> bit) & mask);
+
+        ///<summary>
+        ///Calculates the number of <see cref="ulong"/>s needed to store a given number of bits.
+        ///Uses ceiling division by BITS.
+        ///</summary>
+        ///<param name="bits">Total number of bits to store.</param>
+        ///<returns>Number of <see cref="ulong"/>s required.</returns>
+        public static uint LengthForBits(uint bits) => (bits + BITS - 1) / BITS; //More efficient ceiling division
+
+        public static uint LengthForBits(int bits) => (uint)((bits + BITS - 1) / BITS); //More efficient ceiling division
+
+        ///<summary>
+        ///Number of bits in a <see cref="ulong"/>.
+        ///</summary>
+        protected const byte BITS = 64;
+
+        ///<summary>
+        ///Mask for bit operations, equal to 63 (0b111111).
+        ///</summary>
+        public const byte MASK = BITS - 1;
+
+        ///<summary>
+        ///Number of bits to shift for indexing, equal to log2(BITS) = 6.
+        ///</summary>
+        public const byte LEN = 6;
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); //Delegate to the generic version (or the struct version, see below)
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator(); //Delegate to the struct-returning version
+
+        public Enumerator GetEnumerator() => new(this);
+
+        ///<summary>
+        ///Enumerator struct for <see cref="R"/>.
+        ///</summary>
+        public struct Enumerator : IEnumerator<T>
+        {
+            private readonly R _list;
+            private int _index;
+            private T _current; //Store current value to avoid get property call twice in some cases
+
+            internal Enumerator(R list)
+            {
+                _list = list;
+                _index = -1;
+                _current = default; //Initialize current
+            }
+
+            ///<inheritdoc/>
+            public T Current => _index == -1 ? throw new InvalidOperationException("Enumeration has either not started or has finished.") : _current;
+
+            ///<inheritdoc/>
+            object? IEnumerator.Current => Current;
+
+            ///<inheritdoc/>
+            public bool MoveNext()
+            {
+                if (++_index < _list.Count)
+                {
+                    _current = _list[_index]; //Fetch and store current value
+                    return true;
+                }
+
+                return false;
+            }
+
+            public void Reset()
+            {
+                _index = -1;
+                _current = default; //Reset current
+            }
+
+            public void Dispose() { }
+        }
     }
 
-    public struct Enumerator : IEnumerator<T>, IEnumerator
+    ///<summary>
+    ///Read-write extension of <see cref="BitsList{T}"/>, adding methods that modify the list and return the instance for chaining.
+    ///Extends <see cref="R"/> with additional functionality for dynamic manipulation.
+    ///</summary>
+    public class RW : R, IList<T>
     {
-        private readonly R _list;
-        private int _index;
+        public RW(byte bitsPerItem) : base(bitsPerItem) { }
 
-        private T _current;
+        public RW(byte bitsPerItem, uint length) : base(bitsPerItem, length) { }
 
-        internal Enumerator(R list)
+        public RW(byte bitsPerItem, T defaultValue, int size) : base(bitsPerItem, defaultValue, size) { }
+
+        ///<inheritdoc/>
+        public bool IsReadOnly => false;
+
+        public void Add(T item) => R.Add(this, item);
+
+        ///<inheritdoc/>
+        public void Insert(int index, T item) => R.Add(this, index, item);
+
+        ///<inheritdoc/>
+        public bool Remove(T item)
         {
-            _list = list;
-            _index = 0;
-            _current = default;
+            var initialCount = Count;
+            R.Remove(this, item);
+            return initialCount != Count;
         }
 
-        public void Dispose()
+        public void RemoveAt(int index) => R.RemoveAt(this, index);
+
+        ///<summary>
+        ///Removes the last item and returns this instance for chaining.
+        ///</summary>
+        ///<returns>This <see cref="RW"/> instance.</returns>
+        ///<exception cref="IndexOutOfRangeException">Thrown if the list is empty.</exception>
+        public RW RemoveLast()
         {
-        }
-
-        public bool MoveNext()
-        {
-            _current = _list[_index];
-            _index++;
-            return true;
-        }
-
-        public T Current => _current!;
-
-        object? IEnumerator.Current => _current;
-
-        void IEnumerator.Reset()
-        {
-            _index = 0;
-            _current = default;
-        }
-    }
-
-    class RW : R
-    {
-        public RW(int bitsPerItem) : base(bitsPerItem)
-        {
-        }
-
-        public RW(int bitsPerItem, int length) : base(bitsPerItem, length)
-        {
-        }
-
-        public RW(int bitsPerItem, T defaultValue, int length) : base(bitsPerItem, defaultValue, length)
-        {
-        }
-
-        public RW Add1(long value)
-        {
-            add(this, value);
+            if (count == 0)
+                throw new IndexOutOfRangeException("List is empty");
+            RemoveAt(this, count - 1);
             return this;
         }
 
-        public RW Add(params T[] values)
+        ///<summary>
+        ///Sets the value of the last item and returns this instance for chaining.
+        ///</summary>
+        ///<param name="value">The value to set.</param>
+        ///<returns>This <see cref="RW"/> instance.</returns>
+        ///<exception cref="IndexOutOfRangeException">Thrown if the list is empty.</exception>
+        public RW SetLast(T value)
         {
-            foreach (var value in values) Set(Count, value);
+            if (count == 0)
+                throw new IndexOutOfRangeException("List is empty");
+            Set1(this, count - 1, value);
             return this;
         }
 
-        public RW Add1(int index, long src)
+        ///<summary>
+        ///Sets the value at the specified index and returns this instance for chaining.
+        ///</summary>
+        ///<param name="item">The index to set (0 to <see cref="Count"/>).</param>
+        ///<param name="value">The value to set.</param>
+        ///<returns>This <see cref="RW"/> instance.</returns>
+        ///<exception cref="IndexOutOfRangeException">Thrown if <paramref name="item"/> is out of bounds.</exception>
+        public RW Set(int item, T value)
         {
-            add(this, index, from_byte(src));
+            Set1(this, item, value);
             return this;
         }
 
-        public RW Remove(T value)
-        {
-            remove(this, value);
-            return this;
-        }
-
-        public RW RemoveAt(int item)
-        {
-            removeAt(this, item);
-            return this;
-        }
-
-        public RW Remove()
-        {
-            removeAt(this, base.Count - 1);
-            return this;
-        }
-
+        ///<inheritdoc/>
         public override T this[int item]
         {
             get => base[item];
-            set => set1(this, item, value);
+            set => Set1(this, item, value);
         }
 
-        public RW Set(int index, params byte[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from an array of type T starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The array of type T values to set.</param>
+        public RW Set(int from, ReadOnlySpan<T> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public RW Set(int index, params T[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from a byte array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The byte array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<byte> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public RW Set(int index, params short[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from a sbyte array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The sbyte array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<sbyte> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public RW Set(int index, params ushort[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from a ushort array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The ushort array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<ushort> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public RW Set(int index, params int[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from a short array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The short array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<short> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public RW Set(int index, params uint[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from an int array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The int array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<int> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public RW Set(int index, params long[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from a uint array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The uint array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<uint> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public RW Set(int index, params ulong[] values)
+        ///<summary>
+        ///Protected static method to set a range of items from a long array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The long array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<long> src)
         {
-            set(this, index, values);
+            Set(this, from, src);
             return this;
         }
 
-        public bool retainAll(R chk)
+        ///<summary>
+        ///Protected static method to set a range of items from a ulong array starting at a given index.
+        ///</summary>
+        ///<param name="from">The starting item index.</param>
+        ///<param name="src">The ulong array of values to set.</param>
+        public RW Set(int from, ReadOnlySpan<ulong> src)
         {
-            var fix = base.Count;
-            T v;
-            for (var item = 0; item < base.Count; item++)
-                if (!chk.Contains(v = this[item]))
-                    remove(this, v);
-            return fix != base.Count;
-        }
-
-        public RW Fit() => Capacity(base.Count);
-
-        public RW Clear()
-        {
-            clear();
+            Set(this, from, src);
             return this;
         }
 
-
-        public new RW Capacity(int value)
+        ///<summary>
+        ///Retains only the items present in the specified list and indicates if the list changed.
+        ///Removes all items not found in <paramref name="chk"/>.
+        ///</summary>
+        ///<param name="chk">The <see cref="R"/> instance containing values to retain.</param>
+        ///<returns><code>true</code> if this list was modified, <code>false</code> otherwise.</returns>
+        public bool RetainAll(R? chk)
         {
-            if (value < 1)
+            if (chk == null)
+                return false;
+            var originalCount = Count;
+            for (var item = 0; item < Count; item++)
             {
-                values = Array.Empty<ulong>();
-                base.Count = 0;
+                if (!chk.Contains(this[item]))
+                {
+                    Remove(this, this[item]);
+                    item--; //Decrement item to re-examine the current index after removal
+                }
             }
-            else base.Capacity(value);
 
-            return this;
+            return originalCount != Count;
         }
 
-        public new int Count
+        ///<summary>
+        ///Adjusts the capacity to match the current size and returns this instance for chaining.
+        ///Trims excess capacity to optimize memory usage.
+        ///</summary>
+        ///<returns>This <see cref="RW"/> instance.</returns>
+        public RW Fit() => Capacity(count);
+
+        ///<summary>
+        ///Sets the capacity of the list and returns this instance for chaining.
+        ///If <paramref name="items"/> is less than 1, clears the list and sets capacity to 0; otherwise, adjusts to at least <paramref name="items"/>.
+        ///</summary>
+        ///<param name="items">The desired capacity in items.</param>
+        ///<returns>This <see cref="RW"/> instance.</returns>
+        public RW Capacity(int items)
         {
-            get => base.Count;
-            set
+            if (items < 1)
             {
-                if (value < 1) Clear();
-                else if (base.Count < value) set1(this, value - 1, default_value);
-                else base.Count = value;
+                values = [];
+                count = 0;
             }
-        }
+            else
+                base.Capacity(items);
 
-        public RW Resize(int size)
-        {
-            Count = size;
             return this;
         }
 
-        RW Clone() => (RW)base.Clone();
+        ///<inheritdoc/>
+        public new void Clear() => base.Clear();
+
+        ///<summary>
+        ///Sets the size of the list, extending with the default value if necessary, and returns this instance.
+        ///If <paramref name="count"/> is less than 1, clears the list; if greater than current size, extends with <see cref="default_value"/>.
+        ///</summary>
+        ///<param name="count">The desired size in items.</param>
+        ///<returns>This <see cref="RW"/> instance.</returns>
+        public RW Count_(int count)
+        {
+            if (count < 0)
+                Clear();
+            else if (this.count < count)
+                Set1(this, count - 1, default_value);
+            else
+                this.count = count;
+            return this;
+        }
+
+        public new RW Clone() => (RW)base.Clone();
+
+        ///<inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+
+        ///<inheritdoc/>
+        public new IEnumerator<T> GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+
+        ///<inheritdoc/>
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex) { base.CopyTo(array, arrayIndex); }
     }
 }

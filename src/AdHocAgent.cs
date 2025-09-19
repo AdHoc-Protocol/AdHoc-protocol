@@ -1,42 +1,29 @@
-﻿//  MIT License
+﻿// Copyright 2025 Chikirev Sirguy, Unirail Group
 //
-//  Copyright © 2020 Chikirev Sirguy, Unirail Group. All rights reserved.
-//  For inquiries, please contact:  al8v5C6HU4UtqE9@gmail.com
-//  GitHub Repository: https://github.com/AdHoc-Protocol
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files (the "Software"), to use,
-//  copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-//  the Software, and to permit others to do so, under the following conditions:
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-//  1. The above copyright notice and this permission notice must be included in all
-//     copies or substantial portions of the Software.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //
-//  2. Users of the Software must provide a clear acknowledgment in their user
-//     documentation or other materials that their solution includes or is based on
-//     this Software. This acknowledgment should be prominent and easily visible,
-//     and can be formatted as follows:
-//     "This product includes software developed by Chikirev Sirguy and the Unirail Group
-//     (https://github.com/AdHoc-Protocol)."
-//
-//  3. If you modify the Software and distribute it, you must include a prominent notice
-//     stating that you have changed the Software.
-//
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
-//  OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//  SOFTWARE.
+// For inquiries, please contact: al8v5C6HU4UtqE9@gmail.com
+// GitHub Repository: https://github.com/AdHoc-Protocol
 
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -44,25 +31,31 @@ using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using org.unirail.Agent;
-using org.unirail.Agent.AdHocProtocol.Agent_;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Tommy;
 
-//https://github.com/dezhidki/Tommy
+//https://github.com/dezhidki/Tommy - TOML parser library
 
 namespace org.unirail
 {
-    // https: //docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/get-started/semantic-analysis
+    /// <summary>
+    /// Static class responsible for AdHoc Agent operations, including protocol description processing,
+    /// code generation, and deployment.
+    /// </summary>
     static class AdHocAgent
     {
+        /// <summary>
+        /// Serilog enricher to add file path and line number to log events.
+        /// </summary>
         class CallerEnricher : ILogEventEnricher
         {
             StringBuilder sb = new();
 
             public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
             {
+                // Captures stack frame information, skipping the enricher itself and Serilog internals.
                 var stack = new StackTrace(true) // true to capture file information
                             .GetFrames().Skip(1).FirstOrDefault(stack => stack.GetFileName() != null);
 
@@ -74,12 +67,19 @@ namespace org.unirail
             }
         }
 
-        public static readonly Logger LOG = new LoggerConfiguration() // >> https://github.com/serilog/serilog/wiki/Getting-Started <<
-                                            .Enrich.With<CallerEnricher>()
-                                            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message} in {FileLine}\n")
+        /// <summary>
+        /// Global logger instance for the AdHoc Agent, configured with console output and caller information.
+        /// Uses Serilog for structured logging: https://github.com/serilog/serilog/wiki/Getting-Started
+        /// </summary>
+        public static readonly Logger LOG = new LoggerConfiguration()
+                                            .Enrich.With<CallerEnricher>()                                                                  // Add file path and line number to logs
+                                            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message} in {FileLine}\n") // Configure console output format
                                             .CreateLogger();
 
-
+        /// <summary>
+        /// Gets the path to the application properties file (AdHocAgent.toml).
+        /// If the file doesn't exist, it extracts a template from embedded resources.
+        /// </summary>
         public static string app_props_file
         {
             get
@@ -101,9 +101,17 @@ namespace org.unirail
             }
         }
 
+        /// <summary>
+        /// Application properties loaded from the TOML configuration file.
+        /// Uses Tommy library to parse TOML: https://www.ryansouthgate.com/2016/03/23/iconfiguration-in-netcore/
+        /// </summary>
         public static TomlTable app_props = TOML.Parse(File.OpenText(app_props_file)); //load application 'toml file'   https://www.ryansouthgate.com/2016/03/23/iconfiguration-in-netcore/
 
-
+        /// <summary>
+        /// Unzips a stream to a destination folder. Creates a temporary file for processing.
+        /// </summary>
+        /// <param name="sourceStream">The source stream to unzip.</param>
+        /// <param name="destinationFolder">The destination folder for the unzipped files.</param>
         public static void unzip(Stream src, string dst_folder)
         {
             var tmp_src = File.OpenWrite(new_random_tmp_path);
@@ -114,6 +122,12 @@ namespace org.unirail
             File.Delete(tmp_src.Name);
         }
 
+        /// <summary>
+        /// Unzips a file to a destination folder using 7-Zip command-line tool.
+        /// Requires 7-Zip to be installed and in the system PATH.
+        /// </summary>
+        /// <param name="sourceFile">The path to the zip file.</param>
+        /// <param name="destinationFolder">The destination folder for the unzipped files.</param>
         public static void unzip(string src_file, string dst_folder) => Process.Start(new ProcessStartInfo
         {
             FileName = "7z",
@@ -122,9 +136,18 @@ namespace org.unirail
             WindowStyle = ProcessWindowStyle.Hidden
         })!.WaitForExit();
 
-        private static string new_random_tmp_path => Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
+        /// <summary>
+        /// Generates a new random temporary file path using GUID.
+        /// </summary>
+        static string new_random_tmp_path => Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
 
-
+        /// <summary>
+        /// Zips a byte array into a 7z archive with a given name.
+        /// Creates a temporary file to store the byte array before zipping.
+        /// </summary>
+        /// <param name="sourceBytes">The byte array to zip.</param>
+        /// <param name="name">The name of the zip archive (without extension).</param>
+        /// <returns>The zipped byte array.</returns>
         public static byte[] zip(byte[] src, string name)
         {
             name = Path.Join(Path.GetTempPath(), name);
@@ -135,7 +158,12 @@ namespace org.unirail
             return ret;
         }
 
-
+        /// <summary>
+        /// Zips a list of files into a 7z archive using 7-Zip command-line tool.
+        /// Uses PPMd compression for maximum compression.
+        /// </summary>
+        /// <param name="filesPaths">An enumerable of file paths to be zipped.</param>
+        /// <returns>The zipped byte array.</returns>
         public static byte[] zip(IEnumerable<string> files_paths)
         {
             var tmp_zip = new_random_tmp_path;
@@ -157,8 +185,12 @@ namespace org.unirail
             return ret.ToArray();
         }
 
+        /// <summary>
+        /// Flag indicating if the agent is in testing mode (triggered by '!' suffix in path argument).
+        /// </summary>
         public static bool is_testing;
 
+        public static bool is_diagramming;
 
         /**
          first - required full path to the description_file.cs
@@ -209,98 +241,91 @@ namespace org.unirail
             if (paths.Length == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("AdHocAgent utility");
+                Console.WriteLine(" AdHocAgent Utility - Your friendly command-line assistant for project workflows.");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" accepts the following command-line input:");
+                Console.WriteLine("===============================================================================================");
+                Console.WriteLine();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Commands:");
+                Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\tUUID   ");
+                Console.Write("  UUID   ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Save the provided personal, volatile UUID to the AdHocAgent.toml configuration file.");
+                Console.WriteLine("         Saves the provided personal, volatile UUID to the AdHocAgent.toml configuration file.");
+                Console.ResetColor();
+                Console.WriteLine();
 
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(" File - based Tasks:");
+                Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("  The first argument is the path to the task file:");
+                Console.WriteLine("  The first argument is the path to the task file. The file extension determines the action:");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("\tIf the provided path ends with:");
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\t.cs   ");
+                Console.Write("\t.cs   ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("- Uploads the protocol description file to the server to generate source code.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\t.cs?  ");
+                Console.Write("\t.cs?  ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("- Displays information about the protocol description file in the viewer.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\t.md   ");
+                Console.Write("\t.md   ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("- Repeats the deployment process according to the instructions in the .md file, using source files already in the working directory.");
-
-
-                Console.Write("\t\tThe remaining arguments are paths to source ");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(".cs ");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("files and project ");
+                Console.WriteLine("          - Repeats the deployment process using instructions from the .md file.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(".csproj ");
+                Console.Write("\t.proto");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("files that are imported and used with the root protocol description file.");
+                Console.WriteLine("         - Converts Protocol Buffers file(s) to AdHoc protocol description format.");
+                Console.ResetColor();
 
-                Console.WriteLine("\t\tIf the last argument is a path to a folder, it is used as the output folder for intermediate results. If not provided, the current working directory is used.");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("\n  Additional Arguments:");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\t- Remaining arguments can be paths to source (.cs) and project (.csproj) files.");
+                Console.WriteLine("\t- If the last argument is a folder, it's used as the output directory.");
+                Console.WriteLine("\t- For `.proto` files, the second argument can be a directory of imported `.proto` files.");
+                Console.WriteLine();
 
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\t\t.proto");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("- or path to a directory, indicates that the file(s) is in Protocol Buffers format and will be sent to the server for conversion to AdHoc protocol description format.");
-                Console.WriteLine("\t\tThe second argument can be a path to a directory containing additional imported `.proto` files.");
 
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Configuration:");
+                Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("In addition to command-line arguments, the ");
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("AdHocAgent utility");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(" requires the following:");
+                Console.Write("  This utility requires the following files in its directory:\n");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("  AdHocAgent.toml ");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("- A file that contains:");
+                Console.WriteLine(" - Contains server URL and paths to local resources (e.g., IDE).");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\t\tThe server URL.");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\tAnd paths to local resources such as:");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\t\tIDE");
+                Console.WriteLine("\t\t     If not found, a template will be generated for you to fill out.");
 
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("\tThe AdHocAgent utility");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write(" searches for the ");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("AdHocAgent.toml");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine(" file in its own directory.");
-                Console.WriteLine("\tIf the file does not exist, the utility will generate a template. You may need to update this file to match the latest configuration.");
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("  Deployment_instructions.md");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine(" is required only for code generation tasks. This file contains deployment instructions for the generated results. If the file does not exist, the utility will generate a template. You have to update this file with your deployment instructions.");
+                Console.WriteLine(" - Required for code generation. Contains deployment instructions.");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\t\t\t\t   If not found, a template will be generated for you to customize.");
+                Console.WriteLine();
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine();
-                Console.Write("The template for your protocol description file can be found at:");
+                Console.Write("A template for your protocol description file can be found at: ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 var path = Path.Join(Directory.GetCurrentDirectory(), "MyProtocolDescription.cs");
                 Console.WriteLine(path);
 
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ResetColor();
 
                 await using var file = File.Create(path);
                 await Assembly.GetExecutingAssembly().GetManifestResourceStream("AdHocAgent.Templates.ProtocolDescription.cs")!.CopyToAsync(file);
@@ -310,12 +335,20 @@ namespace org.unirail
 
             if (!paths[0].Contains('.')) //UUID
             {
-                Guid.Parse(paths[0]); // Attempt to parse provided string into a GUID
-
                 updatePersonalVolatileUUID(paths[0]);
                 LOG.Information("Volatile personal UUID updated successfully!");
                 return;
             }
+
+            if (paths[0].EndsWith(".json") || paths[0].EndsWith(".yaml")) // Converts OpenAPI json/yaml file into AdHoc protocol description format.
+            {
+                provided_path = paths[0];
+                await OpenApi_To_AdHoc_Converter.convert(paths[0], paths.Length == 1 ?
+                                                                       paths[0][..^4] + "cs" : //If the second argument is skipped, the AdHocAgent utility will output the `.cs` file next to the provided OpenAPI file.
+                                                                       paths[1]);
+                return;
+            }
+
 
             if (paths[0].EndsWith(".md")) //  repeat only the deployment process according to instructions in the .md file, already received source files in the `working directory`
             {
@@ -326,6 +359,7 @@ namespace org.unirail
 
             if (paths[0].EndsWith(".cs?")) // run provided protocol description file viewer
             {
+                is_diagramming = true;
                 provided_path = paths[0][..^1]; //cut '?'
                 set_provided_paths(paths[1..]);
                 await ChannelToObserver.Start();
@@ -363,7 +397,7 @@ namespace org.unirail
             if (provided_path.EndsWith(".cs"))
             {
                 set_provided_paths(paths[1..]);
-                ChannelToServer.Start(ProjectImpl.init());
+                await ChannelToServer.Start(ProjectImpl.init());
                 return;
             }
             #endregion
@@ -492,7 +526,7 @@ namespace org.unirail
                 var bytes = new byte[AdHoc.varint_bytes(str)];
                 AdHoc.varint(str.AsSpan(), new Span<byte>(bytes));
 
-                ChannelToServer.Start(new Proto
+                await ChannelToServer.Start(new AdHocProtocol.Agent_.Proto
                 {
                     task = task,
                     name = Path.GetFileName(provided_path),
@@ -535,7 +569,7 @@ namespace org.unirail
             if (files.Count == 0)
                 exit($"No useful information found at the path: {provided_path}");
 
-            ChannelToServer.Start(new Proto
+            await ChannelToServer.Start(new AdHocProtocol.Agent_.Proto
             {
                 task = task,
                 name = Path.GetFileName(provided_path),
@@ -544,7 +578,7 @@ namespace org.unirail
             #endregion
         }
 
-        private static void set_provided_paths(string[] paths)
+        static void set_provided_paths(string[] paths)
         {
             if (paths.Length == 0) return;
 
@@ -579,8 +613,10 @@ namespace org.unirail
         //folder for downloading files before their processing and deployment ( working(current) directory by default)
         public static string destination_dir_path = Directory.GetCurrentDirectory();
 
-        public static string raw_files_dir_path => Path.Combine(destination_dir_path, Path.GetFileName(provided_path)[..^3]);
-        public static Lazy<string> layout = new(() => raw_files_dir_path + ".layout"); // path to the layout file
+        public static string RawFilesDirPath => Path.Combine(destination_dir_path, Path.GetFileName(provided_path)[..^3]);
+
+
+
 
         public static int exit(string banner, int code = 1)
         {
@@ -621,34 +657,51 @@ namespace org.unirail
             static string deployment_instructions_txt;
             static string raw_files_dir_path;
 
-
+            // A shared StringBuilder to reduce memory allocations during string construction.
             static StringBuilder sb = new();
 
+            /// Represents a single file or directory in the deployment source tree.
+            /// It holds information about its path, display properties, and deployment rules.
+            /// </summary>
             class LineInfo
             {
+                /// <summary>
+                /// Initializes a new LineInfo object and adds it to the global dictionary.
+                /// </summary>
+                /// <param name="path">The full file system path to the file or directory.</param>
+                /// <param name="icon">The icon to use when rendering this line in Markdown.</param>
+                /// <param name="indent">The indentation string for Markdown rendering.</param>
+                /// <param name="key">The relative path used as a unique key in the dictionary.</param>
                 public LineInfo(string path, string icon, string indent, string key)
                 {
                     this.path = path;
                     this.icon = icon;
                     this.indent = indent;
+                    // 'asis' files are treated as binary/library files. They are copied directly without merging.
+                    asis = key.Contains("/lib/") || key.Contains(@"\lib\") || key.Contains(@"\__\") || key.Contains(@"/__/");
                     receiver_files_lines.Add(key, this);
                 }
 
+                // --- Deployment Properties ---
+                public bool skipped; // True if this file/folder should be ignored during deployment.
+                public (Regex Selector, string[] Destinations)[]? targets; // Deployment rules: a selector regex and destination paths.
 
-                public bool skipped;
-                public (Regex, string[])[]? targets;
+                // --- Reporting Properties ---
+                public List<string>? report; // A list of messages detailing the outcome of deployment for this item.
 
-                public List<string>? report;
+                public void add_report(string report) => (this.report ??= new List<string>(2)).Add(report);
 
-                public void add_report(string report) => (this.report == null ?
-                                                              this.report = new List<string>(2) :
-                                                              this.report).Add(report);
-
+                // --- Display Properties ---
                 public string indent;
+                public bool asis; // If true, file is copied verbatim without smart merge.
                 public string path;
                 public string icon;
-                public string customization = "";
+                public string customization = ""; // User-added text from the .md file (e.g., "✅ copy full tree"), preserved on regeneration.
 
+                /// <summary>
+                /// Appends a Markdown-formatted line representing this file/folder to the shared StringBuilder.
+                /// Used for generating or updating the deployment instructions file.
+                /// </summary>
                 public StringBuilder append_md_line()
                 {
                     sb.Append(indent)
@@ -658,9 +711,11 @@ namespace org.unirail
                       .Append(Path.GetFileName(path))
                       .Append("](");
 
+                    // Handle paths with spaces by wrapping them in angle brackets <...>, as per Markdown spec.
                     if (path.Contains(' '))
                     {
                         sb.Append('<');
+                        // Normalize Windows drive letter paths for better cross-platform link compatibility.
                         if (path[1] == ':') sb.Append('/');
                         sb.Append(path).Append(">) ");
                     }
@@ -671,10 +726,13 @@ namespace org.unirail
                         sb.Append(") ");
                     }
 
-                    sb.Replace('\\', '/');
+                    sb.Replace('\\', '/'); // Always use forward slashes in Markdown links.
                     return sb;
                 }
 
+                /// <summary>
+                /// Appends a line to the console report summarizing the deployment result for this file.
+                /// </summary>
                 public void append_report_line()
                 {
                     sb.Append(indent)
@@ -683,9 +741,10 @@ namespace org.unirail
 
                     if (File.Exists(path))
                         if (skipped || report == null)
-                            sb.Append(" ⛔ ");
+                            sb.Append(" ⛔ "); // Skipped or no action taken.
                         else
                         {
+                            // Append multi-line reports with proper indentation for readability.
                             sb.Append(' ');
                             var chars = sb.Length;
                             sb.Append(report[0]);
@@ -701,26 +760,35 @@ namespace org.unirail
                 }
             }
 
-            // the keys
-            //      InCS/Agent/lib/collections/BitList.cs
-            //      InJAVA/Server/collections/org/unirail/collections/BitList.java
+            /// <summary>
+            /// A dictionary mapping relative file paths (e.g., "InCS/Agent/MyFile.cs") to their LineInfo objects.
+            /// This is the central data structure holding the state of all source files to be deployed.
+            /// </summary>
             static Dictionary<string, LineInfo> receiver_files_lines = new();
 
+            /// <summary>
+            /// Scans the source directory (`raw_files_dir_path`) recursively and populates the `receiver_files_lines` dictionary.
+            /// </summary>
+            /// <returns>The length of the root path, used for creating relative keys for the dictionary.</returns>
             public static int build_receiver_files_lines()
             {
                 var root_path_len = raw_files_dir_path.Length + (raw_files_dir_path.EndsWith('/') || raw_files_dir_path.EndsWith('\\') ?
                                                                      0 :
                                                                      1);
 
+                // Helper to create a LineInfo object for a given path.
                 void add(string icon, string path, int level)
                 {
                     sb.Clear();
-                    for (var i = 0; i < level; i++) sb.Append("  ");
+                    for (var i = 0; i < level; i++) sb.Append("  "); // Create indentation string.
+                    // The key is the path relative to the root, with normalized forward slashes.
                     new LineInfo(path, icon, sb.ToString(), path[root_path_len..].Replace('\\', '/'));
                 }
 
+                // Recursive function to scan directories.
                 void scan(string dir, int level)
                 {
+                    // The initial call with level -1 skips adding the root directory itself to the visual tree.
                     if (-1 < level) add("📁", dir, level);
 
                     level++;
@@ -749,36 +817,55 @@ namespace org.unirail
                 return root_path_len;
             }
 
+            /// <summary>
+            /// Redeploys source files based on an existing deployment instructions file.
+            /// This is typically called after the initial `deploy` has been configured by the user.
+            /// </summary>
+            /// <param name="deployment_instructions_file">Path to the deployment instructions .md file.</param>
             public static void redeploy(string deployment_instructions_file)
             {
-                raw_files_dir_path = provided_path[..^".md".Length]; //cut '.md'  and get directory with source files
+                // Infer the source directory path by removing the ".md" extension from the instructions file name.
+                raw_files_dir_path = deployment_instructions_file[..^".md".Length];
+
+                // Search for the source directory first next to the .md file, then in the current working directory.
                 if (!Directory.Exists(raw_files_dir_path) && !Directory.Exists(raw_files_dir_path = Path.Join(Directory.GetCurrentDirectory(), Path.GetFileName(raw_files_dir_path))))
-                    exit($"Cannot find source folder {Path.GetFileName(raw_files_dir_path)} at {Path.GetDirectoryName(provided_path)} and at working directory {Directory.GetCurrentDirectory()} redeploy process canceled");
+                    exit($"Cannot find source folder {Path.GetFileName(raw_files_dir_path)} at {Path.GetDirectoryName(deployment_instructions_file)} and at working directory {Directory.GetCurrentDirectory()} redeploy process canceled");
 
                 process(deployment_instructions_file);
             }
 
+            /// <summary>
+            /// A shared UTF8Encoding instance that does not emit a Byte Order Mark (BOM).
+            /// This is crucial for compatibility with many tools and systems (e.g., clang-format, Java compilers, shell scripts)
+            /// that do not correctly handle a BOM.
+            /// </summary>
+            public static readonly UTF8Encoding UTF8_NO_BOM = new(false);
+
+            /// <summary>
+            /// Performs the initial deployment. It locates or generates a default deployment instructions file
+            /// and then processes it to deploy files from the raw source directory.
+            /// </summary>
+            /// <param name="raw_files_dir_path">Path to the directory containing the received source files.</param>
             public static void deploy(string raw_files_dir_path)
             {
                 Deployment.raw_files_dir_path = raw_files_dir_path;
+                var deployment_instructions_file_name = Path.GetFileName(raw_files_dir_path) + ".md";
 
-                var deployment_instructions_file_name = Path.GetFileName(raw_files_dir_path) + ".md"; //cut `.cs`
-
-                //looking for deployment instructions file
-
-                //1) take a look at working dir
+                // --- Search for the deployment instructions file in priority order ---
+                // 1. Next to the raw files directory itself.
                 var deployment_instructions_file_path = Path.Join(Path.GetDirectoryName(raw_files_dir_path)!, deployment_instructions_file_name);
-                if (File.Exists(deployment_instructions_file_path)) goto deploy; //prefer working directory to extract template
-
-                //2)take a look next to provided file
-                deployment_instructions_file_path = Path.Join(Path.GetDirectoryName(provided_path)!, deployment_instructions_file_name);
                 if (File.Exists(deployment_instructions_file_path)) goto deploy;
 
+                // 2. In the current working directory (where the tool was executed from).
+                deployment_instructions_file_path = Path.Join(Directory.GetCurrentDirectory(), deployment_instructions_file_name);
+                if (File.Exists(deployment_instructions_file_path)) goto deploy;
+
+                // --- If not found, generate a default deployment instructions file ---
                 deployment_instructions_file_path = Path.Join(Path.GetDirectoryName(raw_files_dir_path)!, deployment_instructions_file_name);
 
                 var deployment_instructions_file = File.OpenWrite(deployment_instructions_file_path);
 
-                deployment_instructions_file.Write(Encoding.UTF8.GetBytes(@"**Autogenerated Deployment Instructions File**
+                deployment_instructions_file.Write(UTF8_NO_BOM.GetBytes(@"**Autogenerated Deployment Instructions File**
 
 This file is crucial for managing the deployment process. ✅⛔✔️ ✖️ ❌ ❎ 🟢 🔴 🟩 🟥 🟡 🔵 ⚠️ 🚫 🔺 🔻 ❓❗👀📅🕒
 
@@ -794,13 +881,16 @@ This file is crucial for managing the deployment process. ✅⛔✔️ ✖️ �
                 build_receiver_files_lines();
                 sb.Clear();
 
-                foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value))
+                foreach (var info in receiver_files_lines
+                                     .Where(e => !(e.Value.asis)) //exclude libs and finally generated files
+                                     .OrderBy(e => e.Key)
+                                     .Select(e => e.Value))
                     info.append_md_line().Append('\n');
 
                 var tree = sb.ToString();
-                deployment_instructions_file.Write(Encoding.UTF8.GetBytes(tree));
+                deployment_instructions_file.Write(UTF8_NO_BOM.GetBytes(tree));
 
-                deployment_instructions_file.Write(Encoding.UTF8.GetBytes(@$" 
+                deployment_instructions_file.Write(UTF8_NO_BOM.GetBytes(@$" 
 
 
 **Rerun Deployment Process:**
@@ -861,9 +951,9 @@ astyle  --style=allman
 
 To format C# files with `dotnet format` use the command in format `before and after deployment execution`
 ```shell
-[before deployment](dotnet format ""/InCS/Host_in_C#"" )
+［before deployment](dotnet format ""/InCS/Host_in_C#"" )
 ```
-
+Install `prettier` globally `npm install -g prettier` to ensure it is available in the console as `prettier`.
 ```regexp
 \.ts$
 ```
@@ -955,27 +1045,34 @@ After making the necessary modifications, you can rerun the deployment process b
                            );
                 return;
 
+            // Label to jump to when the deployment file is found and ready for processing.
             deploy:
                 process(deployment_instructions_file_path);
             }
 
-
-            private static void process(string deployment_instructions_file)
+            /// <summary>
+            /// The core processing engine that reads the deployment instructions, executes tasks,
+            /// merges/copies files, and generates reports and backups.
+            /// </summary>
+            /// <param name="deployment_instructions_file">The path to the configured .md instructions file.</param>
+            static void process(string deployment_instructions_file)
             {
+                // Initialize the source file tree from the filesystem.
                 build_receiver_files_lines();
 
-                deployment_instructions_txt = File.ReadAllText(deployment_instructions_file, Encoding.UTF8);
+                deployment_instructions_txt = File.ReadAllText(deployment_instructions_file, UTF8_NO_BOM);
 
-                LOG.Information("Starting the redeployment process of received source files in \"{src_dir}\", according to the {md} instructions file", raw_files_dir_path, provided_path);
+                LOG.Information("Starting deployment of files from \"{src_dir}\", according to instructions in \"{md_file}\"", raw_files_dir_path, deployment_instructions_file);
 
-                var obsoletes_targets = new List<string>(); //Items listed in the deployment instructions but not present among the receiver files
+                var obsoletes_targets = new List<string>(); // Tracks instructions for files that no longer received from server.
                 var Key_path_segment = new Regex(@"(?<=\/|\\)(CPP|InCS|InGO|InJAVA|InRS|InTS)[\\/]*.*");
                 var start = -1;
                 Match? end = null;
-                var targets_lines_count = 0; //lines count
+                var targets_lines_count = 0;
                 var any = new Regex(".*");
                 var has_some_targets = false;
 
+                // First pass: Parse the deployment instructions from the .md file.
                 foreach (Match match in new Regex(@"- (?:📁|＃|🧩|🧾|☕|🌀|📜|🌐|🎨|🐹|⚙️|🟪|🐦|📄|\{\})(?:\s*\[([^\]]*)\]\(([^)]*)\)[^\[\n\r]*)*(?:\s*⛔)?", RegexOptions.Multiline).Matches(deployment_instructions_txt))
                 {
                     targets_lines_count++;
@@ -985,67 +1082,66 @@ After making the necessary modifications, you can rerun the deployment process b
                     // the link
                     //      InCS/Agent/lib/collections/BitList.cs
                     //      InJAVA/Server/collections/org/unirail/collections/BitList.java
-                    var key = Key_path_segment.Match(match.Groups[2].Captures[0].Value).Groups[0].Value.Replace('\\', '/').Replace(">", "").Trim(); //Paths with whitespaces must be enclosed in <>
+                    var key = Key_path_segment.Match(match.Groups[2].Captures[0].Value).Groups[0].Value.Replace('\\', '/').Replace(">", "").Trim();
                     if (receiver_files_lines.TryGetValue(key, out var info))
                     {
                         //- 📁[InCS](/AdHocTMP/AdHocProtocol/InCS) ✅ copy full structure [](/AdHoc/Protocol/Generated/InCS)
                         //           <--------- head ------------> <------------------- customization --------------------->
                         var head = match.Groups[2].Captures[0];
-                        info.customization = match.ToString()[(head.Index + head.Length + 1 - match.Index)..]; //backup line customization
+                        info.customization = match.ToString()[(head.Index + head.Length + 1 - match.Index)..]; // Preserve user text like "✅ copy full tree".
+
                         if (targets_lines_count == 1 &&
                             !string.Equals(match.Groups[2].Captures[0].Value.Trim(' ', '<', '>', '\\', '/'),
                                            Path.GetFullPath(info.path).Replace('\\', '/').Trim(' ', '\\', '/'),
                                            StringComparison.InvariantCultureIgnoreCase))
-                            targets_lines_count = int.MinValue; //need tree lines fully update mark
-
+                            targets_lines_count = int.MinValue; // Mark for tree regeneration if root path has changed.
 
                         info.skipped = match.Value.Contains('⛔');
 
                         info.targets = match.Groups[1].Captures.Skip(1).Select(s => s.Value)
                                             .Zip(match.Groups[2].Captures.Skip(1).Select(t => t.Value[0] == '/' && t.Value[2] == ':' ?
-                                                                                                  t.Value[1..].Replace('/', '\\') : //in the instruction, the path in the windows format
+                                                                                                  t.Value[1..].Replace('/', '\\') :
                                                                                                   t.Value))
                                             .GroupBy(_i_ =>
                                                      {
-                                                         if (_i_.First == "" && _i_.Second == "") info.skipped = true; // []() case
+                                                         //To skip a file or folder from deployment, add `⛔` to the line or use an empty target `[]()`.
+                                                         if (_i_.First == "" && _i_.Second == "") info.skipped = true; // []() case.
                                                          return _i_.First;
                                                      })
                                             .Select(group => (group.Key.Equals("") ?
                                                                   any :
                                                                   new Regex(group.Key), group.Select(pair => pair.Second).ToArray())).ToArray();
-                        if (0 < info.targets.Length) has_some_targets = true;
+                        if (0 < info.targets.Length)
+                            has_some_targets = true;
 
                         continue;
                     }
 
-                    obsoletes_targets.Add(match.ToString()); //The line contains target information that is not applicable to the newly received code. Add it to the list of obsolete items.
+                    obsoletes_targets.Add(match.ToString());
                 }
 
-                if (end == null) //Deployment instructions not found. Autogenerating default instructions.
+                if (end == null)
                 {
+                    // Regenerate instructions if they are missing from the file.
                     sb.Clear();
-
                     foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value))
                         info.append_md_line().Append('\n');
-
                     sb.Append("\n\n");
                     using (var deployment_instructions_file_ = File.OpenWrite(deployment_instructions_file))
                     {
-                        deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(sb.ToString()));
-                        deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(deployment_instructions_txt));
+                        deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(sb.ToString()));
+                        deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(deployment_instructions_txt));
                     }
 
-                    exit($"Deployment instructions not fount and have been regenerated. Please update {deployment_instructions_file} with actual `deployment targets`");
+                    exit($"Deployment instructions not found and have been regenerated. Please update {deployment_instructions_file} with actual `deployment targets`");
                 }
 
-                if (!has_some_targets) // Deployment instructions found, but no `target locations` detected.
-                    exit($"No `target locations` detected. Ensure they are added, and verify that the provided deployment instructions file path `{deployment_instructions_file}` is correct.");
+                if (!has_some_targets)
+                    exit($"No `target locations` detected. Please add deployment targets to `{deployment_instructions_file}`.");
 
-
-                //======================== binaries execute before deployment
+                // Execute pre-deployment commands.
                 foreach (var before_deployment in new Regex(@"\[before deployment\]\((.+)\)").Matches(deployment_instructions_txt).Select(m => m.Groups[1].Value))
                     Start_and_wait(before_deployment, raw_files_dir_path);
-
 
                 var shell_tasks = new Regex(@"^([^\s].+?)(?:\r?\n(?=\s)|\r?\n?$)(?:\s+(.+?)(?:\r?\n(?=\s)|\r?\n?$))*", RegexOptions.Multiline);
 
@@ -1054,7 +1150,7 @@ After making the necessary modifications, you can rerun the deployment process b
                 foreach (var (type, match) in new Regex(@"```regexp\s+(.+?)\s*```\s*```shell\s*([\s\S]*?)\s*```")
                                               .Matches(deployment_instructions_txt).Select(m => (0, m))
                                               .Concat(new Regex(@"```regexp\s+(.+?)\s*```\s*```csharp\s*([\s\S]*?)\s*```", RegexOptions.Multiline).Matches(deployment_instructions_txt).Select(m => (1, m)))
-                                              .OrderBy(m => m.m.Index)) //Ordered execution instructions
+                                              .OrderBy(m => m.m.Index))
                 {
                     var selector = string.IsNullOrEmpty(match.Groups[1].Value) ?
                                        null :
@@ -1063,79 +1159,51 @@ After making the necessary modifications, you can rerun the deployment process b
                     int i;
                     switch (type)
                     {
-                        case 0: //shell
-                            foreach (var m in shell_tasks.Matches(target).Select(m => m))
-                                foreach (var info in receiver_files_lines.Values.Where(info => selector == null || selector.Match(info.path).Success))
-
-                                    Start_and_wait(m.Groups[1].Value[..(i = m.Groups[1].Value[0] == '"' ?
-                                                                                m.Groups[1].Value.IndexOf('"', 1) + 1 :
-                                                                                m.Groups[1].Value.IndexOf(' '))],
-                                                   (m.Groups[1].Value[i..] + " " + string.Join(" ", m.Groups[2].Captures)).Replace("FILE_PATH", info.path.Contains(' ') ?
-                                                                                                                                                    $"\"{info.path}\"" :
-                                                                                                                                                    info.path), raw_files_dir_path);
-                            continue;
-                        case 1: //C#
-                            var cut = -1;
-
-                            var obj = Path.GetDirectoryName(typeof(object).Assembly.Location);
-                            var refs = new[]
+                        case 0: //shell. formatting for example
+                            foreach (Match m in shell_tasks.Matches(target))
+                                foreach (var info in receiver_files_lines.Values.Where(info => selector == null || selector.IsMatch(info.path)))
                                 {
-                                    "mscorlib.dll",
-                                    "System.dll",
-                                    "System.Core.dll",
-                                    "System.Runtime.dll"
-                                }.Select(s => Path.Combine(obj, s))
-                                 .Concat([
-                                             typeof(object).Assembly.Location,
-                                     typeof(Console).Assembly.Location,
-                                     Assembly.Load("System.Runtime").Location,
-                                     Assembly.Load("System.Collections").Location,
-                                     Assembly.Load("System.Linq").Location,
-                                     Assembly.Load("System.Text.RegularExpressions").Location
-                                         ]).Select(p => MetadataReference.CreateFromFile(p))
-                                 .Concat(
-                                         new Regex(@"^(?:\""([^\""]+)\""\r?\n)*")
-                                             .Matches(target)
-                                             .SelectMany(m =>
-                                                         {
-                                                             cut = m.Index + m.Length;
-                                                             return m.Groups[1].Captures;
-                                                         })
-                                             .SelectMany(c => AppDomain.CurrentDomain.GetAssemblies()
-                                                                       .Where(a => a.GetTypes().Any(t => t.FullName.StartsWith(c.Value))))
-                                             .Distinct()
-                                             .Select(assembly => MetadataReference.CreateFromFile(assembly.Location)).ToArray()
-                                        );
+                                    var fullCommand = (m.Groups[1].Value + " " + string.Join(" ", m.Groups[2].Captures.Cast<Capture>()))
+                                        .Replace("FILE_PATH", info.path.Contains(' ') ?
+                                                                  $"\"{info.path}\"" :
+                                                                  info.path);
 
+                                    Start_and_wait(fullCommand, raw_files_dir_path);
+                                }
+
+                            continue;
+
+                        case 1: // Compile and execute C# code on files matching the regex.
+                            var cut = -1;
+                            var obj = Path.GetDirectoryName(typeof(object).Assembly.Location);
+                            var refs = new[] { "mscorlib.dll", "System.dll", "System.Core.dll", "System.Runtime.dll" }.Select(s => Path.Combine(obj, s))
+                                                                                                                      .Concat(new[] { typeof(object).Assembly.Location, typeof(Console).Assembly.Location, Assembly.Load("System.Runtime").Location, Assembly.Load("System.Collections").Location, Assembly.Load("System.Linq").Location, Assembly.Load("System.Text.RegularExpressions").Location })
+                                                                                                                      .Select(p => MetadataReference.CreateFromFile(p))
+                                                                                                                      .Concat(new Regex(@"^(?:\""([^\""]+)\""\r?\n)*").Matches(target).SelectMany(m =>
+                                                                                                                                                                                                  {
+                                                                                                                                                                                                      cut = m.Index + m.Length;
+                                                                                                                                                                                                      return m.Groups[1].Captures;
+                                                                                                                                                                                                  }).SelectMany(c => AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetTypes().Any(t => t.FullName.StartsWith(c.Value)))).Distinct().Select(assembly => MetadataReference.CreateFromFile(assembly.Location)).ToArray());
 
                             if (0 < cut) target = target[cut..];
-
-
-                            var compilation = CSharpCompilation.Create(
-                                                                       Path.GetRandomFileName(),
-                                                                       syntaxTrees: [CSharpSyntaxTree.ParseText(target)],
-                                                                       references: refs,
-                                                                       options: new CSharpCompilationOptions(OutputKind.ConsoleApplication));
+                            var compilation = CSharpCompilation.Create(Path.GetRandomFileName(), syntaxTrees: new[] { CSharpSyntaxTree.ParseText(target) }, references: refs, options: new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
                             var ms = new MemoryStream();
                             var result = compilation.Emit(ms);
-
                             if (!result.Success)
                             {
-                                foreach (var diagnostic in result.Diagnostics) { Console.Error.WriteLine($"{diagnostic.Id}: {diagnostic.GetMessage()}"); }
-
+                                foreach (var diagnostic in result.Diagnostics)
+                                    Console.Error.WriteLine($"{diagnostic.Id}: {diagnostic.GetMessage()}");
                                 exit("");
                             }
 
                             ms.Seek(0, SeekOrigin.Begin);
                             var compiledAssembly = Assembly.Load(ms.ToArray());
-
-
                             var args = new string[1];
                             var objs = new object[] { args };
                             var main = compiledAssembly.GetType("Program")!.GetMethod("Main", BindingFlags.Public | BindingFlags.Static)!;
 
-                            foreach (var info in receiver_files_lines.Values.Where(info => File.Exists(info.path) && (selector == null || selector.Match(info.path).Success)))
+                            foreach (var info in receiver_files_lines.Values.Where(info => File.Exists(info.path) && (selector == null || selector.IsMatch(info.path))))
                                 try
                                 {
                                     args[0] = info.path;
@@ -1151,48 +1219,90 @@ After making the necessary modifications, you can rerun the deployment process b
                     }
                 }
 
-                //==============================  Copy custom injected code from current files to newly received files, then overwrite current files
-                var infos = receiver_files_lines.Values.GetEnumerator();
+                // --- Main Deployment Logic: Copy/Merge files based on instructions ---
 
+                var tempDir = Path.GetTempPath();
+                Directory.CreateDirectory(tempDir);
+                var tempFiles = new Dictionary<string, string>();
                 var ancestors = new List<LineInfo>();
-                while (infos.MoveNext())
-                {
-                start:
-                    var info = infos.Current;
-                    if (info.skipped)
-                    {
-                        if (Directory.Exists(info.path))
-                            while (infos.MoveNext() && infos.Current.path.StartsWith(info.path))
-                                ;
-                        else infos.MoveNext();
-                        goto start;
-                    }
 
-                    while (0 < ancestors.Count && !Path.GetDirectoryName(info.path)!.Equals(ancestors[^1].path))
+                foreach (var info in receiver_files_lines.Values)
+                {
+                    // Maintain the ancestor stack. Pop directories from the stack until the current item's parent is on top.
+                    while (ancestors.Count > 0 && !Path.GetDirectoryName(info.path)!.Equals(ancestors[^1].path, StringComparison.OrdinalIgnoreCase))
                         ancestors.RemoveAt(ancestors.Count - 1);
 
+                    // An item is skipped if marked explicitly, OR if it's inside a skipped folder.
+                    var shouldSkip = info.skipped || ancestors.Any(a => a.skipped);
+
+                    // If it's a directory, push it to the stack for its children's reference.
                     if (Directory.Exists(info.path))
                     {
                         ancestors.Add(info);
                         continue;
                     }
 
+                    if (shouldSkip)
+                        continue;
+
+                    // If we reach here, the item is a file that needs to be processed.
                     var received_src_file = info.path;
 
-                    //The deployment process will process `custom code injection point` and copy according instructions with matched selectors of a file's parent folders .
+                    // Apply deployment rules inherited from parent folders.
                     foreach (var parent_folder in ancestors.Where(i => i.targets is { Length: > 0 }))
-                        foreach (var target_path in parent_folder.targets!.Where(t => t.Item1.Match(received_src_file).Success).SelectMany(t => t.Item2))
-                            info.add_report(copy_custom_code_from_current_files_to_the_newly_received_files(received_src_file, Path.Combine(target_path[^1] == '/' || target_path[^1] == '\\' ? //If the link ends with '/', the received item will be copied into the specified path.
-                                                                                                                                                Path.Combine(target_path, Path.GetFileName(parent_folder.path)) :
-                                                                                                                                                target_path,
-                                                                                                                                            received_src_file[(parent_folder.path.Length + 1)..])));
-                    //self file instructions
+                        foreach (var target_path in parent_folder.targets!.Where(t => t.Item1.IsMatch(received_src_file)).SelectMany(t => t.Item2))
+                        {
+                            var target_base = target_path.EndsWith('/') || target_path.EndsWith('\\') ?
+                                                  Path.Combine(target_path, Path.GetFileName(parent_folder.path)) :
+                                                  target_path;
+                            var relativePath = Path.GetRelativePath(parent_folder.path, received_src_file);
+                            var existingDstFilePath = Path.Combine(target_base, relativePath);
+
+                            var tempPath = Path.Combine(tempDir, Guid.NewGuid() + Path.GetExtension(existingDstFilePath));
+
+                            if (info.asis)
+                            {
+                                File.Copy(received_src_file, tempPath);
+                                info.add_report("👉 " + existingDstFilePath);
+                            }
+                            else
+                            {
+                                var (report, content) = MergeCustomCodeIntoNewlyGeneratedFile(received_src_file, existingDstFilePath);
+                                File.WriteAllText(tempPath, content, UTF8_NO_BOM);
+                                info.add_report(report);
+                            }
+
+                            tempFiles[existingDstFilePath] = tempPath;
+                        }
+
+                    // Apply deployment rules from the file itself.
                     if (info.targets == null) continue;
+
                     foreach (var target_path in info.targets.SelectMany(t => t.Item2))
-                        info.add_report(copy_custom_code_from_current_files_to_the_newly_received_files(received_src_file, target_path[^1] == '/' || target_path[^1] == '\\' ? //If the link ends with '/', the received item will be copied into the specified path.
-                                                                                                                               Path.Combine(target_path, Path.GetFileName(received_src_file)) :
-                                                                                                                               target_path));
+                    {
+                        var existingDstFilePath = target_path.EndsWith('/') || target_path.EndsWith('\\') ?
+                                                      Path.Combine(target_path, Path.GetFileName(received_src_file)) :
+                                                      target_path;
+
+                        var tempPath = Path.Combine(tempDir, Guid.NewGuid() + Path.GetExtension(existingDstFilePath));
+
+                        if (info.asis)
+                        {
+                            File.Copy(received_src_file, tempPath, true);
+                            info.add_report("👉 " + existingDstFilePath);
+                        }
+                        else
+                        {
+                            var (report, content) = MergeCustomCodeIntoNewlyGeneratedFile(received_src_file, existingDstFilePath);
+                            File.WriteAllText(tempPath, content, UTF8_NO_BOM);
+                            info.add_report(report);
+                        }
+
+                        tempFiles[existingDstFilePath] = tempPath;
+                    }
                 }
+
+                // --- Finalization: Reporting, Backup, and Cleanup ---
 
                 foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value))
                 {
@@ -1201,120 +1311,471 @@ After making the necessary modifications, you can rerun the deployment process b
                     Console.Out.Write(sb.ToString());
                 }
 
-                //binaries execute after deployment
+                // Execute post-deployment commands.
                 foreach (var after_deployment in new Regex(@"\[after deployment\]\((.+)\)").Matches(deployment_instructions_txt).Select(m => m.Groups[1].Value))
                     Start_and_wait(after_deployment, raw_files_dir_path);
 
-                if (0 < obsoletes_targets.Count || targets_lines_count != receiver_files_lines.Count) // Fully update tree lines needed
+                // Create a backup of all overwritten files.
+                var dir = Path.GetDirectoryName(deployment_instructions_file);
+                var name = Path.GetFileName(raw_files_dir_path);
+                var backupDir = Path.Combine(dir, name + "_" + (Directory.GetDirectories(dir, $"{name}_*").Select(dirPath =>
+                                                                                                                  {
+                                                                                                                      int.TryParse(Path.GetFileName(dirPath).Substring(name.Length + 1), out var number);
+                                                                                                                      return number;
+                                                                                                                  }).DefaultIfEmpty(0).Max() + 1));
+                Directory.CreateDirectory(backupDir);
+                var restorePlan = new Dictionary<string, string>();
+
+                foreach (var dest in tempFiles.Keys.Where(File.Exists))
                 {
-                    if (0 < obsoletes_targets.Count)
+                    var pathRoot = Path.GetPathRoot(dest);
+                    var relativeDestPath = string.IsNullOrEmpty(pathRoot) ?
+                                               dest :
+                                               dest[pathRoot.Length..];
+                    var initialBackupPath = Path.Combine(backupDir, relativeDestPath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(initialBackupPath)!);
+                    var uniqueBackupPath = GetUniqueBackupPath(initialBackupPath);
+                    File.Copy(dest, uniqueBackupPath);
+                    restorePlan.Add(dest, uniqueBackupPath);
+                }
+
+                GenerateRestoreScripts(restorePlan, backupDir);
+
+                // Overwrite target files with the processed temp files.
+                foreach (var (dest, tempPath) in tempFiles)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+                    File.Copy(tempPath, dest, true);
+                }
+
+                try
+                {
+                    Directory.Delete(tempDir, true); //be nice.remove garbage
+                }
+                catch (Exception e)
+                { // ignored
+                }
+
+                // If the source file tree has changed, regenerate that portion of the .md file.
+                if (obsoletes_targets.Count > 0 || targets_lines_count != receiver_files_lines.Count)
+                {
+                    if (obsoletes_targets.Count > 0)
                     {
-                        LOG.Information("Items listed in the deployment instructions but not present among the receiver files.");
+                        LOG.Information("Items listed in the deployment instructions but not present among the receiver files:");
                         foreach (var useless in obsoletes_targets)
                             Console.Out.WriteLine(useless);
                     }
 
                     using var deployment_instructions_file_ = File.OpenWrite(deployment_instructions_file);
-                    deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(deployment_instructions_txt[..start]));
+                    deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(deployment_instructions_txt[..start]));
 
-                    foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value)) //Re-render tree
+                    // Re-render the file tree, preserving user customizations.
+                    foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value))
                     {
                         sb.Clear();
-                        info.append_md_line().Append(info.customization).Append('\n'); //Preserve customization
-                        deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(sb.ToString()));
+                        info.append_md_line().Append(info.customization).Append('\n');
+                        deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(sb.ToString()));
                     }
 
                     sb.Clear();
                     sb.Append("\n\n");
-                    deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(sb.ToString()));
-
-                    deployment_instructions_file_.Write(Encoding.UTF8.GetBytes(deployment_instructions_txt[(end.Index + end.Length)..]));
+                    deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(sb.ToString()));
+                    deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(deployment_instructions_txt[(end.Index + end.Length)..]));
                 }
 
-                LOG.Information("Deployment process completed.");
+                LOG.Information("✔ Deployment successful!");
+                LOG.Information("A backup of all overwritten files has been created at: {backupLocation}", backupDir);
+                LOG.Information("To undo changes, run one of the restore scripts inside that directory.");
                 exit("", 0);
             }
 
-            private static readonly Dictionary<string, string> uid2custom_code = new();
-            private static readonly string[] rn = ["\r\n", "\r", "\n"];
+            // These are truly constant and can remain static
+            //in .NET does not work !!!
+            //Console.WriteLine(new Regex(@"\p{So}", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.NonBacktracking).Matches("").Count);
+            // output 0!!!!
+            //https://github.com/dotnet/runtime/issues/36425
+            static readonly Regex GEN_BLOCK = new(@"\s*//(?<marker>\p{So})<\s*(?<content>.*?)\s*//\k<marker>/>", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.Singleline);
+            static readonly Regex JAVA = new(@"//#region\s*>\s*(?:.*?)\r?\n(?<content>[\s\S]*?)//#endregion\s*>\s*(?<uid>.*?)\s*?$", RegexOptions.Multiline | RegexOptions.Compiled);
+            static readonly Regex CS = new(@"#region\s*>\s*(?:.*?)\r?\n(?<content>[\s\S]*?)#endregion\s*>\s*(?<uid>.*?)\s*?$", RegexOptions.Multiline | RegexOptions.Compiled);
 
-            private static readonly Regex JAVA = new(@"//#region\s*>.*?$\s*([\s\S]*?)\s*//#endregion\s*>\s+?(.*?)\s*?$", RegexOptions.Multiline);
-            private static readonly Regex CS = new(@"#region\s*>.*?$\s*([\s\S]*?)\s*#endregion\s*>\s+?(.*?)\s*?$", RegexOptions.Multiline);
-            private static string result_code_tmp_file = Path.GetTempFileName();
 
-            private static string copy_custom_code_from_current_files_to_the_newly_received_files(string raw_file_path, string target_file_path)
+            /// <summary>
+            /// Intelligently merges a newly generated source file with an existing, user-modified version.
+            /// This is the core safety feature that preserves custom code across deployments. It works by identifying
+            /// special "injection points" (regions marked with a Unique ID) where user code is safe.
+            /// Inside these regions, it can also update "generated blocks" while respecting the user's
+            /// decision to enable, disable, or reorder them.
+            /// </summary>
+            /// <param name="newlyGeneratedFilePath">The path to the pristine file from the generator.</param>
+            /// <param name="existingDstFilePath">The path to the existing file in the destination, which may contain user code.</param>
+            /// <returns>A tuple containing a status report string and the final merged file content.</returns>
+            static (string status, string content) MergeCustomCodeIntoNewlyGeneratedFile(string newlyGeneratedFilePath, string existingDstFilePath)
             {
-                if (!Directory.Exists(Path.GetDirectoryName(target_file_path)))
+                // If the existing file doesn't exist, there's nothing to merge.
+                // We simply copy the new file to the target location.
+                if (!File.Exists(existingDstFilePath))
+                    return ("👉 " + existingDstFilePath, File.ReadAllText(newlyGeneratedFilePath));
+
+                // =================================================================================
+                // STEP 1: EXTRACT - Scan the EXISTING file for all custom code.
+                // We build a dictionary of all user-modified regions, keyed by their Unique ID (UID).
+                // This preserves a snapshot of the user's work.
+                // =================================================================================
+                var existingRegionsByUid = new Dictionary<string, string>();
+                var regionRegex = existingDstFilePath.EndsWith(".java") || existingDstFilePath.EndsWith(".ts") ?
+                                      JAVA :
+                                      CS;
+                var existingFileContent = File.ReadAllText(existingDstFilePath);
+
+                foreach (Match regionMatch in regionRegex.Matches(existingFileContent))
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(target_file_path)!);
-                    goto just_copy;
+                    var customCode = regionMatch.Groups["content"].Value;
+                    var uid = regionMatch.Groups["uid"].Value.Trim();
+                    if (!string.IsNullOrWhiteSpace(uid) && !string.IsNullOrWhiteSpace(customCode.Trim()))
+                        existingRegionsByUid[uid] = customCode;
                 }
 
-                if (!File.Exists(target_file_path)) goto just_copy;
+                // =================================================================================
+                // STEP 2: REBUILD - Build the new file content using the NEWLY GENERATED file as the template.
+                // We walk through the new file, and for each region, we inject the user's saved
+                // customizations if a matching UID exists.
+                // =================================================================================
+                var mergedResult = new StringBuilder();
+                var newFileContent = File.ReadAllText(newlyGeneratedFilePath);
+                var lastIndex = 0;
 
-                uid2custom_code.Clear();
-
-                var regex = raw_file_path.EndsWith(".java") || raw_file_path.EndsWith(".ts") ?
-                                JAVA :
-                                CS;
-
-                //collect custom code
-                foreach (var injection_point in regex.Matches(File.ReadAllText(target_file_path)).Where(m => 0 < m.Groups[1].Value.Length))
+                foreach (var newRegionMatch in regionRegex.Matches(newFileContent).Cast<Match>())
                 {
-                    var uid = injection_point.Groups[2].Value.Trim();
+                    // Append the generated scaffolding that comes *before* this region.
+                    mergedResult.Append(newFileContent, lastIndex, newRegionMatch.Index - lastIndex);
 
-                    if (injection_point.Groups[1].Value.Split(rn, StringSplitOptions.RemoveEmptyEntries).All(line => line.Trim().EndsWith("//"))) continue;
+                    var uid = newRegionMatch.Groups["uid"].Value.Trim();
+                    var newRegionContent = newRegionMatch.Groups["content"].Value;
+                    var fullNewRegionBlock = newRegionMatch.Value;
 
-                    uid2custom_code.Add(uid, injection_point.Groups[1].Value + "\r\n");
-                }
-
-                if (uid2custom_code.Count == 0) goto just_copy;
-
-                var result_code = File.OpenWrite(result_code_tmp_file);
-                var raw_code = File.ReadAllText(raw_file_path);
-                var last_index = 0;
-                //copy custom code to the newly received files
-                foreach (var injection_point in regex.Matches(raw_code).Select(m => m))
-                {
-                    var uid = injection_point.Groups[2].Value;
-
-                    if (!uid2custom_code.TryGetValue(uid, out var custom_code)) continue;
-
-                    var code_area = injection_point.Groups[1];
-                    result_code.Write(Encoding.UTF8.GetBytes(raw_code[last_index..code_area.Index]));
-                    result_code.Write(Encoding.UTF8.GetBytes(custom_code));
-                    last_index = code_area.Index + code_area.Length; //skip generated code
-                    uid2custom_code.Remove(uid);
-                }
-
-                result_code.Write(Encoding.UTF8.GetBytes(raw_code[last_index..raw_code.Length]));
-                result_code.Flush();
-                result_code.Close();
-
-                if (0 < uid2custom_code.Count) //orphaned custom code has been detected
-                {
-                    LOG.Error($"Orphaned custom code detected in {target_file_path}. Open and compare it with the new {raw_file_path} by key strings.");
-                    foreach (var (id, code) in uid2custom_code)
+                    // Do we have saved custom code for this UID from the old file?
+                    if (existingRegionsByUid.TryGetValue(uid, out var existingRegionContent))
                     {
-                        LOG.Error("{id}", id);
-                        Console.WriteLine(code);
+                        // YES: This region existed before. Perform a smart merge of its content.
+                        var mergedRegionContent = MergeRegionContent(existingRegionContent, newRegionContent);
+
+                        // Reconstruct the full region block with the newly merged content.
+                        // We do this by replacing the original content of the new region with our merged version.
+                        if (newRegionContent.Length == 0 && !fullNewRegionBlock.Contains("\n\n")) // Handle empty new regions carefully
+                            mergedResult.Append(fullNewRegionBlock.Insert(fullNewRegionBlock.LastIndexOf('\n') + 1, mergedRegionContent));
+                        else
+                            mergedResult.Append(fullNewRegionBlock.Replace(newRegionContent, mergedRegionContent));
+
+                        // Mark this UID as processed by removing it. Any remaining UIDs at the end
+                        // are "orphans"—regions that existed in the old file but not the new one.
+                        existingRegionsByUid.Remove(uid);
+                    }
+                    else
+                        // NO: This is a brand-new region. Just append it as-is from the generator.
+                        mergedResult.Append(fullNewRegionBlock);
+
+                    // Advance the index past the entire region we just processed.
+                    lastIndex = newRegionMatch.Index + newRegionMatch.Length;
+                }
+
+                // Append the final segment of the new file (anything after the last region).
+                mergedResult.Append(newFileContent.Substring(lastIndex));
+
+                // =================================================================================
+                // STEP 3: FINALIZE - Check for orphaned custom code to prevent data loss.
+                // =================================================================================
+                if (existingRegionsByUid.Count == 0)
+                    return ("✅  " + existingDstFilePath, mergedResult.ToString());
+
+                // An orphan is a region the user had, but which the generator no longer creates.
+                // This is a critical safety net.
+                LOG.Error("Orphaned custom code detected in {ExistingFilePath}. These regions existed in your file but were removed in the new version. Your changes will be lost if you proceed.", existingDstFilePath);
+                foreach (var (id, code) in existingRegionsByUid)
+                {
+                    Console.WriteLine($"--- ORPHANED REGION (UID: {id}) ---");
+                    Console.WriteLine(code);
+                    Console.WriteLine("------------------------------------");
+                }
+
+                Console.WriteLine(); // Add spacing for readability
+                LOG.Warning("If you continue, the orphaned code above will be removed from the active file: '{0}'", Path.GetFileName(existingDstFilePath));
+                LOG.Information("IMPORTANT: A full backup of the original file will be created before any changes are made. Your code will NOT be permanently lost and can be recovered from the backup.");
+
+                // Ask for explicit user confirmation with the new, less alarming context.
+                LOG.Error("Proceed with the merge? (y/N): ");
+                if (Console.ReadKey().Key != ConsoleKey.Y)
+                {
+                    exit("\nOperation cancelled by user to prevent data loss.", -1);
+                    return ($"CANCELLED: {Path.GetFileName(existingDstFilePath)}", "");
+                }
+
+                Console.WriteLine();
+                return ("✅⚠️ " + existingDstFilePath, mergedResult.ToString());
+
+                // <summary>
+                // Intelligently merges the content of a single injection region from an code block and new file.
+                // It preserves user-written code while updating generator-provided blocks, respecting user
+                // decisions like reordering or enabling/disabling blocks.
+                // </summary>
+                // <param name="existingContent">The code from inside the region in the existing file (contains user changes).</param>
+                // <param name="newContent">The code from inside the region in the newly generated file (the template).</param>
+                // <returns>The merged content for the injection region.</returns>
+                string MergeRegionContent(string existingContent, string newContent)
+                {
+                    if (existingContent.Length == 0) return newContent;
+
+                    // Helper function to comment out every line of a text block.
+                    string CommentOutBlock(string blockText) => Regex.Replace(blockText, "^", "//", RegexOptions.Multiline);
+
+                    // Helper function to uncomment a block, removing the leading "//" from each line.
+                    string UncommentBlock(string blockText) => Regex.Replace(blockText, @"^// ?", "", RegexOptions.Multiline);
+
+                    // Find all OLD generated blocks from the existing file.
+                    var existingBlocks = ParseGenBlocks(existingContent);
+                    if (existingBlocks.Count == 0) return newContent + existingContent;
+
+                    var result = new StringBuilder();
+                    var i = 0;
+
+
+                    // Index all NEW generated blocks by their unique marker for quick lookup.
+                    var newBlocks = ParseGenBlocks(newContent);
+                    if (newBlocks.Count == 0) //remove all blocks from existing content
+                    {
+                        foreach (var block in existingBlocks.Values)
+                        {
+                            result.Append(existingContent, i, block.BlockStart - i);
+                            i = block.BlockEnd;
+                        }
+
+                        return result.ToString();
                     }
 
-                    LOG.Error("In the file {target_file_path}, orphaned custom code has been detected. Would you like to continue anyway? Enter 'N' if you want to stop.", raw_file_path.Replace('\\', '/'));
 
-                    if (Console.Read() is 'N' or 'n')
+                    // --- Main Merge Loop: Iterate through the existing content's structure ---
+                    // This loop respects the user's ordering of blocks and any custom code written between them.
+                    foreach (var existingBlock in existingBlocks.OrderBy(e => e.Value.BlockStart))
                     {
-                        exit("Bye", -1);
-                        return "";
+                        // Append the user's custom code located *between* the previous block and this one.
+                        result.Append(existingContent, i, existingBlock.Value.BlockStart - i);
+
+                        var marker = existingBlock.Key;
+
+                        // A block is considered "enabled" if its first line does not start with "//" (ignoring whitespace).
+                        // This is the key to preserving the user's choice.
+                        var isExistingBlockEnabled = !existingBlock.Value.Content.TrimStart().StartsWith("//");
+
+                        if (newBlocks.TryGetValue(marker, out var newBlock))
+                        {
+                            // RULE: A corresponding block exists in the new file.
+                            result.Append(newContent, newBlock.BlockStart, newBlock.ContentStart - newBlock.BlockStart);
+                            result.Append(
+                                          // We will use the NEW content, but respect the user's ENABLED/DISABLED state.
+                                          isExistingBlockEnabled ?
+                                              UncommentBlock(newBlock.Content) : // User wants it enabled.
+                                              CommentOutBlock(newBlock.Content)  // User wants it disabled.
+                                         );
+                            result.Append(newContent, newBlock.ContentEnd, newBlock.BlockEnd - newBlock.ContentEnd);
+
+                            // Mark the new block as processed so it isn't added again at the end.
+                            newBlocks.Remove(marker);
+                        }
+                        else if (isExistingBlockEnabled)
+                        {
+                            // RULE: A block the user HAD ENABLED was removed by the generator.
+                            // Preserve it as commented-out code with a "todo" warning to prevent data loss.
+                            result.AppendLine();
+                            result.AppendLine("//todo 🔴 The following code block was removed by the code generator. Please review.");
+                            result.Append(existingContent, existingBlock.Value.BlockStart, existingBlock.Value.ContentStart - existingBlock.Value.BlockStart);
+                            result.Append(CommentOutBlock(existingBlock.Value.Content));
+                            result.Append(existingContent, existingBlock.Value.ContentEnd, existingBlock.Value.BlockEnd - existingBlock.Value.ContentEnd);
+                            result.AppendLine();
+                        }
+                        // If the block was removed by the generator AND the user already had it disabled, we simply let it disappear.
+
+                        i = existingBlock.Value.BlockEnd;
                     }
+
+
+                    // --- Final Step: Add any completely new blocks ---
+                    // These are blocks that exist in the new file but not in the old one.
+                    if (newBlocks.Count != 0)
+                    {
+                        // Check if at least one of the new, unprocessed blocks is ACTIVE by default.
+                        var newActivated = newBlocks.Values.Any(m => !m.Content.TrimStart().StartsWith("//"));
+
+                        // RULE: If a new ACTIVE block is added, warn the user as it might change behavior.
+                        if (newActivated)
+                        {
+                            result.AppendLine();
+                            result.AppendLine("//todo 🔴 New active generated code was added by the generator. Please review as it may affect your custom logic.");
+                        }
+
+                        // Append all new blocks at the end of the region, ordered as they appear in the new file.
+                        foreach (var newBlock in newBlocks.OrderBy(e => e.Value.BlockStart)) result.Append(newContent, newBlock.Value.BlockStart, newBlock.Value.BlockEnd - newBlock.Value.BlockStart);
+                    }
+
+                    // Append any remaining user code that was after the very last generated block.
+                    result.Append(existingContent.AsSpan(i));
+
+
+                    return result.ToString();
                 }
 
-                File.Move(result_code_tmp_file, target_file_path, true);
-                return "✅  " + target_file_path;
+                // <summary>
+                // Parses the content and extracts all generator blocks, identified by special markers.
+                // </summary>
+                // <param name="content">The source code content to parse.</param>
+                // <returns>A dictionary mapping each block's unique marker to its parsed information.</returns>
+                static Dictionary<string, GenBlock> ParseGenBlocks(ReadOnlySpan<char> content)
+                {
+                    var result = new Dictionary<string, GenBlock>();
+                    var currentIndex = 0;
 
-            just_copy:
-                File.Copy(raw_file_path, target_file_path, true);
-                return "👉 " + target_file_path;
+                    while (currentIndex < content.Length)
+                    {
+                        var startOffset = content.Slice(currentIndex).IndexOf("//");
+                        if (startOffset == -1) break;
+
+                        var blockStart = currentIndex + startOffset;
+                        var cursor = blockStart + 2;
+                        if (cursor >= content.Length) break;
+
+                        var (marker, markerLength) = GetMarker(content.Slice(cursor));
+                        if (marker == null)
+                        {
+                            currentIndex = blockStart + 2;
+                            continue;
+                        }
+
+                        cursor += markerLength;
+                        if (cursor >= content.Length || content[cursor] != '<')
+                        {
+                            currentIndex = blockStart + 2;
+                            continue;
+                        }
+
+                        cursor++; // Skip '<'
+
+                        // --- START OF THE FIX ---
+                        // Find the start of the content, skipping only HORIZONTAL whitespace (spaces, tabs).
+                        // This preserves newlines.
+                        var contentStart = cursor;
+                        while (contentStart < content.Length && (content[contentStart] == ' ' || content[contentStart] == '\t')) { contentStart++; }
+                        // --- END OF THE FIX ---
+
+                        var endTag = $"//{marker}/>";
+                        var endTagOffset = content.Slice(contentStart).IndexOf(endTag);
+                        if (endTagOffset == -1)
+                        {
+                            currentIndex = blockStart + 2;
+                            continue;
+                        }
+
+                        var endTagStart = contentStart + endTagOffset;
+                        var blockEnd = endTagStart + endTag.Length;
+
+                        // --- START OF THE FIX ---
+                        // Find the end of the content, trimming only HORIZONTAL whitespace from the end.
+                        var contentEnd = endTagStart;
+                        while (contentEnd > contentStart && (content[contentEnd - 1] == ' ' || content[contentEnd - 1] == '\t')) { contentEnd--; }
+                        // --- END OF THE FIX ---
+
+                        var blockContent = content[contentStart..contentEnd].ToString();
+
+                        result[marker] = new GenBlock(
+                                                      Content: blockContent,
+                                                      BlockStart: blockStart,
+                                                      BlockEnd: blockEnd,
+                                                      ContentStart: contentStart,
+                                                      ContentEnd: contentEnd
+                                                     );
+
+                        currentIndex = blockEnd;
+                    }
+
+                    return result;
+                }
+
+
+                static (string? Marker, int Length) GetMarker(ReadOnlySpan<char> span)
+                {
+                    if (span.IsEmpty) return (null, 0);
+
+                    var category = char.GetUnicodeCategory(span[0]);
+                    if (category != UnicodeCategory.OtherSymbol && category != UnicodeCategory.Surrogate)
+                        return (null, 0);
+
+                    var length = char.IsSurrogatePair(span[0], span.Length > 1 ?
+                                                                   span[1] :
+                                                                   '\0') ?
+                                     2 :
+                                     1;
+                    return (span.Slice(0, length).ToString(), length);
+                }
+            }
+
+
+            public readonly record struct GenBlock(
+                string Content,
+                int BlockStart,
+                int BlockEnd,
+                int ContentStart,
+                int ContentEnd
+            );
+
+            // Replace the ENTIRE GenerateRestoreScripts method with this new version
+            /// <summary>
+            /// Generates restore scripts (Batch, PowerShell, Shell) in the backup directory.
+            /// </summary>
+            static void GenerateRestoreScripts(Dictionary<string, string> restorePlan, string backupDir)
+            {
+                var restoreBat = new StringBuilder("@echo off\r\n");
+                var restorePs1 = new StringBuilder("# PowerShell Restore Script\r\n");
+                var restoreSh = new StringBuilder("#!/bin/sh\n# Run 'chmod +x restore.sh' to make this script executable.\n");
+
+                foreach (var (originalPath, backupPath) in restorePlan)
+                {
+                    var relativeBackupPath = Path.GetRelativePath(backupDir, backupPath);
+
+                    var destDir = Path.GetDirectoryName(originalPath)!;
+
+                    // --- Batch Script (.bat) ---
+                    // Use the relative path for the source file.
+                    restoreBat.AppendLine($"if not exist \"{destDir}\" mkdir \"{destDir}\"");
+                    restoreBat.AppendLine($"copy /Y \"{relativeBackupPath}\" \"{originalPath}\"");
+
+                    // --- PowerShell Script (.ps1) ---
+                    // Use the relative path for the source path.
+                    restorePs1.AppendLine($"Copy-Item -Path \"{relativeBackupPath}\" -Destination \"{originalPath}\" -Recurse -Force");
+
+                    // --- Shell Script (.sh) ---
+                    // Use the relative path for the source (ensure forward slashes).
+
+                    restoreSh.AppendLine($"mkdir -p \"{destDir.Replace('\\', '/')}\"");
+                    restoreSh.AppendLine($"cp -rf \"{relativeBackupPath.Replace('\\', '/')}\" \"{originalPath.Replace('\\', '/')}\"");
+                }
+
+                File.WriteAllText(Path.Combine(backupDir, "restore.bat"), restoreBat.ToString(), UTF8_NO_BOM);
+                File.WriteAllText(Path.Combine(backupDir, "restore.ps1"), restorePs1.ToString(), UTF8_NO_BOM);
+                File.WriteAllText(Path.Combine(backupDir, "restore.sh"), restoreSh.ToString(), UTF8_NO_BOM);
+            }
+
+            static string GetUniqueBackupPath(string fullPath)
+            {
+                if (!File.Exists(fullPath))
+                    return fullPath;
+
+                var directory = Path.GetDirectoryName(fullPath)!;
+                var filename = Path.GetFileNameWithoutExtension(fullPath);
+                var extension = Path.GetExtension(fullPath);
+                var counter = 1;
+                string newFullPath;
+
+                do { newFullPath = Path.Combine(directory, $"{filename} ({counter++}){extension}"); }
+                while (File.Exists(newFullPath));
+
+                return newFullPath;
             }
         }
 
@@ -1330,11 +1791,17 @@ After making the necessary modifications, you can rerun the deployment process b
         }
 
         // Regular expression to match quoted paths or paths without spaces
-        private static readonly Regex paths = new("(\".*?\"\\s*)|(\\S+\\s*)", RegexOptions.Compiled);
+        static readonly Regex paths = new("(\".*?\"\\s*)|(\\S+\\s*)", RegexOptions.Compiled);
 
         static readonly Regex root_path = new(@"^\""?[\\/](InCPP|InCS|InGO|InJAVA|InRS|InTS)[\\/]", RegexOptions.Compiled);
 
-
+        /// <summary>
+        /// Starts and waits for a process to exit, handling path conversions, and error reporting.
+        /// </summary>
+        /// <param name="exe">The path to the executable.</param>
+        /// <param name="args">The arguments for the executable.</param>
+        /// <param name="WorkingDirectory">The working directory for the process.</param>
+        /// <returns>The standard output of the process.</returns>
         public static string Start_and_wait(string exe, string args, string WorkingDirectory)
         {
             args = string.Join("", paths.Matches(args)
@@ -1348,7 +1815,7 @@ After making the necessary modifications, you can rerun the deployment process b
                                                                    '\\' :
                                                                    '/';
 
-                                                    var ret = Path.Join(raw_files_dir_path.Replace("\"", "").Replace(from, to), s.Replace("\"", "").Replace(from, to));
+                                                    var ret = Path.Join(RawFilesDirPath.Replace("\"", "").Replace(from, to), s.Replace("\"", "").Replace(from, to));
                                                     return ret.Contains(' ') ?
                                                                "\"" + ret + "\"" :
                                                                ret;
@@ -1367,16 +1834,16 @@ After making the necessary modifications, you can rerun the deployment process b
                 CreateNoWindow = true
             };
             var error = "";
-            // Attempt to execute the process twice with different configurations
+            // Attempt to execute process with different configurations to handle path/extension issues
             for (var i = 0;
                  i < 3;
                  i++, startInfo.FileName = exe + (OperatingSystem.IsWindows() ?
                                                       i == 1 ?
-                                                          ".exe" :
-                                                          ".cmd" :
+                                                          ".exe" : // Try .exe extension on Windows
+                                                          ".cmd" : // Try .cmd on Windows
                                                       i == 1 ?
-                                                          ".sh" :
-                                                          ".bash"), startInfo.UseShellExecute = true)
+                                                          ".sh" :                                      // Try .sh on non-Windows
+                                                          ".bash"), startInfo.UseShellExecute = true) // Try different extensions and shell execution
             {
                 try
                 {
@@ -1396,8 +1863,8 @@ After making the necessary modifications, you can rerun the deployment process b
                 }
                 catch (Exception e)
                 {
-                    // If the first attempt fails, modify the start info for the second attempt
-                    startInfo.UseShellExecute = false;
+                    // Second attempt: Modify start info and retry
+                    startInfo.UseShellExecute = false; // Disable shell execution for second attempt
                     try
                     {
                         // Second attempt: Execute the process with modified start info
@@ -1419,77 +1886,70 @@ After making the necessary modifications, you can rerun the deployment process b
                                 }
                             }
 
-                            return output;
+                            return output; // Return standard output on success
                         }
                     }
                     catch (Exception ee)
                     {
-                        // If both attempts fail on the second iteration, exit the application
+                        // If both attempts fail after the first iteration, exit with error
                         if (1 < i) { exit($"Error executing {exe} {args}. Exception details:\n{ee}", -1); }
-                        // If it's the first iteration, the loop will continue to the second attempt
+                        // If first iteration fails, loop will continue to next attempt
                     }
                 }
             }
 
-            // Note: If execution reaches here, it means both attempts failed on the first iteration
-            // and succeeded on the second iteration. This case is not explicitly handled.
-            return exe + " " + args;
+            // Note: Code should not reach here in normal execution, indicates both attempts on first iteration failed.
+            return exe + " " + args; // Return command line for debugging if something unexpected happens
         }
 
-        private const string HEX = "0123456789abcdef";
-
-        public static void updatePersonalVolatileUUID(ulong uuid_hi, ulong uuid_lo)
-        {
-            var chars = new char[32]; // 32 hex digits
-
-            for (var i = 15; -1 < i; i--)
-            {
-                chars[i] = HEX[(int)(uuid_hi & 0xF)];
-                uuid_hi >>= 4;
-            }
-
-            for (var i = 31; 15 < i; i--)
-            {
-                chars[i] = HEX[(int)(uuid_lo & 0xF)];
-                uuid_lo >>= 4;
-            }
-
-            updatePersonalVolatileUUID(new string(chars));
-        }
-
+        /// <summary>
+        /// Updates the PersonalVolatileUUID in the application properties file.
+        /// </summary>
+        /// <param name="uuidString">The UUID string to set.</param>
         public static void updatePersonalVolatileUUID(string UUID)
         {
-            if (app_props.HasKey("PersonalVolatileUUID")) // Update
+            // Ensure the input is a valid GUID before saving.
+            if (!Guid.TryParse(UUID, out _)) return; // Or throw an exception if invalid input is a critical error.
+
+            if (app_props.HasKey("PersonalVolatileUUID")) // If UUID exists, update it and back up the old one.
                 app_props["PersonalVolatileUUID"].AsString.Value = UUID;
-            else
-                app_props.Add("PersonalVolatileUUID", new TomlString { Value = UUID }); //add
+            else // Otherwise, add the new UUID.
+                app_props.Add("PersonalVolatileUUID", new TomlString { Value = UUID });
 
             using var writer = File.CreateText(app_props_file);
             app_props.WriteTo(writer);
         }
 
+        /// <summary>
+        /// Retrieves the PersonalVolatileUUID and parses it into two ulong values.
+        /// </summary>
+        /// <param name="uuid_hi">Output parameter for the high 64 bits of the UUID.</param>
+        /// <param name="uuid_lo">Output parameter for the low 64 bits of the UUID.</param>
         public static void PersonalVolatileUUID(out ulong uuid_hi, out ulong uuid_lo)
         {
-            var uuid = app_props["PersonalVolatileUUID"].AsString!.Value;
-
-            uuid_lo = 0;
+            // Default to zero in case of failure.
             uuid_hi = 0;
+            uuid_lo = 0;
 
-            for (int i = 0, ch, n = 0; i < uuid.Length; i++)
-                if ((ch = uuid[i]) != '-')
-                {
-                    if ('0' <= ch && ch <= '9') ch -= '0';      // Convert '0'-'9' to 0-9
-                    else if ('a' <= ch && ch <= 'f') ch -= 'a' - 10; // Convert 'a'-'f' to 10-15
-                    else if ('A' <= ch && ch <= 'F') ch -= 'A' - 10; // Convert 'A'-'F' to 10-15
+            if (!app_props.HasKey("PersonalVolatileUUID"))
+                exit("Error: 'PersonalVolatileUUID' not found in configuration. Please provide one first.");
 
+            var uuidString = app_props["PersonalVolatileUUID"].AsString!.Value;
 
-                    if (n < 16)
-                        uuid_hi = (uuid_hi << 4) | (uint)ch;
-                    else
-                        uuid_lo = (uuid_lo << 4) | (uint)ch;
+            // Use Guid.TryParse to safely handle any valid GUID format (with or without hyphens, etc.).
+            if (!Guid.TryParse(uuidString, out var guid))
+                return; // Failed to parse, uuid_hi and uuid_lo remain 0.
 
-                    n++;
-                }
+            // Convert the parsed GUID to a clean 32-digit hex string ("N" format).
+            var cleanHexString = guid.ToString("N");
+
+            // Split the string into high and low parts. Substring is safe here due to the fixed length.
+            var hiString = cleanHexString.Substring(0, 16);
+            var loString = cleanHexString.Substring(16);
+
+            // Use the safer TryParse to convert hex strings to ulongs.
+            ulong.TryParse(hiString, System.Globalization.NumberStyles.HexNumber, null, out uuid_hi);
+            ulong.TryParse(loString, System.Globalization.NumberStyles.HexNumber, null, out uuid_lo);
         }
     }
 }

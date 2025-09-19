@@ -6,45 +6,68 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: "single-instance"
+  group: "signup-processing"
   cancel-in-progress: false
 
 env:
   GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
   REPO: AdHoc-Protocol
   ORG: AdHoc-Protocol
-  CATEGORY_SLUG: "sign-up"  # Use the correct slug format
+  CATEGORY_SLUG: "sign-up"
 
 jobs:
-  process-messages:
+  # Job 1: Get prerequisite IDs that other jobs will need.
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      category_id: ${{ steps.get_ids.outputs.category_id }}
+      org_id: ${{ steps.get_ids.outputs.org_id }}
     steps:
-      - name: Get Discussion Category ID for "Sign up"
-        id: fetch_category_id
+      - name: Get Discussion Category and Organization IDs
+        id: get_ids
         run: |
-          CATEGORY_ID=$(gh api graphql -f query='
+          IDS_JSON=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categorySlug: String!) {
               repository(owner: $owner, name: $name) {
                 discussionCategory(slug: $categorySlug) {
                   id
                 }
               }
+              organization(login: $owner) {
+                id
+              }
             }
-          ' -F owner="$ORG" -F name="$REPO" -F categorySlug="$CATEGORY_SLUG" --jq '.data.repository.discussionCategory.id')
+          ' -F owner="$ORG" -F name="$REPO" -F categorySlug="$CATEGORY_SLUG")
           
-          if [[ -z "$CATEGORY_ID" ]]; then
-            echo "Error: Category ID not found for '$CATEGORY_SLUG'" >&2
+          CATEGORY_ID=$(echo "$IDS_JSON" | jq -r '.data.repository.discussionCategory.id')
+          ORG_ID=$(echo "$IDS_JSON" | jq -r '.data.organization.id')
+          
+          if [[ -z "$CATEGORY_ID" || "$CATEGORY_ID" == "null" ]]; then
+            echo "::error::Category ID not found for slug '${CATEGORY_SLUG}'"
             exit 1
           fi
-          echo "Fetched Category ID: $CATEGORY_ID"
-          echo "category_id=$CATEGORY_ID" >> $GITHUB_ENV
+          
+          echo "category_id=$CATEGORY_ID" >> $GITHUB_OUTPUT
+          echo "org_id=$ORG_ID" >> $GITHUB_OUTPUT
+          echo "✓ Fetched Category ID: $CATEGORY_ID"
+          echo "✓ Fetched Organization ID: $ORG_ID"
 
-      - name: Collect Discussion Messages in "Sign up" Category
-        id: process_messages
+  # Job 2: Find all unique users who need to be processed.
+  discover:
+    runs-on: ubuntu-latest
+    needs: setup
+    outputs:
+      users_json: ${{ steps.get_users.outputs.users_json }}
+      user_count: ${{ steps.get_users.outputs.user_count }}
+    steps:
+      - name: Fetch Unique Sign-up Users
+        id: get_users
         env:
-          CATEGORY_ID: ${{ env.category_id }}
+          CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
         run: |
-          MESSAGES=$(gh api graphql -f query='
+          # This single, efficient query gets all unique users and all required data fields.
+          # This avoids making separate API calls for each user's details later on.
+          USERS_PAYLOAD=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
                 discussions(first: 100, categoryId: $categoryId) {
@@ -53,228 +76,159 @@ jobs:
                       login
                       url
                       avatarUrl
-                    }
-                    createdAt
-                    id
-                  }
-                }
-              }
-            }
-          ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
-
-          if [[ -z "$MESSAGES" ]]; then
-            echo "No messages found in 'Sign up' category. Exiting..."
-            exit 0
-          fi
-
-          echo "$MESSAGES" | jq -r '.data.repository.discussions.nodes 
-            | unique_by(.author.login) 
-            | .[] 
-            | "\(.author.login),\(.author.url),\(.author.avatarUrl)"' |
-          while IFS=',' read -r login url avatarUrl; do
-              USER_DATA=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
-                query($login: String!) {
-                  user(login: $login) {
-                    id
-                    createdAt
-                  }
-                }
-              ' -F login="$login" --jq '.data.user')
-          
-              USER_ID=$(echo "$USER_DATA" | jq -r '.id')
-              CREATED_AT=$(echo "$USER_DATA" | jq -r '.createdAt')
-              CREATED_AT_MS=$(date -d "$CREATED_AT" +%s%3N)
-          
-              echo "${login},${url},${avatarUrl},${USER_ID},${CREATED_AT_MS},$(uuidgen)"
-          done > unique_messages.txt          
-          
-          while IFS=',' read -r login url avatarUrl user_id created_at_ms uuid; do
-            echo -n "$uuid" | tr -d '-' | xxd -r -p
-            printf "%016x" "$created_at_ms" | xxd -r -p
-            echo -n "$user_id" && printf '\0'
-            echo -n "$login" && printf '\0'
-          done < unique_messages.txt > binary_send
-          
-          echo "Collected and processed unique messages in Sign up ID:'$CATEGORY_ID' category."
-
-      - name: Send Messages via websocat
-        env:
-          SIGN_UP_URL: ${{ secrets.SIGN_UP_URL }}
-          SIGN_UP_HEADER: ${{ secrets.SIGN_UP_HEADER }}
-          SIGN_UP_OK: ${{ secrets.SIGN_UP_OK }}
-        run: |
-          wget -q https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux -O /usr/local/bin/websocat
-          chmod +x /usr/local/bin/websocat
-
-          binary_header_tmp=$(mktemp) 
-          echo -n "$SIGN_UP_HEADER" | xxd -r -p > "$binary_header_tmp"
-          file_size=$(stat -c%s binary_send)
-          printf "%02x%02x" $((file_size & 0xFF)) $((file_size >> 8 & 0xFF)) | xxd -r -p >> "$binary_header_tmp"
-          cat binary_send >> "$binary_header_tmp"
-
-          response=$(timeout 5 websocat --binary "$SIGN_UP_URL" < "$binary_header_tmp")
-          if [ -z "$response" ]; then
-              echo "Error: Failed to receive a response within 5 seconds" >&2
-              exit 1
-          fi
-          
-          response_hex=$(echo -n "$response" | xxd -p | tr -d '\n')
-          expected_hex="${SIGN_UP_OK}"
-          
-          if [ "$response_hex" != "$expected_hex" ]; then
-              echo "Error: Unexpected response received. Expected:$expected_hex, Got:$response_hex". >&2
-              exit 1
-          fi
-
-      - name: Get Organization ID
-        id: get_org_id
-        run: |
-          ORG_ID=$(gh api graphql -f query='
-            query($organization: String!) {
-              organization(login: $organization) {
-                id
-              }
-            }
-          ' -F organization="$ORG" --jq '.data.organization.id')
-          echo "org_id=$ORG_ID" >> $GITHUB_OUTPUT
-
-      - name: Process Unique Messages
-        run: |
-          while IFS=',' read -r login url avatarUrl user_id user_createdAt uuid; do
-            USER_PROJECTS=$(gh api graphql -f query='
-              query($organization: String!, $login: String!) {
-                organization(login: $organization) {
-                  projectsV2(first: 1, query: $login) {
-                    nodes {
-                      id
-                    }
-                  }
-                }
-              }
-            ' -F organization="$ORG" -F login="$login" --jq '.data.organization.projectsV2.nodes')
-          
-            # Check if USER_PROJECTS is empty or does not contain any projects
-            if [[ "$USER_PROJECTS" == "[]" || -z "$USER_PROJECTS" ]]; then
-              echo "Creating new project for $login..."
-              PROJECT_ID=$(gh api graphql -f query='
-                mutation($ownerId: ID!, $title: String!) {
-                  createProjectV2(input: {ownerId: $ownerId, title: $title}) {
-                    projectV2 {
-                      id
-                    }
-                  }
-                }
-              ' -F ownerId="${{ steps.get_org_id.outputs.org_id }}" -F title="$login" --jq '.data.createProjectV2.projectV2.id')
-          
-              README_CONTENT="# [$login]($url)  \n\n![image]($avatarUrl)"
-          
-              gh api graphql -f query='
-                mutation($projectId: ID!, $readme: String!) {
-                  updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
-                    projectV2 {
-                      id
-                    }
-                  }
-                }
-<<<<<<< HEAD
-              ' -F projectId="$NEW_PROJECT_ID" -F readme="$README_CONTENT"
-
-              gh api graphql -f query='
-                mutation($projectId: ID!, $title: String!) {
-                  addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
-                    clientMutationId
-                  }
-                }' -F projectId="$NEW_PROJECT_ID" -F title="$id"
-
-              # Get USER_ID from GitHub API
-              USER_ID=$(gh api graphql -H "X-Github-Next-Global-ID: 1" -f query='
-                query($login: String!) {
-                  user(login: $login) {
-                    id
-                  }
-                }
-              ' -F login="$login" --jq '.data.user.id')
-          
-              # Update ProjectV2 Collaborators
-=======
-              ' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
-          
-              # Update ProjectV2 Collaborators only if the project is newly created
->>>>>>> c504ae6a59ebc50960cf3f767492be7a7790769f
-              gh api graphql -f query='
-                mutation($projectId: ID!, $userId: ID!) {
-                  updateProjectV2Collaborators(input: {
-                    projectId: $projectId, 
-                    collaborators: [{userId: $userId, role: WRITER}]
-                  }) {
-                    clientMutationId
-                  }
-                }
-              ' -F projectId="$PROJECT_ID" -F userId="$user_id"
-          
-              echo "Invited $login to project $login with read-write access"
-            else
-              # If project already exists, use the first one
-              PROJECT_ID=$(echo "$USER_PROJECTS" | jq -r '.[0].id')
-              if [[ "$PROJECT_ID" == "null" || -z "$PROJECT_ID" ]]; then
-                echo "No valid project found for $login, skipping."
-                continue
-              fi
-              echo "Project for $login already exists, skipping creation. Using existing project ID: $PROJECT_ID"
-            fi
-          
-            gh api graphql -f query='
-              mutation($projectId: ID!, $title: String!) {
-                addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
-                  clientMutationId
-                }
-              }' -F projectId="$PROJECT_ID" -F title="$uuid"
-          
-          done < unique_messages.txt
-
-      - name: Delete Processed Messages
-        if: ${{ success() }}
-        env:
-          CATEGORY_ID: ${{ env.category_id }}
-        run: |
-          while IFS=',' read -r login _; do
-              echo "Fetching all messages for user: $login in category $CATEGORY_ID"
-          
-              # Fetch all discussion messages in the specified category
-              DISCUSSIONS=$(gh api graphql -f query='
-                query($repository: String!, $owner: String!, $categoryId: ID!) {
-                  repository(name: $repository, owner: $owner) {
-                    discussions(first: 100, categoryId: $categoryId) {
-                      nodes {
+                      ... on User {
                         id
-                        author {
-                          login
-                        }
+                        createdAt
                       }
                     }
                   }
                 }
-<<<<<<< HEAD
               }
-            ' -F id="$id"
+            }
+          ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID" | \
+          jq -c '[.data.repository.discussions.nodes | .[] | .author] | unique_by(.login)')
+
+          USER_COUNT=$(echo "$USERS_PAYLOAD" | jq 'length')
+
+          if [[ "$USER_COUNT" -eq 0 ]]; then
+            echo "No new sign-up discussions to process."
+          else
+            echo "Found $USER_COUNT unique user(s) to process."
+          fi
+          
+          echo "users_json=$USERS_PAYLOAD" >> $GITHUB_OUTPUT
+          echo "user_count=$USER_COUNT" >> $GITHUB_OUTPUT
+
+  # Job 3: Process each user in parallel.
+  process:
+    runs-on: ubuntu-latest
+    needs: [setup, discover]
+    # Only run this job if the 'discover' job found users to process.
+    if: needs.discover.outputs.user_count > 0
+    strategy:
+      fail-fast: false # Allows other users to continue processing even if one fails.
+      matrix:
+        # Create a parallel job for each user found in the 'discover' job.
+        user: ${{ fromJson(needs.discover.outputs.users_json) }}
+
+    steps:
+      - name: Send Registration & Provision Project for ${{ matrix.user.login }}
+        env:
+          SIGN_UP_URL: ${{ secrets.SIGN_UP_URL }}
+          SIGN_UP_HEADER: ${{ secrets.SIGN_UP_HEADER }}
+          ORG_ID: ${{ needs.setup.outputs.org_id }}
+          USER_LOGIN: ${{ matrix.user.login }}
+          USER_ID: ${{ matrix.user.id }}
+          USER_URL: ${{ matrix.user.url }}
+          USER_AVATAR_URL: ${{ matrix.user.avatarUrl }}
+          USER_CREATED_AT: ${{ matrix.user.createdAt }}
+        run: |
+          echo "--- Processing user: $USER_LOGIN ---"
+          
+          # 1. Prepare data
+          uuid=$(uuidgen)
+          created_at_ms=$(date -d "$USER_CREATED_AT" +%s%3N)
+          
+          # 2. Send user data via HTTP GET request
+          echo "Sending registration request..."
+          http_status=$(curl -s -G \
+            -w "%{http_code}" \
+            -o /dev/null \
+            "$SIGN_UP_URL" \
+            --data-urlencode "header=$SIGN_UP_HEADER" \
+            --data-urlencode "uuid=$uuid" \
+            --data-urlencode "timestamp=$created_at_ms" \
+            --data-urlencode "user_id=$USER_ID" \
+            --data-urlencode "login=$USER_LOGIN")
+
+          if [[ "$http_status" -lt 200 || "$http_status" -ge 300 ]]; then
+            echo "::error::Received non-successful HTTP status '$http_status' for user '$USER_LOGIN'. Aborting this user's processing."
+            exit 1
+          fi
+          echo "✓ Successfully registered (HTTP $http_status). Now provisioning project."
+
+          # 3. Check for and provision a GitHub Project for the user
+          USER_PROJECTS=$(gh api graphql -f query='
+            query($org: String!, $login: String!) {
+              organization(login: $org) {
+                projectsV2(first: 1, query: $login) { nodes { id } }
+              }
+            }' -F org="$ORG" -F login="$USER_LOGIN" --jq '.data.organization.projectsV2.nodes')
+
+          if [[ "$USER_PROJECTS" == "[]" || -z "$USER_PROJECTS" ]]; then
+            echo "Creating new project for $USER_LOGIN..."
+            PROJECT_ID=$(gh api graphql -f query='
+              mutation($ownerId: ID!, $title: String!) {
+                createProjectV2(input: {ownerId: $ownerId, title: $title}) {
+                  projectV2 { id }
+                }
+              }' -F ownerId="$ORG_ID" -F title="$USER_LOGIN" --jq '.data.createProjectV2.projectV2.id')
+          
+            README_CONTENT="# [$USER_LOGIN]($USER_URL)  \n\n![Avatar]($USER_AVATAR_URL)"
+          
+            # Update README, set to private, and invite user in two mutations
+            gh api graphql -f query='
+              mutation($projectId: ID!, $readme: String!) {
+                updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
+                  projectV2 { id }
+                }
+              }' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
+          
+            gh api graphql -f query='
+              mutation($projectId: ID!, $userId: ID!) {
+                updateProjectV2Collaborators(input: {
+                  projectId: $projectId, 
+                  collaborators: [{userId: $userId, role: WRITER}]
+                }) { clientMutationId }
+              }' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
+            echo "✓ Invited $USER_LOGIN to new project with read-write access."
+          else
+            PROJECT_ID=$(echo "$USER_PROJECTS" | jq -r '.[0].id')
+            echo "Project already exists. Using existing project ID: $PROJECT_ID"
+          fi
+          
+          # 4. Add the sign-up UUID as a draft issue to their project
+          gh api graphql -f query='
+            mutation($projectId: ID!, $title: String!) {
+              addProjectV2DraftIssue(input: {projectId: $projectId, title: $title}) {
+                clientMutationId
+              }
+            }' -F projectId="$PROJECT_ID" -F title="$uuid"
+          echo "✓ Added sign-up record ($uuid) to project."
+
+  # Job 4: Clean up all discussions after processing is complete.
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [setup, process]
+    # This job runs only if the discovery and processing jobs succeeded.
+    # It will not run if 'discover' found no users, because 'process' will be skipped.
+    if: always() && needs.process.result == 'success'
+    steps:
+      - name: Delete All Processed Sign-up Discussions
+        env:
+          CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
+        run: |
+          echo "Cleaning up all discussions in the 'Sign up' category..."
+          DISCUSSION_IDS=$(gh api graphql -f query='
+            query($owner: String!, $name: String!, $categoryId: ID!) {
+              repository(owner: $owner, name: $name) {
+                discussions(first: 100, categoryId: $categoryId) {
+                  nodes { id }
+                }
+              }
+            }' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID" | jq -r '.data.repository.discussions.nodes[].id')
+          
+          if [[ -z "$DISCUSSION_IDS" ]]; then
+            echo "No discussions to delete."
+            exit 0
+          fi
+          
+          for id in $DISCUSSION_IDS; do
+            echo "Deleting discussion with ID: $id"
+            gh api graphql -f query='
+              mutation($id: ID!) {
+                deleteDiscussion(input: {id: $id}) { clientMutationId }
+              }' -F id="$id" || echo "::warning::Failed to delete discussion with ID: $id"
+            sleep 1 # Crucial to avoid hitting secondary rate limits.
           done
-=======
-              ' -F repository="$REPO" -F owner="$ORG" -F categoryId="$CATEGORY_ID")
-          
-              # Filter discussion IDs by the current user login
-              MESSAGE_IDS=$(echo "$DISCUSSIONS" | jq -r --arg login "$login" '.data.repository.discussions.nodes | map(select(.author.login == $login)) | .[] | .id')
-          
-              # Delete each message by the user
-              for id in $MESSAGE_IDS; do
-                echo "Deleting message with ID: $id for user: $login"
-                gh api graphql -f query='
-                  mutation($id: ID!) {
-                    deleteDiscussion(input: {id: $id}) {
-                      clientMutationId
-                    }
-                  }
-                ' -F id="$id" || echo "Failed to delete message with ID: $id for user: $login"
-                sleep 1  # Optional: delay to handle rate limits
-              done
-          done < unique_messages.txt
->>>>>>> c504ae6a59ebc50960cf3f767492be7a7790769f
+          echo "✓ Cleanup complete."

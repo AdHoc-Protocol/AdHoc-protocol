@@ -1,80 +1,103 @@
-# *Attention!!!*
+# AdHoc: Multi-Language Binary Protocol Code Generator
 
-Performance can rarely be an afterthought
+Performance should never be an afterthought.
 
 ![image](https://user-images.githubusercontent.com/29354319/204679188-d5b0bdc7-4e47-4f32-87bb-2bfaf9d09d78.png)
 
-When your solution components need to communicate across different programming languages, manually coding data serialization becomes a
-challenging task. It's slow, error-prone, and grows more complicated as you add languages and platforms, or when you need to modify
-existing solutions with new data structures or message types.
+When your solution components need to communicate efficiently across different programming languages and platforms, manually coding data serialization
+and deserialization becomes a
+significant challenge. This process is inherently slow, prone to errors, and rapidly grows more complicated as your system scales, new languages are
+added, or existing data structures
+require modification.
 
-This is where Domain-Specific Languages (DSLs) for protocol description come in. These declarative languages allow you to define your data structures and communication protocols once, then automatically generate implementation code for any supported language. This approach offers several key benefits:
+This is precisely where **Domain-Specific Languages (DSLs) for protocol description** excel. By using a declarative language to define your data
+structures, message types, and communication
+protocols once, you can automatically generate consistent, high-performance implementation code for any supported language. This approach offers
+substantial benefits:
 
-* Reduced development time
-* Fewer bugs and compatibility issues
-* Consistent implementation across platforms
-* Easier maintenance and updates
+* **Reduced Development Time:** Eliminate tedious manual coding of serialization logic.
+* **Fewer Bugs and Compatibility Issues:** Generated code is inherently more consistent and less prone to human error across different platforms.
+* **Consistent Implementation:** Ensure uniform data handling and protocol adherence throughout your distributed system.
+* **Easier Maintenance and Updates:** Protocol changes can be made in one place (the description file) and propagated automatically to all language
+  implementations.
 
-Many established frameworks already utilize this approach, including:
+Many established frameworks leverage this powerful paradigm, including:
 
-- [Protocol Buffers](https://developers.google.com/protocol-buffers/docs/overview)
-- [Cap’n Proto](https://capnproto.org/language.html)
-- [FlatBuffers](http://google.github.io/flatbuffers/flatbuffers_guide_writing_schema.html)
-- [ZCM](https://github.com/ZeroCM/zcm/blob/master/docs/tutorial.md)
-- [MAVLink](https://github.com/mavlink/mavlink)
-- [Thrift](https://thrift.apache.org/docs/idl)
-- [Apache Avro](https://avro.apache.org/docs/1.8.2/idl.html)
+- [**Swagger/OpenAPI**](https://swagger.io/docs/specification/data-models/): Defines RESTful APIs, enabling documentation and code generation.
+- [**Protocol Buffers**](https://developers.google.com/protocol-buffers/docs/overview): A compact binary serialization format with schema evolution.
+- [**Cap’n Proto**](https://capnproto.org/language.html): High-performance, zero-copy serialization with RPC capabilities.
+- [**FlatBuffers**](http://google.github.io/flatbuffers/flatbuffers_guide_writing_schema.html): Memory-efficient serialization for zero-copy access.
+- [**ZCM**](https://github.com/ZeroCM/zcm/blob/master/docs/tutorial.md): Real-time, low-latency messaging for structured data.
+- [**MAVLink**](https://github.com/mavlink/mavlink): Lightweight messaging for drones and robotics, focused on efficiency.
+- [**Thrift**](https://thrift.apache.org/docs/idl): A cross-language serialization and RPC framework.
+- [**Apache Avro**](https://avro.apache.org/docs/1.8.2/idl.html): Schema-based serialization for big data, supporting dynamic typing.
 
-However, after careful evaluation of existing solutions, we identified opportunities for improvement.
-This led to the development of AdHoc protocol — a next-generation code generator designed to overcome common limitations.AdHoc currently supports C#, Java, and TypeScript, with
-plans to expand to C++, Rust, and Go. It seamlessly handles the translation between binary data streams and structured packages in your application,
-making cross-language communication effortless.
+However, through careful evaluation, we identified opportunities to enhance existing solutions, particularly for scenarios demanding the utmost in
+binary data efficiency and application-specific
+protocol control. This led to the development of **AdHoc Protocol** — a next-generation code generator designed to meet these demands.
 
-The AdHoc code generator is crafted for **data-oriented applications** requiring high performance, with efficient handling of structured binary data across network
-communication and custom storage formats. Its design is ideal for applications that demand fast data throughput with minimal resource consumption, allowing more users to be
-served on the same hardware. Here’s where it excels:
+AdHoc currently supports **C#, Java, and TypeScript**, with planned expansion to C++, Rust, and Go. It seamlessly handles the translation between
+binary data streams and structured objects ("packs")
+in your application, making high-performance cross-language communication effortless.
 
-1. **Best Fit: Data-Intensive Applications**  
-   This solution is especially suited for:
-	- **Financial Trading**: Real-time handling of high-frequency data packets with low latency.
-	- **Customer Relationship Management (CRM)**: Processing substantial datasets for customer and transactional data.
-	- **Enterprise Resource Planning (ERP)**: Supporting high-volume updates in logistics, inventory, and other real-time processes.
-	- **Game Servers**: Managing real-time communication and state synchronization between players in multiplayer online games with minimal latency.
-	- **IoT Systems**: Handling large-scale sensor data streams with high throughput and low latency.
-	- **Real-Time Analytics Platforms**: Processing large amounts of data in real time, such as monitoring and analyzing system logs or sensor data, where low latency and
-	  high throughput are essential.
-	- **Streaming Media Services**: Delivering high-quality, low-latency audio or video streams, ensuring smooth, uninterrupted delivery to users.
-	- **Telecommunications Systems**: Managing communication data for high-volume call routing, message delivery, and network state monitoring in real time.
-	- **Autonomous Vehicles**: Handling data from various sensors and communication systems, requiring fast and efficient transmission of data packets between components
-	  for decision-making.
-   
-   Applications in these areas require **optimized binary protocols** that can manage complex data transactions while minimizing memory and CPU usage. The efficient data
-2. handling enables these applications to **serve more users on the same hardware**, enhancing scalability and cost-efficiency.
+## Why Choose AdHoc?
 
-2. **Network Communication and Custom Storage**  
-   The generated code can be employed for high-performance network communication between applications or microservices, ensuring fast, reliable data exchange with
-3. reduced computational overhead. Additionally, it supports **custom binary file storage formats** that are compact and efficient, further reducing memory usage and
-4. improving retrieval speed.
+The AdHoc code generator is specifically crafted for **data-oriented applications** that require high performance and efficient handling of structured
+binary data, whether for network communication or custom storage formats.
+Its design prioritizes fast data throughput with minimal resource consumption, allowing you to serve more users or process more data on the same
+hardware.
 
-3. **Performance Benefits**  
-   By leveraging binary protocols, this solution offers:
-	- **Reduced Memory and CPU Usage**: Optimized data formats mean lower resource consumption, allowing a single server to handle a higher number of simultaneous users.
-	- **Faster Serialization/Deserialization**: Less processing time for data transformations.
-	- **Improved Network Efficiency**: Smaller data packets translate to reduced transfer times and enhanced throughput.
+### 1. Best Fit: Data-Intensive Applications
 
-4. **When to Consider Other Solutions**  
-   Applications that are primarily **text-based or content-oriented**, such as blogs, content management systems, or document storage, may not gain significant benefits
-5. from binary protocols. In these cases, standard formats like JSON or XML often meet requirements effectively without the complexity of a binary format.
-   
-   Additionally, for **simple or low-performance use cases**, where data volume and speed are not critical factors, traditional data formats may be more straightforward to
-6. implement and maintain.
+AdHoc is particularly well-suited for systems where data volume, speed, and efficiency are paramount:
+
+- **Financial Trading:** Managing real-time, high-frequency market data with minimal latency.
+- **Customer Relationship Management (CRM):** Processing large datasets of customer interactions and transactions efficiently.
+- **Enterprise Resource Planning (ERP):** Handling high-volume, real-time data updates in logistics, inventory, and operations.
+- **Game Servers:** Facilitating low-latency, real-time communication and state synchronization for multiplayer online games.
+- **IoT Systems:** Processing extensive sensor data streams with high throughput and low latency demands.
+- **Real-Time Analytics Platforms:** Analyzing vast amounts of streaming data (logs, sensor data) where speed is critical.
+- **Streaming Media Services:** Delivering high-quality audio/video streams with low latency.
+- **Telecommunications Systems:** Managing high-volume call routing, message delivery, and network state monitoring.
+- **Autonomous Vehicles:** Processing data from numerous sensors and communication systems rapidly for decision-making.
+- **Network Communication for Applications and Microservices:** Ensuring efficient, seamless data exchange in distributed systems.
+- **Custom File Storage Formats:** Creating application-specific binary file formats optimized for data retrieval and storage efficiency.
+
+### 2. Performance Benefits
+
+Leveraging structured binary protocols generated by AdHoc provides significant performance advantages:
+
+- **Reduced Memory and CPU Usage:** Optimized binary formats require less memory and processing power for serialization/deserialization, enabling
+  higher concurrency and resource efficiency.
+- **Faster Serialization/Deserialization:** Minimized processing time for data transformation translates directly to lower latency.
+- **Improved Network Efficiency:** Smaller binary packets reduce bandwidth usage and transfer times, enhancing overall throughput.
+
+### 3. When to Consider Other Solutions
+
+While powerful, AdHoc Protocol may not be the optimal choice for all scenarios:
+
+- **Primarily Text-Based or Content-Oriented Applications:** For systems like blogs, content management, or document storage where human-readable
+  formats are acceptable or beneficial, standard formats like JSON or XML are often sufficient and simpler to implement.
+- **Simple or Low-Performance Use Cases:** If data volume, speed, and resource efficiency are not critical requirements, traditional data formats
+  might be more straightforward to implement and maintain.
+
+## AdHoc Protocol Key Concepts
+
+AdHoc Protocol provides a rich set of features and building blocks to define sophisticated binary protocols and application communication flows.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/a15016a6-ac05-4d66-8798-4a7188bf24c5)
 
 The **AdHoc** generator offers a comprehensive set of features:
 
+- Use C# to describe the protocol data structure in a familiar and intuitive way.
+- Each entity can import(inherit) or subtract(remove) properties of others, allowing for flexible composition.
+- Projects can be composed of other projects or selectively import specific components, such as channels, constants, or individual packs.
+- Channels can be constructed from channels or their components, such as stages or branches.
+- Packs can import or subtract individual fields or all fields of other packs.
+- Provides a [`custom code injection point`](#custom-code-injection-point), where custom code can safely be integrated with the generated code.
+- Provides built-in visualization tools through the **AdHoc Observer**, which can render interactive diagrams of network topology, pack field layouts, and data flow state machines.
 - Support for bitfields.
-- Handling of standard and nullable primitive data types.
+- Handling of nullable primitive data types.
 - If all the field data of a pack fits within 8 bytes, it will be represented as a `long` primitive, thereby
   reducing garbage collection overhead.
 - Support for data types like strings, maps, sets, and arrays.
@@ -83,39 +106,31 @@ The **AdHoc** generator offers a comprehensive set of features:
 - Handles both standard and flags-like enums.
 - Fields can use enum and reference to a pack data types.
 - Defines constants at both host and packet levels.
-- Each entity can import(inherit) or subtract(remove) properties of others, allowing for flexible composition.
-  The system handles pack circular references and supports multiple inheritance.
+- The system handles pack circular references and supports multiple inheritance.
   Additionally, reused entities can be modified to meet the specific requirements of the new project.
-- Projects can be composed of other projects or selectively import specific parts, such as channels, constants or substruct a pack.
-- Channels can be constructed from channels or their segments, such as stages or branches.
-- Packs can import or subtract individual fields or all fields of other packs.
 - Implements compression using the [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding algorithm.
-- Generates code for a ready-to-use network infrastructure.
-- The generated code reuses buffers, starting from a minimum length of 127 bytes, with a preference for 256 bytes or larger. Buffer allocation for the entire packet is not required.
-- Provides a [`custom code injection point`](#custom-code-injection-point), where custom code can safely be integrated with the generated code.
-- The system has built-in facilities that enable it to display diagrams of the network infrastructure topology, the
-  layout of the pack's field, and the states of the data flow state machine.
+- Generates fully functional code ready for use in network infrastructure.
+- The generated code reuses buffers, starting from a minimum length of 127 bytes, with a preference for 256 bytes or larger. Buffer allocation for the
+  entire packet is not required.
 
-The code generated by the AdHoc generator can be used to handle network communication
-between applications or microservices and to create custom file storage formats for
-application data.
-
-The **AdHoc Code Generator** is a [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service) platform that provides cloud-based code generation services.
+The **AdHoc Code Generator** is a [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service) platform that provides cloud-based code generation
+services.
 
 First, you'll need a personal [UUID](#uuid).
 Why UUID?
-The use of a UUID, rather than a login and password, allows users to automate code generation and embed the **AdHocAgent** utility into their code delivery process.
+The use of a UUID, rather than a login and password, allows users to automate code generation and embed the **AdHocAgent** utility into their code
+delivery process.
 
 To start using the AdHoc code generator, follow these steps:
 
 1. Install .NET.
 2. Install a **C# IDE** such as **[Intellij Rider](https://www.jetbrains.com/rider/)**,
-   **[Visual Studio Code](https://code.visualstudio.com/)**, or *
-   *[Visual Studio](https://visualstudio.microsoft.com/vs/community/)**.
+   **[Visual Studio Code](https://code.visualstudio.com/)**, or **[Visual Studio](https://visualstudio.microsoft.com/vs/community/)**.
 
 ---
 
-3. Install [7-Zip Compression](https://www.7-zip.org/download.html), a utility for optimal PPMd compression of source files. Download the appropriate version for your platform:
+3. Install [7-Zip Compression](https://www.7-zip.org/download.html), a utility for optimal PPMd compression of source files. Download the [**24.07
+   version or higher !**](https://youtu.be/i5L9xEk_adw) for your platform:
 	
 	- **[Windows](https://www.7-zip.org/a/7zr.exe)**  
 	  Add `C:\Program Files\7-Zip` to the system `PATH`, and ensure the `7z` command works in the console.
@@ -130,9 +145,12 @@ To start using the AdHoc code generator, follow these steps:
 	    ```
 		brew install p7zip
 		```
-4. Download the source code of the [AdHoc protocol metadata attributes Meta.cs file](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/master/src/Meta.cs).  
-   Alternatively, add a dependency on the AdHocAgent `.dll` to your protocol project.
-   ![image](https://github.com/user-attachments/assets/76298dca-1f8c-4b88-855b-080ead6ad0d7)
+4. Download the source code of
+   the [AdHoc protocol metadata attributes Meta.cs file](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/master/src/Meta.cs).  
+   Alternatively, add a dependency on the `AdHocAgent.dll` to your protocol project.
+
+![image](https://github.com/user-attachments/assets/76298dca-1f8c-4b88-855b-080ead6ad0d7)
+
 5. Add a reference to the `Meta` in your AdHoc protocol description project.  
    ![image](https://github.com/user-attachments/assets/c91a05fe-3eff-4106-880f-e17f0e6b12de)
 6. Compose your protocol description project.
@@ -146,9 +164,9 @@ AdHocAgent is a command-line utility designed to streamline your project workflo
 1. Uploading your task
 2. Downloading generated results
 3. Deploying your project
-4. View your project structure as a diagram
-5. Upload `.proto` files to convert into AdHoc protocol description format
-6. Retain and update user `UUID`
+4. Visualizing your project structure as a diagram
+5. Uploading `.proto` files to convert into AdHoc protocol description format
+6. Retaining and updating your user `UUID`
 
 It accepts the following input:
 
@@ -170,46 +188,44 @@ Upload the `protocol description file` to generate source code.
 
 ## `.cs?`
 
-Render the `protocol description file` in a browser-based viewer.
-<details>
- <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
+This command launches the **AdHoc Observer**, a powerful, web-based tool for visualizing, analyzing, and documenting your protocol definitions. It connects via WebSocket to receive live protocol data and renders it as a series of interconnected diagrams.
 
 Example:
 
 ```cmd
     AdHocAgent.exe MyProtocol.cs?
 ```
+The Observer is an integrated development environment for your protocol, allowing you to:
+*   **Visualize High-Level Architecture:** See all hosts, the packs they handle, and the communication channels linking them in a clear, interactive graph.
+*   **Drill into Data Flow Logic:** Right-click a channel to open a detailed pop-up view of its state machine, including all stages and branching logic.
+*   **Inspect Data Structures:** Left-click a pack to instantly view its fields, data types, and nested structures in a dedicated diagram.
+*   **Annotate and Document:** Double-click the background to create, edit, and save rich-text "stickers" (notes) directly on the diagrams.
+*   **Navigate with Ease:** Use a searchable, collapsible tree view in the sidebar to quickly find and focus on any host, pack, or channel.
+*   **Persist Your Workspace:** All layout customizations (node positions, pan, zoom) and annotations are automatically saved.
+
+> **[See the full Observer User Guide](./Observer.md) for a detailed explanation of all features.**
 
 ![image](https://user-images.githubusercontent.com/29354319/232010215-ea6f4b1e-2251-4c3a-956d-017d222ab1e3.png)
 
 ![image](https://github.com/user-attachments/assets/565a76c2-58f3-4570-9ca8-c6bad41f4f43)
- </details>
 
 > [!NOTE]    
-> To enable navigation from the viewer to the source code, specify the path to your local C# IDE in the `AdHocAgent.toml` configuration file.
+> To enable navigation from the Observer to your source code, specify the path to your local C# IDE in the `AdHocAgent.toml` configuration file.
 
-The remaining arguments are:
+### Saving Your Workspace (Layouts and Annotations)
 
-- Paths to source files `.cs` and/or `.csproj` project files referenced in the `protocol description file`.
-- The path to a temporary folder where files received from the server will be stored.
+The Observer automatically saves your workspace, including diagram layouts and annotations (stickers), into a dedicated folder.
 
-The Observer will search for and save the `.layout` file in the current working directory with the same name as the specified protocol description file.
-For example, if the provided file path is   
-`my_protocol_description.cs`  the corresponding layout file will be   
-`my_protocol_description.layout`.
-
-To save the current layout, right-click on an empty space within the diagram:
+*   **Location:** The data is saved in the current working folder of AdhocAgent.
+*   **Manual Save:** To save the current state of your diagram, open sidebar and select **"Save Diagram"**.
+*   **Recovery:** If you accidentally close the browser without saving, the Observer creates an `current_working_folder/unsaved`. You can move these filese to current_working_folder to recover your work.
 
 ![image](https://github.com/user-attachments/assets/d2482a1b-5058-4903-920e-ef5dbf252ef6)
 
-Then, click `Save layout`.
+## `.proto` or path to a folder
 
-If you modify the layout and close the browser without saving, a `my_protocol_description.unsaved_layout` file will be created, containing the layout before closing.
-You can rename this file to `my_protocol_description.layout` to use it, if you accidentally closed without saving.
-
-## `.proto` or path to a directory
-
-Indicates that the task is converting files in the [Protocol Buffers](https://developers.google.com/protocol-buffers) format to format of the AdHoc `protocol description`.
+Indicates that the task is converting a file or a directory of files in the [Protocol Buffers](https://developers.google.com/protocol-buffers) format
+to the AdHoc `protocol description` format.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -223,15 +239,25 @@ Example
  </details> 
 
 > [!NOTE]  
-> The second argument can be a path to a directory containing additional imported `.proto` files, such as [`well_known`](https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf)
+> The second argument can be a path to a directory containing additional imported `.proto` files, such as [
+`well_known`](https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf)
 > files and others.
 
 The result of the .proto files transformation is only a starting point for your transition to the AdHoc protocol and cannot be used as is.
 Reconsider it in the context of the greater opportunities provided by the AdHoc protocol.
 
+## `.json` or `.yaml` Input
+
+Specify that your input file is a Swagger/OpenAPI specification in `.json` or `.yaml` format. An optional second argument can be the
+path to the output AdHoc protocol description `.cs` file.
+If the second argument is skipped, the AdHocAgent utility will output the `.cs` file next to the provided OpenAPI file.
+Do not expect a perfect result from the transformation, but this is a good starting point for the transition from OpenAPI specification
+to the AdHoc protocol description.
+
 ## `.md`
 
-The provided path is the `deployment instruction file` for the embedded [Continuous Deployment](https://en.wikipedia.org/wiki/Continuous_deployment) system.
+The provided path is the `deployment instruction file` for the embedded [Continuous Deployment](https://en.wikipedia.org/wiki/Continuous_deployment)
+system.
 `AdHocAgent` will only repeat the deployment process for source files that have already been received from the server.
 This feature is particularly useful for debugging deployments.
 
@@ -247,7 +273,7 @@ This feature is particularly useful for debugging deployments.
 - **`AdHocAgent.toml`:** This file includes essential settings for the `AdHocAgent` utility, such as:
 	- The URL of the code-generating server.
 	- The path to the local C# IDE binary. This allows the utility to open the IDE directly to specific source files at a specified line
-	- The path to the [7-Zip](https://www.7-zip.org/download.html) binary. `AdHocAgent` utilizes its PPMd compression capability.
+	- The path to the [7-Zip](https://www.7-zip.org/download.html) binary. `AdHocAgent` leverages 7-Zip's PPMd compression capability.
 		- Download links:  
 		  [Windows](https://www.7-zip.org/a/7zr.exe)  
 		  [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)  
@@ -255,7 +281,8 @@ This feature is particularly useful for debugging deployments.
 	- The path to your preferred source code formatter binaries, including:
 		- Download links  
 		  [clang-format](https://releases.llvm.org/download.html)  
-		  [prettier](https://prettier.io/docs/en/install.html)  
+		  [prettier](https://prettier.io/docs/en/install.html)  Install `prettier` globally `npm install -g prettier` to ensure it is available in the
+		  console as `prettier`.
 		  [astyle](https://sourceforge.net/projects/astyle/files/)
 
 The `AdHocAgent` utility will search for the `AdHocAgent.toml` file in its directory.
@@ -263,18 +290,20 @@ If the file is not found, the utility will generate a template that you can upda
 
 ## UUID
 
-To get your first `volatile` [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) or to recover one, follow these steps:
+To restore or get your first `volatile` personal Authentication [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier), follow these
+steps:
 
-1. Sign in to your GitHub account.
+1. Sign in to your **GitHub** account.
 2. Go to the [Sign-Up Discussion](https://github.com/orgs/AdHoc-Protocol/discussions/categories/sign-up) and post a message.
 
-After your request is processed (when the post disappears), a bot will automatically create a new **private** project for you [here](https://github.com/orgs/AdHoc-Protocol/projects).
+After your request is processed (when the post disappears), a bot will automatically create a new **private** project for
+you [here](https://github.com/orgs/AdHoc-Protocol/projects).
 This project will track your code generation history and provide helpful messages with details about any issues and their resolutions.
 
-In the project, you will find a task with your UUID:   
+In the project, you will find a task with your `UUID`:   
 ![image](https://github.com/user-attachments/assets/b1789e7e-3ca3-4442-839b-aca172babf4e)
 
-Copy the UUID and once run the **AdHocAgent** utility.
+Grub the `UUID` and once run the **AdHocAgent** utility.
 
 ```shell
 AdHocAgent 100b9fd2-e593-485b-a2fe-9b9c82bc1e3f
@@ -288,433 +317,295 @@ The utility will save the `volatile UUID` in the `AdHocAgent.toml` configuration
 > If your UUID is rejected, you must manually repeat the process to acquire a new one.
 
 
-> [!NOTE]
+> [!NOTE]  
 > When run without arguments, the AdHocAgent utility displays the command-line help and generates a `protocol description file` template.
 
-## Continuous deployment (CD)
+## Continuous Deployment (CD) System
 
-The embedded [Continuous deployment](https://en.wikipedia.org/wiki/Continuous_deployment) system relies on a `deployment instructions file` to deploy the received source code into the target project folders.  
-A typical layout for received files might resemble the following:
+The embedded Continuous Deployment system automates the process of deploying generated source code into your target projects. It uses a special
+Markdown file, the **Deployment Instructions File**, to control exactly how and where files are copied.
 
-- 📁[InCS](/C:/Received/AdHocProtocol/InCS)
-	- 📁[Agent](file:/C:/Received/AdHocProtocol/InCS/Agent)
-		- 📁[gen](/C:/Received/AdHocProtocol/InCS/Agent/gen)
-			- ＃[Agent.cs](D:/AdHocTMP/AdHocProtocol/InCS/Agent/gen/Agent.cs)
-			- ＃[Context.cs](/C:/Received/AdHocProtocol/InCS/Agent/gen/Context.cs)
-		- 📁[lib](/C:/Received/AdHocProtocol/InCS/Agent/lib)
-			- ＃[AdHoc.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/AdHoc.cs)
-			- 📁[collections](/C:/Received/AdHocProtocol/InCS/Agent/lib/collections)
-				- ＃[BitList.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/collections/BitList.cs)
-				- ＃[RingBuffer.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/collections/RingBuffer.cs)
-			- ＃[Network.cs](/C:/Received/AdHocProtocol/InCS/Agent/lib/Network.cs)
-		- 📄[Project.csproj](/C:/Received/AdHocProtocol/InCS/Agent/Project.csproj)
-- 📁[InJAVA](/C:/Received/AdHocProtocol/InJAVA)
-	- 📁[Server](/C:/Received/AdHocProtocol/InJAVA/Server)
-		- 📁[collections](/C:/Received/AdHocProtocol/InJAVA/Server/collections)
-			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org)
-				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail)
-					- 📁[collections](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections)
-						- ☕[Array.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections/Array.java)
-						- ☕[BitList.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections/BitList.java)
-						- ☕[BitsList.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/collections/BitsList.java)
-					- ☕[JsonWriter.java](/C:/Received/AdHocProtocol/InJAVA/Server/collections/org/unirail/JsonWriter.java)
-		- 📁[demo](/C:/Received/AdHocProtocol/InJAVA/Server/demo)
-			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/demo/org)
-				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/demo/org/unirail)
-					- ☕[ServerImpl.java](/C:/Received/AdHocProtocol/InJAVA/Server/demo/org/unirail/ServerImpl.java)
-		- 📁[gen](/C:/Received/AdHocProtocol/InJAVA/Server/gen)
-			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org)
-				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org/unirail)
-					- ☕[Context.java](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org/unirail/Context.java)
-					- ☕[Server.java](/C:/Received/AdHocProtocol/InJAVA/Server/gen/org/unirail/Server.java)
-		- 📁[lib](/C:/Received/AdHocProtocol/InJAVA/Server/lib)
-			- 📁[org](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org)
-				- 📁[unirail](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org/unirail)
-					- ☕[AdHoc.java](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org/unirail/AdHoc.java)
-					- ☕[Network.java](/C:/Received/AdHocProtocol/InJAVA/Server/lib/org/unirail/Network.java)
-- 📁[InTS](/C:/Received/AdHocProtocol/InTS)
-	- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer)
-		- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
-		- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
-			- 🌀[Context.ts](/C:/Received/AdHocProtocol/InTS/Observer/gen/Context.ts)
-			- 🌀[Observer.ts](/C:/Received/AdHocProtocol/InTS/Observer/gen/Observer.ts)
-		- 📁[lib](/C:/Received/AdHocProtocol/InTS/Observer/lib)
-			- 🌀[AdHoc.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/AdHoc.ts)
-			- 📁[collections](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections)
-				- 🌀[BigInt64List.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections/BigInt64List.ts)
-				- 🌀[Uint8List.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections/Uint8List.ts)
-				- 🌀[Uint8NullList.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/collections/Uint8NullList.ts)
-			- 🌀[Network.ts](/C:/Received/AdHocProtocol/InTS/Observer/lib/Network.ts)
-		- {}[package.json](/C:/Received/AdHocProtocol/InTS/Observer/package.json)
-		- {}[tsconfig.json](/C:/Received/AdHocProtocol/InTS/Observer/tsconfig.json)
+Its most powerful feature is a **"Smart Merge"** capability, which preserves custom code you've written inside designated "injection points,"
+preventing your work from being overwritten during updates.
 
-> [!TIP]  
-> Switch from Markdown preview to Markdown source to view detailed formatting
+### The Deployment Workflow
 
-This tree view has been taken from autogenerated deployment instructions file.
+Here’s the typical workflow for using the deployment system:
 
-This `deployment instructions file` should be named using the `protocol description file name` followed by `.md`  
-For example, if the protocol description file is named `AdHocProtocol.cs`, the instruction file should be named `AdHocProtocol.md`.
+1. **First Run & Generation:** Run the AdHocAgent utility. If it doesn't find a deployment instructions file, it will **automatically generate one for
+   you** (e.g., `AdHocProtocol.md`). The process will then stop.
+2. **Configure:** Open the newly generated `.md` file. This file contains a complete tree of all the source files. Edit this file to add the
+   destination paths for your project folders.
+3. **Redeploy:** Run the AdHocAgent utility again. This time, it will read your configured instructions and deploy the files, intelligently merging
+   your custom code.
+4. **Repeat:** After future code generation, simply re-run the utility to deploy the updated files. Your deployment configuration and custom code will
+   be preserved.
 
-The AdHocAgent utility will search for this instruction file in the following locations:
+### The Deployment Instructions File
 
-- The folder containing the `protocol description file`.
-- The `Working directory`.
+This file is the brain of the deployment process.
 
-If the utility cannot find the `deployment instruction file`, it will generate a suitable one.  
-In that case, you will need to edit the file and provide the correct `deployment instructions`.
+* **Naming:** It must be named after the protocol description file, but with an `.md` extension. (e.g., `AdHocProtocol.cs` -> `AdHocProtocol.md`).
+* **Location:** The utility searches for this file first in the directory of the protocol file, and then in the working directory.
 
-### Adding Destination Paths
+#### Structure: The File Tree
 
-`Destination Paths` specify the target locations for received files or folders.
-You can add `target path(s)` at the end of any folder or file line using the following syntax:
+The file contains a Markdown list representing the source directory structure. Each file and folder can be configured for deployment.
 
-- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [\.(jpg|png|gif)$](/path/to/folder) [](/path/to/folder2)
-	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) [](/path/to/folder3)
-	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen) [\.cpp$](/path/to/folder3)
-
-> [!TIP]  
-> Switch from Markdown preview to Markdown source to view detailed formatting.
-
-The deployment process will process [custom code injection point](#custom-code-injection-point) and copy according instructions with matched selectors of a file's parent
-folders and instructions on their own line.
-
-#### Target File Path Link
-
-**Copying to a folder:**  
-If the link ends with '/', the received item will be copied into the specified path.
-
-For a folder:
-
-- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/parent_folder/)
-  
-  `/C:/Received/AdHocProtocol/InTS/Observer` will be copied inside `/path/to/parent_folder` as `/path/to/parent_folder/Observer`.
-
-For a file:
-
-- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) [](/path/to/parent_folder/)
-  
-  `/C:/Received/AdHocProtocol/InTS/Observer/demo.ts` will be copied inside `/path/to/parent_folder` as `/path/to/parent_folder/demo.ts`.
-
-**Copying with a new name:**  
-If the link doesn't end with '/', the item will be copied with the specified name.
-
-For a folder:
-
-- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/NewName)
-  `/C:/Received/AdHocProtocol/InTS/Observer` will be copied as `/path/to/NewName`.
-
-For a file:
-
-- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) [](/path/to/NewName.ts)
-  
-  `/C:/Received/AdHocProtocol/InTS/Observer/demo.ts` will be copied as `/path/to/NewName.ts`.
-
-If no `destination` is specified for files/subfolders, they inherit the parent folder's destination:
-
-- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [\.cpp$](/path/to/folder) [](/path/to/folder2)
-	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
-	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
-
-Use an empty target link `[]()` or `⛔` to skip a file/folder:
-
-- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/folder)
-	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts) ⛔
-	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen) []()
-
-Specify a [ regular expression](#regular-expression-patterns-for-file-path-matching) on folder lines to select multiple files:
-
-- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer) [](/path/to/folder) [\.(jpg|png|gif)$](/path/to/folder)
-	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
-	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
-
-> [!TIP]  
-> Switch from Markdown preview to Markdown source to view detailed formatting.
-
-You can add notes or comments (without line breaks) on any line:
-
-- 📁[Observer](/C:/Received/AdHocProtocol/InTS/Observer)  ✅ copy full tree structure. [](/path/to/folder) Filtered [\.(jpg|png|gif)$](/path/to/folder)
-	- 🌀[demo.ts](/C:/Received/AdHocProtocol/InTS/Observer/demo.ts)
-	- 📁[gen](/C:/Received/AdHocProtocol/InTS/Observer/gen)
-
-#### Regular Expression Patterns for File Path Matching
-
-Examples of valid regex patterns commonly used for file matching:
-
-1. **File Extensions**
-	- `\.cpp$`: Matches files ending with .cpp
-	- `\.(c|h)$`: Matches files ending with either .c or .h
-
-2. **Specific Naming Patterns**
-	- `^test[^/]\.txt$`: Matches files like test1.txt, testA.txt, but not test/1.txt
-	- `^log_[0-9]\.txt$`: Matches log_0.txt through log_9.txt
-
-3. **Directory Structures**
-	- `^src/.*\.js$`: Matches .js files in the src directory or its subdirectories
-	- `^docs/[^/]*\.md$`: Matches .md files directly in the docs directory
-
-4. **Exclusions**
-	- `^.*(?<!\.o)$`: Matches files not ending with .o
-	- `^.*(?<!\.txt)$`: Matches files not ending with .txt
-
-5. **Complex Patterns**
-	- `^.*test_.*\.py$`: Matches Python files with "test_" anywhere in the filename
-	- `^data_\d{4}\.csv$`: Matches data files with a 4-digit number, like data_0001.csv
-
-6. **Multiple Criteria**
-	- `\.(jpg|png|gif)$`: Matches files ending with .jpg, .png, or .gif
-	- `^project/(src|test)/.*\.js$`: Matches .js files in either src or test directories
-
-Key regex components:
-
-- `^` asserts the start of the string.
-- `$` asserts the end of the string.
-- `.` matches any character except newline.
-- `.*` matches any number of characters.
-- `[^/]` matches any character except a forward slash.
-- `\d` matches a digit.
-- `{4}` specifies exactly four occurrences of the previous pattern.
-
-### Deploying Execution Instructions
-
-The `Execution Instructions` feature allows you to run code on received source files before they are deployed to their destinations.
-This is useful for tasks such as formatting, linting, or performing other operations on the files.
-A `Deployment Instructions` file can include multiple `Execution Instructions` as needed.
-
-`Execution Instructions` start with `regex_matching` - regular expressions (regex) used to match file paths and determine which files a particular instruction applies to. These patterns provide a powerful and flexible way to select files based on their names or paths.
-
-`Execution Instructions` are executed in the order they appear in the instruction file.
-
-#### Root Path
-
-If a path starts with one of the following prefixes:
-
-- `/InCPP/`
-- `/InCS/`
-- `/InGO/`
-- `/InJAVA/`
-- `/InRS/`
-- `/InTS/`
-
-it indicates that the path is relative to the root of the folder containing the received files.
-
-#### File Path Placeholder
-
-The `FILE_PATH` placeholder in an `Execution Instruction` will be replaced with the actual file path during execution.
-
-#### Types of Execution Instructions
-
-##### Shell Execution Instruction
-
-Execute an application via the command line using the following structure:
-
-   ```regexp
-   regex_matching
-   ```
-
-   ```shell
-executable_path command_line_parameters
-   ```
-
-> [!TIP]  
-> Switch from Markdown preview to Markdown source to view detailed formatting
-
-- `regex_matching`: Specifies which files the instruction applies to.
-- `executable_path`: Path to the executable. Must be at the start of the line. Enclose `executable_path` in quotes if it contains spaces.
-- `command_line_parameters`: Parameters to pass to the executable. Must include the `FILE_PATH` placeholder.
-	- Notes:
-		- You can split `command_line_parameters` across multiple lines, but each line must be indented.
-		- Multiple shell executions `executable_path command_line_parameters` can be specified for the same `regex_matching` selector.
-
-**Examples:**
-
-Format Java, C#, C++, and header files using clang-format:
-
-   ```regexp
-   \.(java|cs|cpp|h|)$
-   ```
-
-   ```shell  
-clang-format -i -style="{ColumnLimit: 0,IndentWidth: 4, 
-                        TabWidth: 4, 
-                        UseTab: Never, 
-                        BreakBeforeBraces: Allman, 
-                        IndentCaseLabels: true, 
-                        SpacesInLineCommentPrefix: {Minimum: 0, Maximum: 0}}" FILE_PATH 
-   ```
-
-To format C# files with `dotnet format` use the command in format [before and after deployment execution](#before-and-after-deployment-execution)
-
-```shell
-[before deployment](dotnet format "/InCS/Host_in_C#" )
+```markdown
+- 📁[InCS](/path/to/source/InCS)
+	- 📁[Agent](/path/to/source/InCS/Agent)
+		- ＃[Agent.cs](/path/to/source/InCS/Agent/gen/Agent.cs)
+		- ＃[Context.cs](/path/to/source/InCS/Agent/gen/Context.cs)
 ```
 
-To format TypeScript files using prettier:
+#### Configuring Deployment Targets
 
-   ```regexp
-   \.ts$
-   ```
+You specify where files go by adding extra Markdown links to the end of a line. The syntax is `[<regex_filter>](<destination_path>)`.
 
-   ```shell  
-prettier --write FILE_PATH --tab-width 4 --bracket-spacing false --print-width  999
-   ```
+* The `regex_filter` is optional. If omitted (`[](/path)`), the rule applies to all files within that scope.
+* The `destination_path` is the target location on your file system.
 
-Run custom lint on JavaScript files:
+##### Target Path Behavior
 
-   ```regexp
-   \.js$
-   ```
+**1. Copying into a Folder (Path ends with `/` or `\`):**
+The source item is copied *inside* the destination folder, keeping its original name.
 
-   ```shell
-c:\scripts\custom_lint.exe --fix FILE_PATH
-   ```
+- **Folder:** `- 📁[Observer](...) [](/path/to/project/src/)`
+	* The `Observer` folder will be copied to `/path/to/project/src/Observer`.
+- **File:** `- 🌀[demo.ts](...) [](/path/to/project/components/)`
+	* The `demo.ts` file will be copied to `/path/to/project/components/demo.ts`.
 
-Multiple executions for C++ files:
+**2. Copying and Renaming (Path does NOT end with `/` or `\`):**
+The source item is copied *as* the destination path.
 
-   ```regexp
-   \.cpp$
-   ```
+- **Folder:** `- 📁[Observer](...) [](/path/to/project/NewObserverName)`
+	* The `Observer` folder will be copied and renamed to `NewObserverName`.
+- **File:** `- 🌀[demo.ts](...) [](/path/to/NewName.ts)`
+	* The `demo.ts` file will be copied and renamed to `NewName.ts`.
 
-   ```shell
-c:\clang-format.exe -i FILE_PATH
-"d:\Path with whitespaces must be enclosed in quotes\apps.exe" FILE_PATH
-   ```
+##### Inheritance and Filtering
 
-##### C# Code Execution Instruction
+* **Inheritance:** Rules applied to a parent folder are automatically inherited by all its children.
+* **Filtering:** You can provide a regular expression in the brackets to apply a rule only to matching files within a folder's hierarchy.
 
-Execute a C# code snippet. The structure is:
+**Example:**
+> [!TIP]
+> Switch from Markdown preview to Markdown source to view detailed formatting.
+
+```markdown
+
+- 📁[Observer](/path/to/source/InTS/Observer)  ✅ Deploys all files to folder1, but images go to an assets folder.
+  [\.(jpg|png|gif)$](/project/assets/images/)
+  [](/project/src/folder1/)
+	
+	- 🌀[demo.ts](/path/to/source/InTS/Observer/demo.ts)  // Inherits /project/src/folder1/
+	- 📁[gen](/path/to/source/InTS/Observer/gen)          // All files inside also inherit
+```
+
+##### Skipping Files and Folders
+
+To exclude a file or folder from deployment, add `⛔` to the line or use an empty target `[]()`.
+
+```markdown
+- 📁[Observer](/path/to/source/InTS/Observer) [](/path/to/project/)
+	- 🌀[demo.ts](/path/to/source/InTS/Observer/demo.ts) ⛔ // This file will be skipped
+	- 📁[gen](/path/to/source/InTS/Observer/gen) []()            // This entire folder will be skipped
+```
+
+#### Advanced Processing: Execution Instructions
+
+You can run scripts or tools on source files *before* they are deployed. This is perfect for code formatting, linting, or other transformations.
+Instructions are defined in code blocks and are executed in the order they appear.
+
+##### File Path Placeholder & Root Path
+
+* Use the `FILE_PATH` placeholder in your commands; it will be replaced with the actual path of the file being processed.
+* Paths starting with `/InCS/`, `/InJAVA/`, etc., are treated as relative to the root of the source files directory.
+
+##### Shell Execution
+
+Execute any command-line tool.
 
 ```regexp
-\.cpp$
+<regex_to_select_files>
+```
+
+```shell
+<executable_path> <command_line_arguments_with_FILE_PATH>
+```
+
+**Example: Formatting C++, C#, and Java files with `clang-format`.**
+
+```regexp
+\.(java|cs|cpp|h)$
+```
+
+```shell
+clang-format -i -style="{ColumnLimit: 120, BreakBeforeBraces: Allman}" FILE_PATH
+```
+
+##### C# Code Execution
+
+Execute an in-line C# script for more complex transformations. The file path is passed as `args[0]` to `Main`.
+
+* **Reference Assemblies:** If your script needs namespaces not available by default (like `System.Linq`), add assembly references in quotes at the
+  top of the script.
+
+**Example: Removing leading whitespace from region directives.**
+
+```regexp
+.*
 ```
 
 ```csharp
-"System.Linq.Enumerable"
-"System.Text.RegularExpressions"
+"System.Text.RegularExpressions" // Reference the assembly for Regex
 
 using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 
 public class Program
 {
-    // Define the regex pattern
-    static string pattern = @"^\s+(?=//#region|//#endregion|#region|#endregion|//region|//endregion|// region|// endregion)";
-    
     public static void Main(string[] args)
     {
-        // Read the file content with UTF-8 encoding
-        var content = File.ReadAllText( args[0], System.Text.Encoding.UTF8);
-
-        // Perform the replacement
-        var updatedContent = Regex.Replace(content, pattern,"", RegexOptions.Multiline);
-
-        // Write the updated content back to the file with UTF-8 encoding
-        //According to the Unicode standard, the BOM for UTF-8 files is not recommended !!!
-        File.WriteAllText( args[0], updatedContent,  new System.Text.UTF8Encoding()); 
+        var filePath = args[0];
+        var pattern = @"^\s+(?=//#region|#region)";
+        var content = File.ReadAllText(filePath, Encoding.UTF8);
+        var updatedContent = Regex.Replace(content, pattern, "", RegexOptions.Multiline);
+        // Write back without a Byte Order Mark (BOM), which is recommended
+        File.WriteAllText(filePath, updatedContent, new UTF8Encoding(false));
     }
 }
 ```
 
-This code removes whitespace before region directives in a C++ file.
+### Preserving Custom Code: The Smart Merge Feature
 
-**Attention**:
+This is the system's core safety feature. It ensures you can add custom logic to generated files without losing it on the next deployment.
 
-- actual file path will be passed as `arg[0]` of `Program.Main`.
-- Add required assembly references for missing namespaces.   
-  For example, if you encounter errors like `The type or namespace name 'Linq' does not exist in the namespace 'System'`,
-  add the required assembly at the top of your code.   
-  Each assembly should be on a new line, enclosed in quotes, such as `"System.Linq.Enumerable"`.
+#### Injection Points (Your Safe Zone)
 
-```csharp
-"System.Linq.Enumerable"
-"Other.Assembly.Full.Name"
-"Other.Assembly.Full.Name1"
+An **injection point** is a special, identifiable region in a generated file where you can safely add your own code. They are marked with
+language-specific region comments that include a **Unique ID (UID)**.
 
-...
-rest of your code    
-...
-```
+- **C#**:
+  ```csharp
+  #region > receiving
+  // Your custom code goes here
+  #endregion > ǺÿÿČ.Project.Channel receiving  // <-- DO NOT EDIT THIS UID
+  ```
+- **Java/TypeScript**:
+  ```typescript
+  //#region > receiving
+  // Your custom code goes here
+  //#endregion > ǺÿÿČ.Project.Channel receiving // <-- DO NOT EDIT THIS UID
+  ```
 
-### Custom code injection point
+> [!CAUTION]
+> **Never edit, move, or duplicate the `endregion` line or its Unique ID.** The UID is how the system finds your safe zone to preserve your code.
+Changing it will cause your custom code to be permanently lost.
 
-Custom code `injection points` are areas within your generated codebase where you can safely insert custom code that will be preserved during generated file updates.
-This feature allows you to seamlessly integrate your custom logic with generated code.
+#### Generated Blocks (Suggestions from the Generator)
 
-#### How It Works
-
-1. During file deployment, the system scans the content of files being overwritten in the target location.
-2. It extracts custom code within `injection points` areas and transfer to corresponding areas in the newly received file.
-3. The files being overwritten are backed up to ensure data integrity.
-
-#### Injection Point Format
-
-The format of `injection points` varies depending on the programming language. They are denoted by special comments that mark the beginning and end of the `injection point`.
-
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/7c7dec09-86b0-4b7a-8c63-8f7df2a035ee)
-
-Here are examples of the special injection points:
-
-Java/TypeScript:
-
-```javascript
-//#region > before Project.Channel receiving
-//#endregion > ÿ.Receiver.receiving.Project.Channel
-```
-
-C#:
+Inside an injection point, you may find pre-written code snippets wrapped in special comment tags (e.g., `//❗<` and `//❗/>`). These are **Generated
+Blocks**.
 
 ```csharp
-#region > before Project.Channel receiving
-#endregion > ÿ.Receiver.receiving.Info
+#region > receiving
+// Your custom code can go here.
+
+//❗<
+    // This is a generated block. You can enable or disable it.
+//❗/>
+
+// Your custom code can also go here.
+#endregion > ǺÿÿČ.Project.Channel receiving
 ```
 
-Some `injection points`may contain generated code, which is marked by an empty inline comment at the end:
+**How to Work with Generated Blocks:**
 
-```csharp
-//#region > before Project.Channel receiving
-return allocator.new_Project_Channel.get();//
-// You can add your custom code here
-//#endregion > ÿ.Receiver.receiving.Project.Channel
-```
+* ✅ **DO:** **Enable/Disable a block.** To disable it, comment out the entire block, including the start/end tags. To enable it, uncomment the entire
+  block.
+* ✅ **DO:** **Reorder blocks.** You can move an entire block (tags and all) within its injection point.
+* ❌ **DO NOT:** **Edit the code *inside* a generated block.** Your changes will be discarded on the next deployment.
+* ❌ **DO NOT:** **Modify the block markers** (e.g., `//❗<`).
 
-This indicates that the code line is generated and can be deleted if it does not meet your requirements.
+#### Smart Update Notifications
 
-#### Important Considerations
+The system helps you review important changes by automatically adding `//todo 🔴` comments.
 
-Unique Identifiers
+* **New Active Code:** If an update adds a new, *active* generated block, you'll get a warning. This is critical because new code could change
+  behavior.
+  ```csharp
+  //todo 🔴 New active generated code was added by the generator. Please review...
+  //✅<
+      callNewFunction();
+  //✅/>
+  ```
+* **Removed Code You Used:** If a generated block that you had *enabled* is removed in an update, it won't be deleted. Instead, it will be commented
+  out with a warning, preserving your logic for you to review.
+  ```csharp
+  //todo 🔴 The following code block was removed by the code generator. Please review.
+  // //❗<
+  //    callObsoleteFunction();
+  // //❗/>
+  ```
 
-- Each `injection point` has a unique identifier, represented by short text (`scope uid` and `injection point uid`).
-- These identifiers allow you to freely move or edit the `injection point` comment without losing changes after an update.
+### Lifecycle Hooks: Before and After Deployment
 
-> [!CAUTION]  
-> Never edit or duplicate the unique identifiers. Doing so may result in loss of custom code during updates.
-
-Best Practices
-
-1. Only add custom code within clearly marked `injection point` areas.
-2. Do not modify the `injection point` comments themselves.
-3. Keep your custom code modular and well-documented for easier maintenance.
-
-### Before and After Deployment Execution
-
-In the `deployment instructions file`, you can specify the paths to executable files
-that will run before and after the `Continuous Deployment` process. These executables can be configured as follows:
+You can run executables at the very beginning or very end of the entire deployment process.
 
 ```markdown
-[before deployment]("C:\Program Files\dotnet\dotnet.exe" format "C:\My Deployment\folder\MyProject\InCS\My Host" )
-[before deployment](dotnet format "C:\My Deployment\folder\MyProject\InCS\My Host2" )
-
-[after deployment](/path/to/executable_after1.exe)
-[after deployment](/path/to/executable_after2.exe)
-
-[before deployment](/path/to/executable_before2.exe)
+[before deployment]("C:\Program Files\dotnet\dotnet.exe" format "/InCS/MyProject")
+[after deployment](/path/to/logging_script.sh --status=success)
 ```
+
+### Safety Features: Automated Backups and Restoration
+
+To protect your project from unintended consequences of a deployment, the system includes a robust, automatic backup and restore mechanism. This
+provides a critical safety net, allowing you to instantly revert changes if needed.
+
+#### How it Works
+
+Before the deployment process overwrites any files in your target project directories, it performs the following steps:
+
+1. **Creates a Backup Directory:** A new, unique backup directory is created in the same location as your deployment instructions file. The
+   directories are named sequentially (e.g., `AdHocProtocol_1`, `AdHocProtocol_2`, etc.), making it easy to find the most recent backup.
+2. **Copies Existing Files:** For every single file that is about to be updated or replaced, its current version is copied into this new backup
+   directory. The files are given generic names (like `original_1.cs`, `original_2.java`) to prevent conflicts.
+3. **Generates Restore Scripts:** Inside the backup directory, the system generates three scripts:
+	* `restore.bat` (for Windows Command Prompt)
+	* `restore.ps1` (for Windows PowerShell)
+	* `restore.sh` (for Linux, macOS, or WSL)
+
+> [!IMPORTANT]
+> Only files that are being **overwritten** are backed up. If a new file is deployed to a location where no file previously existed, there is no "
+original" to back up.
+
+#### How to Restore Your Files
+
+If a deployment introduces a bug or an unwanted change, you can immediately roll back to the previous state.
+
+1. **Navigate to the Backup Directory:** Open the latest backup folder (e.g., `AdHocProtocol_5`).
+2. **Choose and Run the Correct Script for Your OS:**
+	* **Windows:** Double-click `restore.bat` or right-click `restore.ps1` and select "Run with PowerShell".
+	* **Linux/macOS:** Open a terminal in the backup directory and run the following commands:
+	  ```shell
+	  # Make the script executable (only need to do this once)
+	  chmod +x restore.sh
+
+	  # Run the script
+	  ./restore.sh
+	  ```
+
+Running the script will copy every backed-up file from the backup folder back to its original project location, effectively undoing the deployment and
+restoring your project to its exact pre-deployment state.
 
 # Overview
 
-The simplest form of a `protocol description file` can be [represented as follows](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/Templates/ProtocolDescription.cs):
+The simplest form of a `protocol description file` can
+be [represented as follows](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/Templates/ProtocolDescription.cs):
 
 ```csharp
 using org.unirail.Meta; // Importing attributes required for AdHoc protocol generation
@@ -759,8 +650,8 @@ namespace com.my.company // The namespace for your company's project. Required!
 }
 ```
 
-To view the structure of a `protocol description file`, use the AdHocAgent utility by specifying the file path followed by a question mark.
-For example: `AdHocAgent.exe /dir/minimal_descr_file.cs?`. Running this command will prompt the utility to display the schema of the `protocol description file`.
+To visualize the structure of your protocol, launch the **AdHoc Observer** by appending a question mark to your protocol file path.
+For example: `AdHocAgent.exe /dir/minimal_descr_file.cs?`. This command opens an interactive diagram of your protocol's architecture.
 
 <details>
   <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -776,6 +667,8 @@ This command will upload the file and initiate the process of generating the sou
 > **The `protocol description file` follows a specific naming convention:**
 >
 >- Names should not start or end with an underscore `_`.
+>- C# prohibits a class from having a field or nested class with the same name as the class itself.  
+   Therefore, a `Pack` cannot have a field or nested pack with the same name as the pack.
 >- Names should not match any keywords defined by the programming languages that the code generator supports. *
    *AdHocAgent** will check for and warn about such conflicts before uploading.
 
@@ -803,6 +696,24 @@ namespace com.my.company // Your company's namespace. This is required.
         // Add your protocol description here
     }
 }
+```
+
+> [!Note]
+> In C# 10, file-scoped namespaces were introduced to simplify namespace declarations by eliminating the need for curly braces and reducing
+> indentation levels.
+
+This enhancement allows you to declare your namespace in a more concise manner:
+
+```csharp
+using org.unirail.Meta; // Importing AdHoc protocol attributes. This is required.
+
+namespace com.my.company; // Your company's namespace. This is required.
+
+public interface MyProject // Declare the AdHoc protocol description project as "MyProject."
+{
+    // Add your protocol description here
+}
+
 ```
 
 The **AdHoc protocol** not only defines the data for passing information, which includes packets and fields, but it also
@@ -996,7 +907,8 @@ interface MyProject : OtherProjects, MoreProjects
 > [!NOTE]  
 > The order of the extended interfaces determines priority in cases of full name or pack ID conflicts. Projects listed first take precedence.
 
-To exclude specific imported entities, reference them in the project's XML documentation using the [`<see cref="entity"/>-`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute) attribute:
+To exclude specific imported entities, reference them in the project's XML documentation using the [
+`<see cref="entity"/>-`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute) attribute:
 
 ```csharp
 /// <see cref="MoreProjects.UnnecessaryPack"/>-
@@ -1031,7 +943,9 @@ To import only specific enums, constant sets, channels, list them in the project
 [Learn how to modify imported packs](#modify-imported-packs).  
 [Learn how to modify imported channels](#modify-imported-channels).
 
-For example, the protocol description in [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) defines public, external communications. However, on the **Server** side, the backend infrastructure requires an internal communication protocol to handle tasks such as:
+For example, the protocol description in [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) defines
+public, external communications. However, on the **Server** side, the backend infrastructure requires an internal communication protocol to handle
+tasks such as:
 
 - Distributing workloads
 - Sending and receiving metrics
@@ -1158,14 +1072,16 @@ In this example, the `AdHocProtocolWithBackend` protocol description import all 
 
 - **Packs**:
 	- The `AuthorisationRequest` and `MetricsData` pack is created to be sent from the `Server` via `ChannelToAuthorizer`.
-	- Two packs, `AuthorisationConfirmed` and `AuthorisationRejected`, are defined within the `Authorizer`. One of these will be sent as a reply to the `AuthorisationRequest` from the `Server`.
+	- Two packs, `AuthorisationConfirmed` and `AuthorisationRejected`, are defined within the `Authorizer`. One of these will be sent as a reply to
+	  the `AuthorisationRequest` from the `Server`.
 
 - **Channels**:
 	- `ChannelToMetrics` connects the `Server` and `Metrics`.
 	- `ChannelToAuthorizer` connects the `Server` and `Authorizer`.
 
 > [!IMPORTANT]
-> If your solution requires working with multiple protocols, you cannot easily combine their generated protocol-processing code within the same VM instance
+> If your solution requires working with multiple protocols, you cannot easily combine their generated protocol-processing code within the same VM
+> instance
 > due to `lib` **org.unirail** namespace clashes. To resolve this, assign each project’s `lib` to a distinct namespace.
 
 ## Hosts
@@ -1173,7 +1089,8 @@ In this example, the `AdHocProtocolWithBackend` protocol description import all 
 In the AdHoc protocol, "hosts" refer to entities that actively participate in the exchange of information.
 These hosts are represented as C# `structs` within a project's `interface` and implement the `org.unirail.Meta.Host` marker interface.
 
-To specify the programming language and options for generating the host's source code, use the XML [`<see cref="entity">`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
+To specify the programming language and options for generating the host's source code, use the XML [
+`<see cref="entity">`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
 tag in the code documentation of the host declaration.
 
 The built-in marker interfaces such as `InCS`, `InJAVA`, `InTS` and others allow you to declare language configuration scopes.
@@ -1216,6 +1133,56 @@ AdHocAgent utility could be read the `Server` configuration in this manner..
 > [!NOTE]  
 > A host can serve as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the host's internal packet hierarchy.
 
+### The Multi Context Host
+
+In a simple application, you might have one continuous interaction (a single "state machine") per connection. However, complex applications often need
+to manage multiple, independent tasks or sessions over that same single connection.
+
+For example, on a game server, a single player connection might need to handle:
+
+* In-game chat (one context)
+* A live trade with another player (a second context)
+* A background quest update (a third context)
+
+Trying to manage these distinct tasks within a single state machine is complex and error-prone. The **Multicontext Host** is AdHoc's solution to this
+challenge.
+
+**Core Concepts**
+
+1. **Context as an Independent Task:** A "Context" is an isolated state machine with its own state and data. It represents a single, logical task.
+2. **State Isolation:** Each Context's state is completely separate from others, even though they share the same network connection.
+3. **Shared Packet Types:** All Contexts on a Host use the same defined set of request and response packets.
+4. **Automatic Routing:** The AdHoc runtime automatically tags outgoing packets with a Context ID and routes incoming packets to the correct Context
+   instance. You don't have to manage this manually.
+
+**Defining a Multicontext Host**
+
+To enable this feature, you implement the `org.unirail.MultiContextHost` interface instead of the basic `org.unirail.Host` interface. The compiler
+will then
+require you to define the `Contexts` property, which specifies the maximum number of concurrent contexts that can run on this Host per connection.
+
+```csharp
+using org.unirail.Meta;
+
+struct Server : MultiContextHost
+{
+    // This server can handle up to 10 independent contexts (tasks) on a single connection.
+    public int Contexts => 10;
+}
+```
+
+> **Warning:** Be mindful that each active Context consumes memory. Choose a number that balances your application's needs with its resource budget.
+
+**Benefits of the Multicontext Approach**
+
+* **Modularity:** Build your application as a set of clean, decoupled logical units.
+* **State Safety:** Prevent state conflicts between different tasks, making your code safer and easier to debug.
+* **Efficiency:** Manage many concurrent operations over a single, efficient network connection instead of multiple connections.
+* **Simplicity:** Your code within each Context only needs to care about its own state and logic, making it dramatically simpler.
+
+In short, the Multicontext feature allows you to build sophisticated, modular, and scalable network applications by layering multiple independent
+interactions over a single physical connection.
+
 ### Modify Imported Hosts
 
 You can adjust the language implementation configuration of imported `hosts`. For example:
@@ -1231,157 +1198,93 @@ struct ModifyServer : Modify<Server> { }
 
 In this example, we add information to the imported host `Server`, imply that `Pack` should be fully implemented in Java.
 
-## Packs
+## Pack Set
 
-Packs are the smallest units of transmittable information, defined using a C# `class`. Pack declarations can be nested and placed anywhere within a project’s scope.
+A Pack Set is a powerful feature for grouping related packet types under a single, manageable unit. This simplifies rule application, improves code
+organization, and enhances reusability.
+Pack Sets are the primary mechanism for defining a Scope—the target group of packets for a rule or operation.
 
-> [!NOTE]  
-> A pack can function as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the pack's internal hierarchy of packs.
+### In-Place Pack Sets
 
-The `fields` in a pack's class represent the data it transmits.
+The `org.unirail.Meta._<> ` interface is a special utility that creates an **Ad-Hoc Pack Set**, allowing flexible grouping of packet types.
+To exclude specific entities from a `PackSet`, use the `org.unirail.Meta.X<>` utility interface.
 
-Constant and static fields define constants within a pack's scope. A pack can be empty; in this case, its transmission is the only information it conveys.
+### Named Pack Sets
 
-To include or inherit **all fields** from other packs, add the `<see cref='Full.Path.To.Pack_or_field'/>+` line in the target pack’s XML documentation,
-or use C# class inheritance. To inherit fields from multiple packs, use the `org.unirail.Meta._<>` wrapper.
+**Named Pack Sets** simplify the management of frequently used or recurring packets by grouping them under a single, reusable name. This improves code
+readability and reduces complexity when referencing multiple packets in your project.
 
-Individual fields can be _inherited_ or _embedded_ by adding the `<see cref="Full.Path.To.OtherPack.AddField"/>+` comment in the target pack's XML documentation.
-
-Inherited fields cannot override existing or previously inherited fields with same name.
-
-To remove specific inherited fields, use the `<see cref="Full.Path.To.OtherPack.RemoveField"/>-` XML comment on pack.  
-The `<see cref="Full.Path.To.Source.Pack"/>-` comment can be used to simultaneously remove all fields that share the same names as the fields in the referenced `Pack`.
-
-<details>
- <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
+To define a **Named Pack Set**, use C# interface construct. For example:
 
 ```csharp
-using org.unirail.Meta;
-
-namespace com.my.company2 {
-    public interface MyProject {
-        public class AnyPacksFields {
-            long   received_time;
-            long   global_uid;
-            string client_hashcode;
-        }
-
-        ///<see cref = 'InJAVA'/>
-        struct Server : Host {
-            ///<see cref="AnyPacksFields"/> Embeds all fields from AnyPacksFields.
-            ///<see cref="AnyPacksFields.client_hashcode"/> but excludes the `client_hashcode` field from AnyPacksFields.
-            class ServerPack { } // Packets that the Server can create and send through this port
-        }
-
-
-        ///<see cref = 'InTS'/>
-        struct Client : Host {
-            class Login : _<AnyPacksFields> // Embeds all fields from AnyPacksFields
-            {
-                string user;
-                string password;
-            }
-        }
-
-        interface CommunicationChannel : ChannelFor<Server, Client> { }
-    }
-}
-```
-
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/c3cd9f94-7c6f-486e-a60b-c156b5342d5f)
-
-</details>
-
-### Empty packs
-
-Empty packets, which have no fields, are implemented as singletons. They serve as the most efficient means of signaling
-something simple.
-
-### Value Pack
-
-Value packs are compact data structures that can fit within **8 bytes**. They possess unique properties:
-
-- Do not allocate memory on the heap
-- Store data directly in primitive types
-- Benefit from specialized code generation methods for efficient packing and unpacking of field data
-
-### Container Pack
-
-Container packs are non-transmittable structures designed to organize other packs into logical hierarchies:
-
-- Declared using a C# `struct`
-- Dedicated to structuring and grouping related packs
-- Can contain constants declared with `const` or `static` fields
-
-### Modify Imported Packs
-
-To modify the layout of imported packs, create a new pack and merge its fields into the `TargetPack` by implementing the built-in `org.unirail.Meta.Modify<TargetPack>`.
-
-To remove specific fields from the `TargetPack`, use the `<see cref="Full.Path.To.OtherPack.RemoveField"/>-` XML comment on the pack.
-
-For example:
-
-```csharp
-/// <see cref="Agent.Proto.proto"/>+   // Add field to target
-/// <see cref="Agent.Login.uid"/>-     // Remove field from target
-class Pack : Modify<TargetPack> { 
-    public string UserName;
-    public long LoginTime;
-}
-```
-
-This approach allows you to add, remove and replace fields from an imported pack.
-
-
-> [!NOTE]
-> A modifier pack can function as a normal pack.
-
-## Enums and Constants
-
-### Enums
-
-Enums are used to organize sets of constants of the same primitive type:
-
-- Use the `[Flags]` attribute to indicate an enum can be treated as a bit field or set of flags
-- Enum fields without explicit initialization are automatically assigned integer values
-- In a `[Flags]` enum, assigned values represent bit flags
-
-### Constants
-
-Constants with different primitive types or strings (including their arrays) can be declared as `const` or `static` fields
-in any related pack, including `Container Packs`.
-
-- `static` fields:
-	- Can be assigned a value or the result of a static expression
-	- Can utilize any available C# static functions
-
-- `const` fields:
-	- Can be used as `attribute` parameters
-	- Must have a value that is the result of a C# compile-time expression
-	- Cannot use C# static functions to calculate values.
-
-To overcome this `const` fields limitations the `AdHoc protocol description` syntax introduces the `[ValueFor(const_constant)]` attribute:
-
-- Applied to a dummy `static` field
-- During code generation, the generator assigns the value and type from the `static` field to a corresponding `const` constant
-
-This approach combines the flexibility of `static` fields with the compile-time benefits of `const` constants.
-
-Example: Using [ValueFor(ConstantField)] Attribute
-
-Here's an example demonstrating the use of the `[ValueFor(ConstantField)]` attribute:
-
-```csharp
-[ValueFor(ConstantField)] static double value_for = Math.Sin(23);
-
-const double ConstantField = 0; // Result: ConstantField = Math.Sin(23)
+interface Info_Result:
+    _<
+    	Server.Info,
+    	Server.Result
+    >{}
 ```
 
 In this example:
 
-- `value_for` is assigned the value of `Math.Sin(23)`
-- This value is then copied to the `ConstantField` constant
-- Due to the `[ValueFor(ConstantField)]` attribute, `ConstantField` will have the calculated value of `Math.Sin(23)` at compile-time
+- `Info_Result` is the name of the set.
+- `Server.Info` and `Server.Result` are the packets that are grouped together.
+
+**Named packet sets** can be declared anywhere within your project and may contain references to individual pack, other **Named packet sets**,
+projects, or hosts.Once you have defined a **Named Pack Set**, you can reference it in your code wherever the set of packets is needed. For example:
+
+### Project, Host, or Pack as a Named Pack Set
+
+You can treat a **Project**, **Host**, or **Pack** as a **Named Pack Set** to automatically include all transmittable packets defined directly within
+their scope. This approach simplifies organizing and managing large packet sets hierarchically.
+
+```csharp
+interface Info_Result:
+    _<
+    	Server.Info,
+    	Server.Result
+        Project,  //  includes all transmittable packets directly within the Project's scope.
+        Host      // includes all transmittable packets directly within the Host's scope.    
+    >{}
+```                  
+
+To include **all transmittable packets recursively** (including those in nested structures) within a **Project**, **Host**, or **Pack**, prefix the
+reference with the `@` symbol. For example:
+
+```csharp
+interface Info_Result:
+    _<
+    	Server.Info,
+    	Server.Result
+        @Project, // includes all transmittable packets recursively within the Project.
+        Host,      // includes all transmittable packets directly within the Host's scope. 
+		X<
+		    Packs, //excludes the specified packets
+		    Need, 
+		    @ToDelete 
+		>
+    >{}
+```    
+
+## Empty packs, Constants, Enums
+
+### Empty Packs
+
+A **transmittable** (referenced(registered) in a channel) C# class-based pack that contains no instance fields, but various types
+of [constants](#constants) or nested declarations of other packs.
+Implemented as singletons, it offers the most efficient way to signal simple events or states via a channel.
+
+> [!NOTE]  
+> When constructing a pack hierarchy, you may encounter an `Empty pack` that is unexpectedly transmittable over the network. This is undesirable if
+> the pack’s sole purpose is to define the hierarchy structure.
+> To prevent transmission, switch to use a C# struct-based [Constant Container](#constant-container) that remains non-transmittable while still
+> fulfilling its hierarchy organizational role.
+
+### Constant Container
+
+A **non-transmittable** C# struct-based pack that may contain various types of [constants](#constants) or nested declarations of other packs.
+Declaring instance fields is not allowed.
+**Constant Container** is primarily used to define the hierarchy structure and deliver metadata to generated code. It can be declared anywhere within
+your project.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -1482,14 +1385,435 @@ namespace com.my.company
 
 </details>
 
-The constants defined in the root description file are propagated to all hosts.
 
-`Enums` and all constants are replicated on every host and are not transmitted during communication.
-They serve as local copies of the constant values and are available for reference and use within the respective host's scope.
+----
+
+### Enums
+
+Enums are used to organize sets of constants of the same primitive type:
+
+- Use the `[Flags]` attribute to indicate that an enum can be treated as a bit field or a set of flags.
+- Manual assignment of values is not required, except when an explicit value is needed. Enum fields without explicit initialization
+  are automatically assigned integer values, with the `[Flags]` attribute ensuring that each field is assigned a unique bit.
+
+
+- [!NOTE]
+- `Enums` and all constants are replicated on every host and are not transmitted during communication.
+- They serve as local copies of the constant values and are available for reference and use within the respective host's scope.
 
 ### Modify Enums and Constants
 
 Enums and constants can be modified like a [simple pack](#modify-imported-packs), **but the modifier is discarded after the modification is applied.**
+
+## Packs
+
+Packs are the smallest units of transmittable information, defined using a C# `class`. Pack declarations can be nested and placed anywhere within a
+project’s scope.
+
+The instance **fields** in a pack's class represent the data it transmits. A pack may also contain various types of [constants](#constants) or nested
+declarations of other packs.
+> [!NOTE]  
+> A pack can be used as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the pack hierarchy.
+
+To include or inherit:
+
+- **All fields** from other packs: Use C# class inheritance (To inherit fields from multiple packs, use the `org.unirail.Meta._<>` wrapper.)   
+  or use the `<see cref='Path.To.Pack'/>+` line in the target pack’s XML documentation.
+- **Specific fields** from other packs: Use the `<see cref='Path.To.Pack.field'/>+` line in the target pack’s XML documentation.
+
+> [!NOTE]
+> Inherited fields cannot override existing or previously inherited fields with same name.
+
+To remove:
+
+- **All fields** with the same names as another `Pack`: Use the `<see cref="Full.Path.To.Source.Pack"/>-` line in the target pack’s XML documentation.
+- **Specific fields** with the same names as referenced: Use the `<see cref="Full.Path.To.OtherPack.RemoveField"/>-` line in the target pack’s XML
+  documentation.
+
+<details>
+ <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
+
+```csharp
+using org.unirail.Meta;
+
+namespace com.my.company2 {
+    public interface MyProject {
+        public class AnyPacksFields {
+            long   received_time;
+            long   global_uid;
+            string client_hashcode;
+        }
+
+        ///<see cref = 'InJAVA'/>
+        struct Server : Host {
+            ///<see cref="AnyPacksFields"/> Embeds all fields from AnyPacksFields.
+            ///<see cref="AnyPacksFields.client_hashcode"/> but excludes the `client_hashcode` field from AnyPacksFields.
+            class ServerPack { } // Packets that the Server can create and send through this port
+        }
+
+
+        ///<see cref = 'InTS'/>
+        struct Client : Host {
+            class Login : _<AnyPacksFields> // Embeds all fields from AnyPacksFields
+            {
+                string user;
+                string password;
+            }
+        }
+
+        interface CommunicationChannel : ChannelFor<Server, Client> { }
+    }
+}
+```
+
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/c3cd9f94-7c6f-486e-a60b-c156b5342d5f)
+
+</details>
+
+### Field Injection
+
+The `FieldsInjectInto` Interface allows you to define a "template" class containing fields that are automatically injected into the **payload** (the
+main
+data body) of other packets. This is ideal for adding common fields without repetitive code. The template class itself
+is not preserved as a packet; only its fields are distributed.
+
+`FieldsInjectInto< PackSet >`inject fields only into transmittable packets defined within the specified [`PackSet`](#projecthost-as-a-named-pack-set)
+
+**Example:**
+
+Let's define a set of common fields and apply them to all packets in `MyProject` except for `Point2d`.
+
+```csharp
+// Rule: Add 'name' and 'length' to all packets in MyProject, but not to Point2d.
+class CommonFields : FieldsInjectInto< _<MyProject, X<Point2d>> > {
+    string name;
+    int length;
+}
+
+// Packet Definitions
+class Point2d {
+    float X;
+    float Y;
+}
+
+class Point3d { // Assumed to be in MyProject scope
+    float X;
+    float Y;
+    float Z;
+}
+```
+
+**Resulting Generated Structures:**
+
+The source generator processes these rules and effectively transforms the code:
+
+* `Point2d` is unchanged because it was in the `X<Point2d>`.
+* `Point3d` is modified to inject the fields from `CommonFields`.
+
+```csharp
+// Final structure of Point3d after generation
+class Point3d {
+    // --- Injected Fields ---
+    string name;
+    int length;
+    // --- Original Fields ---
+    float X;
+    float Y;
+    float Z;
+}
+```
+
+> [!NOTE]  
+> If a target packet already contains a field with the same name as a field being injected, the target's original field is removed and replaced by the
+> one from the injector. The injector's field definition (including its type, attributes, and documentation) takes precedence.
+---
+
+#### Modify Imported Field Injection
+
+The `Modify Imported Field Injection` feature extends [Modify Imported Packs](#modify-imported-packs) but targets a specific `TargetFieldInjection`.
+Use the `org.unirail.Meta.Modify<TargetFieldInjection>` modifier and specify a **PackSet** to add or remove fields from the target injector.
+
+```csharp
+
+class FieldInjectionModifier : Modify<TargetFieldInjection>, _<AddPack, X<RemovePack>>  {
+    string name; //add field in the imported injector
+    int length;
+}
+```
+
+### Headers
+
+A **packet header** contains protocol-level metadata fields separate from the **application payload**. These fields manage critical network tasks such
+as routing, identification, and session management.
+
+**Key Characteristics of Headers**
+
+- **Transmission Order**: Headers are always sent and received *before* the payload and are directly accessible in network event handlers.
+- **Data Types**: Header fields must use primitive, **non-nullable❗**types (e.g., `bool`, `int`, `long`).
+- **Scope**: Headers are only present in **Standalone Packets**, not in **Sub-Packets**.
+	- **Standalone Packet**: A packet sent or received directly over the network, always including a header.
+	- **Sub-Packet**: When a packet definition is used only as the type for a field in another packet, it acts as a "Sub-Packet." In this role, it
+	  contributes only its payload to the parent packet's data. It does not have headers.
+
+#### Adding Header Fields
+
+Header fields can be added to standalone packets in three ways:
+
+1. **Implicit (Automatic)**: Every standalone packet includes a `packet_id` field for identification.
+2. **Conditional (Feature-Based)**: If the [MultiContextHost](#the-multi-context-host) is used, a `context_id` field is added to the headers of all
+   host
+   packets.
+3. **Explicit (User-Defined)**: You have the flexibility to define your own custom header fields. This is achieved by creating a "Header" class that
+   implements the `HeaderFor< PackSet >` interface from the `org.unirail.Meta` namespace, where [PackSet](#pack-set) is the specific set of one or
+   more packet types that you want the custom header to target.
+
+#### Header Scope
+
+The scope of an explicit header depends on where the `Header` is declared:
+
+1. **Channel-Specific Scope (Highest Precedence)**:
+	- Applies only to packets sent through a specific channel.
+	- **How**: Declare `HeaderFor<PackSet>` within a `Channel` interface.
+
+2. **Host-Specific Scope**:
+	- Applies only to packets sent from or received by a specific host.
+	- **How**: Declare `HeaderFor<PackSet>` within a `Host` definition.
+
+3. **Project Scope (Lowest Precedence)**:
+	- Applies globally to all specified packets across the project, unless overridden by a more specific scope.
+	- **How**: Declare `HeaderFor<PackSet>` at the project’s top level.
+
+**Precedence Rule**: Channel-Specific **▷** Host-Specific **▷** Project Scope.
+
+**Example**
+
+The following example assigns different header fields to `Point2d` and `Point3d` packets:
+
+```csharp
+// Project-scope header for Point2d packets
+class HeaderFor2dEntities : HeaderFor<Point2d> {
+    int plain_id;
+    int session;
+}
+
+/**
+ * See also: InCPP, InTS, InJAVA, InCS
+ */
+struct NodeB : Host {
+    // Host-specific header for Point3d packets
+    class HeaderFor3dEntities : HeaderFor<Point3d> {
+        int world_id;
+        int session;
+    }
+}
+
+// Packet definitions
+class Point2d {
+    float X;
+    float Y;
+}
+
+class Point3d {
+    float X;
+    float Y;
+    float Z;
+}
+
+// Communication channel definition
+interface CommunicationChannel : ChannelFor<NodeA, NodeB> {
+    // Channel-specific header for TeamCoordination packets
+    class CommunicationChannelHeader : HeaderFor<TeamCoordination> {
+        uint sequence_num;
+        ushort priority;
+    }
+}
+```
+
+**Resulting On-the-Wire Packet Structure**
+
+The final packet structure combines implicit, conditional, and explicit headers.
+
+**`Point3d` Packet (Host-Specific Header)**:
+When sent via *any* channel:
+
+```
+[-- HEADER --]
+  packet_id   (Implicit)
+  context_id  (Conditional: if MultiContextHost is used)
+  world_id    (Host-Specific: from HeaderFor3dEntities)
+  session     (Host-Specific: from HeaderFor3dEntities)
+[-- PAYLOAD --]
+  X
+  Y
+  Z
+```
+
+**`TeamCoordination` Packet (Channel-Specific Header)**:
+
+- **When sent via `CommunicationChannel`**:
+
+```
+[-- HEADER --]
+  packet_id      (Implicit)
+  context_id     (Conditional: if MultiContextHost is used)
+  sequence_num   (Channel-Specific: from CommunicationChannelHeader)
+  priority       (Channel-Specific: from CommunicationChannelHeader)
+[-- PAYLOAD --]
+  ... (TeamCoordination fields)
+```
+
+- **When sent via any other channel**:
+
+```
+[-- HEADER --]
+  packet_id   (Implicit)
+  context_id  (Conditional: if MultiContextHost is used)
+[-- PAYLOAD --]
+  ... (TeamCoordination fields)
+```
+
+#### Modify Imported Header
+
+The `Modify Imported Header` feature extends [Modify Imported Packs](#modify-imported-packs) but targets a specific `TargetHeader`.
+Use the `org.unirail.Meta.Modify<TargetHeader>` modifier and specify a **PackSet** to add or remove fields from the target injector.
+
+```csharp
+
+class HeaderModifier : Modify<TargetHeader>, _<AddPack, X<RemovePack>>  {
+    string name; //add field in the imported header
+    int length;
+}
+```
+
+### Value Pack
+
+**Value Pack** is a highly efficient data structure that packs multiple fields into a single **up to 8-byte** primitive type.
+This design offers significant performance and memory advantages while maintaining type safety and ease of use.
+
+Key Features
+
+- **Zero Heap Allocation**: Data is stored in value types, eliminating garbage collection overhead.
+- **Compact Memory Layout**: Multiple fields are efficiently packed into eight bytes or fewer.
+- **Type Safety**: Full compile-time validation and type-checking. Fields must be primitive numeric types or other Value Packs.
+- **Automatic Implementation**: All fields are always implemented. The code generator automatically produces optimized packing and unpacking methods.
+
+Memory Layout
+
+The code generator performs the following steps:
+
+1. Analyzes field layouts to calculate the required space.
+2. Choose the appropriate primitive type for storage.
+3. Generates optimal packing/unpacking code to ensure efficiency.
+
+```csharp
+// Example: 6 bytes total, packed into an 8-byte primitive (long)
+class PositionPack {
+    float x;     // 4 bytes
+    byte layer;  // 1 byte
+    byte flags;  // 1 byte 
+}
+```
+
+In this example:
+
+- The `PositionPack` requires **6 bytes**, which doesn't fit in a 4-byte primitive like `int`, so it uses an **8-byte primitive** like `long`.
+
+#### Smart Flattening
+
+AdHoc code generator automatically flattens nested **single-field** `Value Packs` to eliminate unnecessary wrapping, enhancing compactness.
+
+**Basic Flattening**
+
+```csharp
+// Before flattening
+class Temperature {
+    float celsius;
+}
+
+class SensorReading {
+    Temperature measurement;
+}
+
+// After flattening
+class SensorReading {
+    float measurement;  // Directly stores the temperature value
+}
+```
+
+This flattening occurs because `SensorReading` is essentially just a copy of `Temperature` and does not add any extra data.
+
+**Nullability Preservation**
+
+Flattening preserves nullability throughout the pack chain:
+
+```csharp
+// Before flattening
+class Pressure {
+    float kilopascals;
+}
+
+class PressureSensor {
+    Pressure? reading;  // Nullable Pressure
+}
+
+// After flattening
+class PressureSensor {
+    float? reading;  // Nullability is preserved
+}
+```
+
+**Deep Flattening**
+
+Value Pack can flatten arbitrarily deep chains of **single-field** types:
+
+```csharp
+// Before flattening
+class Voltage { float volts; }
+class PowerLevel { Voltage? level; }
+class DeviceStatus { PowerLevel? power; }
+
+// After flattening
+class DeviceStatus {
+    float? power;  // Fully flattened with preserved nullability
+}
+```
+
+another example
+
+```csharp
+class FloadWraper{ float field;}
+class FloadWraperNullable{ float? field;}
+
+// The following fields have the same type: Set<float?>.
+Set<FloadWraper?>          set_of_nullable_float;                
+Set<FloadWraperNullable>   set_of_nullable_float; 
+Set<FloadWraperNullable?>  set_of_nullable_float; 
+```
+
+### Modify Imported Packs
+
+To modify the layout of imported packs, create a new pack and merge its fields into the `TargetPack` by implementing the built-in
+`org.unirail.Meta.Modify<TargetPack>`.
+
+To remove specific fields from the `TargetPack`, use the `<see cref="Full.Path.To.OtherPack.RemoveField"/>-` XML comment on the pack.
+
+For example:
+
+```csharp
+/// <see cref="Agent.Proto.proto"/>+   // Add field to target
+/// <see cref="Agent.Login.uid"/>-     // Remove field from target
+class Pack : Modify<TargetPack> { 
+    public string UserName;
+    public long LoginTime;
+}
+```
+
+This approach allows you to add, remove and replace fields from an imported pack.
+
+
+
+> [!NOTE]  
+> A modifier pack can function as a normal pack.
 
 ## Channels
 
@@ -1527,8 +1851,10 @@ interface CommunicationChannel : ChannelFor<Server, Client>, SomeCommunicationCh
 
 Implementation:
 
-The AdHoc protocol implementation features channels designed to connect the EXTernal network with the INTernal host. Each channel comprises processing layers,
-each containing both an **EXT**ernal and **INT**ernal side. The abbreviations INT and EXT are consistently employed throughout the generated code to denote
+The AdHoc protocol implementation features channels designed to connect the EXTernal network with the INTernal host. Each channel comprises processing
+layers,
+each containing both an **EXT**ernal and **INT**ernal side. The abbreviations INT and EXT are consistently employed throughout the generated code to
+denote
 internal and external aspects.
 
 <details>
@@ -1543,37 +1869,150 @@ internal and external aspects.
 
 ### Stages
 
-Stages within a channel represent the channel's distinct processing states.
+Stages represent distinct processing states within a channel's lifecycle.
+The implementation follows established [state machine patterns](https://en.wikipedia.org/wiki/Finite-state_machine) similar to
 
-Each stage is declared within the channel scope using a C# `interface` construction, where the `interface` name becomes the stage name.
-The topmost stage, known as the "**init**" stage, represents the initial state.
-To collect the stages of a channel, initiate a traversal from the **init** stage. Any stages that are not reachable from **init** will be disregarded.
+- [**Spring Statemachine**](https://spring.io/projects/spring-statemachine): A robust state machine library for Java with hierarchical states and
+  transition guards.
+- [**xstate**](https://github.com/statelyai/xstate): A JavaScript/TypeScript library for creating and interpreting statecharts, featuring visual
+  tools.
+- [**squirrel-foundation**](https://github.com/hekailiang/squirrel): A lightweight Java library for building hierarchical and concurrent state
+  machines.
+- [**StatefulJ**](https://www.statefulj.io/): A Java-based state machine framework tailored for RESTful services.
+- [**stateless4j**](https://github.com/stateless4j): A minimalist state machine library for Java with a clean API.
+- [**zustand**](https://github.com/pmndrs/zustand): A lightweight state management library for React with minimal boilerplate.
+- [**Jotai**](https://jotai.org/): A modern and scalable state management library for React focused on atomic state pieces.
+- [**Easy Peasy**](https://easy-peasy.vercel.app/): A simple and intuitive React state management library built on Redux.
 
-A stage extends the built-in interfaces `org.unirail.Meta.L`, `org.unirail.Meta.R` or `org.unirail.Meta.LR`. Here, `L` and `R` represent the left and right hosts, respectively,
-while `LR` denotes both hosts in the channel declaration to which the stage belongs.
+providing a structured approach to state management.
 
-The declaration of branches begins immediately after denote host side.
+
+> [!NOTE]   
+> In the AdHoc protocol, the state machine is driven by packet transmission and timeout events.
+> It is designed to outline the overall system architecture rather than to provide exhaustive details about every aspect.  
+> The code generated from your dataflow description based on stages and branches.
+> Developers are encouraged to adapt and integrate this code into their implementations, making decisions and responding to deviations from the
+> standard flow.
+> For a practical usage example, you can search for `Communication.Stages` in the
+> [ChannelToServer.cs](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/src/ChannelToServer.cs) file of the AdHoc Protocol GitHub
+> repository.
+
+Let's examine the practical use of the communication flow in the
+[`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/acfc582c971914a4a86f3458d4b85a141a787d3c/AdHocProtocol.cs#L443) protocol
+description file.
+
+<details>
+ <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
+
+<img width="1120" height="2392" alt="image" src="https://github.com/user-attachments/assets/3b059e62-6fb3-482a-b6d3-1ba56ef8af56" />
+
+The diagram on the **right** illustrates the communication channels lifecycle, which is declared in the code .  
+To view the communication flow diagram in the **Observer**, run the **AdHocAgent** utility from the command line:
+   ```cmd
+      AdHocAgent.exe /path/to/AdHocProtocol.cs?
+   ```
+
+Once the diagram opens, right-click on a channel's link. Resize the opened channels window to display all channels.
+
+### Top Diagram: Communication: Agent ↔ Server
+
+This diagram illustrates the stateful communication protocol between an `Agent` and a `Server`. The flow progresses through distinct stages, from
+initial connection and authentication to task processing.
+
+**1. Start & Version Matching**
+
+* **Initial State:** The process begins with the `Agent` in a `Start` state.
+* **Agent's Action:** The `Agent` initiates communication by sending its `Version` information to the `Server`, which is in a `VersionMatching` state.
+* **Server's Action:** The `Server` validates the `Agent`'s version.
+	* **If Versions Mismatch:** The `Server` sends an `Info` packet containing an error description. The red stop symbol (⛔) indicates this is a
+	  terminal action, and the `Server` closes the connection.
+	* **If Versions Match:** The `Server` sends an `Invitation` packet, signaling that the `Agent` can proceed to the authentication stage.
+
+**2. Login & Authentication**
+
+* **State Transition:** Upon receiving the `Invitation`, the `Agent` transitions to the `Login` state, while the `Server` moves to the `LoginResponce`
+  state to await credentials.
+* **Agent's Action:** From the `Login` state, the `Agent` sends either a `Login` packet (for existing users) or a `Signup` packet (for new users).
+* **Server's Action:** The `Server` processes the request. A failed attempt results in an `Info` packet. A successful authentication is confirmed with
+  another `Invitation` packet.
+* **Agent State Transition:** After a successful login, the `Agent` moves to the `TodoJobRequest` state, ready to submit tasks.
+
+**3. Data Request & Response (Task Processing)**
+
+* **Agent's Action:** From the `TodoJobRequest` state, the `Agent` can send one of two types of tasks to the `Server`:
+	1. **Project Task:** The `Agent` sends a packet containing either a new `Project` or a `RequestResult` for a project that was sent earlier. The
+	   `Server` then transitions to its `Project` processing state.
+	2. **Proto Task:** The `Agent` sends a `Proto` packet (likely structured data like a protocol buffer). The `Server` then transitions to its
+	   `Proto` processing state.
+* **Server's Action & Response:** The `Server` processes the received task (`Project` or `Proto`). Afterward, it sends a single, final response and
+  terminates the connection.
+	* On **success**, the `Server` sends a `Result` packet with the task's outcome.
+	* On **failure**, the `Server` sends an `Info` packet with an error description.
+	* The red stop symbol (⛔) beside both `Result` and `Info` indicates that the connection is closed after this final packet is sent.
+
+---
+
+### Bottom Diagram: ObserverCommunication: Agent ↔ Observer
+
+This diagram illustrates a separate, persistent communication channel between the `Agent` and an `Observer`.
+
+**1. Start & Initial Synchronization**
+
+* **Initial State:** The `Agent` begins in a `Start` state for this channel.
+* **Agent's Action:** The `Agent` initiates the session by pushing its initial state to the `Observer`. This includes a `Layout` packet (defining UI
+  structure)
+  and a `Project` packet (containing initial project data).
+* **Observer's Action:** The `Observer` receives this data to render its initial view.
+
+**2. Observer-driven Operations**
+
+* **State Transition:** After initialization, the system enters a continuous interactive loop where the `Observer` drives the actions.
+* **Observer's Action:** The `Observer` in the `Operate` stage can send to the `Agent` packs:
+	* `Up_to_date`: A request to check if the `Observer`'s data is current.
+	* `Show_Code`: A request for the `Agent` to provide and show source code in the IDE.
+	* `Layout`: A command to same modified diagram layout.
+* **Agent's Action & Response:** The `Agent` in the `RefreshProject` stage can reply:
+	* With updated `Project` if the command required it (`Up_to_date`).
+	* Or an `Up_to_date` status confirmation if no update occurs.
+* This cycle allows the `Observer` to stay synchronized with the `Agent` and request operations as needed.
+
+---
+
+</details>
+
+
+
+Each stage is declared within the channel scope using a C# `interface`, where the `interface` name becomes the stage name.
+The topmost stage represents the initial state.  
+The code generator collects the stages of a channel by initiating a traversal from the top stage.
+Any stages that are not reachable from the top will be disregarded.
+
+A stage's `interface` extends the built-in interfaces `org.unirail.Meta.L`, `org.unirail.Meta.R`, or `org.unirail.Meta.LR`.  
+Here, `L` and `R` represent the left and right hosts of the channel to which the stage belongs, respectively, while `LR` denotes both hosts.
+
+The declaration of branches begins right after denote host side.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/1cd6ad55-7e0e-4167-9d4a-fef279b4fa11)
 
-It is possible for only one side to have the capability to send packets.
+It is possible for only one side to be able to send packets.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/f1cdc9e3-9e14-4781-af7b-ce46b3dc5234)
 
 > [!WARNING]   
-> A short `block comment` with some symbols `/*įĂ*/` represents auto-sets
-> unique
-> identifiers.
+> A short `block comment` with some symbols `/*įĂ*/` represents auto-sets unique identifiers.
 > These identifiers are used to identify entities. Therefore, you can relocate or rename entities, but the
 > identifier will remain unchanged.
 > It is important to never edit or clone this identifier.
 
 #### Branches
 
-After referencing a host side (`L`, `R`, or `LR`), `sending` packets are organized into multiple `branches`. A `branch` consists of a list of `sending` packets
-and may optionally include a reference to the target `stage`, which the host will transition to after sending any packet from the list.
+After referencing a host side (`L`, `R`, or `LR`), `sending` packets are organized into multiple `branches`. A `branch` consists of the specified [
+`PackSet`](#projecthost-as-a-named-pack-set) of
+`sending` packets
+and may optionally include a reference to the target `stage`, which the host will transition to, after sending any packet from the list.
 
-- If the target `stage` is a reference to the built-in `org.unirail.Meta.Exit`, the receiving host will terminate the connection after receiving any packet from the branch.
+- If the target `stage` is a reference to the built-in `org.unirail.Meta.Exit`, the receiving host will terminate the connection after receiving any
+  packet from the branch.
 - If a branch does not explicitly reference a target `stage`, it implicitly references its own stage — the stage to which the branch belongs.
   This implies that the current stage is permanent.
 
@@ -1629,87 +2068,20 @@ interface Start  : L,
                     { };
 ```
 
-#### Named Pack Sets
-
-When you identify a recurring pattern in a set of packets, you can create a **named set of transmittable packets** and reference that set by name.   
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/8637f064-75e7-4ab0-8c66-c7625a7aa813)  
-Prefixing a reference to a pack with **`@`** includes all transmittable packs declared within the pack body.
-
-```csharp
-interface Start : LR,
-                  _< 
-                      @Pack1,
-                      Pack12
-                  >
-                  { };
-```
-
-**Named packet sets** can be declared anywhere within your project and may contain references to individual pack, other named packet sets, projects, or hosts.
-
-##### Project/Host as a Named Pack Set
-
-A project or host can function as a **named pack set** and be used accordingly. When referenced directly, it implies a collection of transmittable packs declared within the body.
-
-```csharp
-interface Start : LR,
-                  _< 
-                      Project,
-                      Host,
-                  >
-                  { };
-```
-
-Prefixing a reference with **`@`** adds all transmittable packs recursively, including packs throughout the hierarchical structure.
-
-```csharp
-interface Start : LR,
-                  _< 
-                      @Project,
-                      @Host
-                  >
-                  { };
-```
-
-This approach simplifies referencing and enhances the reusability of packet sets throughout your protocol description.
+![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/8637f064-75e7-4ab0-8c66-c7625a7aa813)
 
 #### Timeout
 
-The `Timeout` is the built-in attribute on a stage that sets the maximum duration it can remain active in seconds.
+The `ReceiveTimeout` and `TransmitTimeout` is the built-in attribute on a stage that sets the maximum duration it can remain active in seconds.
 If this attribute is not specified, the stage can persist indefinitely.
-
-Let's examine the practical use of the communication flow in the
-[`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/acfc582c971914a4a86f3458d4b85a141a787d3c/AdHocProtocol.cs#L443) protocol description file.
-
-<details>
- <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
-
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/63eb6d6f-fa33-4f7a-852a-724531db5726)
-
-</details>
-
-To view the communication flow diagram in the **Observer**, follow these steps:
-
-Run the **AdHocAgent** Utility using the following command:
-
-   ```cmd
-      AdHocAgent.exe /path/to/AdHocProtocol.cs
-   ```
-
-Once the diagram opens, right-click on a channel link. Resize the opened channels window to display all channels.
-
-
-> [!NOTE]
-> The code generated for each stage is provided as a reference. It does not impose any constraints on the package flow.
-> Developers have full flexibility to adapt and integrate this code into their implementations according to their specific needs and requirements.
-> For a practical usage example, you can search for `Communication.Stages` in the
-> [ChannelToServer.cs](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/src/ChannelToServer.cs) file of the AdHoc Protocol GitHub repository.
 
 ### Modify imported channels and their internal components.
 
 You can modify the configuration of imported `channels` and their internal components, including `stages`, `named packs sets`, and `branches`.
 
 - To modify `channels` or `stages`, replicate the original layout of the targets with custom names and,
-  extend the built-in `org.unirail.Meta.Modify<TargetEntity>` or `org.unirail.Meta.Modify<TargetChannel, HostA, HostB>` if you also want to modify channel's hosts.
+  extend the built-in `org.unirail.Meta.Modify<TargetEntity>` or `org.unirail.Meta.Modify<TargetChannel, HostA, HostB>` if you also want to modify
+  channel's hosts.
 - To delete imported `channel` or `stage`, reference it using an XML comment `/// <see cref="Delete.Channel"/>-` in the project declaration.
 
 > [!NOTE]  
@@ -1728,12 +2100,14 @@ interface UpdateLogin : Modify<Login>,
 { }
 ```
 
-In this example, `Agent.Login`, `Agent.Signup`, and `Login` will be removed from the `Login` stage branch, and the target stage will be set to `Update_to_stage`.
+In this example, `Agent.Login`, `Agent.Signup`, and `Login` will be removed from the `Login` stage branch, and the target stage will be set to
+`Update_to_stage`.
 
 - To add a new entity to a `branch`, reference the new entity as you would when declare branches.
 
 > [!NOTE]  
-> If a branch you want to modify does not explicitly reference a target `Stage` (imply a self-referencing, permanent stage), you must reference it in modifier explicitly
+> If a branch you want to modify does not explicitly reference a target `Stage` (imply a self-referencing, permanent stage), you must reference it in
+> modifier explicitly
 > to modify the branch's target `Stage`..
 
 For example:
@@ -1747,7 +2121,8 @@ interface Login /*ā*/ : L,
             { }
 ```
 
-In this case, the branch implicitly circular references the transition to the `Login` stage. To modify the target stage, explicitly reference the `Login` stage, as shown below:
+In this case, the branch implicitly circular references the transition to the `Login` stage. To modify the target stage, explicitly reference the
+`Login` stage, as shown below:
 
 ```csharp
 interface UpdateLogin : Modify<Login>, 
@@ -1761,7 +2136,8 @@ interface UpdateLogin : Modify<Login>,
 
 This code modifies the branch's target stage from `Login` to `Update_to_stage` by making the reference explicit.
 
-For example, suppose you import all entities from [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) but need to modify the inherited `Communication` channel:
+For example, suppose you import all entities from [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs)
+but need to modify the inherited `Communication` channel:
 
 ```csharp
 interface Communication : ChannelFor<Agent, Server> { ... }
@@ -1776,7 +2152,7 @@ interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
                                       X<Server.Info>
                                    > { }
 
-    [Timeout(30)]
+    [TransmitTimeout(30)]
     interface Updated_Start : Modify<AdHocProtocol.Communication.Start>,
                               L,
                               _<
@@ -1803,29 +2179,9 @@ In this example, the following changes are made to the `Communication` channel:
 - The `Server.Info` pack is removed from the original `named packs set` `Info_Result` via  `Change_Info_Result`.
 - The `VersionMatching` transition stage is replaced by a new `NewStage`.
 - In the `VersionMatching` stage, the `Invitation` pack is removed, and a new `Authorizer` pack is added.
-- Set new Timeout on the `Start` stage
+- Set new `TransmitTimeout` on the `Start` stage
 
 # Fields
-
-## `Optional` and `Required` fields
-
-A pack's field can be `optional` or `required`.
-
-* `required` fields are always allocated and transmitted.
-* `optional` fields, on the other hand, only allocate a few bits if they have not data.
-
-In the AdHoc protocol description, fields with type declarations ending with a `?` (such as `int?`, `byte?`, `string?`, etc.) are considered 'optional'.
-
-```csharp
-class Packet
-{
-    string user; //non-primitive data types are always optional
-    uint? optional_field; //optional uint field
-}     
-```
-
-> [!NOTE]
-> All fields with reference types (embedded packs, strings, collections) declared in the pack root are always `optional`.
 
 ## Numeric type
 
@@ -1844,44 +2200,176 @@ AdHoc protocol description supports the entire range of numeric primitive types 
 | `float`  | ±1.5 x 10−45 to ±3.4 x 1038                              |
 | `double` | ±5.0 × 10−324 to ±1.7 × 10308                            |
 
-As the protocol creator, you possess the most profound understanding of your data and its unique requisites.
+## Constants
 
-When dealing with a field whose values fall within the range of 400 000 000 to 400 000 093, it's common to use an 'int' data type.
-However, it becomes evident that for efficient storage of this field, only one byte and a constant value of 400 000 000 are necessary.
-This constant should be subtracted during the setting process and added during retrieval.
+Fields declared as `const` or `static` that use primitive types, strings, or arrays of these types.
 
-The AdHoc protocol description includes attributes that enable you to provide this knowledge to the code generator, allowing it to generate optimized code.
+- **`static` fields**:
+  Can be assigned a value or the result of a calculated expression. Any available C# static functions can be used to calculate their values.
 
-In this scenario, the `MinMax` attribute can be applied to the field declaration.
+- **`const` fields**:
+	- Can be used as `attribute` parameters.
+	- Must have a value resulting from a C# compile-time expression and cannot use C# static functions to calculate their values.
+
+To overcome the limitations of `const` fields, the `AdHoc protocol description` syntax introduces the `[ValueFor(const_constant)]` attribute.
+
+- Applied to a proxy `static` field.
+- During code generation, the generator assigns the value and type from this `static` field to the corresponding `const` constant.
+
+This approach combines the flexibility of `static` fields with the compile-time benefits of `const` constants.
+
+### Example: Using the `[ValueFor(ConstantField)]` Attribute
+
+Here's an example demonstrating the use of the `[ValueFor(ConstantField)]` attribute:
 
 ```csharp
-     [MinMax(400_000_000, 400_000_093)] int ranged_field;     
+[ValueFor(ConstantField)] static double value_for = Math.Sin(23);
+
+const double ConstantField = 0; // Result: ConstantField = Math.Sin(23)
 ```
 
-The code generator will then select the appropriate field type (`byte`) and generate helper getter and setter functions accordingly.
+In this example:
 
-For fields with value **ranges** smaller than 127, the code generator employs internal `bits storage` to conserve memory.
+- `value_for` is assigned the value of `Math.Sin(23)`.
+- This value is then copied to the `ConstantField` constant.
+- Due to the `[ValueFor(ConstantField)]` attribute, `ConstantField` will have the calculated value of `Math.Sin(23)`.
 
-Example:
+## Attributes
+
+As the protocol creator, you possess the most comprehensive understanding of your data and its specific requirements.
+The **AdHoc protocol description** empowers you with tools to encode metadata effectively, facilitating optimized code generation.
+Attributes can be applied to the following elements of the protocol **Hosts, Packs, Fields, Channels,** and **Stages**
+
+### Built-in Attributes
+
+The AdHoc protocol description includes a suite of built-in attributes within the `org.unirail.Meta` namespace.
+These attributes enable you to convey essential metadata directly to the code generator, ensuring efficient and accurate implementation.
+
+Let's consider a field with values in the range of **400 000 000** to **400 000 193**, storing them as an `int` would waste memory.
+Instead, we can optimize memory usage by using a constant offset of 400 000 000.
+This enables representing the entire range using just one byte.
+
+When setting a value, the constant offset is subtracted from the input value.
+Conversely, when retrieving the value, the constant is added back to return the original value.
+
+This approach is applied seamlessly using built in the `MinMax` attribute:
 
 ```csharp
-     [MinMax(1, 8)] int car_doors;     
+[MinMax(400_000_000, 400_000_193)] int ranged_field;
 ```
 
-In this case, the code generator can allocate 3 bits in the bits storage for the `car_doors` field, based on the
-specified range of 1 to 8.
+When the `MinMax` attribute is used, the **code generator**:
 
-The AdHoc generator utilizes a 3-layered approach for representing field values.
+1. Automatically determines the most efficient storage type (e.g., `byte` for this range).
+2. Generates **getter** and **setter** methods to handle the offset during access operations.
 
-| layer | Description                                                                                                                                     |
-|-------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| exT   | External type. The representation required for external consumers.<br> Information Quanta: Matches the granularity of the language's data types |
-| inT   | Internal type. The representation optimized for storage.<br> Information Quanta: Matches the granularity of the language's data types           |
-| ioT   | IO wire type. The network transmission format. Information Quanta: None; transmitted as a byte stream.                                          |
+If the `MinMax` arguments specify a range of less than 127, the code generator can further optimize memory usage by packing
+multiple small-range fields into a pack's **bit storage** bytes. For example:
+
+```csharp
+[MinMax(1, 8)] int car_doors;
+```
+
+In this case:
+
+- The range **1 to 8** requires only **3 bits**.
+- The code generator:
+	- Allocates three bits for `car_doors` in the pack's **bit storage**.
+	- Generates optimized **bit manipulation logic** for accessing and modifying the field value.
+
+### Custom Attributes
+
+In addition to built-in attributes, you can define **custom attributes**. Custom attributes are transformed by the generator into a hierarchy of
+constants,
+offering a straightforward and consistent approach to defining metadata.
+
+- For **fields**, attributes are the sole method for specifying metadata.
+- For other entities, metadata can be defined either through attributes or directly using constants.
+  For more details, see [Constants](#constants).
+
+Example: Specifying a Description Attribute
+
+To set a Description for a channel stage, you can define a reusable `Description` attribute:
+
+```csharp
+[AttributeUsage(AttributeTargets.Interface)]
+public class DescriptionAttribute : Attribute {
+    public DescriptionAttribute(string description) { }
+}
+
+interface Communication : ChannelFor<Agent, Server> {
+    [Description("The stage either responds with the result if successful or provides an error message with relevant information in case of failure.")]
+    interface Stage : 
+        _<
+            Server.Info,
+            Server.Result
+        > { }
+}
+```
+
+Alternatively, you can use a constant:
+
+```csharp
+interface Communication : ChannelFor<Agent, Server> {
+    interface Stage : 
+        _<
+            Server.Info,
+            Server.Result
+        > {
+        const string Description = "The stage either responds with the result if successful or provides an error message with relevant information in case of failure.";
+    }
+}
+```
+
+Both approaches provide similar functionality, but the second approach offers more control over the layout of constants.
+
+## Optional Fields
+
+`Optional(nullable) Fields` are identified by type declarations ending with a `?` (e.g., `int?`, `byte?`, `string?`, etc.).
+They are allocated in memory but transmit only a bit, if empty, optimizing transmission size.
+Fields with reference types (e.g., embedded packs, strings, and collections) that are not part of a collection are always treated as optional.
+
+```csharp
+class Packet
+{
+    string user;          // Single referenced data types are always optional
+    string[] tags;        // The field with a collection is optional, but collection items with referenced data types are not
+    string?[] emails;     // The field with a collection is optional, as well as the collection items
+    uint? optional_field; // Optional uint field (nullable)
+}
+```
+
+For **optional fields**, with primitive types, the AdHoc generator attempts to encode the empty value efficiently by default.
+This behavior can be overridden by declaring the field as **required(not nullable)** and applying a custom attribute to specify a value that
+should be treated specially.
+
+```csharp
+        [AttributeUsage(AttributeTargets.Field)]
+        public class IgnoreZoomIfEqualAttribute : Attribute
+        {
+            public IgnoreZoomIfEqualAttribute(float value) { }
+        }
+        
+        [IgnoreZoomIfEqual(1.1f)]
+        float zoom;
+```
+
+The `[IgnoreZoomIfEqual]` attribute with the value `1.1f` will be embedded directly into the field's generated code.
+
+## Value layers
+
+The AdHoc generator uses a 3-layered approach for representing field values.
+
+| layer | Description                                                                                                                                         |
+|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| exT   | External datatype. The representation required for external consumers.<br> Information Quanta: Matches the granularity of the language's data types |
+| inT   | Internal datatype. The representation optimized for storage.<br> Information Quanta: Matches the granularity of the language's data types           |
+| ioT   | IO wire datatype. The network transmission format. Information Quanta: None; transmitted as a byte stream.                                          |
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/180a331d-3d55-4878-8dfe-794ceb9297f3)
 
-However, when dealing with a field containing values ranging from 1 000 000 to 1 080 000, applying shifting on exT <==> inT transition will not result in memory savings in C#/Java.
+However, when dealing with a field containing values ranging from 1 000 000 to 1 080 000, applying shifting on exT <==> inT transition will not result
+in memory savings in C#/Java.
 This limitation primarily stems from the type quantization inherent to the language.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/0b8f90cc-aafc-4923-8c90-1fed53775bb3)
@@ -1894,7 +2382,8 @@ Upon reception, reading these 3 bytes and subsequently adding 1 000 000 allows f
 
 This example illustrates that data transformation on exT <==> inT can be redundant and only meaningful during the inT <==> ioT transition.
 
-This is a simple and effective technique, but it's not applicable in every scenario. When a field's data type is an `enclosed` array, repacking data into
+This is a simple and effective technique, but it's not applicable in every scenario. When a field's data type is an `enclosed` array, repacking data
+into
 different array types during exT <==> inT transitions can be costly and entirely impractical, especially when dealing with keys in a Map or Set
 (such as Map<int[], string> or Set<long[]>).
 
@@ -1911,10 +2400,10 @@ However, if the numeric field exhibits a specific dispersion or gradient pattern
 ![image](https://user-images.githubusercontent.com/29354319/70128574-0a404880-16b8-11ea-8a4d-efa8a7358dc1.png)
 
 Compressing this type of data could be advantageous in reducing the amount of data transmitted. In such cases,
-the code generator can utilize the
+the code generator can use the
 [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding
 [algorithm](https://en.wikipedia.org/wiki/Variable-length_quantity)  for encoding single value field data.
-For encoding fields with value collections, the code generator can utilize the `Group Varint Encoding` technique
+For encoding fields with value collections, the code generator can use the `Group Varint Encoding` technique
 
 This compression algorithms skips the transmission of higher bytes if they are zeros, reducing the amount of data
 transmitted, and restore the skipped bytes on the receiving end.
@@ -1944,10 +2433,12 @@ Useful to recognize three particular dispersion or gradient patterns within valu
 
 ## Collection type
 
-Collections, such as `arrays`, `maps`, and `sets`, have the ability to store a variety of data types, including `primitives`, `strings`, and even `user-defined types`(packs).
+Collections, such as `arrays`, `maps`, and `sets`, have the ability to store a variety of data types, including `primitives`, `strings`, and even
+`user-defined types`(packs).
 The fields of Collection type are `optional`.
 
-Controlling the length of collections is crucial, especially in network applications. This control is vital in preventing overflow, which is one of the tactics
+Controlling the length of collections is crucial, especially in network applications. This control is vital in preventing overflow, which is one of
+the tactics
 used in Distributed Denial of Service (DDoS) attacks.
 By default, all collections, including `string`, have a maximum capacity of 255 items. To adjust this limit, you can explicitly define an `enum` named
 `_DefaultCollectionsMaxLength` with the following fields:
@@ -2004,7 +2495,7 @@ class Packet{
 ```
 
 If you have a specific `string` format that is used in multiple places,
-it may be more convenient to declare and utilize the AdHoc [`TYPEDEF`](#typedef) construction:
+it may be more convenient to declare and use the AdHoc [`TYPEDEF`](#typedef) construction:
 
 ```csharp
 class max_6_chars_string{         // AdHoc typedef
@@ -2028,7 +2519,8 @@ class Packet{ //                         using typedef
 ### Map/Set
 
 The `Map` and `Set` types are declared in the `org.unirail.Meta` namespace.
-By default, they are limited to holding a maximum of 255 items unless redefined in the [`_DefaultMaxLengthOf.Sets` / `_DefaultMaxLengthOf.Maps`](#collection-type).
+By default, they are limited to holding a maximum of 255 items unless redefined in the [`_DefaultMaxLengthOf.Sets` /
+`_DefaultMaxLengthOf.Maps`](#collection-type).
 Apply the `[D(+N)]` attribute if you need to impose size limitations on a specific field with `Map` and `Set`,
 the `N` represents the new limit.
 
@@ -2122,6 +2614,28 @@ class Packet{
 }
 ```
 
+## Object type
+
+There is no distinct `Object` type available. If you want your field to have an `Object` type, use the [`Binary`](#binary-type) array type instead.
+You should pre-transform your object into a binary array before storing it in the field and convert it back from binary upon retrieval.
+
+For better efficiency, especially if you expect only a limited number of types, consider creating an optional field for each object type. For example:
+
+```csharp
+Binary[,] myFieldOfObjects;// Not ideal
+```
+
+Alternatively, you can define specific fields for each expected type:
+
+```csharp
+string? myFieldIfString;
+ulong? myFieldIfUlong;
+Response? myFieldIfResponse;
+```
+
+> [!NOTE]  
+> If a field is empty(null), it allocates **just a bit** in the transmitting packet bytes
+
 ## Binary type
 
 To declare the type as a raw binary array, you can use the `Binary` type from the `org.unirail.Meta` namespace.  
@@ -2137,6 +2651,19 @@ class Result
     [D(100)]     Binary[]   hash; // binary array with constant length 100 bytes
 }
 ```
+
+## longJS and ulongJS types
+
+If you are planning to generate a host in `TypeScript`, you must be aware of the limitations
+of the `TypeScript (JavaScript)` `number` type.  
+The `number` type can safely represent integers only within the range of **-2^53 + 1 to 2^53 - 1** (
+see [SAFE_INTEGER](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/SAFE_INTEGER)).
+
+If a field's value exceeds this range, the [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt)
+type will be used, which is less efficient than the `number` primitive.
+
+Therefore, if your field's data is within the safe integer range, using `longJS` or `ulongJS` for communication with the host generated in TypeScript
+is preferable to using `long` or `ulong`.
 
 ## TYPEDEF
 
@@ -2178,7 +2705,7 @@ class Packet{ //                         using typedef
 
 Both `enums` and `packs` can serve as data types for a field.
 
-- `Enums` are utilized to represent a set of named constant values of the same type.
+- `Enums` are used to represent a set of named constant values of the same type.
 - `Packs` are data structures designed to contain multiple fields with diverse data types.
 
 By utilizing `enums` and `packs` as field data types, you can effectively organize and manage diverse data types in your code.
@@ -2260,6 +2787,8 @@ result
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/4c485e72-fea2-4886-b1aa-28444657fe71)
 </details>
 
+# Meta
+
 [downloads](https://github.com/AdHoc-Protocol/AdHoc-protocol/releases)
 
 * Ask questions you’re wondering about.
@@ -2272,4 +2801,20 @@ result
   C++ generator forum   
   RUST generator forum  
   Swift generator forum  
-  GO generator forum  
+  GO generator forum
+
+# Third-Party Dependencies
+
+**This project respectfully acknowledges the invaluable contributions of the following third-party dependencies:**
+
+1. **[Microsoft.CodeAnalysis.CSharp](https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp/4.12.0-1.final)**
+	- This library provides essential .NET Compiler Platform ("Roslyn") support for the C# language, greatly enhancing our project's development
+	  capabilities.
+
+2. **[Microsoft.OpenApi.Readers](https://www.nuget.org/packages/Microsoft.OpenApi.Readers/2.0.0-preview2)**
+	- This library delivers robust functionality for reading OpenAPI (Swagger) documents, significantly enriching our project's API documentation and
+	  integration processes.
+
+4. **[Cytoscape](https://js.cytoscape.org/)**
+	- This JavaScript library is a powerful tool for visualizing complex networks and graphs, enabling advanced data representation and interaction
+	  within our project.

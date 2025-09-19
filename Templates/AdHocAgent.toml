@@ -1,20 +1,23 @@
-#This file contains common information about the AdHoc agent.
+# This file contains AdHoc agent common information
 
-# =============================== Attempting to establish connections to the server in sequential order. ==============================
-
+# =============================== connections to the server. trying to connect in order ==============================
 server = ["wss://wss.unirail.org"]
-
+# server = [ "wss://wss.unirail.org", "tcp.unirail.org" ]
+# ===============================Path to 7-Zip console executable.  https://7-zip.org/download.html set latest version!
+# for Windows https://7-zip.org/a/7zr.exe
+# for MacOS https://7-zip.org/a/7z2300-mac.tar.xz
+# for Linux https://7-zip.org/a/7z2300-linux-x86.tar.xz
+7zip_exe = "C:/Program Files/7-Zip/7z.exe"
 # =============================== EXTERNAL C# EDITOR ==============================
-
-#JetBrains Rider
-#https://www.jetbrains.com/help/rider/Opening_Files_from_Command_Line.html
-#rider64.exe [--line <number>] [--column <number>] <path ...>
-#show_code_exe="/Rider/bin/rider64.exe"
-#show_code_args="--line <line number> <path to file>"
-
-#VS Code
+# JetBrains Rider
+# https://www.jetbrains.com/help/rider/Opening_Files_from_Command_Line.html
+# rider64.exe [--line <number>] [--column <number>] <path ...>
+# show_code_exe="X:/Rider/bin/rider64.exe"
+# show_code_args="--line <line number> <path to file>"
+# VS Code
 # https://code.visualstudio.com/docs/editor/command-line#_launching-from-command-line
-#-g or --goto	When used with file:line{:character}, opens a file at a specific line and optional character position.
-#This argument is provided since some operating systems permit : in a file name.
-show_code_exe = "/VSCode/Code.exe"
+# -g or --goto	When used with file:line{:character}, opens a file at a specific line and optional character position.
+# This argument is provided since some operating systems permit : in a file name.
+show_code_exe = "X:/VSCode/Code.exe"
 show_code_args = "--goto <path to file>:<line number>:<char number>"
+PersonalVolatileUUID = ""

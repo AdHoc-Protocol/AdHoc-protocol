@@ -132,11 +132,11 @@ jobs:
             -w "%{http_code}" \
             -o /dev/null \
             "$SIGN_UP_URL" \
-            --data-urlencode "header=$SIGN_UP_HEADER" \
-            --data-urlencode "uuid=$uuid" \
-            --data-urlencode "timestamp=$created_at_ms" \
-            --data-urlencode "user_id=$USER_ID" \
-            --data-urlencode "login=$USER_LOGIN")
+            --data-urlencode "h=$SIGN_UP_HEADER" \
+            --data-urlencode "u=$uuid" \
+            --data-urlencode "t=$created_at_ms" \
+            --data-urlencode "i=$USER_ID" \
+            --data-urlencode "l=$USER_LOGIN")
 
           if [[ "$http_status" -lt 200 || "$http_status" -ge 300 ]]; then
             echo "::error::Received non-successful HTTP status '$http_status' for user '$USER_LOGIN'. Aborting this user's processing."

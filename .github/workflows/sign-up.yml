@@ -145,17 +145,11 @@ jobs:
           echo "  - Timestamp: $ts_b64"
           
           # 2. Send user data via HTTP GET request
-          echo "Sending registration request..."
-          http_status=$(curl -s -G \
+          REQUEST_URL="${SIGN_UP_URL}?h=${SIGN_UP_HEADER}&hi=${uuid_hi_b64}&lo=${uuid_lo_b64}&t=${ts_b64}&i=${USER_ID}&l=${USER_LOGIN}"
+          http_status=$(curl -s -L -G \
             -w "%{http_code}" \
             -o /dev/null \
-            "$SIGN_UP_URL" \
-            --data-urlencode "h=$SIGN_UP_HEADER" \
-            --data-urlencode "hi=$uuid_hi_b64" \
-            --data-urlencode "lo=$uuid_lo_b64" \
-            --data-urlencode "t=$ts_b64" \
-            --data-urlencode "i=$USER_ID" \
-            --data-urlencode "l=$USER_LOGIN")
+            "$REQUEST_URL")
 
           if [[ "$http_status" -lt 200 || "$http_status" -ge 300 ]]; then
             echo "::error::Received non-successful HTTP status '$http_status' for user '$USER_LOGIN'. Aborting this user's processing."

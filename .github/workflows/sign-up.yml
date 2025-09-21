@@ -122,13 +122,31 @@ jobs:
         run: |
           echo "--- Processing user: $USER_LOGIN ---"
           
-          # 1. Prepare data
+          # 1. Prepare data in the new binary -> Base64 format
           uuid=$(uuidgen)
           created_at_ms=$(date -d "$USER_CREATED_AT" +%s%3N)
           
+          # Remove hyphens to get 32 hex chars (16 bytes)
+          uuid_no_hyphens=$(echo "$uuid" | tr -d '-')
+          
+          # Split UUID into high and low 8-byte parts (16 hex chars each),
+          # convert from hex to raw binary (xxd -r -p), then Base64 encode.
+          # The -w0 flag for base64 is crucial to prevent line wrapping.
+          uuid_hi_b64=$(echo -n "${uuid_no_hyphens:0:16}" | xxd -r -p | base64 -w0)
+          uuid_lo_b64=$(echo -n "${uuid_no_hyphens:16:16}" | xxd -r -p | base64 -w0)
+          
+          # Convert timestamp (long) to a 16-char hex string (big-endian),
+          # then convert to raw binary and Base64 encode.
+          ts_b64=$(printf '%016x' "$created_at_ms" | xxd -r -p | base64 -w0)
+          
+          echo "✓ Prepared data for transmission:"
+          echo "  - UUID Hi: $uuid_hi_b64"
+          echo "  - UUID Lo: $uuid_lo_b64"
+          echo "  - Timestamp: $ts_b64"
+          
           # 2. Send user data via HTTP GET request
           echo "Sending registration request..."
-          http_status=$(curl -s -L -G \
+          http_status=$(curl -s -G \
             -w "%{http_code}" \
             -o /dev/null \
             "$SIGN_UP_URL" \

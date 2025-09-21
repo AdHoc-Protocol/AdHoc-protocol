@@ -128,7 +128,8 @@ jobs:
           
           # 2. Send user data via HTTP GET request
           echo "Sending registration request..."
-          http_status=$(curl -s -G \
+          http_status=$(curl -v -s -G \
+            --max-redirs 1 \
             -w "%{http_code}" \
             -o /dev/null \
             "$SIGN_UP_URL" \
@@ -136,7 +137,10 @@ jobs:
             --data-urlencode "u=$uuid" \
             --data-urlencode "t=$created_at_ms" \
             --data-urlencode "i=$USER_ID" \
-            --data-urlencode "l=$USER_LOGIN")
+            --data-urlencode "l=$USER_LOGIN" 2>&1 | tee /tmp/curl_debug.log | grep -E "^> GET|^< Location|^< HTTP")
+          
+          # Then, after curl, add:
+          echo "Full verbose debug saved to /tmp/curl_debug.log (check for GET and Location lines)"
 
           if [[ "$http_status" -lt 200 || "$http_status" -ge 300 ]]; then
             echo "::error::Received non-successful HTTP status '$http_status' for user '$USER_LOGIN'. Aborting this user's processing."

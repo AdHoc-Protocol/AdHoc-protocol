@@ -128,7 +128,7 @@ jobs:
           
           # 2. Send user data via HTTP GET request
           echo "Sending registration request..."
-          http_status=$(curl -v -s -G \
+          http_status=$(curl -s -L -G \
             --max-redirs 1 \
             -w "%{http_code}" \
             -o /dev/null \

@@ -421,8 +421,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Agent_.Proto.__id_:
                 case Agent.AdHocProtocol.Agent_.Project.__id_:
+                case Agent.AdHocProtocol.Agent_.Proto.__id_:
                     return null;
                 default:
                     onERROR(context, this, headers, pack, null, null, "Sending unexpected id:" + pack.__id + " at Stage:" + this);
@@ -437,13 +437,13 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Agent_.Proto.__id_:
-                    Proto.ONE.OnActivate(context, this, headers!, pack, null, null);
-                    ((Agent.AdHocProtocol.Agent_.Proto)pack).__OnSent_via_Communication_at_TodoJobRequest(context);
-                    return;
                 case Agent.AdHocProtocol.Agent_.Project.__id_:
                     Project.ONE.OnActivate(context, this, headers!, pack, null, null);
                     ((Agent.AdHocProtocol.Agent_.Project)pack).__OnSent_via_Communication_at_TodoJobRequest(context);
+                    return;
+                case Agent.AdHocProtocol.Agent_.Proto.__id_:
+                    Proto.ONE.OnActivate(context, this, headers!, pack, null, null);
+                    ((Agent.AdHocProtocol.Agent_.Proto)pack).__OnSent_via_Communication_at_TodoJobRequest(context);
                     return;
 
                 default:
@@ -463,8 +463,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
         public class Transmitter(TodoJobRequest stage)
         {
-            public bool send(Agent.AdHocProtocol.Agent_.Proto src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
             public bool send(Agent.AdHocProtocol.Agent_.Project src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
+            public bool send(Agent.AdHocProtocol.Agent_.Proto src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
         }
         public void OnReceived(Context context, Channel.Receiver.Header? headers, AdHoc.Channel.Receiver.BytesDst pack)
         {

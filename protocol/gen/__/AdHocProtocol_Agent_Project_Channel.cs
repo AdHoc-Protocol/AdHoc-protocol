@@ -1,7 +1,7 @@
+
 using System;
 using org.unirail;
 using org.unirail.collections;
-
 namespace org.unirail
 {
     namespace Agent
@@ -17,15 +17,19 @@ namespace org.unirail
                     ///</summary>
                     public partial interface Channel : AdHoc.Channel.Transmitter.BytesSrc
                     {
+
                         int AdHoc.Channel.Transmitter.BytesSrc.__id => __id_;
                         public const int __id_ = -1;
                         #region uid
+
                         public byte _uid { get; }
                         #endregion
                         #region hostL
+
                         public byte _hostL { get; }
                         #endregion
                         #region hostL_transmitting_packs
+
                         //Get a reference to the field data for existence and equality checks
                         public object? _hostL_transmitting_packs();
 
@@ -34,13 +38,14 @@ namespace org.unirail
 
                         //Get the element of the collection
                         public ushort _hostL_transmitting_packs(Base.Transmitter ctx, Base.Transmitter.Slot __slot, int item);
-
                         public partial struct _hostL_transmitting_packs_
                         {
+
                             public const int ARRAY_LEN_MAX = 65535;
                         }
                         #endregion
                         #region hostL_related_packs
+
                         //Get a reference to the field data for existence and equality checks
                         public object? _hostL_related_packs();
 
@@ -49,16 +54,18 @@ namespace org.unirail
 
                         //Get the element of the collection
                         public ushort _hostL_related_packs(Base.Transmitter ctx, Base.Transmitter.Slot __slot, int item);
-
                         public partial struct _hostL_related_packs_
                         {
+
                             public const int ARRAY_LEN_MAX = 65535;
                         }
                         #endregion
                         #region hostR
+
                         public byte _hostR { get; }
                         #endregion
                         #region hostR_transmitting_packs
+
                         //Get a reference to the field data for existence and equality checks
                         public object? _hostR_transmitting_packs();
 
@@ -67,13 +74,14 @@ namespace org.unirail
 
                         //Get the element of the collection
                         public ushort _hostR_transmitting_packs(Base.Transmitter ctx, Base.Transmitter.Slot __slot, int item);
-
                         public partial struct _hostR_transmitting_packs_
                         {
+
                             public const int ARRAY_LEN_MAX = 65535;
                         }
                         #endregion
                         #region hostR_related_packs
+
                         //Get a reference to the field data for existence and equality checks
                         public object? _hostR_related_packs();
 
@@ -82,13 +90,14 @@ namespace org.unirail
 
                         //Get the element of the collection
                         public ushort _hostR_related_packs(Base.Transmitter ctx, Base.Transmitter.Slot __slot, int item);
-
                         public partial struct _hostR_related_packs_
                         {
+
                             public const int ARRAY_LEN_MAX = 65535;
                         }
                         #endregion
                         #region stages
+
                         //Get a reference to the field data for existence and equality checks
                         public object? _stages();
 
@@ -97,22 +106,24 @@ namespace org.unirail
 
                         //Get the element of the collection
                         public Agent.AdHocProtocol.Agent_.Project.Channel.Stage _stages(Base.Transmitter ctx, Base.Transmitter.Slot __slot, int item);
-
                         public partial struct _stages_
                         {
+
                             public const int ARRAY_LEN_MAX = 4095;
                         }
                         #endregion
                         #region parent
-                        public ushort _parent { get; }
 
+                        public ushort _parent { get; }
                         public partial struct _parent_
                         {
+
                             public const ushort NULL = (ushort)0xFFFF;
                             public const ushort MAX = 0xFFFE;
                         }
                         #endregion
                         #region constants
+
                         //Get a reference to the field data for existence and equality checks
                         public object? _constants();
 
@@ -121,23 +132,24 @@ namespace org.unirail
 
                         //Get the element of the collection
                         public int _constants(Base.Transmitter ctx, Base.Transmitter.Slot __slot, int item);
-
                         public partial struct _constants_
                         {
+
                             public const int ARRAY_LEN_MAX = 65000;
                         }
                         #endregion
                         #region name
-                        public string? _name { get; }
 
+                        public string? _name { get; }
                         public partial struct _name_
                         {
+
                             public const int STR_LEN_MAX = 255;
                         }
                         #endregion
                         #region doc
-                        public string? _doc { get; }
 
+                        public string? _doc { get; }
                         public partial struct _doc_
                         { //Field for full, XML-style documentation.
 
@@ -145,8 +157,8 @@ namespace org.unirail
                         }
                         #endregion
                         #region inline_doc
-                        public string? _inline_doc { get; }
 
+                        public string? _inline_doc { get; }
                         public partial struct _inline_doc_
                         { //Field for a short, single-line summary.
 
@@ -175,9 +187,7 @@ namespace org.unirail
                                         goto case 2;
                                     case 2:
 
-                                        if (!__dst.init_fields_nulls(_hostL_transmitting_packs() != null ?
-                                                                         1 :
-                                                                         0, 2))
+                                        if (!__dst.init_fields_nulls(_hostL_transmitting_packs() != null ? 1 : 0, 2))
                                             return false;
                                         if (_hostL_related_packs() != null) __dst.set_fields_nulls(1 << 1);
                                         if (_hostR_transmitting_packs() != null)
@@ -197,6 +207,7 @@ namespace org.unirail
                                         goto case 3;
                                     case 3:
                                         #region hostL_transmitting_packs
+
                                         if (__dst.is_null(1))
                                             goto case 5;
 
@@ -205,7 +216,6 @@ namespace org.unirail
                                             if (__dst.put_val(0, 2, 5)) goto case 5;
                                             return false;
                                         }
-
                                         if (!__dst.put_val((uint)__slot.index_max1, 2, 4)) return false;
 
                                         goto case 4;
@@ -219,17 +229,16 @@ namespace org.unirail
                                                 for (; __i < __v; __i++)
                                                     __dst.put((ushort)_hostL_transmitting_packs(__dst, __slot, __i));
                                             }
-
                                             __dst.retry_at(4);
                                             return false;
                                         }
-
                                         __i += __v = __slot.index1;
                                         for (; __v < __i; __v++) __dst.put((ushort)_hostL_transmitting_packs(__dst, __slot, __v));
                                         goto case 5;
                                     case 5:
                                         #endregion
                                         #region hostL_related_packs
+
                                         if (__dst.is_null(1 << 1))
                                             goto case 7;
 
@@ -238,7 +247,6 @@ namespace org.unirail
                                             if (__dst.put_val(0, 2, 7)) goto case 7;
                                             return false;
                                         }
-
                                         if (!__dst.put_val((uint)__slot.index_max1, 2, 6)) return false;
 
                                         goto case 6;
@@ -252,17 +260,16 @@ namespace org.unirail
                                                 for (; __i < __v; __i++)
                                                     __dst.put((ushort)_hostL_related_packs(__dst, __slot, __i));
                                             }
-
                                             __dst.retry_at(6);
                                             return false;
                                         }
-
                                         __i += __v = __slot.index1;
                                         for (; __v < __i; __v++) __dst.put((ushort)_hostL_related_packs(__dst, __slot, __v));
                                         goto case 7;
                                     case 7:
                                         #endregion
                                         #region hostR_transmitting_packs
+
                                         if (__dst.is_null(1 << 2))
                                             goto case 9;
 
@@ -271,7 +278,6 @@ namespace org.unirail
                                             if (__dst.put_val(0, 2, 9)) goto case 9;
                                             return false;
                                         }
-
                                         if (!__dst.put_val((uint)__slot.index_max1, 2, 8)) return false;
 
                                         goto case 8;
@@ -285,17 +291,16 @@ namespace org.unirail
                                                 for (; __i < __v; __i++)
                                                     __dst.put((ushort)_hostR_transmitting_packs(__dst, __slot, __i));
                                             }
-
                                             __dst.retry_at(8);
                                             return false;
                                         }
-
                                         __i += __v = __slot.index1;
                                         for (; __v < __i; __v++) __dst.put((ushort)_hostR_transmitting_packs(__dst, __slot, __v));
                                         goto case 9;
                                     case 9:
                                         #endregion
                                         #region hostR_related_packs
+
                                         if (__dst.is_null(1 << 3))
                                             goto case 11;
 
@@ -304,7 +309,6 @@ namespace org.unirail
                                             if (__dst.put_val(0, 2, 11)) goto case 11;
                                             return false;
                                         }
-
                                         if (!__dst.put_val((uint)__slot.index_max1, 2, 10)) return false;
 
                                         goto case 10;
@@ -318,17 +322,16 @@ namespace org.unirail
                                                 for (; __i < __v; __i++)
                                                     __dst.put((ushort)_hostR_related_packs(__dst, __slot, __i));
                                             }
-
                                             __dst.retry_at(10);
                                             return false;
                                         }
-
                                         __i += __v = __slot.index1;
                                         for (; __v < __i; __v++) __dst.put((ushort)_hostR_related_packs(__dst, __slot, __v));
                                         goto case 11;
                                     case 11:
                                         #endregion
                                         #region stages
+
                                         if (__dst.is_null(1 << 4))
                                             goto case 13;
 
@@ -337,22 +340,20 @@ namespace org.unirail
                                             if (__dst.put_val(0, 2, 13)) goto case 13;
                                             return false;
                                         }
-
                                         if (!__dst.put_val((uint)__slot.index_max1, 2, 12)) return false;
 
                                         goto case 12;
                                     case 12:
 
                                         for (var b = true; b;)
-                                            if (!__dst.put_bytes(_stages(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ?
-                                                                                                             12U :
-                                                                                                             13U))
+                                            if (!__dst.put_bytes(_stages(__dst, __slot, __slot.index1)!, (b = __slot.next_index1()) ? 12U : 13U))
                                                 return false;
 
                                         goto case 13;
                                     case 13:
                                         #endregion
                                         #region parent
+
                                         if (__dst.is_null(1 << 5))
                                             goto case 14;
                                         if (__dst.put((ushort)_parent, 14)) goto case 14;
@@ -360,6 +361,7 @@ namespace org.unirail
                                     case 14:
                                         #endregion
                                         #region constants
+
                                         if (__dst.is_null(1 << 6))
                                             goto case 16;
 
@@ -368,7 +370,6 @@ namespace org.unirail
                                             if (__dst.put_val(0, 2, 16)) goto case 16;
                                             return false;
                                         }
-
                                         if (!__dst.put_val((uint)__slot.index_max1, 2, 15)) return false;
 
                                         goto case 15;
@@ -382,17 +383,16 @@ namespace org.unirail
                                                 for (; __i < __v; __i++)
                                                     __dst.put((int)_constants(__dst, __slot, __i));
                                             }
-
                                             __dst.retry_at(15);
                                             return false;
                                         }
-
                                         __i += __v = __slot.index1;
                                         for (; __v < __i; __v++) __dst.put((int)_constants(__dst, __slot, __v));
                                         goto case 16;
                                     case 16:
                                         #endregion
                                         #region name
+
                                         if (__dst.is_null(1 << 7))
                                             goto case 17;
                                         if (__dst.put(_name!, 17)) goto case 17;
@@ -400,9 +400,7 @@ namespace org.unirail
                                     case 17:
                                         #endregion
 
-                                        if (!__dst.init_fields_nulls(_doc != null ?
-                                                                         1 :
-                                                                         0, 17))
+                                        if (!__dst.init_fields_nulls(_doc != null ? 1 : 0, 17))
                                             return false;
                                         if (_inline_doc != null) __dst.set_fields_nulls(1 << 1);
 
@@ -410,6 +408,7 @@ namespace org.unirail
                                         goto case 18;
                                     case 18:
                                         #region doc
+
                                         if (__dst.is_null(1))
                                             goto case 19;
                                         if (__dst.put(_doc!, 19)) goto case 19;
@@ -417,6 +416,7 @@ namespace org.unirail
                                     case 19:
                                         #endregion
                                         #region inline_doc
+
                                         if (__dst.is_null(1 << 1))
                                             goto case 20;
                                         if (__dst.put(_inline_doc!, 20)) goto case 20;

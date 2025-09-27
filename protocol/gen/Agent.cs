@@ -1,3 +1,5 @@
+
+
 //Copyright 2025 Chikirev Sirguy, Unirail Group
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +28,7 @@ using System.Threading;
 using System.Net.Sockets;
 using org.unirail.collections;
 using System.Runtime.CompilerServices;
+
 using org.unirail.Agent;
 
 namespace org.unirail
@@ -36,6 +39,7 @@ namespace org.unirail
     ///</summary>
     namespace Agent
     {
+
         ///<summary>
         ///This file defines the **meta-protocol** for the AdHoc system itself. It orchestrates the communication
         ///between the `AdHocAgent` (the developer's tool), the code-generation `Server`, and the `Observer`
@@ -47,17 +51,20 @@ namespace org.unirail
         ///</summary>
         public static partial class AdHocProtocol
         {
+
             ///<summary>
             ///Defines the Agent host, which corresponds to the `AdHocAgent` command-line tool.
             ///Its primary role is to serialize the user's protocol definition into the `Project` pack and send it to the Server.
             ///</summary>
             public static partial class Agent_
             {
+
                 ///<summary>
                 ///Contains the user's credentials (a permanent UUID) used for authentication with the Server.
                 ///</summary>
                 public partial class Login
                 {
+
                     public void __OnSent_via_Communication_at_Login(Communication.Context context)
                     {
                         #region> Login OnSent Event
@@ -73,7 +80,6 @@ namespace org.unirail
                         public static event Action<Login, Communication.Context> handlers;
                     }
                 }
-
                 ///<summary>
                 ///This is the central "meta-pack" of the system. It contains a complete, serialized
                 ///description of a user's AdHoc protocol project. The Agent constructs this pack and sends
@@ -81,6 +87,7 @@ namespace org.unirail
                 ///</summary>
                 public partial interface Project
                 {
+
                     void __OnSent_via_Communication_at_TodoJobRequest(Communication.Context context)
                     {
                         #region> Project OnSent Event
@@ -146,23 +153,27 @@ namespace org.unirail
                     ///</summary>
                     public partial interface Channel
                     {
+
                         ///<summary>
                         ///Describes a single state (Stage) in the channel's state machine.
                         ///</summary>
                         public partial interface Stage
                         {
+
                             ///<summary>
                             ///Describes a single transition (Branch) from a Stage, which is triggered by sending a specific pack.
                             ///</summary>
-                            public partial interface Branch { }
+                            public partial interface Branch
+                            {
+                            }
                         }
                     }
-
                     ///<summary>
                     ///Describes a single Host within the user's project.
                     ///</summary>
                     public partial interface Host
                     {
+
                         [Flags]
                         public enum Langs : ushort
                         {
@@ -174,56 +185,60 @@ namespace org.unirail
                             InRS = 2,
                             InSwift = 64,
                             InTS = 32,
-                        }
 
+                        }
                         ///<summary>
                         ///Describes a single Pack (data structure) within the user's project.
                         ///</summary>
                         public partial interface Pack
                         {
-                            ///<summary>Describes a single constant or enum member within the protocol.</summary>
-                            public partial interface Constant { }
 
+                            ///<summary>Describes a single constant or enum member within the protocol.</summary>
+                            public partial interface Constant
+                            {
+                            }
                             ///<summary>
                             ///Describes a single Field within a Pack, including its type, constraints, and attributes.
                             ///</summary>
                             public partial interface Field
                             {
+
                                 ///<summary>Internal enumeration of all possible data types recognized by the generator. These are abstract types mapped to platform-specific ones during code generation.</summary>
                                 public enum DataType : ushort
                                 {
-                                    t_binary = 65529, //Reserved for binary data
-                                    t_bool = 65531, //Reserved for boolean type
-                                    t_char = 65525, //Reserved for characters
-                                    t_constants = 65535, //Reserved for a constant set type
-                                    t_double = 65519, //Reserved for double type
-                                    t_enum_exp = 65533, //Reserved for expression enums
+                                    t_binary = 65529,     //Reserved for binary data
+                                    t_bool = 65531,       //Reserved for boolean type
+                                    t_char = 65525,       //Reserved for characters
+                                    t_constants = 65535,  //Reserved for a constant set type
+                                    t_double = 65519,     //Reserved for double type
+                                    t_enum_exp = 65533,   //Reserved for expression enums
                                     t_enum_flags = 65532, //Reserved for flags enum
-                                    t_enum_sw = 65534, //Reserved for switch enums
-                                    t_float = 65520, //Reserved for a float type
-                                    t_int16 = 65527, //Reserved for 16-bit signed integers
-                                    t_int32 = 65524, //Reserved for 32-bit signed integers
-                                    t_int64 = 65522, //Reserved for 64-bit signed integers
-                                    t_int8 = 65530, //Reserved for 8-bit signed integers
-                                    t_map = 65517, //Reserved for a map type
-                                    t_set = 65516, //Reserved for a set type
-                                    t_string = 65518, //Reserved for a string type
-                                    t_subpack = 65515, //Reserved for a sub-pack type
-                                    t_uint16 = 65526, //Reserved for 16-bit unsigned integers
-                                    t_uint32 = 65523, //Reserved for 32-bit unsigned integers
-                                    t_uint64 = 65521, //Reserved for 64-bit unsigned integers
-                                    t_uint8 = 65528, //Reserved for 8-bit unsigned integers
+                                    t_enum_sw = 65534,    //Reserved for switch enums
+                                    t_float = 65520,      //Reserved for a float type
+                                    t_int16 = 65527,      //Reserved for 16-bit signed integers
+                                    t_int32 = 65524,      //Reserved for 32-bit signed integers
+                                    t_int64 = 65522,      //Reserved for 64-bit signed integers
+                                    t_int8 = 65530,       //Reserved for 8-bit signed integers
+                                    t_map = 65517,        //Reserved for a map type
+                                    t_set = 65516,        //Reserved for a set type
+                                    t_string = 65518,     //Reserved for a string type
+                                    t_subpack = 65515,    //Reserved for a sub-pack type
+                                    t_uint16 = 65526,     //Reserved for 16-bit unsigned integers
+                                    t_uint32 = 65523,     //Reserved for 32-bit unsigned integers
+                                    t_uint64 = 65521,     //Reserved for 64-bit unsigned integers
+                                    t_uint8 = 65528,      //Reserved for 8-bit unsigned integers
+
                                 }
                             }
                         }
                     }
                 }
-
                 ///<summary>
                 ///A pack used to send a `.proto` file (or files) to the Server for conversion into the AdHoc format.
                 ///</summary>
                 public partial class Proto
                 {
+
                     public void __OnSent_via_Communication_at_TodoJobRequest(Communication.Context context)
                     {
                         #region> Proto OnSent Event
@@ -242,6 +257,7 @@ namespace org.unirail
 
                 public partial struct Version
                 {
+
                     public class OnSent_via_Communication_at_Start
                     {
                         public static void notify(Version pack, Communication.Context context) => handlers?.Invoke(pack, context);
@@ -257,15 +273,17 @@ namespace org.unirail
             ///</summary>
             public static partial class Item
             {
+
                 public enum Type : byte
-                { //Enumeration defining the possible types of an item.
-                    Channel = 5,        //A reference to a communication channel.
-                    Constant = 4,        //A reference to a constant.
-                    Field = 3,        //A reference to a specific field.
-                    Host = 1,        //A reference to a specific host.
-                    Pack = 2,        //A reference to a specific pack.
-                    Project = 0,        //A reference to the entire project.
-                    Stage = 6,        //A reference to a stage within a channel's state machine.
+                {                 //Enumeration defining the possible types of an item.
+                    Channel = 5,  //A reference to a communication channel.
+                    Constant = 4, //A reference to a constant.
+                    Field = 3,    //A reference to a specific field.
+                    Host = 1,     //A reference to a specific host.
+                    Pack = 2,     //A reference to a specific pack.
+                    Project = 0,  //A reference to the entire project.
+                    Stage = 6,    //A reference to a stage within a channel's state machine.
+
                 }
             }
 
@@ -276,12 +294,14 @@ namespace org.unirail
             ///</summary>
             public static partial class LayoutFile_
             {
+
                 ///<summary>
                 ///Contains the actual layout information, such as coordinates, zoom levels, and splitter positions
                 ///for the various diagrams displayed in the Observer.
                 ///</summary>
                 public partial class Info
                 {
+
                     public void __OnReceived_via_ObserverCommunication_at_Operate(ObserverCommunication.Context context)
                     {
                         #region> Info OnReceived Event
@@ -342,17 +362,21 @@ namespace org.unirail
                         public static event Action<Info, SaveLayout.Context, SaveLayout.Stages.Start.Transmitter> handlers;
                     }
 
-                    public partial class View { }
+                    public partial class View
+                    {
+                    }
 
-                    public partial struct XY { }
+                    public partial struct XY
+                    {
+                    }
                 }
-
                 ///<summary>
                 ///Maps the persistent UIDs of protocol entities (hosts, packs, etc.) to their layout keys.
                 ///This ensures that diagram positions are preserved across sessions, even if volatile internal IDs change.
                 ///</summary>
                 public partial class UID
                 {
+
                     public void __OnReceived_via_SaveLayout_at_Start(SaveLayout.Context context, SaveLayout.Stages.Start.Transmitter transmitter_)
                     {
                         #region> UID OnReceived Event
@@ -391,21 +415,23 @@ namespace org.unirail
             ///</summary>
             public static partial class Observer_
             {
+
                 public partial struct Show_Code
                 {
+
                     public class OnReceived_via_ObserverCommunication_at_Operate
                     {
                         public static void notify(Show_Code pack, ObserverCommunication.Context context) => handlers?.Invoke(pack, context);
                         public static event Action<Show_Code, ObserverCommunication.Context> handlers;
                     }
                 }
-
                 ///<summary>
                 ///A request from the Observer to check if its data is stale. The Agent will respond either
                 ///with an updated `Project` pack or with this same pack to confirm it's already up-to-date.
                 ///</summary>
                 public partial class Up_to_date
                 {
+
                     public void __OnReceived_via_ObserverCommunication_at_Operate(ObserverCommunication.Context context, ObserverCommunication.Stages.RefreshProject.Transmitter transmitter_)
                     {
                         #region> Up_to_date OnReceived Event
@@ -445,11 +471,13 @@ namespace org.unirail
             ///</summary>
             public static partial class Server_
             {
+
                 ///<summary>
                 ///A generic informational or error message pack sent from the Server to the Agent.
                 ///</summary>
                 public partial class Info
                 {
+
                     public void __OnReceived_via_Communication_at_VersionMatching(Communication.Context context)
                     {
                         #region> Info OnReceived Event
@@ -510,13 +538,13 @@ namespace org.unirail
                         public static event Action<Info, Communication.Context> handlers;
                     }
                 }
-
                 ///<summary>
                 ///An empty pack sent by the Server to invite the Agent to the next communication stage (e.g., proceed to login).
                 ///Empty packs are implemented as highly efficient singletons, making them ideal for signaling state transitions.
                 ///</summary>
                 public static partial class Invitation
                 {
+
                     public const int __id_ = 3;
 
                     public class Handler : AdHoc.Channel.Receiver.BytesDst
@@ -539,7 +567,6 @@ namespace org.unirail
                         public static event Action<Communication.Context, Communication.Stages.TodoJobRequest.Transmitter> handlers;
                     }
                 }
-
                 ///<summary>
                 ///Sent by the Server after a successful login to provide the Agent with a new, temporary (volatile) UUID for the session.
                 ///The 128-bit UUID is split into two `ulong` fields. Its volatile nature prevents reuse and supports automated
@@ -547,6 +574,7 @@ namespace org.unirail
                 ///</summary>
                 public partial class InvitationUpdate
                 {
+
                     public void __OnReceived_via_Communication_at_LoginResponse(Communication.Context context, Communication.Stages.TodoJobRequest.Transmitter transmitter_)
                     {
                         #region> InvitationUpdate OnReceived Event
@@ -562,12 +590,12 @@ namespace org.unirail
                         public static event Action<InvitationUpdate, Communication.Context, Communication.Stages.TodoJobRequest.Transmitter> handlers;
                     }
                 }
-
                 ///<summary>
                 ///Contains the final result of a code generation task, sent from the Server to the Agent.
                 ///</summary>
                 public partial class Result
                 {
+
                     public void __OnReceived_via_Communication_at_Project(Communication.Context context)
                     {
                         #region> Result OnReceived Event
@@ -600,10 +628,11 @@ namespace org.unirail
                 }
             }
         }
-    }
 
+    }
     public class _Allocator
     {
+
         public Func<AdHoc.Channel.Receiver, Agent.AdHocProtocol.Agent_.Project.Channel.Stage.Branch> new_AdHocProtocol_Agent_Project_Channel_Stage_Branch = (srs) => throw new Exception("The producer of Agent.AdHocProtocol.Agent_.Project.Channel.Stage.Branch is not assigned");
         public Func<AdHoc.Channel.Receiver, Agent.AdHocProtocol.Agent_.Project.Channel> new_AdHocProtocol_Agent_Project_Channel = (srs) => throw new Exception("The producer of Agent.AdHocProtocol.Agent_.Project.Channel is not assigned");
         public Func<AdHoc.Channel.Receiver, Agent.AdHocProtocol.Agent_.Project.Host.Pack.Constant> new_AdHocProtocol_Agent_Project_Host_Pack_Constant = (srs) => throw new Exception("The producer of Agent.AdHocProtocol.Agent_.Project.Host.Pack.Constant is not assigned");
@@ -652,7 +681,7 @@ namespace org.unirail
 
             return dst;
         }
-
         public static readonly _Allocator DEFAULT = new();
     }
+
 }

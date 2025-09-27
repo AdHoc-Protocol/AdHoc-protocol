@@ -95,7 +95,8 @@ The **AdHoc** generator offers a comprehensive set of features:
 - Channels can be constructed from channels or their components, such as stages or branches.
 - Packs can import or subtract individual fields or all fields of other packs.
 - Provides a [`custom code injection point`](#custom-code-injection-point), where custom code can safely be integrated with the generated code.
-- Provides built-in visualization tools through the **AdHoc Observer**, which can render interactive diagrams of network topology, pack field layouts, and data flow state machines.
+- Provides built-in visualization tools through the **AdHoc Observer**, which can render interactive diagrams of network topology, pack field layouts,
+  and data flow state machines.
 - Support for bitfields.
 - Handling of nullable primitive data types.
 - If all the field data of a pack fits within 8 bytes, it will be represented as a `long` primitive, thereby
@@ -188,20 +189,24 @@ Upload the `protocol description file` to generate source code.
 
 ## `.cs?`
 
-This command launches the **AdHoc Observer**, a powerful, web-based tool for visualizing, analyzing, and documenting your protocol definitions. It connects via WebSocket to receive live protocol data and renders it as a series of interconnected diagrams.
+This command launches the **AdHoc Observer**, a powerful, web-based tool for visualizing, analyzing, and documenting your protocol definitions. It
+connects via WebSocket to receive live protocol data and renders it as a series of interconnected diagrams.
 
 Example:
 
 ```cmd
     AdHocAgent.exe MyProtocol.cs?
 ```
+
 The Observer is an integrated development environment for your protocol, allowing you to:
-*   **Visualize High-Level Architecture:** See all hosts, the packs they handle, and the communication channels linking them in a clear, interactive graph.
-*   **Drill into Data Flow Logic:** Right-click a channel to open a detailed pop-up view of its state machine, including all stages and branching logic.
-*   **Inspect Data Structures:** Left-click a pack to instantly view its fields, data types, and nested structures in a dedicated diagram.
-*   **Annotate and Document:** Double-click the background to create, edit, and save rich-text "stickers" (notes) directly on the diagrams.
-*   **Navigate with Ease:** Use a searchable, collapsible tree view in the sidebar to quickly find and focus on any host, pack, or channel.
-*   **Persist Your Workspace:** All layout customizations (node positions, pan, zoom) and annotations are automatically saved.
+
+* **Visualize High-Level Architecture:** See all hosts, the packs they handle, and the communication channels linking them in a clear, interactive
+  graph.
+* **Drill into Data Flow Logic:** Right-click a channel to open a detailed pop-up view of its state machine, including all stages and branching logic.
+* **Inspect Data Structures:** Left-click a pack to instantly view its fields, data types, and nested structures in a dedicated diagram.
+* **Annotate and Document:** Double-click the background to create, edit, and save rich-text "stickers" (notes) directly on the diagrams.
+* **Navigate with Ease:** Use a searchable, collapsible tree view in the sidebar to quickly find and focus on any host, pack, or channel.
+* **Persist Your Workspace:** All layout customizations (node positions, pan, zoom) and annotations are automatically saved.
 
 > **[See the full Observer User Guide](./Observer.md) for a detailed explanation of all features.**
 
@@ -216,9 +221,10 @@ The Observer is an integrated development environment for your protocol, allowin
 
 The Observer automatically saves your workspace, including diagram layouts and annotations (stickers), into a dedicated folder.
 
-*   **Location:** The data is saved in the current working folder of AdhocAgent.
-*   **Manual Save:** To save the current state of your diagram, open sidebar and select **"Save Diagram"**.
-*   **Recovery:** If you accidentally close the browser without saving, the Observer creates an `current_working_folder/unsaved`. You can move these filese to current_working_folder to recover your work.
+* **Location:** The data is saved in the current working folder of AdhocAgent.
+* **Manual Save:** To save the current state of your diagram, open sidebar and select **"Save Diagram"**.
+* **Recovery:** If you accidentally close the browser without saving, the Observer creates an `current_working_folder/unsaved`. You can move these
+  filese to current_working_folder to recover your work.
 
 ![image](https://github.com/user-attachments/assets/d2482a1b-5058-4903-920e-ef5dbf252ef6)
 
@@ -504,7 +510,7 @@ language-specific region comments that include a **Unique ID (UID)**.
 
 > [!CAUTION]
 > **Never edit, move, or duplicate the `endregion` line or its Unique ID.** The UID is how the system finds your safe zone to preserve your code.
-Changing it will cause your custom code to be permanently lost.
+> Changing it will cause your custom code to be permanently lost.
 
 #### Generated Blocks (Suggestions from the Generator)
 
@@ -581,7 +587,7 @@ Before the deployment process overwrites any files in your target project direct
 
 > [!IMPORTANT]
 > Only files that are being **overwritten** are backed up. If a new file is deployed to a location where no file previously existed, there is no "
-original" to back up.
+> original" to back up.
 
 #### How to Restore Your Files
 
@@ -1908,6 +1914,7 @@ description file.
 
 The diagram on the **right** illustrates the communication channels lifecycle, which is declared in the code .  
 To view the communication flow diagram in the **Observer**, run the **AdHocAgent** utility from the command line:
+
    ```cmd
       AdHocAgent.exe /path/to/AdHocProtocol.cs?
    ```
@@ -2454,7 +2461,7 @@ By default, all collections, including `string`, have a maximum capacity of 255 
 
 Types omitted in the `_DefaultMaxLengthOf` enum retain the default limit.
 
-### Flat array
+### Flat array/list
 
 Flat arrays are declared using square brackets `[]`, and the `AhHoc` supports three types of flat arrays:
 

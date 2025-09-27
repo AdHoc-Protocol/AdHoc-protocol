@@ -616,8 +616,6 @@ namespace org.unirail
         public static string RawFilesDirPath => Path.Combine(destination_dir_path, Path.GetFileName(provided_path)[..^3]);
 
 
-
-
         public static int exit(string banner, int code = 1)
         {
             if (0 < banner.Length)
@@ -1057,83 +1055,169 @@ After making the necessary modifications, you can rerun the deployment process b
             /// <param name="deployment_instructions_file">The path to the configured .md instructions file.</param>
             static void process(string deployment_instructions_file)
             {
-                // Initialize the source file tree from the filesystem.
+                // STEP 1: Get the ground truth by scanning the current filesystem.
                 build_receiver_files_lines();
-
                 deployment_instructions_txt = File.ReadAllText(deployment_instructions_file, UTF8_NO_BOM);
-
                 LOG.Information("Starting deployment of files from \"{src_dir}\", according to instructions in \"{md_file}\"", raw_files_dir_path, deployment_instructions_file);
 
-                var obsoletes_targets = new List<string>(); // Tracks instructions for files that no longer received from server.
+                // --- Data structures for reconciliation ---
+                var obsolete_md_lines = new List<string>();    // Holds full markdown lines from the .md file that no longer correspond to a real file.
+                var reconciled_keys = new HashSet<string>(); // Tracks keys of files that were found in both the .md and the filesystem.
                 var Key_path_segment = new Regex(@"(?<=\/|\\)(CPP|InCS|InGO|InJAVA|InRS|InTS)[\\/]*.*");
-                var start = -1;
-                Match? end = null;
-                var targets_lines_count = 0;
-                var any = new Regex(".*");
-                var has_some_targets = false;
+                var markdown_regex = new Regex(@"- (?:📁|＃|🧩|🧾|☕|🌀|📜|🌐|🎨|🐹|⚙️|🟪|🐦|📄|\{\})(?:\s*\[([^\]]*)\]\(([^)]*)\)[^\[\n\r]*)*(?:\s*⛔)?", RegexOptions.Multiline);
 
-                // First pass: Parse the deployment instructions from the .md file.
-                foreach (Match match in new Regex(@"- (?:📁|＃|🧩|🧾|☕|🌀|📜|🌐|🎨|🐹|⚙️|🟪|🐦|📄|\{\})(?:\s*\[([^\]]*)\]\(([^)]*)\)[^\[\n\r]*)*(?:\s*⛔)?", RegexOptions.Multiline).Matches(deployment_instructions_txt))
+                Match? first_match = null;
+                Match? last_match = null;
+
+                // STEP 2: Parse the existing .md file and reconcile with the ground truth.
+                foreach (Match match in markdown_regex.Matches(deployment_instructions_txt))
                 {
-                    targets_lines_count++;
-
-                    end = match;
-                    if (start == -1) start = match.Index;
+                    last_match = match;
+                    first_match ??= match;
                     // the link
                     //      InCS/Agent/lib/collections/BitList.cs
                     //      InJAVA/Server/collections/org/unirail/collections/BitList.java
                     var key = Key_path_segment.Match(match.Groups[2].Captures[0].Value).Groups[0].Value.Replace('\\', '/').Replace(">", "").Trim();
+
                     if (receiver_files_lines.TryGetValue(key, out var info))
                     {
+                        // MATCH FOUND: This file exists. Preserve its customization.
                         //- 📁[InCS](/AdHocTMP/AdHocProtocol/InCS) ✅ copy full structure [](/AdHoc/Protocol/Generated/InCS)
                         //           <--------- head ------------> <------------------- customization --------------------->
                         var head = match.Groups[2].Captures[0];
-                        info.customization = match.ToString()[(head.Index + head.Length + 1 - match.Index)..]; // Preserve user text like "✅ copy full tree".
-
-                        if (targets_lines_count == 1 &&
-                            !string.Equals(match.Groups[2].Captures[0].Value.Trim(' ', '<', '>', '\\', '/'),
-                                           Path.GetFullPath(info.path).Replace('\\', '/').Trim(' ', '\\', '/'),
-                                           StringComparison.InvariantCultureIgnoreCase))
-                            targets_lines_count = int.MinValue; // Mark for tree regeneration if root path has changed.
-
-                        info.skipped = match.Value.Contains('⛔');
-
-                        info.targets = match.Groups[1].Captures.Skip(1).Select(s => s.Value)
-                                            .Zip(match.Groups[2].Captures.Skip(1).Select(t => t.Value[0] == '/' && t.Value[2] == ':' ?
-                                                                                                  t.Value[1..].Replace('/', '\\') :
-                                                                                                  t.Value))
-                                            .GroupBy(_i_ =>
-                                                     {
-                                                         //To skip a file or folder from deployment, add `⛔` to the line or use an empty target `[]()`.
-                                                         if (_i_.First == "" && _i_.Second == "") info.skipped = true; // []() case.
-                                                         return _i_.First;
-                                                     })
-                                            .Select(group => (group.Key.Equals("") ?
-                                                                  any :
-                                                                  new Regex(group.Key), group.Select(pair => pair.Second).ToArray())).ToArray();
-                        if (0 < info.targets.Length)
-                            has_some_targets = true;
-
-                        continue;
+                        info.customization = match.ToString()[(head.Index + head.Length + 1 - match.Index)..];
+                        reconciled_keys.Add(key);
                     }
-
-                    obsoletes_targets.Add(match.ToString());
+                    else
+                    {
+                        // NO MATCH: This instruction is obsolete.
+                        obsolete_md_lines.Add(match.ToString());
+                    }
                 }
 
-                if (end == null)
+                var new_files = receiver_files_lines.Keys.Where(k => !reconciled_keys.Contains(k)).ToList();
+
+                // STEP 3: Check for discrepancies (new files or obsolete instructions).
+                if (obsolete_md_lines.Count > 0 || new_files.Count > 0)
                 {
-                    // Regenerate instructions if they are missing from the file.
-                    sb.Clear();
-                    foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value))
-                        info.append_md_line().Append('\n');
-                    sb.Append("\n\n");
-                    using (var deployment_instructions_file_ = File.OpenWrite(deployment_instructions_file))
+                    LOG.Warning("Discrepancy detected between the deployment instructions file and the source directory.");
+
+                    if (new_files.Count > 0)
                     {
-                        deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(sb.ToString()));
-                        deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(deployment_instructions_txt));
+                        LOG.Information("New files/directories detected:");
+                        foreach (var key in new_files) Console.Out.WriteLine($"  + {key}");
                     }
 
-                    exit($"Deployment instructions not found and have been regenerated. Please update {deployment_instructions_file} with actual `deployment targets`");
+                    if (obsolete_md_lines.Count > 0)
+                    {
+                        LOG.Information("Obsolete instructions found (files may have been removed or renamed):");
+                        foreach (var line in obsolete_md_lines) Console.Out.WriteLine($"  - {line}");
+                    }
+
+                    LOG.Warning("The file list in '{md_file}' will be regenerated to reflect these changes.", Path.GetFileName(deployment_instructions_file));
+                    LOG.Information("Your existing deployment rules (target paths, skip markers) for unchanged files will be preserved.");
+
+                    // Ask for user confirmation.
+                    Console.Write("Proceed with updating the instructions file? (y/N): ");
+                    if (Console.ReadKey().Key != ConsoleKey.Y)
+                    {
+                        exit("\nOperation cancelled by user.", -1);
+                        return; // return is needed for non-exit methods
+                    }
+
+                    Console.WriteLine();
+
+                    // 1. Get the basic parts of the file path.
+                    var dir = Path.GetDirectoryName(deployment_instructions_file)!;
+                    var name = Path.GetFileNameWithoutExtension(deployment_instructions_file);
+                    var ext = Path.GetExtension(deployment_instructions_file);
+
+                    // 2. Find the highest existing backup number.
+                    // The search pattern now looks for files like "deployment-instructions.*.json"
+                    var backup_num = Directory.GetFiles(dir, $"{name}.*{ext}")
+                                              .Select(f =>
+                                              {
+                                                  // For a file like "deployment-instructions.5.json",
+                                                  // this gets the middle part: ".5"
+                                                  var nameWithoutBase = Path.GetFileNameWithoutExtension(f).Substring(name.Length);
+
+                                                  // Remove the leading dot to get "5"
+                                                  var numStr = nameWithoutBase.TrimStart('.');
+
+                                                  int.TryParse(numStr, out var num);
+                                                  return num; // Returns the parsed number, or 0 if it fails
+                                              })
+                                              .DefaultIfEmpty(0) // If no backup files are found, start with 0
+                                              .Max() + 1;        // Get the highest number and add 1
+
+                    // 3. Create the new backup path without adding ".bak".
+                    // This will create a path like "C:\MyApp\deployment-instructions.1.json"
+                    var backup_path = Path.Combine(dir, $"{name}.{backup_num}{ext}");
+                    File.Copy(deployment_instructions_file, backup_path);
+                    LOG.Information("A backup of the old instructions file has been created at: {backup_path}", backup_path);
+
+                    // REGENERATE the file list section.
+                    if (first_match != null && last_match != null)
+                    {
+                        var sb_new_tree = new StringBuilder();
+                        foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value))
+                        {
+                            info.append_md_line().Append(info.customization).Append('\n');
+                            sb_new_tree.Append(sb.ToString());
+                            sb.Clear();
+                        }
+
+                        var header = deployment_instructions_txt[..first_match.Index];
+                        var footer = deployment_instructions_txt[(last_match.Index + last_match.Length)..];
+
+                        deployment_instructions_txt = header + sb_new_tree.ToString() + footer;
+                        File.WriteAllText(deployment_instructions_file, deployment_instructions_txt, UTF8_NO_BOM);
+
+                        LOG.Information("Instructions file has been successfully updated.");
+                    }
+                }
+
+                // STEP 4: Parse the final, up-to-date instructions to prepare for deployment.
+                var any = new Regex(".*");
+                var has_some_targets = false;
+
+                foreach (var info in receiver_files_lines.Values)
+                {
+                    // This regex finds the skip marker and all target definitions `[...](...)` within the customization string.
+                    var parser_regex = new Regex(@"(\[([^\]]*)\]\(([^)]*)\))|(\s*⛔)");
+                    var targets = new List<(string Selector, string Destination)>();
+
+                    foreach (Match match in parser_regex.Matches(info.customization))
+                    {
+                        if (match.Groups[4].Success) // Matched the skip marker ⛔
+                        {
+                            info.skipped = true;
+                        }
+                        else if (match.Groups[1].Success) // Matched a target []()
+                        {
+                            var selector = match.Groups[2].Value;
+                            var dest = match.Groups[3].Value;
+                            dest = dest[0] == '/' && dest[2] == ':' ?
+                                       dest[1..].Replace('/', '\\') :
+                                       dest;
+
+                            // To skip a file or folder from deployment, add `⛔` to the line or use an empty target `[]()`.
+                            if (selector == "" && dest == "") { info.skipped = true; }
+                            else { targets.Add((selector, dest)); }
+                        }
+                    }
+
+                    if (targets.Count > 0)
+                    {
+                        has_some_targets = true;
+                        info.targets = targets.GroupBy(t => t.Selector)
+                                              .Select(group => (
+                                                                   group.Key.Equals("") ?
+                                                                       any :
+                                                                       new Regex(group.Key),
+                                                                   group.Select(pair => pair.Destination).ToArray()
+                                                               )).ToArray();
+                    }
                 }
 
                 if (!has_some_targets)
@@ -1250,7 +1334,7 @@ After making the necessary modifications, you can rerun the deployment process b
 
                     // Apply deployment rules inherited from parent folders.
                     foreach (var parent_folder in ancestors.Where(i => i.targets is { Length: > 0 }))
-                        foreach (var target_path in parent_folder.targets!.Where(t => t.Item1.IsMatch(received_src_file)).SelectMany(t => t.Item2))
+                        foreach (var target_path in parent_folder.targets!.Where(t => t.Selector.IsMatch(received_src_file)).SelectMany(t => t.Destinations))
                         {
                             var target_base = target_path.EndsWith('/') || target_path.EndsWith('\\') ?
                                                   Path.Combine(target_path, Path.GetFileName(parent_folder.path)) :
@@ -1278,7 +1362,7 @@ After making the necessary modifications, you can rerun the deployment process b
                     // Apply deployment rules from the file itself.
                     if (info.targets == null) continue;
 
-                    foreach (var target_path in info.targets.SelectMany(t => t.Item2))
+                    foreach (var target_path in info.targets.SelectMany(t => t.Destinations))
                     {
                         var existingDstFilePath = target_path.EndsWith('/') || target_path.EndsWith('\\') ?
                                                       Path.Combine(target_path, Path.GetFileName(received_src_file)) :
@@ -1316,13 +1400,13 @@ After making the necessary modifications, you can rerun the deployment process b
                     Start_and_wait(after_deployment, raw_files_dir_path);
 
                 // Create a backup of all overwritten files.
-                var dir = Path.GetDirectoryName(deployment_instructions_file);
-                var name = Path.GetFileName(raw_files_dir_path);
-                var backupDir = Path.Combine(dir, name + "_" + (Directory.GetDirectories(dir, $"{name}_*").Select(dirPath =>
-                                                                                                                  {
-                                                                                                                      int.TryParse(Path.GetFileName(dirPath).Substring(name.Length + 1), out var number);
-                                                                                                                      return number;
-                                                                                                                  }).DefaultIfEmpty(0).Max() + 1));
+                var backup_dir = Path.GetDirectoryName(deployment_instructions_file);
+                var backup_name = Path.GetFileName(raw_files_dir_path);
+                var backupDir = Path.Combine(backup_dir, backup_name + "_" + (Directory.GetDirectories(backup_dir, $"{backup_name}_*").Select(dirPath =>
+                                                                                                                                {
+                                                                                                                                    int.TryParse(Path.GetFileName(dirPath).Substring(backup_name.Length + 1), out var number);
+                                                                                                                                    return number;
+                                                                                                                                }).DefaultIfEmpty(0).Max() + 1));
                 Directory.CreateDirectory(backupDir);
                 var restorePlan = new Dictionary<string, string>();
 
@@ -1352,36 +1436,12 @@ After making the necessary modifications, you can rerun the deployment process b
                 {
                     Directory.Delete(tempDir, true); //be nice.remove garbage
                 }
-                catch (Exception e)
+                catch (Exception)
                 { // ignored
                 }
 
-                // If the source file tree has changed, regenerate that portion of the .md file.
-                if (obsoletes_targets.Count > 0 || targets_lines_count != receiver_files_lines.Count)
-                {
-                    if (obsoletes_targets.Count > 0)
-                    {
-                        LOG.Information("Items listed in the deployment instructions but not present among the receiver files:");
-                        foreach (var useless in obsoletes_targets)
-                            Console.Out.WriteLine(useless);
-                    }
-
-                    using var deployment_instructions_file_ = File.OpenWrite(deployment_instructions_file);
-                    deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(deployment_instructions_txt[..start]));
-
-                    // Re-render the file tree, preserving user customizations.
-                    foreach (var info in receiver_files_lines.OrderBy(e => e.Key).Select(e => e.Value))
-                    {
-                        sb.Clear();
-                        info.append_md_line().Append(info.customization).Append('\n');
-                        deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(sb.ToString()));
-                    }
-
-                    sb.Clear();
-                    sb.Append("\n\n");
-                    deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(sb.ToString()));
-                    deployment_instructions_file_.Write(UTF8_NO_BOM.GetBytes(deployment_instructions_txt[(end.Index + end.Length)..]));
-                }
+                // This final regeneration check is no longer needed here, as it's handled at the start.
+                // You can safely remove the old `if (obsoletes_targets.Count > 0 ...)` block.
 
                 LOG.Information("✔ Deployment successful!");
                 LOG.Information("A backup of all overwritten files has been created at: {backupLocation}", backupDir);

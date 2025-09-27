@@ -89,8 +89,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Agent_.Project.__id_:
                 case Agent.AdHocProtocol.LayoutFile_.Info.__id_:
+                case Agent.AdHocProtocol.Agent_.Project.__id_:
                     return null;
                 default:
                     onERROR(context, this, headers, pack, null, null, "Sending unexpected id:" + pack.__id + " at Stage:" + this);
@@ -105,13 +105,13 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Agent_.Project.__id_:
-                    Operate.ONE.OnActivate(context, this, headers!, pack, null, null);
-                    ((Agent.AdHocProtocol.Agent_.Project)pack).__OnSent_via_ObserverCommunication_at_Start(context);
-                    return;
                 case Agent.AdHocProtocol.LayoutFile_.Info.__id_:
                     LayoutSent.ONE.OnActivate(context, this, headers!, pack, null, null);
                     ((Agent.AdHocProtocol.LayoutFile_.Info)pack).__OnSent_via_ObserverCommunication_at_Start(context, LayoutSent.ONE.transmitter);
+                    return;
+                case Agent.AdHocProtocol.Agent_.Project.__id_:
+                    Operate.ONE.OnActivate(context, this, headers!, pack, null, null);
+                    ((Agent.AdHocProtocol.Agent_.Project)pack).__OnSent_via_ObserverCommunication_at_Start(context);
                     return;
 
                 default:
@@ -131,8 +131,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
         public class Transmitter(Start stage)
         {
-            public bool send(Agent.AdHocProtocol.Agent_.Project src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
             public bool send(Agent.AdHocProtocol.LayoutFile_.Info src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
+            public bool send(Agent.AdHocProtocol.Agent_.Project src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
         }
         public void OnReceived(Context context, Channel.Receiver.Header? headers, AdHoc.Channel.Receiver.BytesDst pack)
         {
@@ -254,9 +254,9 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
                 case Agent.AdHocProtocol.Observer_.Show_Code.__id_:
                 case Agent.AdHocProtocol.LayoutFile_.Info.__id_:
+                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
 
                     return null;
                 default:
@@ -281,11 +281,6 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
-                    RefreshProject.ONE.OnActivate(context, this, null, null, headers!, pack);
-                    ((Agent.AdHocProtocol.Observer_.Up_to_date)pack).__OnReceived_via_ObserverCommunication_at_Operate(context, RefreshProject.ONE.transmitter);
-
-                    return;
                 case Agent.AdHocProtocol.Observer_.Show_Code.__id_:
                     #region> Show_Code OnReceived Event
                     //🌭<
@@ -298,6 +293,11 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
                 case Agent.AdHocProtocol.LayoutFile_.Info.__id_:
 
                     ((Agent.AdHocProtocol.LayoutFile_.Info)pack).__OnReceived_via_ObserverCommunication_at_Operate(context);
+
+                    return;
+                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
+                    RefreshProject.ONE.OnActivate(context, this, null, null, headers!, pack);
+                    ((Agent.AdHocProtocol.Observer_.Up_to_date)pack).__OnReceived_via_ObserverCommunication_at_Operate(context, RefreshProject.ONE.transmitter);
 
                     return;
 

@@ -30,16 +30,19 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
         #region> onERROR
         #endregion> ĀĀ.onERROR
         context.channel.ext_channal.Close();
+
         if (receivePack != null)
             AdHoc.Channel.Receiver.error_handler.error(
                 context.channel.receiver,
                 AdHoc.Channel.Receiver.OnError.ERROR,
                 new Exception($"Error `{error}` detected at stage: {stage}, during receiving of pack with id: {receivePack.__id}"));
         else
+
             AdHoc.Channel.Transmitter.error_handler.error(
                 context.channel.transmitter,
                 AdHoc.Channel.Transmitter.OnError.ERROR,
                 new Exception($"Error `{error}` detected at stage: {stage}, during transmitting of pack with id: {(sendPack != null ? sendPack.__id : "unknown")}"));
+
         O.OnActivate(context, stage, sendHeaders, sendPack, receiveHeaders, receivePack);
     }
 
@@ -48,12 +51,15 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
         #region> onTIMEOUT
         #endregion> ĀĀ.onTIMEOUT
         context.channel.ext_channal.CloseAndDispose();
+
         if (receivePack != null)
             AdHoc.Channel.Receiver.error_handler.error(
                 context.channel.receiver,
                 AdHoc.Channel.Receiver.OnError.TIMEOUT,
                 new Exception($"Timeout detected at stage: {stage}, during receiving of pack with id: {receivePack.__id}"));
+
         else
+
             AdHoc.Channel.Transmitter.error_handler.error(
                 context.channel.transmitter,
                 AdHoc.Channel.Transmitter.OnError.TIMEOUT,

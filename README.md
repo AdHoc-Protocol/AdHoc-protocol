@@ -1092,42 +1092,34 @@ In this example, the `AdHocProtocolWithBackend` protocol description import all 
 
 ## Hosts
 
-In the AdHoc protocol, "hosts" refer to entities that actively participate in the exchange of information.
-These hosts are represented as C# `structs` within a project's `interface` and implement the `org.unirail.Meta.Host` marker interface.
+In the AdHoc protocol, "hosts" refer to entities that actively participate in the exchange of information. These hosts are represented as C# `structs`
+within a project's `interface` and must implement the `org.unirail.Meta.Host` marker interface.
 
-To specify the programming language and options for generating the host's source code, use the XML [
-`<see cref="entity">`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags#cref-attribute)
-tag in the code documentation of the host declaration.
+A host's code is generated only for the programming languages specified in its configuration. This configuration is defined within XML documentation
+comments (`/// <see.../>`) using a powerful, top-down scoping system that combines language targets, implementation modifiers, and entity scopes.
 
-The built-in marker interfaces such as `InCS`, `InJAVA`, `InTS` and others allow you to declare language configuration scopes.
+### Implementation Modifiers
 
-`Packs` and `Fields` type entities referenced within a particular language scope will inherit the configuration specified by that scope.
-The latest language configuration scope becomes the default for the subsequent `Packs` and `Fields` entities within the host.
+When specifying a language, you can append a one or two-character modifier to precisely control the style of the generated code. The modifier has two
+positions, each controlling a different aspect of code generation:
 
-```csharp
-using org.unirail.Meta;
+1. **First Position (Implementation Style):** Controls whether the code is a concrete data-holding class or an abstract interface.
+2. **Second Position (Hash Support):** Controls the generation of methods required for using packs in hash-based collections (like `HashMap` or
+   `HashSet`).
 
-namespace com.my.company // Your company namespace. Required!
-{
-    public interface MyProject
-    {
-        /**
-        <see cref='InCS'/>+-
-        <see cref='InJAVA'/>
-        <see cref='ToAgent.Result'/>
-        <see cref='Agent.ToServer.Proto'/>
-        <see cref='Agent.ToServer.Login'/>
-        <see cref='InJAVA'/>--
-        */
-        struct Server : Host
-        {
+| Modifier | Example                | First Position: **Implementation**                                                                                                                                  | Second Position: **Hash Support**                                                                           |
+|:---------|:-----------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------|
+| `++`     | `<see cref='InCS'/>++` | `+` (**Concrete**): Generates the final, concrete class with fields to hold all packet data.                                                                        | `+` (**Enabled**): Generates methods supporting hash collections (e.g., `Equals` & `GetHashCode`).          |
+| `+-`     | `<see cref='InCS'/>+-` | `+` (**Concrete**): Generates the concrete data-holding class.                                                                                                      | `-` (**Disabled**): Skips the generation of hash-support methods.                                           |
+| `-+`     | `<see cref='InCS'/>-+` | `-` (**Abstract**): Generates an abstract base class or interface only. This is ideal if you want to integrate with an existing data model, not store data in pack. | `+` (**Enabled**): Includes hash-support method signatures in the abstract definition for you to implement. |
+| `--`     | `<see cref='InCS'/>--` | `-` (**Abstract**): Generates an abstract base class or interface only.                                                                                             | `-` (**Disabled**): Does not include any hash-support methods in the abstract definition.                   |
 
-        }
-    }
-}
-```
+> [!IMPORTANT]
+> **Understanding Defaults:**
+> * A language tag with **no modifiers** (e.g., `<see cref='InJAVA'/>`) defaults to **`++`** (Concrete implementation with hash support).
+> * A language tag with a **single modifier** (e.g., `<see cref='InCS'/>+`) assumes the second modifier is **`-`**. Therefore, `InCS+` is equivalent
+    to `InCS+-` (Concrete implementation, no hash support).
 
-AdHocAgent utility could be read the `Server` configuration in this manner..
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
 
@@ -1135,9 +1127,73 @@ AdHocAgent utility could be read the `Server` configuration in this manner..
 
 </details>
 
+### The Configuration Scoping System
+
+The generator reads the `<see>` tags sequentially from top to bottom. A language marker (e.g., `<see cref='InCS'/>`, `<see cref='InJAVA'/>`) always
+marks the beginning of a new **configuration scope**. A scope extends downwards from its language marker until the next language marker is found.
+
+#### Rule 1: The Default Rule (Empty Scopes)
+
+If a language scope contains **no** packs or Pack Sets before the next language marker, its configuration becomes the new **baseline default** for
+*all* packs associated with the host. If a default was already set by a previous empty scope, it is overridden.
+
+#### Rule 2: The Override Rule (Specific Scopes)
+
+If a language scope **does** contain one or more packs or `Pack Sets`, its configuration **overrides the default** for *only that specific list* of
+entities. All other packs not listed in this scope retain the current default configuration.
+
+### Example: A Detailed Breakdown
+
+Let's analyze a complex host configuration using this precise logic.
+
+```csharp
+public interface MyProject
+{
+     interface BackendPacksThatImplementedOnServer : //Pack Set
+        _<
+            @Monitoring.Network,
+            @Monitoring.Authorizer,
+            @Monitoring.Processing
+        >{ }
+
+    /**
+    <see cref='InCS'/>+-                        		// SCOPE 1 starts here.
+    <see cref='InJAVA'/>                        		// SCOPE 2 starts here. (Defaults to InJAVA++)
+    <see cref='BackendPacksThatImplementedOnServer'/>		//  - Belongs to SCOPE 2
+    <see cref='ToAgent.Result'/>                		//  - Belongs to SCOPE 2
+    <see cref='Agent.ToServer.Proto'/>          		//  - Belongs to SCOPE 2
+    <see cref='Agent.ToServer.Login'/>          		//  - Belongs to SCOPE 2
+    <see cref='InJAVA'/>--                      		// SCOPE 3 starts here.
+    */
+    struct Server : Host { }
+}
+```
+
+1. **SCOPE 1: `InCS` (Sets the Initial Default)**
+	* **Starts at:** `<see cref='InCS'/>+-`
+	* **Contents:** An **Empty Scope**.
+	* **Effect (Default Rule):** The baseline for all `Server` packs is set to `InCS+-` (Concrete implementation, no hash support).
+
+2. **SCOPE 2: `InJAVA` (Applies a Specific Override)**
+	* **Starts at:** `<see cref='InJAVA'/>` (which defaults to `InJAVA++`)
+	* **Contents:** A **Specific Scope** containing the `BackendPacksThatImplementedOnServer` Pack Set and three other packs.
+	* **Effect (Override Rule):** For this specific list of packs, the configuration is overridden to `InJAVA++` (Concrete implementation with hash
+	  support). All other packs retain the `InCS+-` default.
+
+3. **SCOPE 3: `InJAVA --` (Sets a New Default)**
+	* **Starts at:** `<see cref='InJAVA'/>--`
+	* **Contents:** An **Empty Scope**.
+	* **Effect (Default Rule):** The configuration `InJAVA--` (Abstract interface, no hash support) becomes the **new baseline default**, overriding
+	  the initial `InCS+-` default for all packs *not* targeted by SCOPE 2.
+
+#### Final Configuration Summary
+
+* **Override Configuration:** The packs within the `BackendPacksThatImplementedOnServer` set (and the other three) will be generated for **Java** as *
+  *concrete classes with hash support (`++`)**.
+* **Final Default Configuration:** All other `Server` packs will be generated for **Java** as **abstract interfaces without hash support (`--`)**.
 
 > [!NOTE]  
-> A host can serve as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the host's internal packet hierarchy.
+> A host can also serve as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the host's internal packet hierarchy.
 
 ### The Multi Context Host
 

@@ -1425,6 +1425,60 @@ After making the necessary modifications, you can rerun the deployment process b
 
                 GenerateRestoreScripts(restorePlan, backupDir);
 
+                // --- START: INSERT NEW CLEANUP LOGIC HERE ---
+
+                // After backing up, we perform a smart cleanup of the destination directories.
+                // This removes stale files that are no longer part of the deployment source.
+                LOG.Information("Cleaning up stale files from destination locations...");
+
+                // Create a fast lookup set of all files that WILL be deployed. Case-insensitive for Windows.
+                var filesToDeploy = new HashSet<string>(tempFiles.Keys, StringComparer.OrdinalIgnoreCase);
+
+                // Get all unique destination directories that are part of this deployment.
+                var destinationDirs = new HashSet<string>(
+                    tempFiles.Keys.Select(path => Path.GetDirectoryName(path)!),
+                    StringComparer.OrdinalIgnoreCase
+                );
+
+                foreach (var dir in destinationDirs.Where(d => Directory.Exists(d)))
+                    // Recursively get all files in the target directory and its subdirectories.
+                    foreach (var existingFile in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+                        // If an existing file is NOT in our set of files to deploy, it's stale.
+                        if (!filesToDeploy.Contains(existingFile))
+                            try
+                            {
+                                File.Delete(existingFile);
+                            }
+                            catch (Exception ex)
+                            {
+                                LOG.Warning("Could not delete stale file {staleFile}: {errorMessage}", existingFile, ex.Message);
+                            }
+
+
+                // Now, clean up any directories that may have become empty.
+                // We must process from the deepest directories upwards.
+                var allSubDirs = destinationDirs
+                    .Where(d => Directory.Exists(d))
+                    .SelectMany(d => Directory.GetDirectories(d, "*", SearchOption.AllDirectories))
+                    .ToList();
+                allSubDirs.AddRange(destinationDirs); // Also check the root target dirs themselves
+
+                var emptyDirsDeleted = 0;
+                foreach (var subDir in allSubDirs.Distinct().OrderByDescending(p => p.Length))
+                    if (Directory.Exists(subDir) && !Directory.EnumerateFileSystemEntries(subDir).Any())
+                        try
+                        {
+                            Directory.Delete(subDir);
+                            emptyDirsDeleted++;
+                        }
+                        catch (Exception ex)
+                        {
+                            LOG.Warning("Could not delete empty directory {emptyDir}: {errorMessage}", subDir, ex.Message);
+                        }
+
+
+                // --- END: NEW CLEANUP LOGIC ---
+
                 // Overwrite target files with the processed temp files.
                 foreach (var (dest, tempPath) in tempFiles)
                 {

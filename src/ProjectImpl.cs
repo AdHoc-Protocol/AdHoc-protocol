@@ -397,10 +397,11 @@ namespace org.unirail
                         };
                         if (0 < lang)
                         {
-                            #region read host language configuration
+                            #region read host language configuration and create a new scope
                             host._langs |= (Project.Host.Langs)lang; //register language config
                             var txt = comment_line.Parent!.DescendantNodes().FirstOrDefault(t => node.Span.End < t.Span.Start)?.ToString().Trim() ?? "";
 
+                            // This state variable holds the configuration for the current scope being parsed.
                             host._default_impl_hash_equal = (0 < txt.Length ? //the first char after last `>` impl pack
                                                                  txt[0] :
                                                                  ' ') switch
@@ -414,35 +415,28 @@ namespace org.unirail
                                                                  txt[1] :
                                                                  ' ') switch
                             {
-                                '+' => (byte)(host._default_impl_hash_equal | lang),  //Implementing the hash and equals methods for the pack.
-                                '-' => (byte)(host._default_impl_hash_equal & ~lang), //Abstracting the hash and equals methods for the pack.
+                                '+' => host._default_impl_hash_equal | lang,          //Implementing the hash and equals methods for the pack.
+                                '-' => (uint)(host._default_impl_hash_equal & ~lang), //Abstracting the hash and equals methods for the pack.
                                 _ => host._default_impl_hash_equal
                             };
+
+                            // Create and add the new language scope to the host for later processing.
+                            host.LangScopes.Add(new HostImpl.LangScope { Config = host._default_impl_hash_equal });
                             #endregion
                             goto END;
                         }
 
-                        #region apply current language configuration (default_impl_INT) on the host entity
+                        #region Add the cref target to the current language scope
                         if (cref == null) AdHocAgent.exit($"`Reference to unknown entity {node.Cref} on {host} host configuration detected.");
-                        switch (cref!.Kind)
-                        {
-                            case SymbolKind.Field: // ref to a field
 
-                                host.field_impl.Add(cref, (Project.Host.Langs)(host._default_impl_hash_equal >> 16)); //special field lang configuration
-                                break;
-
-                            case SymbolKind.NamedType: //set  host's  enclosing pack language configuration
-
-                                host.pack_impl.Add(cref, host._default_impl_hash_equal); //fixing impl hash equals  config on pack
-                                break;
-
-                            default:
-                                AdHocAgent.exit($"Reference to unknown entity {node.Cref} on {host} host");
-                                break;
-                        }
+                        if (host.LangScopes.Any())
+                            // Add the referenced symbol to the list of targets for the most recently defined scope.
+                            host.LangScopes.Last().Targets.Add(cref);
+                        else
+                            AdHocAgent.LOG.Warning("Configuration target '{cref}' found on host '{host}' without a preceding language specifier like '<see cref=\"InCS\"/>'. This configuration will be ignored.", cref, host);
                         #endregion
                         goto END;
-                    } //  --------------------------- host scope lang config end
+                    }
 
 
                     if (cref == null) AdHocAgent.exit($"`Reference to unknown entity {node.Parent} detected. Correct or delete it");
@@ -521,7 +515,7 @@ namespace org.unirail
                                                  .SelectMany(prj => prj.pack_id_info)
                                                  .ToDictionary(pair => pair.Key, pair => pair.Value, SymbolEqualityComparer.Default);
 
-            var included_packs = transmittable_packs_without_related.Where(p => p.included).ToArray();
+            var included_packs = transmittable_packs_without_related.Where(p => p.included).ToArray(); //packs with persistent is
 
             #region Apply collected pack_id_info to packs
             foreach (var pack in included_packs) //Extract saved transmittable pack ID information
@@ -533,6 +527,11 @@ namespace org.unirail
                 else if (pack_id_info.TryGetValue(pack.symbol!, out var id) ||              // If the root project does not have the pack ID info...
                          imported_projects_pack_id_info.TryGetValue(pack.symbol!, out id)) //imported projects may have it
                     pack._id = (ushort)id;
+            #endregion
+
+            #region Detect obsolete pack ID records to trigger a rewrite
+            var included_pack_symbols = included_packs.Select(p => p.symbol).ToHashSet(SymbolEqualityComparer.Default);
+            if (pack_id_info.Keys.Any(symbol => !included_pack_symbols.Contains(symbol))) update_packs_id_info = true;
             #endregion
 
             if (new FileInfo(AdHocAgent.provided_path).IsReadOnly) // Check if the protocol description file is locked
@@ -587,18 +586,14 @@ namespace org.unirail
 
             if (update_packs_id_info)
             {
-                if (packs_id_info_start == -1) //no saved packs id info in the source file
-                {
-                    dst.Write(src_code[..packs_id_info_end]);
-                    dst.Write("/**\n");
-                }
-                else
-                    dst.Write(src_code[..src_code.LastIndexOf('\n', packs_id_info_end)]); //trim last */
+                //head of the src file without pack id info
+                dst.Write(src_code[..((packs_id_info_start == -1) ? //no saved packs id info in the source file
+                                          packs_id_info_end :
+                                          packs_id_info_start)]);
+                dst.Write("/**\n");
 
                 // Packs without saved info
-                foreach (var pack in included_packs
-                                     .Where(pack => !pack_id_info.TryGetValue(pack.symbol!, out var id) &&
-                                                    !imported_projects_pack_id_info.TryGetValue(pack.symbol!, out id) || pack._id != id).OrderBy(pack => long_full_path(pack)))
+                foreach (var pack in included_packs.Where(pack => !imported_projects_pack_id_info.TryGetValue(pack.symbol!, out var id) || pack._id != id).OrderBy(pack => long_full_path(pack)))
                 {
                     dst.Write("\t\t<see cref = '");
 
@@ -856,7 +851,7 @@ namespace org.unirail
             #region Collect, enumerate, and validate hosts
             // Filter, deduplicate, and sort hosts
             root_project.hosts = root_project.hosts
-                                             .Where(host => host.included)
+                                             .Where(host => host.included && !host.IsModifier)
                                              .Distinct()
                                              .OrderBy(host => host._name)
                                              .ToList();
@@ -987,6 +982,33 @@ namespace org.unirail
 
 
             HostImpl.PackImpl.init(root_project);
+            #region Resolve Host Language Configurations
+            foreach (var host in root_project.hosts)
+            {
+                // Start with the initial default value from the host's constructor.
+                var finalDefault = 0xFFFFFFFF;
+
+                foreach (var scope in host.LangScopes)
+                    if (scope.Targets.Count == 0) // An empty scope sets or overwrites the default. The last one processed wins.
+                        finalDefault = scope.Config;
+                    else
+                        // This is an override scope. Populate the final implementation dictionaries.
+                        foreach (var targetSymbol in scope.Targets)
+                            if (targetSymbol.Kind == SymbolKind.Field)
+                                host.field_impl[targetSymbol] = (Project.Host.Langs)(scope.Config >> 16);
+                            else if (targetSymbol.Kind == SymbolKind.NamedType)
+                                if (named_packs.TryGetValue(targetSymbol, out var packSet)) // It's a Pack Set. Apply the config to each pack within the set.
+                                    foreach (var pack in packSet.packs)
+                                        host.pack_impl[pack.symbol!] = scope.Config;
+                                else
+                                    // It's a single Pack.
+                                    host.pack_impl[targetSymbol] = scope.Config;
+
+                // After iterating through all scopes, set the final default value on the host.
+                // This value will be used for any pack not explicitly mentioned in an override scope.
+                host._default_impl_hash_equal = finalDefault;
+            }
+            #endregion
 
             #region Distribute transmittable packs across available channels
             HashSet<HostImpl.PackImpl> packs_ = [];
@@ -1347,21 +1369,19 @@ Resolution: Rename duplicate nested types to ensure compatibility across file sy
                                     uid = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 0x192_8A31_D95EUL // Generate a "unique" identifier based on the current time.
                                 ));
 
-            foreach (var host in hosts) //process host modifications
+            foreach (var host in hosts.Where(host => host.IsModifier)) //process host modifications
             {
                 var modify_host = host.modify_host;
-                if (modify_host == null) continue;
-                modify_host._langs |= host._langs;
-                foreach (var (K, V) in host.field_impl)
-                    if (!modify_host.field_impl.TryAdd(K, V))
-                        modify_host.field_impl[K] = V;
 
-                foreach (var (K, V) in host.pack_impl)
-                    if (!modify_host.pack_impl.TryAdd(K, V))
-                        modify_host.pack_impl[K] = V;
+                modify_host._langs |= host._langs; // Merge the language targets (e.g., InCS, InJAVA).
+
+                // Merge the unresolved language configuration scopes from the modifier to the target host.
+                // The main resolution logic in the init() method will process these scopes later,
+                // after Pack Sets have been fully resolved.
+                modify_host.LangScopes.AddRange(host.LangScopes);
             }
 
-            hosts.RemoveAll(host => host.modify_host != null); // Remove modifier hosts after they've been applied.
+            hosts.RemoveAll(host => host.IsModifier); // Remove modifier hosts after they've been applied.
 
             // Multi-pass initialization for different entity types to resolve dependencies.
             once.Clear();
@@ -1861,12 +1881,21 @@ Resolution: Rename duplicate nested types to ensure compatibility across file sy
                         dst(pack);
             }
 
+            public class LangScope
+            {
+                public uint Config;
+                public readonly List<ISymbol> Targets = [];
+            }
+
+            public readonly List<LangScope> LangScopes = [];
+
             /// <summary>
             /// Gets or sets the target languages for which code should be generated for this host.
             /// </summary>
             public Project.Host.Langs _langs { get; set; }
 
             public override bool included => _included ?? in_project.included;
+            public bool IsModifier => modify_host != null;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="HostImpl"/> class.
@@ -1915,7 +1944,7 @@ Resolution: Rename duplicate nested types to ensure compatibility across file sy
             /// Gets the host being modified by this host, if this host is a modifier.
             /// Returns null if this host is not a modifier.
             /// </summary>
-            public HostImpl? modify_host => equals(symbol!.Interfaces[0], Meta_Modify_Target) ?
+            public HostImpl? modify_host => equals(symbol!.Interfaces[0].ConstructedFrom, Meta_Modify_Target) ?
                                                 (HostImpl)entities[symbol!.Interfaces[0].TypeArguments[0]] :
                                                 null;
 
@@ -2086,22 +2115,20 @@ Resolution: Rename duplicate nested types to ensure compatibility across file sy
                 /// <param name="pack_set">The symbol of the named pack set, if this operation is part of processing a set. Can be null.</param>
                 public void for_packs_in_scope(uint depth, Action<PackImpl> dst)
                 {
-                    if (depth == 0) // A non-recursive search includes only this pack.
-                        if (is_transmittable) dst(this);
-                        else
+                    if (is_transmittable) dst(this);
+                    // A shallow search includes only this pack if it's transmittable.
+                    if (depth == 0) return;
+
+
+                    // A recursive search starts by including this pack...
+
+                    // ...then RECURSIVELY includes all its descendant packs.
+                    foreach (var entity in entities.Values.Where(e => e.parent_by_source_code == this))
+                        if (entity is PackImpl pack)
                         {
-                            // AdHocAgent.LOG.Warning("Adding a non-transmittable pack {pack} to the set of packs {pack_set} has been detected and will be ignored.", symbol, pack_set);
+                            dst(pack);
+                            pack.for_packs_in_scope(depth - 1, dst);
                         }
-                    else
-                    {
-                        // A recursive search starts by including this pack...
-                        if (is_transmittable)
-                            dst(this);
-                        // ...then includes all its direct children recursively.
-                        foreach (var entity in entities.Values.Where(e => e.parent_by_source_code == this))
-                            if (entity is PackImpl pack && pack.is_transmittable)
-                                dst(pack);
-                    }
                 }
 
                 public ushort _id { get; set; } = (int)Project.Host.Pack.Field.DataType.t_subpack; //pack id
@@ -5838,7 +5865,7 @@ Resolution: Rename duplicate nested types to ensure compatibility across file sy
                 }
 
             modify(model.GetTypeInfo(type).Type!, sn, add, sn.GetFirstToken().Text[0] == '@' ?
-                                                               1U :
+                                                               uint.MaxValue :
                                                                0U);
         }
 

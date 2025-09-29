@@ -30,16 +30,19 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
         #region> onERROR
         #endregion> Āā.onERROR
         context.channel.ext_channal.Close();
+
         if (receivePack != null)
             AdHoc.Channel.Receiver.error_handler.error(
                 context.channel.receiver,
                 AdHoc.Channel.Receiver.OnError.ERROR,
                 new Exception($"Error `{error}` detected at stage: {stage}, during receiving of pack with id: {receivePack.__id}"));
         else
+
             AdHoc.Channel.Transmitter.error_handler.error(
                 context.channel.transmitter,
                 AdHoc.Channel.Transmitter.OnError.ERROR,
                 new Exception($"Error `{error}` detected at stage: {stage}, during transmitting of pack with id: {(sendPack != null ? sendPack.__id : "unknown")}"));
+
         O.OnActivate(context, stage, sendHeaders, sendPack, receiveHeaders, receivePack);
     }
 
@@ -48,12 +51,15 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
         #region> onTIMEOUT
         #endregion> Āā.onTIMEOUT
         context.channel.ext_channal.CloseAndDispose();
+
         if (receivePack != null)
             AdHoc.Channel.Receiver.error_handler.error(
                 context.channel.receiver,
                 AdHoc.Channel.Receiver.OnError.TIMEOUT,
                 new Exception($"Timeout detected at stage: {stage}, during receiving of pack with id: {receivePack.__id}"));
+
         else
+
             AdHoc.Channel.Transmitter.error_handler.error(
                 context.channel.transmitter,
                 AdHoc.Channel.Transmitter.OnError.TIMEOUT,
@@ -254,9 +260,9 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
+                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
                 case Agent.AdHocProtocol.Observer_.Show_Code.__id_:
                 case Agent.AdHocProtocol.LayoutFile_.Info.__id_:
-                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
 
                     return null;
                 default:
@@ -281,6 +287,11 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
+                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
+                    RefreshProject.ONE.OnActivate(context, this, null, null, headers!, pack);
+                    ((Agent.AdHocProtocol.Observer_.Up_to_date)pack).__OnReceived_via_ObserverCommunication_at_Operate(context, RefreshProject.ONE.transmitter);
+
+                    return;
                 case Agent.AdHocProtocol.Observer_.Show_Code.__id_:
                     #region> Show_Code OnReceived Event
                     //🌭<
@@ -293,11 +304,6 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
                 case Agent.AdHocProtocol.LayoutFile_.Info.__id_:
 
                     ((Agent.AdHocProtocol.LayoutFile_.Info)pack).__OnReceived_via_ObserverCommunication_at_Operate(context);
-
-                    return;
-                case Agent.AdHocProtocol.Observer_.Up_to_date.__id_:
-                    RefreshProject.ONE.OnActivate(context, this, null, null, headers!, pack);
-                    ((Agent.AdHocProtocol.Observer_.Up_to_date)pack).__OnReceived_via_ObserverCommunication_at_Operate(context, RefreshProject.ONE.transmitter);
 
                     return;
 

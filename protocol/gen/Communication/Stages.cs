@@ -30,16 +30,19 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
         #region> onERROR
         #endregion> Āÿ.onERROR
         context.channel.ext_channal.Close();
+
         if (receivePack != null)
             AdHoc.Channel.Receiver.error_handler.error(
                 context.channel.receiver,
                 AdHoc.Channel.Receiver.OnError.ERROR,
                 new Exception($"Error `{error}` detected at stage: {stage}, during receiving of pack with id: {receivePack.__id}"));
         else
+
             AdHoc.Channel.Transmitter.error_handler.error(
                 context.channel.transmitter,
                 AdHoc.Channel.Transmitter.OnError.ERROR,
                 new Exception($"Error `{error}` detected at stage: {stage}, during transmitting of pack with id: {(sendPack != null ? sendPack.__id : "unknown")}"));
+
         O.OnActivate(context, stage, sendHeaders, sendPack, receiveHeaders, receivePack);
     }
 
@@ -48,12 +51,15 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
         #region> onTIMEOUT
         #endregion> Āÿ.onTIMEOUT
         context.channel.ext_channal.CloseAndDispose();
+
         if (receivePack != null)
             AdHoc.Channel.Receiver.error_handler.error(
                 context.channel.receiver,
                 AdHoc.Channel.Receiver.OnError.TIMEOUT,
                 new Exception($"Timeout detected at stage: {stage}, during receiving of pack with id: {receivePack.__id}"));
+
         else
+
             AdHoc.Channel.Transmitter.error_handler.error(
                 context.channel.transmitter,
                 AdHoc.Channel.Transmitter.OnError.TIMEOUT,
@@ -179,8 +185,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Server_.Info.__id_:
                 case Agent.AdHocProtocol.Server_.Invitation.__id_:
+                case Agent.AdHocProtocol.Server_.Info.__id_:
 
                     return null;
                 default:
@@ -205,11 +211,6 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Server_.Info.__id_:
-                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
-                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_VersionMatching(context);
-
-                    return;
                 case Agent.AdHocProtocol.Server_.Invitation.__id_:
                     Login.ONE.OnActivate(context, this, null, null, headers!, pack);
                     #region> Invitation OnReceived Event
@@ -217,6 +218,11 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
                     Agent.AdHocProtocol.Server_.Invitation.OnReceived_via_Communication_at_VersionMatching.notify(context, Login.ONE.transmitter);
                     //🌭/>
                     #endregion> ĀĂÿĀĂ.OnReceivedEvent
+
+                    return;
+                case Agent.AdHocProtocol.Server_.Info.__id_:
+                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
+                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_VersionMatching(context);
 
                     return;
 
@@ -339,9 +345,9 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Server_.Info.__id_:
                 case Agent.AdHocProtocol.Server_.Invitation.__id_:
                 case Agent.AdHocProtocol.Server_.InvitationUpdate.__id_:
+                case Agent.AdHocProtocol.Server_.Info.__id_:
 
                     return null;
                 default:
@@ -366,11 +372,6 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Server_.Info.__id_:
-                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
-                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_LoginResponse(context);
-
-                    return;
                 case Agent.AdHocProtocol.Server_.Invitation.__id_:
                     TodoJobRequest.ONE.OnActivate(context, this, null, null, headers!, pack);
                     #region> Invitation OnReceived Event
@@ -384,6 +385,11 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
                 case Agent.AdHocProtocol.Server_.InvitationUpdate.__id_:
                     TodoJobRequest.ONE.OnActivate(context, this, null, null, headers!, pack);
                     ((Agent.AdHocProtocol.Server_.InvitationUpdate)pack).__OnReceived_via_Communication_at_LoginResponse(context, TodoJobRequest.ONE.transmitter);
+
+                    return;
+                case Agent.AdHocProtocol.Server_.Info.__id_:
+                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
+                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_LoginResponse(context);
 
                     return;
 
@@ -421,8 +427,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Agent_.Project.__id_:
                 case Agent.AdHocProtocol.Agent_.Proto.__id_:
+                case Agent.AdHocProtocol.Agent_.Project.__id_:
                     return null;
                 default:
                     onERROR(context, this, headers, pack, null, null, "Sending unexpected id:" + pack.__id + " at Stage:" + this);
@@ -437,13 +443,13 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Agent_.Project.__id_:
-                    Project.ONE.OnActivate(context, this, headers!, pack, null, null);
-                    ((Agent.AdHocProtocol.Agent_.Project)pack).__OnSent_via_Communication_at_TodoJobRequest(context);
-                    return;
                 case Agent.AdHocProtocol.Agent_.Proto.__id_:
                     Proto.ONE.OnActivate(context, this, headers!, pack, null, null);
                     ((Agent.AdHocProtocol.Agent_.Proto)pack).__OnSent_via_Communication_at_TodoJobRequest(context);
+                    return;
+                case Agent.AdHocProtocol.Agent_.Project.__id_:
+                    Project.ONE.OnActivate(context, this, headers!, pack, null, null);
+                    ((Agent.AdHocProtocol.Agent_.Project)pack).__OnSent_via_Communication_at_TodoJobRequest(context);
                     return;
 
                 default:
@@ -463,8 +469,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
         public class Transmitter(TodoJobRequest stage)
         {
-            public bool send(Agent.AdHocProtocol.Agent_.Project src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
             public bool send(Agent.AdHocProtocol.Agent_.Proto src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
+            public bool send(Agent.AdHocProtocol.Agent_.Project src, Context context) { return context.stage == stage && context.channel.transmitter.sending_put(context, src, 0); }
         }
         public void OnReceived(Context context, Channel.Receiver.Header? headers, AdHoc.Channel.Receiver.BytesDst pack)
         {

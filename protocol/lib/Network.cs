@@ -149,41 +149,41 @@ namespace org.unirail
             ///</summary>
             public static readonly Action<AdHoc.Channel.External, int> onEventPrintConsole =
                 (channel, eventId) =>
-            {
-#if DEBUG
-                //Console.WriteLine("debugging stack of onEvent");
-                //Console.WriteLine(new StackTrace().ToString());
-#endif
-                var parts = channel?.ToString()?.Split(':') ?? ["", ""];
-                var source = parts[0].Trim();
-                var peer = parts[1].Trim();
-
-                Console.WriteLine(eventId switch
                 {
-                    (int)ExternalChannel.Event.REMOTE_CONNECT => $"{source}: Accepted connection from {peer}",
-                    (int)ExternalChannel.Event.THIS_CONNECT => $"{source}: Connected to {peer}",
-                    (int)ExternalChannel.Event.REMOTE_CLOSE_GRACEFUL => $"{source}: Remote peer gracefully closed connection with {peer}",
-                    (int)ExternalChannel.Event.THIS_CLOSE_GRACEFUL => $"{source}: Gracefully closed connection to {peer}",
-                    (int)ExternalChannel.Event.REMOTE_CLOSE_ABRUPTLY => $"{source}: Connection abruptly closed by remote peer or network failure with {peer}",
-                    (int)ExternalChannel.Event.THIS_CLOSE_ABRUPTLY => $"{source}: Abruptly closed connection to {peer}",
-                    (int)ExternalChannel.Event.RECEIVE_TIMEOUT => $"{source}: Timeout while receiving from {peer}",
-                    (int)ExternalChannel.Event.TRANSMIT_TIMEOUT => $"{source}: Timeout while transmitting to {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_THIS_CONNECT => $"{source}: WebSocket Connected to {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_REMOTE_CONNECTED => $"{source}: WebSocket connection established from {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_HANDSHAKE_FAILURE => $"{source}: WebSocket handshake failed with {peer}. Invalid upgrade request.",
-                    (int)ExternalChannel.Event.WEBSOCKET_PROTOCOL_ERROR => $"{source}: WebSocket protocol error from {peer}. Terminating connection.",
-                    (int)ExternalChannel.Event.WEBSOCKET_PING => $"{source}: PING received from {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_PONG => $"{source}: PONG received from {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_EMPTY_FRAME => $"{source}: Received an empty data frame from {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_REMOTE_CLOSE_GRACEFUL => $"{source}: WebSocket peer gracefully closed connection with {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_THIS_CLOSE_GRACEFUL => $"{source}: Gracefully closed WebSocket connection to {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_REMOTE_CLOSE_ABRUPTLY => $"{source}: WebSocket connection abruptly closed by remote peer or network failure with {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_THIS_CLOSE_ABRUPTLY => $"{source}: Abruptly closed WebSocket connection to {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_RECEIVE_TIMEOUT => $"{source}: WebSocket timeout while receiving from {peer}",
-                    (int)ExternalChannel.Event.WEBSOCKET_TRANSMIT_TIMEOUT => $"{source}: WebSocket timeout while transmitting to {peer}",
-                    _ => $"{source}: Unknown event {eventId} on connection with {peer}"
-                });
-            };
+#if DEBUG
+                    //Console.WriteLine("debugging stack of onEvent");
+                    //Console.WriteLine(new StackTrace().ToString());
+#endif
+                    var parts = channel?.ToString()?.Split(':') ?? ["", ""];
+                    var source = parts[0].Trim();
+                    var peer = parts[1].Trim();
+
+                    Console.WriteLine(eventId switch
+                    {
+                        (int)ExternalChannel.Event.REMOTE_CONNECT => $"{source}: Accepted connection from {peer}",
+                        (int)ExternalChannel.Event.THIS_CONNECT => $"{source}: Connected to {peer}",
+                        (int)ExternalChannel.Event.REMOTE_CLOSE_GRACEFUL => $"{source}: Remote peer gracefully closed connection with {peer}",
+                        (int)ExternalChannel.Event.THIS_CLOSE_GRACEFUL => $"{source}: Gracefully closed connection to {peer}",
+                        (int)ExternalChannel.Event.REMOTE_CLOSE_ABRUPTLY => $"{source}: Connection abruptly closed by remote peer or network failure with {peer}",
+                        (int)ExternalChannel.Event.THIS_CLOSE_ABRUPTLY => $"{source}: Abruptly closed connection to {peer}",
+                        (int)ExternalChannel.Event.RECEIVE_TIMEOUT => $"{source}: Timeout while receiving from {peer}",
+                        (int)ExternalChannel.Event.TRANSMIT_TIMEOUT => $"{source}: Timeout while transmitting to {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_THIS_CONNECT => $"{source}: WebSocket Connected to {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_REMOTE_CONNECTED => $"{source}: WebSocket connection established from {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_HANDSHAKE_FAILURE => $"{source}: WebSocket handshake failed with {peer}. Invalid upgrade request.",
+                        (int)ExternalChannel.Event.WEBSOCKET_PROTOCOL_ERROR => $"{source}: WebSocket protocol error from {peer}. Terminating connection.",
+                        (int)ExternalChannel.Event.WEBSOCKET_PING => $"{source}: PING received from {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_PONG => $"{source}: PONG received from {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_EMPTY_FRAME => $"{source}: Received an empty data frame from {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_REMOTE_CLOSE_GRACEFUL => $"{source}: WebSocket peer gracefully closed connection with {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_THIS_CLOSE_GRACEFUL => $"{source}: Gracefully closed WebSocket connection to {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_REMOTE_CLOSE_ABRUPTLY => $"{source}: WebSocket connection abruptly closed by remote peer or network failure with {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_THIS_CLOSE_ABRUPTLY => $"{source}: Abruptly closed WebSocket connection to {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_RECEIVE_TIMEOUT => $"{source}: WebSocket timeout while receiving from {peer}",
+                        (int)ExternalChannel.Event.WEBSOCKET_TRANSMIT_TIMEOUT => $"{source}: WebSocket timeout while transmitting to {peer}",
+                        _ => $"{source}: Unknown event {eventId} on connection with {peer}"
+                    });
+                };
 
             ///<summary>
             ///The callback delegate invoked to report exceptions and failures.
@@ -194,13 +194,13 @@ namespace org.unirail
             ///A sample failure handler that logs exception details to the console. Suitable for debugging.
             ///</summary>
             public static readonly Action<object, Exception> onFailurePrintConsole = (src, t) =>
-            {
-                Console.WriteLine($"onFailure {src}");
+                                                                                     {
+                                                                                         Console.WriteLine($"onFailure {src}");
 #if DEBUG
-                Console.WriteLine(new Exception("onFailure").StackTrace);
+                                                                                         Console.WriteLine(new Exception("onFailure").StackTrace);
 #endif
-                Console.WriteLine(t);
-            };
+                                                                                         Console.WriteLine(t);
+                                                                                     };
 
             ///<summary>
             ///Represents a single communication channel over a TCP connection.
@@ -215,7 +215,9 @@ namespace org.unirail
                 ///Returns a string representation of the channel, including the host name and endpoint details.
                 ///</summary>
                 ///<returns>A string describing the channel's state and connection endpoints.</returns>
-                public override string ToString() => IsActive ? $"{host.name} : {ext!.LocalEndPoint} to {ext!.RemoteEndPoint}" : $"{host.name} : closed";
+                public override string ToString() => IsActive ?
+                                                         $"{host.name} : {ext!.LocalEndPoint} to {ext!.RemoteEndPoint}" :
+                                                         $"{host.name} : closed";
 
                 ///<summary>
                 ///Gets the underlying <see cref="Socket"/> for this channel's connection. It is null if the channel is not connected.
@@ -279,13 +281,14 @@ namespace org.unirail
                     DisconnectReuseSocket = true;
                     onNewBytesToTransmitArrive =
                         _ =>
-                    {
-                        //If the socket exists and we can successfully acquire the transmitter lock, start sending.
-                        if (ext != null && IsActivateDeactivatedTransmitter())
-                            transmit();
-                    };
+                        {
+                            //If the socket exists and we can successfully acquire the transmitter lock, start sending.
+                            if (ext != null && IsActivateDeactivatedTransmitter())
+                                transmit();
+                        };
                     this.host = host;
                 }
+
                 #region close
                 ///<summary>
                 ///Initiates a graceful shutdown of the connection.
@@ -297,10 +300,7 @@ namespace org.unirail
                     if (!IsActive)
                         return;
                     isClosingGracefully = true;
-                    try
-                    {
-                        ext?.Shutdown(SocketShutdown.Send);
-                    }
+                    try { ext?.Shutdown(SocketShutdown.Send); }
                     catch (Exception e)
                     {
                         host.onFailure(this, e);
@@ -320,18 +320,12 @@ namespace org.unirail
                 protected void CloseInt()
                 {
                     isClosingGracefully = false; //Reset the flag, as this is an abrupt closure.
-                    try
-                    {
-                        ext?.Shutdown(SocketShutdown.Both);
-                    }
+                    try { ext?.Shutdown(SocketShutdown.Both); }
                     catch (Exception)
                     { /* Ignored */
                     }
 
-                    try
-                    {
-                        ext?.Close();
-                    }
+                    try { ext?.Close(); }
                     catch (Exception)
                     { /* Ignored */
                     }
@@ -347,10 +341,7 @@ namespace org.unirail
 
                     if (ext != null)
                     {
-                        try
-                        {
-                            ext.Close();
-                        }
+                        try { ext.Close(); }
                         catch (Exception)
                         { /* Ignored */
                         }
@@ -441,10 +432,7 @@ namespace org.unirail
                         Internal.OnExternalEvent(this, eventType);
                         CloseAndDispose();
                     }
-                    finally
-                    {
-                        pending_send_receive_completed();
-                    }
+                    finally { pending_send_receive_completed(); }
                 }
 
                 ///<summary>
@@ -486,9 +474,12 @@ namespace org.unirail
                 ///</summary>
                 public virtual int TransmitTimeout
                 {
-                    get => isClosingGracefully ? -ext!.SendTimeout : //Return as negative to signal closing state
+                    get => isClosingGracefully ?
+                               -ext!.SendTimeout : //Return as negative to signal closing state
                                ext!.SendTimeout;
-                    set => ext!.SendTimeout = value < 0 && (isClosingGracefully = true) ? -value : value;
+                    set => ext!.SendTimeout = value < 0 && (isClosingGracefully = true) ?
+                                                  -value :
+                                                  value;
                 }
 
                 ///<summary>
@@ -600,7 +591,9 @@ namespace org.unirail
                                 {
                                     //A zero-byte read signifies that the remote peer has gracefully closed its end of the connection.
                                     //The event type depends on whether this host initiated the close sequence.
-                                    var @event = isClosingGracefully ? (int)Event.THIS_CLOSE_GRACEFUL : (int)Event.REMOTE_CLOSE_GRACEFUL;
+                                    var @event = isClosingGracefully ?
+                                                     (int)Event.THIS_CLOSE_GRACEFUL :
+                                                     (int)Event.REMOTE_CLOSE_GRACEFUL;
                                     Internal.OnExternalEvent(this, @event);
                                     CloseAndDispose();
                                     return;
@@ -628,10 +621,7 @@ namespace org.unirail
                         Internal.OnExternalEvent(this, eventType);
                         CloseAndDispose();
                     }
-                    finally
-                    {
-                        pending_send_receive_completed();
-                    }
+                    finally { pending_send_receive_completed(); }
                 }
 
                 ///<summary>
@@ -673,7 +663,9 @@ namespace org.unirail
                 ///</summary>
                 public virtual int ReceiveTimeout
                 {
-                    get => isClosingGracefully ? -ext!.ReceiveTimeout : ext!.ReceiveTimeout;
+                    get => isClosingGracefully ?
+                               -ext!.ReceiveTimeout :
+                               ext!.ReceiveTimeout;
                     set
                     {
                         if (value < 0)
@@ -707,10 +699,7 @@ namespace org.unirail
                         //Loop as long as ReceiveAsync completes synchronously.
                         while (!ext!.ReceiveAsync(ReceiveMate));
                     }
-                    catch (Exception e)
-                    {
-                        host.onFailure(this, e);
-                    }
+                    catch (Exception e) { host.onFailure(this, e); }
                 }
 
                 ///<summary>
@@ -725,6 +714,7 @@ namespace org.unirail
                 ///A pointer to the next channel in the host's singly linked list of channels.
                 ///</summary>
                 public ExternalChannel? next;
+
                 #region maintenance
                 ///<summary>
                 ///A lock variable used to synchronize channel maintenance with active send/receive operations. Its value represents the channel's I/O state:
@@ -775,7 +765,9 @@ namespace org.unirail
                     int t;
                     do
                         t = maintenance_lock;
-                    while (Interlocked.CompareExchange(ref maintenance_lock, t < 0 ? t : t + 1, t) != t);
+                    while (Interlocked.CompareExchange(ref maintenance_lock, t < 0 ?
+                                                                                 t :
+                                                                                 t + 1, t) != t);
                     return t < 0;
                 }
 
@@ -787,7 +779,9 @@ namespace org.unirail
                     int t;
                     do
                         t = maintenance_lock;
-                    while (Interlocked.CompareExchange(ref maintenance_lock, t < 0 ? t : int.MinValue + t, t) != t);
+                    while (Interlocked.CompareExchange(ref maintenance_lock, t < 0 ?
+                                                                                 t :
+                                                                                 int.MinValue + t, t) != t);
                 }
                 #endregion
 
@@ -894,6 +888,7 @@ namespace org.unirail
 
                 ///<summary>Flag to initiate a graceful WebSocket close after the transmitter is drained.</summary>
                 protected volatile bool _wsCloseGraceful = false; //WebSocket process CloseGraceful is different than raw Socket
+
                 ///<summary>Flag to prevent redundant CLOSE frames from being sent during a graceful shutdown.</summary>
                 protected volatile bool _wsClosingGraceful = false;
 
@@ -903,7 +898,9 @@ namespace org.unirail
                 public override int TransmitTimeout
                 {
                     get => base.TransmitTimeout;
-                    set => base.TransmitTimeout = value < 0 && (_wsCloseGraceful = true) ? -value : value;
+                    set => base.TransmitTimeout = value < 0 && (_wsCloseGraceful = true) ?
+                                                      -value :
+                                                      value;
                 }
 
                 ///<summary>
@@ -1016,6 +1013,7 @@ namespace org.unirail
                         recycle_frame(urgent_frame_data);
                     base.Abort();
                 }
+
                 #region Transmitting
                 ///<summary>
                 ///Tracks whether a CLOSE frame has been sent, as part of the WebSocket closing handshake.
@@ -1052,7 +1050,8 @@ namespace org.unirail
                     //  |N|V|V|V|       |S|             |   (if payload len==126/127)   |
                     //  | |1|2|3|       |K|             |                               |
                     //  +-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
-                    var s = (frame_data != null ? frame_data.buffer_bytes + 2 : //Header bytes for control frame
+                    var s = (frame_data != null ?
+                                 frame_data.buffer_bytes + 2 : //Header bytes for control frame
                                  0) +
                             10; //Max header bytes for data frame
                     var len = Internal.BytesSrc!.Read(dst, s, dst.Length - s);
@@ -1222,7 +1221,7 @@ namespace org.unirail
 
                         //Extract 'Sec-WebSocket-Key' from the HTTP Upgrade request header.
                         for (int b; pos < max && (b = src[pos]) != '\r'; pos++, len++) //Iterate until carriage return '\r' is found.
-                            buffer[len] = (byte)b;                                     //Copy 'Sec-WebSocket-Key' value to buffer.
+                            buffer[len] = (byte)b;                                      //Copy 'Sec-WebSocket-Key' value to buffer.
 
                         GUID.CopyTo(buffer, len); //Append the standard WebSocket GUID to the key for hashing.
 
@@ -1245,11 +1244,11 @@ namespace org.unirail
 
                     ///<summary>A pre-built byte array containing the static portion of the HTTP 101 Switching Protocols response.</summary>
                     static readonly byte[] UPGRADE_WEBSOCKET = Encoding.ASCII.GetBytes(
-                        "HTTP/1.1 101 Switching Protocols\r\n" +
-                        "Server: AdHoc\r\n" +
-                        "Connection: Upgrade\r\n" +
-                        "Upgrade: websocket\r\n" +
-                        "Sec-WebSocket-Accept: ");
+                                                                                       "HTTP/1.1 101 Switching Protocols\r\n" +
+                                                                                       "Server: AdHoc\r\n" +
+                                                                                       "Connection: Upgrade\r\n" +
+                                                                                       "Upgrade: websocket\r\n" +
+                                                                                       "Sec-WebSocket-Accept: ");
 
                     ///<summary>
                     ///Encodes a byte array segment to its Base64 representation.
@@ -1382,7 +1381,9 @@ namespace org.unirail
                                     }
 
                                     state = State.NEW_FRAME;
-                                    Interlocked.Exchange(ref TransmitLock, ext!.SendAsync(this) ? 1 : 0);
+                                    Interlocked.Exchange(ref TransmitLock, ext!.SendAsync(this) ?
+                                                                               1 :
+                                                                               0);
                                     Internal.OnExternalEvent(this, (int)Event.WEBSOCKET_REMOTE_CONNECTED);
                                     return;
                                 }
@@ -1416,7 +1417,9 @@ namespace org.unirail
                                 xor0 = 0;
                                 if (125 < (frame_bytes_left = BYTE & (int)Mask.LEN))
                                 {
-                                    xor0 = frame_bytes_left == 126 ? 2 : 8;
+                                    xor0 = frame_bytes_left == 126 ?
+                                               2 :
+                                               8;
                                     frame_bytes_left = 0;
                                 }
 
@@ -1479,7 +1482,9 @@ namespace org.unirail
                                         break;
                                     case OPCode.PONG:
                                         Internal.OnExternalEvent(this, (int)Event.WEBSOCKET_PONG);
-                                        state = frame_bytes_left == 0 ? State.NEW_FRAME : State.DISCARD;
+                                        state = frame_bytes_left == 0 ?
+                                                    State.NEW_FRAME :
+                                                    State.DISCARD;
                                         continue;
                                     default: //Handles BINARY, TEXT, CONTINUATION
                                         if (frame_bytes_left == 0)
@@ -1585,7 +1590,9 @@ namespace org.unirail
                             break;
                     }
 
-                    state = frame_bytes_left == 0 ? State.NEW_FRAME : state_if_no_more_bytes;
+                    state = frame_bytes_left == 0 ?
+                                State.NEW_FRAME :
+                                state_if_no_more_bytes;
                     return true;
                 }
 
@@ -1658,17 +1665,28 @@ namespace org.unirail
                     #region> Fields and Properties
                     ///<summary>The underlying WebSocket client provided by the .NET framework.</summary>
                     private ClientWebSocket? ws;
+
                     ///<summary>A lock to ensure that transmit operations are serialized.</summary>
                     private volatile int _transmitLock = 1;
+
                     ///<summary>A cancellation token source to signal shutdown for all asynchronous operations.</summary>
                     private readonly CancellationTokenSource _cts = new();
+
                     ///<summary>A flag to prevent concurrent connection attempts.</summary>
                     private volatile int _isConnecting = 0; //Use Interlocked for thread-safety
 
+                    ///<summary>Gets a value indicating whether a connection attempt is currently in progress.</summary>
+                    public bool isConnecting => _isConnecting == 1;
+
+                    ///<summary>Gets a value indicating whether the client is currently connected to the server.</summary>
+                    public bool isConnected => ws?.State == WebSocketState.Open;
+
                     ///<summary>Gets the URI of the connected peer.</summary>
                     public Uri PeerIp { get; private set; }
+
                     ///<summary>A flag indicating that a graceful close has been initiated.</summary>
                     private bool _isClosingGracefully;
+
                     ///<summary>The configured transmit timeout in milliseconds.</summary>
                     private int _transmitTimeout = 100_000;
 
@@ -1682,8 +1700,12 @@ namespace org.unirail
                     ///</summary>
                     public int TransmitTimeout
                     {
-                        get => _isClosingGracefully ? -_transmitTimeout : _transmitTimeout;
-                        set => _transmitTimeout = (_isClosingGracefully = value < 0) ? -value : value;
+                        get => _isClosingGracefully ?
+                                   -_transmitTimeout :
+                                   _transmitTimeout;
+                        set => _transmitTimeout = (_isClosingGracefully = value < 0) ?
+                                                      -value :
+                                                      value;
                     }
 
                     ///<summary>The configured receive timeout in milliseconds.</summary>
@@ -1694,7 +1716,9 @@ namespace org.unirail
                     ///</summary>
                     public virtual int ReceiveTimeout
                     {
-                        get => _isClosingGracefully ? -_receiveTimeout : _receiveTimeout;
+                        get => _isClosingGracefully ?
+                                   -_receiveTimeout :
+                                   _receiveTimeout;
                         set
                         {
                             if (value < 0)
@@ -1702,10 +1726,7 @@ namespace org.unirail
                                 _receiveTimeout = -value;
                                 Close();
                             }
-                            else
-                            {
-                                _receiveTimeout = value;
-                            }
+                            else { _receiveTimeout = value; }
                         }
                     }
 
@@ -1728,10 +1749,13 @@ namespace org.unirail
                     ///Abruptly terminates the WebSocket connection.
                     ///</summary>
                     public void Abort() => ws?.Abort();
+
                     ///<summary>The name of this client instance for logging.</summary>
                     private readonly string _name;
+
                     ///<summary>The cached string representation of the client's current state.</summary>
                     private string _toString;
+
                     ///<summary>The callback for handling exceptions.</summary>
                     private readonly Action<object, Exception> _onFailure;
                     #endregion
@@ -1854,10 +1878,7 @@ namespace org.unirail
                             //Complete the task with a null result to signal failure.
                             tcs.SetResult(null);
                         }
-                        finally
-                        {
-                            Interlocked.Exchange(ref _isConnecting, 0);
-                        }
+                        finally { Interlocked.Exchange(ref _isConnecting, 0); }
                     }
 
                     ///<summary>
@@ -1870,14 +1891,11 @@ namespace org.unirail
                             var remoteIPs = Dns.GetHostAddresses(server.DnsSafeHost);
                             var properties = IPGlobalProperties.GetIPGlobalProperties();
                             var localEndPoint = properties.GetActiveTcpConnections()
-                                                    .FirstOrDefault(c => c.RemoteEndPoint.Port == server.Port && remoteIPs.Contains(c.RemoteEndPoint.Address))
-                                                    ?.LocalEndPoint;
+                                                          .FirstOrDefault(c => c.RemoteEndPoint.Port == server.Port && remoteIPs.Contains(c.RemoteEndPoint.Address))
+                                                          ?.LocalEndPoint;
                             return localEndPoint?.ToString() ?? "local:unknown";
                         }
-                        catch
-                        {
-                            return "local:unknown";
-                        }
+                        catch { return "local:unknown"; }
                     }
 
                     ///<summary>The buffer used for sending data.</summary>
@@ -1889,10 +1907,7 @@ namespace org.unirail
                     private async void TransmitFromInternal(AdHoc.BytesSrc src)
                     {
                         //Acquire lock to ensure only one send loop runs at a time.
-                        if (Interlocked.Exchange(ref _transmitLock, 1) == 1)
-                        {
-                            return;
-                        }
+                        if (Interlocked.Exchange(ref _transmitLock, 1) == 1) { return; }
 
                         try
                         {
@@ -1914,10 +1929,7 @@ namespace org.unirail
                                 }
                             }
                         }
-                        catch (Exception)
-                        {
-                            Internal!.OnExternalEvent(this, (int)Event.WEBSOCKET_REMOTE_CLOSE_ABRUPTLY);
-                        }
+                        catch (Exception) { Internal!.OnExternalEvent(this, (int)Event.WEBSOCKET_REMOTE_CLOSE_ABRUPTLY); }
                         finally
                         {
                             Interlocked.Exchange(ref _transmitLock, 0); //Release lock
@@ -2127,14 +2139,8 @@ namespace org.unirail
                                              continue; //If re-run was requested, loop immediately.
                                          await Task.Delay(waitTime);
                                      }
-                                     catch (Exception ex)
-                                     {
-                                         onFailure(this, ex);
-                                     }
-                                     finally
-                                     {
-                                         maintenance_lock.Release();
-                                     }
+                                     catch (Exception ex) { onFailure(this, ex); }
+                                     finally { maintenance_lock.Release(); }
                                  }
                              });
                     bind(Backlog, socketBuilder, ips);
@@ -2182,16 +2188,16 @@ namespace org.unirail
                         var on_accept_args = new SocketAsyncEventArgs();
                         //This handler will be reused for all accept operations on this listener.
                         EventHandler<SocketAsyncEventArgs> on_accept_handler = (_, _) =>
-                        {
-                            do
-                            {
-                                if (on_accept_args.SocketError == SocketError.Success)
-                                    allocate().receiver_connected(on_accept_args.AcceptSocket!);
-                                on_accept_args.AcceptSocket = null;
-                            }
-                            //Loop as long as AcceptAsync completes synchronously.
-                            while (!tcp_listener.AcceptAsync(on_accept_args));
-                        };
+                                                                               {
+                                                                                   do
+                                                                                   {
+                                                                                       if (on_accept_args.SocketError == SocketError.Success)
+                                                                                           allocate().receiver_connected(on_accept_args.AcceptSocket!);
+                                                                                       on_accept_args.AcceptSocket = null;
+                                                                                   }
+                                                                                   //Loop as long as AcceptAsync completes synchronously.
+                                                                                   while (!tcp_listener.AcceptAsync(on_accept_args));
+                                                                               };
                         on_accept_args.Completed += on_accept_handler;
                         //Start the first accept operation.
                         if (!tcp_listener.AcceptAsync(on_accept_args))
@@ -2200,6 +2206,7 @@ namespace org.unirail
 
                     toString = sb.ToString();
                 }
+
                 #region Maintenance
                 ///<summary>
                 ///A semaphore to ensure that only one maintenance cycle runs at a time.
@@ -2309,6 +2316,14 @@ namespace org.unirail
                 ///<summary>The cached string representation of the client's current state.</summary>
                 private string? toString;
 
+                private volatile bool _isConnecting;
+
+                ///<summary>Gets a value indicating whether a connection attempt is currently in progress.</summary>
+                public bool isConnecting => _isConnecting;
+
+                ///<summary>Gets a value indicating whether the client is currently connected to the server.</summary>
+                public bool isConnected => channels.IsActive;
+
                 ///<summary>
                 ///Initializes a new instance of the <see cref="Client{INT}"/> class.
                 ///</summary>
@@ -2367,36 +2382,40 @@ namespace org.unirail
                 public async Task<INT> ConnectAsync(IPEndPoint server, TimeSpan connectingTimeout,
                                                     CancellationToken cancellationToken = default)
                 {
-                    if (channels.IsActive)
-                    {
-                        throw new InvalidOperationException("Connection already established.");
-                    }
+                    if (isConnected) { throw new InvalidOperationException("Connection already established."); }
 
-                    ResetChannelState();
-                    toString = $"Client {name} : connecting to {server}";
+                    if (isConnecting) { throw new InvalidOperationException("A connection attempt is already in progress."); }
 
-                    var socket = new Socket(server.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
+                    _isConnecting = true;
                     try
                     {
-                        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                        cts.CancelAfter(connectingTimeout);
-
-                        await socket.ConnectAsync(server, cts.Token);
-
-                        //If connection succeeds, configure the reusable channel with the new socket and start I/O.
-                        channels.transmitterConnected(socket);
-                        toString = $"Client {name} : connected to {channels.ext!.RemoteEndPoint}";
-                        return (INT)channels.Internal;
-                    }
-                    catch (Exception ex)
-                    {
-                        socket.Close(); //Ensure socket is closed on any failure.
                         ResetChannelState();
-                        toString = $"Client {name} : connection failed to {server}";
-                        onFailure(this, ex); //Report the failure.
-                        throw;               //Re-throw the exception to the caller.
+                        toString = $"Client {name} : connecting to {server}";
+
+                        var socket = new Socket(server.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+                        try
+                        {
+                            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                            cts.CancelAfter(connectingTimeout);
+
+                            await socket.ConnectAsync(server, cts.Token);
+
+                            //If connection succeeds, configure the reusable channel with the new socket and start I/O.
+                            channels.transmitterConnected(socket);
+                            toString = $"Client {name} : connected to {channels.ext!.RemoteEndPoint}";
+                            return (INT)channels.Internal;
+                        }
+                        catch (Exception ex)
+                        {
+                            socket.Close(); //Ensure socket is closed on any failure.
+                            ResetChannelState();
+                            toString = $"Client {name} : connection failed to {server}";
+                            onFailure(this, ex); //Report the failure.
+                            throw;               //Re-throw the exception to the caller.
+                        }
                     }
+                    finally { _isConnecting = false; }
                 }
 
                 ///<summary>
@@ -2404,7 +2423,7 @@ namespace org.unirail
                 ///</summary>
                 public void Disconnect()
                 {
-                    if (channels.IsActive)
+                    if (isConnected)
                     {
                         channels.Abort();
                         ResetChannelState();
@@ -2480,12 +2499,11 @@ namespace org.unirail
             public void connect(AdHoc.BytesSrc src, AdHoc.BytesDst dst)
             {
                 //Set up a subscription that polls the source and writes to the destination whenever new data is available.
-                subscriber = (this.src = src).subscribeOnNewBytesToTransmitArrive(
-                    _ =>
-                    {
-                        for (int len; 0 < (len = src.Read(buffer, 0, buffer.Length));)
-                            dst.Write(buffer, 0, len);
-                    });
+                subscriber = (this.src = src).subscribeOnNewBytesToTransmitArrive(_ =>
+                                                                                  {
+                                                                                      for (int len; 0 < (len = src.Read(buffer, 0, buffer.Length));)
+                                                                                          dst.Write(buffer, 0, len);
+                                                                                  });
             }
         }
 
@@ -2533,6 +2551,7 @@ namespace org.unirail
 
         ///<summary>Checks if the event indicates a graceful action (e.g., graceful close).</summary>
         public static bool IsGraceful(this Network.TCP.ExternalChannel.Event evt) { return ((int)evt & Mask.GRACEFUL) != 0; }
+
         ///<summary>Checks if the event is specifically a graceful CLOSE event.</summary>
         public static bool IsCloseGraceful(this Network.TCP.ExternalChannel.Event evt) { return ((int)evt & Mask.ACTION) == Action.CLOSE && ((int)evt & Mask.GRACEFUL) != 0; }
 

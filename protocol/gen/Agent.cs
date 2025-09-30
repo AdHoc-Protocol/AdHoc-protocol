@@ -64,6 +64,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class Login
                 {
+                    #region> Login Code
+                    #endregion> ĀĎ.PackScopeCode
 
                     public void __OnSent_via_Communication_at_Login(Communication.Context context)
                     {
@@ -87,6 +89,8 @@ namespace org.unirail
                 ///</summary>
                 public partial interface Project
                 {
+                    #region> Project Code
+                    #endregion> ĀĆ.PackScopeCode
 
                     void __OnSent_via_Communication_at_TodoJobRequest(Communication.Context context)
                     {
@@ -153,18 +157,22 @@ namespace org.unirail
                     ///</summary>
                     public partial interface Channel
                     {
-
+                        #region> Channel Code
+                        #endregion> Āċ.PackScopeCode
                         ///<summary>
                         ///Describes a single state (Stage) in the channel's state machine.
                         ///</summary>
                         public partial interface Stage
                         {
-
+                            #region> Stage Code
+                            #endregion> ĀČ.PackScopeCode
                             ///<summary>
                             ///Describes a single transition (Branch) from a Stage, which is triggered by sending a specific pack.
                             ///</summary>
                             public partial interface Branch
                             {
+                                #region> Branch Code
+                                #endregion> Āč.PackScopeCode
                             }
                         }
                     }
@@ -173,7 +181,8 @@ namespace org.unirail
                     ///</summary>
                     public partial interface Host
                     {
-
+                        #region> Host Code
+                        #endregion> Āć.PackScopeCode
                         [Flags]
                         public enum Langs : ushort
                         {
@@ -192,17 +201,21 @@ namespace org.unirail
                         ///</summary>
                         public partial interface Pack
                         {
-
+                            #region> Pack Code
+                            #endregion> ĀĈ.PackScopeCode
                             ///<summary>Describes a single constant or enum member within the protocol.</summary>
                             public partial interface Constant
                             {
+                                #region> Constant Code
+                                #endregion> ĀĊ.PackScopeCode
                             }
                             ///<summary>
                             ///Describes a single Field within a Pack, including its type, constraints, and attributes.
                             ///</summary>
                             public partial interface Field
                             {
-
+                                #region> Field Code
+                                #endregion> Āĉ.PackScopeCode
                                 ///<summary>Internal enumeration of all possible data types recognized by the generator. These are abstract types mapped to platform-specific ones during code generation.</summary>
                                 public enum DataType : ushort
                                 {
@@ -238,6 +251,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class Proto
                 {
+                    #region> Proto Code
+                    #endregion> ĀĐ.PackScopeCode
 
                     public void __OnSent_via_Communication_at_TodoJobRequest(Communication.Context context)
                     {
@@ -257,6 +272,8 @@ namespace org.unirail
 
                 public partial struct Version
                 {
+                    #region> Version Code
+                    #endregion> Āď.PackScopeCode
 
                     public class OnSent_via_Communication_at_Start
                     {
@@ -301,6 +318,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class Info
                 {
+                    #region> Info Code
+                    #endregion> ĀĔ.PackScopeCode
 
                     public void __OnReceived_via_ObserverCommunication_at_Operate(ObserverCommunication.Context context)
                     {
@@ -364,10 +383,14 @@ namespace org.unirail
 
                     public partial class View
                     {
+                        #region> View Code
+                        #endregion> ĀĖ.PackScopeCode
                     }
 
                     public partial struct XY
                     {
+                        #region> XY Code
+                        #endregion> Āĕ.PackScopeCode
                     }
                 }
                 ///<summary>
@@ -376,6 +399,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class UID
                 {
+                    #region> UID Code
+                    #endregion> Āē.PackScopeCode
 
                     public void __OnReceived_via_SaveLayout_at_Start(SaveLayout.Context context, SaveLayout.Stages.Start.Transmitter transmitter_)
                     {
@@ -418,6 +443,8 @@ namespace org.unirail
 
                 public partial struct Show_Code
                 {
+                    #region> Show_Code Code
+                    #endregion> ĀĒ.PackScopeCode
 
                     public class OnReceived_via_ObserverCommunication_at_Operate
                     {
@@ -431,6 +458,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class Up_to_date
                 {
+                    #region> Up_to_date Code
+                    #endregion> Āđ.PackScopeCode
 
                     public void __OnReceived_via_ObserverCommunication_at_Operate(ObserverCommunication.Context context, ObserverCommunication.Stages.RefreshProject.Transmitter transmitter_)
                     {
@@ -477,6 +506,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class Info
                 {
+                    #region> Info Code
+                    #endregion> ĀĄ.PackScopeCode
 
                     public void __OnReceived_via_Communication_at_VersionMatching(Communication.Context context)
                     {
@@ -574,6 +605,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class InvitationUpdate
                 {
+                    #region> InvitationUpdate Code
+                    #endregion> Āă.PackScopeCode
 
                     public void __OnReceived_via_Communication_at_LoginResponse(Communication.Context context, Communication.Stages.TodoJobRequest.Transmitter transmitter_)
                     {
@@ -595,6 +628,8 @@ namespace org.unirail
                 ///</summary>
                 public partial class Result
                 {
+                    #region> Result Code
+                    #endregion> Āą.PackScopeCode
 
                     public void __OnReceived_via_Communication_at_Project(Communication.Context context)
                     {

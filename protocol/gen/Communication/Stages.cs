@@ -185,8 +185,8 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
-                case Agent.AdHocProtocol.Server_.Invitation.__id_:
                 case Agent.AdHocProtocol.Server_.Info.__id_:
+                case Agent.AdHocProtocol.Server_.Invitation.__id_:
 
                     return null;
                 default:
@@ -211,6 +211,11 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
+                case Agent.AdHocProtocol.Server_.Info.__id_:
+                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
+                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_VersionMatching(context);
+
+                    return;
                 case Agent.AdHocProtocol.Server_.Invitation.__id_:
                     Login.ONE.OnActivate(context, this, null, null, headers!, pack);
                     #region> Invitation OnReceived Event
@@ -218,11 +223,6 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
                     Agent.AdHocProtocol.Server_.Invitation.OnReceived_via_Communication_at_VersionMatching.notify(context, Login.ONE.transmitter);
                     //🌭/>
                     #endregion> ĀĂÿĀĂ.OnReceivedEvent
-
-                    return;
-                case Agent.AdHocProtocol.Server_.Info.__id_:
-                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
-                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_VersionMatching(context);
 
                     return;
 
@@ -345,9 +345,9 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
+                case Agent.AdHocProtocol.Server_.Info.__id_:
                 case Agent.AdHocProtocol.Server_.Invitation.__id_:
                 case Agent.AdHocProtocol.Server_.InvitationUpdate.__id_:
-                case Agent.AdHocProtocol.Server_.Info.__id_:
 
                     return null;
                 default:
@@ -372,6 +372,11 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
 
             switch (pack.__id)
             {
+                case Agent.AdHocProtocol.Server_.Info.__id_:
+                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
+                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_LoginResponse(context);
+
+                    return;
                 case Agent.AdHocProtocol.Server_.Invitation.__id_:
                     TodoJobRequest.ONE.OnActivate(context, this, null, null, headers!, pack);
                     #region> Invitation OnReceived Event
@@ -385,11 +390,6 @@ public interface Stages : AdHoc.Channel.Stage<Context, Channel.Transmitter.Heade
                 case Agent.AdHocProtocol.Server_.InvitationUpdate.__id_:
                     TodoJobRequest.ONE.OnActivate(context, this, null, null, headers!, pack);
                     ((Agent.AdHocProtocol.Server_.InvitationUpdate)pack).__OnReceived_via_Communication_at_LoginResponse(context, TodoJobRequest.ONE.transmitter);
-
-                    return;
-                case Agent.AdHocProtocol.Server_.Info.__id_:
-                    EXIT_.ONE.OnActivate(context, this, null, null, headers!, pack);
-                    ((Agent.AdHocProtocol.Server_.Info)pack).__OnReceived_via_Communication_at_LoginResponse(context);
 
                     return;
 

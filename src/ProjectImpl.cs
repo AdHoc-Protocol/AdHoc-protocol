@@ -41,6 +41,7 @@ namespace org.unirail
     /// </summary>
     public class ProjectImpl : Entity, Project
     {
+
         public ulong _uid => uid;
 
         /// <summary>
@@ -5931,6 +5932,12 @@ Resolution: Rename duplicate nested types to ensure compatibility across file sy
     /// </summary>
     public static class Extensions
     {
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> enumerable)
+        {
+            if (collection is null || enumerable is null) return;
+
+            foreach (var cur in enumerable) collection.Add(cur);
+        }
         /// <summary>
         /// Checks if the symbol represents a `ChannelFor<...>` meta-interface.
         /// </summary>

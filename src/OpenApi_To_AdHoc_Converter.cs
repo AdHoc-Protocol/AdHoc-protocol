@@ -1,14 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
-using Microsoft.OpenApi.Reader;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi.Validations;
 using org.unirail;
 
 /**
@@ -35,12 +36,25 @@ class OpenApi_To_AdHoc_Converter
     public static async Task convert(string src_file, string dst_file)
     {
         stages.Add(new Stage());
-        using var stream = new StreamReader(File.OpenRead(src_file));
-        var settings = new OpenApiReaderSettings(); // Optional settings
-        // Read and parse the OpenAPI document from the source file, handling both JSON and YAML formats.
-        var openAPI = (await (src_file.EndsWith(".json") ?
-                                  (IOpenApiReader)new OpenApiJsonReader() :
-                                  new OpenApiYamlReader()).ReadAsync(stream)).OpenApiDocument;
+        using var stream = File.OpenRead(src_file);
+        var settings = new OpenApiReaderSettings() // Optional settings
+        {
+            // By providing a new, empty RuleSet, we effectively disable all validation.
+            // The parser will ignore specification violations (like duplicate paths,
+            // incorrect data types, etc.) and attempt to build the document model
+            // from whatever is provided in the source file.
+            RuleSet = new ValidationRuleSet()
+        };
+        // Read and parse the OpenAPI document. OpenApiStreamReader automatically detects JSON or YAML.
+        var readResult = await new OpenApiStreamReader(settings).ReadAsync(stream);
+        var openAPI = readResult.OpenApiDocument;
+
+        // Optional: Check for parsing errors
+        if (readResult.OpenApiDiagnostic != null && readResult.OpenApiDiagnostic.Errors.Any())
+        {
+            Console.Error.WriteLine($"Errors parsing OpenAPI document: {src_file}");
+            foreach (var error in readResult.OpenApiDiagnostic.Errors) { Console.Error.WriteLine(error.Message); }
+        }
 
 
         // Process Security Schemes defined in OpenAPI Components.
@@ -129,7 +143,7 @@ class OpenApi_To_AdHoc_Converter
                 // Process Responses defined in Components (reusable responses).
                 foreach (var (_200_404_500, response) in Responses) // Responses for each operation
                 {
-                    var pack_ = Pack.get_or_new($"{path}/{(char.IsDigit(_200_404_500[0]) ? $"Code_{200_404_500}" : _200_404_500)}");
+                    var pack_ = Pack.get_or_new($"{path}/{(char.IsDigit(_200_404_500[0]) ? $"Code_{_200_404_500}" : _200_404_500)}");
                     pack_.add_comment(response.Description!); // Add response description as comment
 
                     // Process content types and schemas for each response.
@@ -139,7 +153,7 @@ class OpenApi_To_AdHoc_Converter
                             new Field(pack_, contentType, mediaType.Schema);
                         else
                             // Schema reference - add inheritance to the pack.
-                            pack_.add_inherits(mediaType.Schema.Reference.ReferenceV3);
+                            pack_.add_inherits(GetReferencePath(mediaType.Schema.Reference));
 
                     // Process response links.
                     foreach (var link in response.Links) pack_.attributes += add_attribute("Link", ["Key", "OperationId"], [$"\"{link.Key}\"", $"\"{link.Value.OperationId}\""]);
@@ -148,7 +162,7 @@ class OpenApi_To_AdHoc_Converter
                     if (0 < response.Headers?.Count)
                         foreach (var (headerName, header) in response.Headers)
                             new Field(pack_, headerName, header.Schema)
-                                .add_comment(header.Description) // Add header description as comment.
+                                .add_comment(header.Description)                          // Add header description as comment.
                                 .add_attributes(add_attribute("ResponseHeader", [], [])); // Mark header as ResponseHeader attribute.
                 }
             else
@@ -168,18 +182,18 @@ class OpenApi_To_AdHoc_Converter
                     // Check if responses can be merged based on schema inheritance and other properties.
                     if (response.Links.Count == 0 && !(0 < response.Headers?.Count)) // Merging criteria: no links and no headers.
                         foreach (var (contentType, mediaType) in response.Content)
-                            if (mediaType.Schema?.Reference == null || same_inherits != "" && same_inherits != mediaType.Schema.Reference.ReferenceV3)
+                            if (mediaType.Schema?.Reference == null || same_inherits != "" && same_inherits != GetReferencePath(mediaType.Schema.Reference))
                                 break; // Do not merge, create new pack.
-                            else if (inherits.TryGetValue(same_inherits = mediaType.Schema.Reference.ReferenceV3, out var value))
+                            else if (inherits.TryGetValue(same_inherits = GetReferencePath(mediaType.Schema.Reference), out var value))
                             {
-                                if (_200_404_500 == value) continue; // Skip if same status code, different media type (already processed).
-                                inherits[mediaType.Schema.Reference.ReferenceV3] = value + "_" + _200_404_500; // Merge status codes.
-                                info[i] = 2; // Mark as merged, skip pack creation later.
+                                if (_200_404_500 == value) continue;                                                // Skip if same status code, different media type (already processed).
+                                inherits[GetReferencePath(mediaType.Schema.Reference)] = value + "_" + _200_404_500; // Merge status codes.
+                                info[i] = 2;                          // Mark as merged, skip pack creation later.
                             }
                             else
                             {
-                                inherits[mediaType.Schema.Reference.ReferenceV3] = _200_404_500; // Start new merge group.
-                                info[i] = 1; // Mark as new merged pack creation.
+                                inherits[GetReferencePath(mediaType.Schema.Reference)] = _200_404_500; // Start new merge group.
+                                info[i] = 1;            // Mark as new merged pack creation.
                             }
                 }
 
@@ -188,14 +202,14 @@ class OpenApi_To_AdHoc_Converter
                 {
                     i++;
                     if (info[i] == 2) continue; // Skip if already merged.
-                    var pack_ = Pack.get_or_new($"{path}/Code_{(info[i] == 1 ? inherits[response.Content.Values.First().Schema!.Reference.ReferenceV3] : _200_404_500)}");
+                    var pack_ = Pack.get_or_new($"{path}/Code_{(info[i] == 1 ? inherits[GetReferencePath(response.Content.Values.First().Schema!.Reference)] : _200_404_500)}");
                     pack_.add_comment(response.Description); // Add response description as comment.
 
                     server_branch?.packs.Add(pack_); // Add pack to server branch.
                     if (info[i] == 1)
                     {
                         // Merged pack - inherit schema.
-                        pack_.add_inherits(response.Content.Values.First().Schema!.Reference.ReferenceV3);
+                        pack_.add_inherits(GetReferencePath(response.Content.Values.First().Schema!.Reference));
                         continue; // Skip further processing for merged packs.
                     }
 
@@ -206,7 +220,7 @@ class OpenApi_To_AdHoc_Converter
                             new Field(pack_, contentType, mediaType.Schema);
                         else
                             // Schema reference - add inheritance to the pack.
-                            pack_.add_inherits(mediaType.Schema.Reference.ReferenceV3);
+                            pack_.add_inherits(GetReferencePath(mediaType.Schema.Reference));
 
                     // Process response links.
                     foreach (var link in response.Links) pack_.attributes += add_attribute("Link", ["Key", "OperationId"], [$"\"{link.Key}\"", $"\"{link.Value.OperationId}\""]);
@@ -215,36 +229,9 @@ class OpenApi_To_AdHoc_Converter
                     if (0 < response.Headers?.Count)
                         foreach (var (headerName, header) in response.Headers)
                             new Field(pack_, headerName, header.Schema)
-                                .add_comment(header.Description) // Add header description as comment.
+                                .add_comment(header.Description)                          // Add header description as comment.
                                 .add_attributes(add_attribute("ResponseHeader", [], [])); // Mark header as ResponseHeader attribute.
                 }
-            }
-        }
-
-
-        // --- Process Components - Responses ---
-        // https://swagger.io/docs/specification/v3_0/describing-responses/
-        if (0 < openAPI.Components?.Responses?.Count)
-            create_response_packs("components/responses", openAPI.Components.Responses, null);
-
-
-        // --- Process Components - Parameters ---
-        // https://swagger.io/docs/specification/v3_0/describing-parameters/
-        if (0 < openAPI.Components?.Parameters?.Count)
-        {
-            var components_parameters = Pack.get_or_new("components/parameters");
-
-            foreach (var (name, parameter) in openAPI.Components.Parameters)
-            {
-                // Create a Field for each parameter in components/parameters.
-                var fld = new Field(components_parameters, name, parameter.Schema) // schema: Defines the type and format of the parameter.
-                {
-                    optional = !parameter.Required                                     // Boolean indicating if parameter is mandatory.
-                }.add_attributes(add_attribute("In", ["In"], [$"\"{parameter.In}\""])) // in: Location (path, query, header, cookie).
-                     .add_comment(parameter.Description);                                // Add parameter description as comment.
-
-                if (parameter.Deprecated)
-                    fld.add_attributes(add_attribute("Deprecated", [], [])); // Add Deprecated attribute if parameter is deprecated.
             }
         }
 
@@ -256,11 +243,11 @@ class OpenApi_To_AdHoc_Converter
 
             foreach (var (name, schema) in openAPI.Components!.Schemas!)
             {
-                if (schema.Reference != null) // Self reference handling.
+                if (schema.Reference != null && GetReferencePath(schema.Reference) != "#/components/schemas/" + name) // Handle non-self references.
                 {
                     var p = Pack.get_or_new("components/schemas/" + name);
                     p.add_comment(schema.Description);
-                    p.Reference = schema.Reference.ReferenceV3; // Store reference path.
+                    p.Reference = GetReferencePath(schema.Reference); // Store reference path.
                     continue;
                 }
 
@@ -280,8 +267,8 @@ class OpenApi_To_AdHoc_Converter
 
 
                 var pack = Pack.get_or_new("components/schemas/" + name); // Pack for the schema (will be referenced by other parts).
-                pack.comment = schema.Description; // Add schema description as comment.
-                add_fields(schema, pack); // Process schema properties.
+                pack.comment = schema.Description;                        // Add schema description as comment.
+                add_fields(schema, pack);                                 // Process schema properties.
 
                 // Adds fields to a Pack based on the properties of an OpenApiSchema.
                 //
@@ -290,6 +277,7 @@ class OpenApi_To_AdHoc_Converter
                 //
                 void add_fields(OpenApiSchema? src, Pack dst)
                 {
+                    if (src == null) return;
                     foreach (var (fld_name, fld_schema) in src.Properties)
                         new Field(dst, fld_name, fld_schema)
                         {
@@ -302,7 +290,7 @@ class OpenApi_To_AdHoc_Converter
                     if (AllOf.Reference == null) // Inline 'allOf' object - add fields directly.
                         add_fields(AllOf, pack);
                     else
-                        pack.add_inherits(AllOf.Reference.ReferenceV3); // Schema reference - add inheritance.
+                        pack.add_inherits(GetReferencePath(AllOf.Reference)); // Schema reference - add inheritance.
 
                 var inline = 0;
                 // Process 'oneOf' composition (polymorphism).
@@ -318,7 +306,8 @@ class OpenApi_To_AdHoc_Converter
                         };
                     }
                     else
-                        new Field(pack, "OneOf_" + OneOf.Reference.ReferenceV3.Split('/')[^1], OneOf) // Schema reference - add field referencing the schema.
+                        // FIX: Use Reference.Id for the field name and pass the schema object to the correct constructor.
+                        new Field(pack, "OneOf_" + OneOf.Reference.Id, OneOf) // Schema reference - add field referencing the schema.
                         {
                             optional = true // 'oneOf' fields are optional.
                         };
@@ -337,7 +326,8 @@ class OpenApi_To_AdHoc_Converter
                         };
                     }
                     else
-                        new Field(pack, "AnyOf_" + AnyOf.Reference.ReferenceV3.Split('/')[^1], AnyOf) // Schema reference - add field referencing the schema.
+                        // FIX: Use Reference.Id for the field name and pass the schema object to the correct constructor.
+                        new Field(pack, "AnyOf_" + AnyOf.Reference.Id, AnyOf) // Schema reference - add field referencing the schema.
                         {
                             optional = true // 'anyOf' fields are optional.
                         };
@@ -363,6 +353,32 @@ class OpenApi_To_AdHoc_Converter
             }
         }
 
+        // --- Process Components - Parameters ---
+        // https://swagger.io/docs/specification/v3_0/describing-parameters/
+        if (0 < openAPI.Components?.Parameters?.Count)
+        {
+            var components_parameters = Pack.get_or_new("components/parameters");
+
+            foreach (var (name, parameter) in openAPI.Components.Parameters)
+            {
+                // Create a Field for each parameter in components/parameters.
+                var fld = new Field(components_parameters, name, parameter.Schema) // schema: Defines the type and format of the parameter.
+                {
+                    optional = !parameter.Required                                     // Boolean indicating if parameter is mandatory.
+                }.add_attributes(add_attribute("In", ["In"], [$"\"{parameter.In}\""])) // in: Location (path, query, header, cookie).
+                     .add_comment(parameter.Description);                                  // Add parameter description as comment.
+
+                if (parameter.Deprecated)
+                    fld.add_attributes(add_attribute("Deprecated", [], [])); // Add Deprecated attribute if parameter is deprecated.
+            }
+        }
+
+        // --- Process Components - Responses ---
+        // https://swagger.io/docs/specification/v3_0/describing-responses/
+        if (0 < openAPI.Components?.Responses?.Count)
+            create_response_packs("components/responses", openAPI.Components.Responses, null);
+
+
         // --- Process Paths and Operations ---
         // https://swagger.io/docs/specification/v3_0/paths-and-operations/
         foreach (var (path, item) in openAPI.Paths)                       // Iterate through API paths.
@@ -376,10 +392,10 @@ class OpenApi_To_AdHoc_Converter
                     pack
                 ];
 
-                pack.comment = operation.Description; // Add operation description as comment.
-                if (!string.IsNullOrEmpty(operation.OperationId)) pack.attributes += add_attribute("OperationId", ["OperationId"], [$"\"{operation.OperationId}\""]); // Add OperationId attribute.
-                if (!string.IsNullOrEmpty(operation.Summary)) pack.attributes += add_attribute("Summary", ["Summary"], [$"\"{operation.Summary}\""]);         // Add Summary attribute.
-                if (operation.Deprecated) pack.attributes += add_attribute("Obsolete", ["Message"], [$"\"This operation is deprecated\""]); // Add Obsolete attribute for deprecated operations.
+                pack.comment = operation.Description;                                                                                                                                             // Add operation description as comment.
+                if (!string.IsNullOrEmpty(operation.OperationId)) pack.attributes += add_attribute("OperationId", ["OperationId"], [$"\"{operation.OperationId}\""]);                    // Add OperationId attribute.
+                if (!string.IsNullOrEmpty(operation.Summary)) pack.attributes += add_attribute("Summary", ["Summary"], [$"\"{operation.Summary}\""]);                        // Add Summary attribute.
+                if (operation.Deprecated) pack.attributes += add_attribute("Obsolete", ["Message"], [$"\"This operation is deprecated\""]);               // Add Obsolete attribute for deprecated operations.
                 foreach (var tag in operation.Tags) pack.attributes += add_attribute("Tag", ["Name", "Description"], [$"\"{tag.Name}\"", $"\"{tag.Description}\""], true); // Add Tag attributes for operation tags.
 
                 // Add support for operation extensions (vendor extensions).
@@ -394,7 +410,7 @@ class OpenApi_To_AdHoc_Converter
                     {
                         optional = !parameter.Required                                     // Boolean indicating if parameter is mandatory.
                     }.add_attributes(add_attribute("In", ["In"], [$"\"{parameter.In}\""])) // in: Location (path, query, header, cookie).
-                         .add_comment(parameter.Description);                                // Add parameter description as comment.
+                         .add_comment(parameter.Description);                                  // Add parameter description as comment.
 
                     if (parameter.Deprecated)
                         fld.add_attributes(add_attribute("Deprecated", [], [])); // Add Deprecated attribute if parameter is deprecated.
@@ -406,7 +422,7 @@ class OpenApi_To_AdHoc_Converter
                     {
                         new Field(pack, $"Request_{contentType}", mediaType.Schema) // Create field for request body content.
                         {
-                            optional = !operation.RequestBody.Required, // Request body is optional if not required.
+                            optional = !operation.RequestBody.Required,   // Request body is optional if not required.
                         }.add_comment(operation.RequestBody.Description); // Add request body description as comment.
                     }
 
@@ -414,10 +430,10 @@ class OpenApi_To_AdHoc_Converter
                 if (0 < operation.Security.Count)
                     foreach (var requirement in operation.Security)
                         foreach (var (schemeName, scopes) in requirement)
-                            pack.attributes += add_attribute("SecurityRequirement",      // Add SecurityRequirement attribute.
-                                                             ["SchemeName", "Scopes"],    // Attribute arguments: Scheme name and scopes.
+                            pack.attributes += add_attribute("SecurityRequirement",                                     // Add SecurityRequirement attribute.
+                                                             ["SchemeName", "Scopes"],                                  // Attribute arguments: Scheme name and scopes.
                                                              [$"\"{schemeName}\"", $"\"{string.Join(",", scopes)}\""]); // Attribute values.
-                var server_branch = new Branch(); // Create a server branch for operation responses.
+                var server_branch = new Branch();                                                                       // Create a server branch for operation responses.
                 server_branch.packs = [];
 
                 if (0 < operation.Responses.Count)
@@ -434,17 +450,17 @@ class OpenApi_To_AdHoc_Converter
                         {
                             foreach (var (callbackOperationType, callbackOperation) in callbackItem.Operations)
                             {
-                                var cbOpPack = Pack.get_or_new($"{callbackPack.name}/{callbackOperationType}"); // Create Pack for callback operation.
-                                cbOpPack.comment = callbackOperation.Description; // Add callback operation description as comment.
-                                cbOpPack.attributes += add_attribute("OperationId", ["OperationId"], [$"\"{callbackOperation.OperationId}\""]); // Add OperationId attribute.
-                                cbOpPack.attributes += add_attribute("Summary", ["Summary"], [$"\"{callbackOperation.Summary}\""]);     // Add Summary attribute.
+                                var cbOpPack = Pack.get_or_new($"{callbackPack.name}/{callbackOperationType}");                                                                                         // Create Pack for callback operation.
+                                cbOpPack.comment = callbackOperation.Description;                                                                                                                   // Add callback operation description as comment.
+                                cbOpPack.attributes += add_attribute("OperationId", ["OperationId"], [$"\"{callbackOperation.OperationId}\""]);                                                         // Add OperationId attribute.
+                                cbOpPack.attributes += add_attribute("Summary", ["Summary"], [$"\"{callbackOperation.Summary}\""]);                                                             // Add Summary attribute.
                                 foreach (var tag in callbackOperation.Tags) cbOpPack.attributes += add_attribute("Tag", ["Name", "Description"], [$"\"{tag.Name}\"", $"\"{tag.Description}\""], true); // Add Tag attributes.
 
                                 // Process request body schema for callbacks (inheritance only).
                                 if (callbackOperation.RequestBody != null)
                                     foreach (var (key, application_json) in callbackOperation.RequestBody.Content)
-                                        if (application_json.Schema != null && !string.IsNullOrEmpty(application_json.Schema.Reference.ReferenceV3))
-                                            cbOpPack.add_inherits(application_json.Schema.Reference.ReferenceV3); // Add inheritance for callback request schema.
+                                        if (application_json.Schema?.Reference != null)
+                                            cbOpPack.add_inherits(GetReferencePath(application_json.Schema.Reference)); // Add inheritance for callback request schema.
                             }
                         }
                     }
@@ -490,7 +506,7 @@ namespace com.my.company // Your company namespace. Required!
 
     }}
 }}
-"); // Write the generated AdHoc protocol definition to the destination file.
+");                     // Write the generated AdHoc protocol definition to the destination file.
     }
 
     // --- Attribute Definition and Helper Methods ---
@@ -516,7 +532,7 @@ namespace com.my.company // Your company namespace. Required!
     public static string add_attribute(string name, string[]? args_name, string[] args_values, bool AllowMultiple = false)
     {
         if (!attributes.ContainsKey(name))
-            attributes[name] = $@" {(AllowMultiple ? "[AttributeUsage(AttributeTargets.All , AllowMultiple = true)]\n" : "")} public class {name}Attribute : Attribute{{ public {name}Attribute( {string.Join(',', args_values.Select((a, i) => $"{(a[0] == '\"' ? "string" : "long")} {(args_name == null ? $"arg{i}" : args_name[i])}"))} ) {{ }} }} ";
+            attributes[name] = $@" {(AllowMultiple ? "[AttributeUsage(AttributeTargets.All , AllowMultiple = true)]\n" : "")} public class {name}Attribute : Attribute{{ public {name}Attribute( {string.Join(',', args_values.Select((a, i) => $"{(a[0] == '\"' ? "string" : "long")} {(args_name == null || args_name.Length <= i ? $"arg{i}" : args_name[i])}"))} ) {{ }} }} ";
 
         return args_values.All(a => a == "\"\"" || a == "") ?
                    $"[{name}]" :
@@ -534,8 +550,8 @@ namespace com.my.company // Your company namespace. Required!
      */
     public abstract class Entity
     {
-        public Pack? parent;   // Parent Pack of this entity. Null for root Pack.
-        public string name;      // Name of the entity.
+        public Pack? parent;    // Parent Pack of this entity. Null for root Pack.
+        public string name = ""; // Name of the entity.
 
         /**
          * @brief Abstract method to write the entity's definition to a StringBuilder.
@@ -554,7 +570,7 @@ namespace com.my.company // Your company namespace. Required!
                 if (src.parent == null || src.parent == root) dst.Append(src.name); // Base case: root or no parent.
                 else
                 {
-                    scan(src.parent!, dst); // Recursively scan parent.
+                    scan(src.parent!, dst);           // Recursively scan parent.
                     dst.Append('.').Append(src.name); // Append current name.
                 }
             }
@@ -563,20 +579,21 @@ namespace com.my.company // Your company namespace. Required!
             return tmp.ToString();
         }
 
-        public string comment; // Comment associated with the entity.
+        public string comment = ""; // Comment associated with the entity.
 
         /**
          * @brief Adds a comment to the entity's comment string.
          * @param comment The comment string to add.
          * @return The entity instance for chaining.
          */
-        public Entity add_comment(string comment)
+        public Entity add_comment(string? comment)
         {
-            this.comment += comment + "\n";
+            if (!string.IsNullOrEmpty(comment)) { this.comment += comment + "\n"; }
+
             return this;
         }
 
-        public string attributes; // Attributes string associated with the entity.
+        public string attributes = ""; // Attributes string associated with the entity.
 
         /**
          * @brief Adds attributes string to the entity's attributes string.
@@ -595,10 +612,10 @@ namespace com.my.company // Your company namespace. Required!
      * @param comment The comment string.
      * @return Formatted comment string enclosed in block comments, or empty string if comment is null or empty.
      */
-    static string _comment(string? comment) => string.IsNullOrEmpty(comment?.Trim()) ?
+    static string _comment(string? comment) => string.IsNullOrWhiteSpace(comment?.Trim()) || comment.StartsWith("(empty)") ?
                                                    "" :
                                                    $@"
-/** {comment} */
+/** {comment.Trim()} */
 ";
 
 
@@ -611,10 +628,10 @@ namespace com.my.company // Your company namespace. Required!
      */
     public class Field : Entity
     {
-        public OpenApiSchema? Schema;   // OpenAPI schema associated with the field. Null for enum fields.
-        public bool optional; // Indicates if the field is optional.
-        public bool has_Set_type; // Indicates if the field is a Set type.
-        public bool has_Map_type; // Indicates if the field is a Map type.
+        public OpenApiSchema? Schema;           // OpenAPI schema associated with the field. Null for enum fields.
+        public bool optional;         // Indicates if the field is optional.
+        public bool has_Set_type;     // Indicates if the field is a Set type.
+        public bool has_Map_type;     // Indicates if the field is a Map type.
         public string inline_type = ""; // For inline types (e.g., enum, nested objects).
 
         /**
@@ -647,7 +664,7 @@ namespace com.my.company // Your company namespace. Required!
             if (schema != null) // Process schema properties if schema is not null (not enum field).
             {
                 has_Set_type = schema.UniqueItems ?? false; // Check for UniqueItems for Set type.
-                this.has_Map_type = has_Map_type; // Indicate if it's a Map type.
+                this.has_Map_type = has_Map_type;                // Indicate if it's a Map type.
 
                 if (schema.MaxLength.HasValue) // Apply MaxLength attribute for string fields.
                     attributes += $"[D( +{schema.MaxLength})]\n";
@@ -661,11 +678,21 @@ namespace com.my.company // Your company namespace. Required!
 
                     switch (schema.Default) // Handle different default value types.
                     {
-                        case System.Text.Json.Nodes.JsonValue val when val.TryGetValue(out long longVal):
-                            attributes += $"[Default({Default = longVal.ToString()})]\n";
+                        case OpenApiLong val:
+                            attributes += $"[Default({Default = val.Value.ToString()})]\n";
                             break;
-                        case System.Text.Json.Nodes.JsonValue val when val.TryGetValue(out double doubleVal):
-                            attributes += $"[Default({Default = doubleVal.ToString()})]\n";
+                        case OpenApiInteger val:
+                            attributes += $"[Default({Default = val.Value.ToString()})]\n";
+                            break;
+                        case OpenApiDouble val:
+                            attributes += $"[Default({Default = val.Value.ToString(CultureInfo.InvariantCulture)})]\n";
+                            break;
+                        case OpenApiFloat val:
+                            attributes += $"[Default({Default = val.Value.ToString(CultureInfo.InvariantCulture)})]\n";
+                            break;
+                        case OpenApiString val:
+                            attributes += $"[Default(@\"{val.Value}\")]\n";
+                            Default = $"@\"{val.Value}\"";
                             break;
                     }
                 }
@@ -693,9 +720,11 @@ namespace com.my.company // Your company namespace. Required!
 
                 if (0 < schema.Enum?.Count) // Handle enum definitions within schema.
                 {
-                    var en = Pack.get_enum(pack.ToString().Replace('.', '/') + "/enum_for_" + this.name, schema.Enum); // Create enum Pack.
-                    en.comment = schema.Description; // Add enum description as comment.
-                    inline_type = en.ToString(); // Set inline type to enum Pack name.
+                    var en = Pack.get_enum(pack.ToString().Replace('.', '/') + "/" + (char.IsUpper(this.name[0]) ?
+                                                                                          this.name[..^1] + this.name[^1..].ToUpper() :
+                                                                                          char.ToUpper(this.name[0]) + this.name[1..]), schema.Enum); // Create enum Pack.
+                    en.comment = schema.Description;                                                                                                 // Add enum description as comment.
+                    inline_type = en.ToString();                                                                                                      // Set inline type to enum Pack name.
                 }
             }
 
@@ -705,71 +734,114 @@ namespace com.my.company // Your company namespace. Required!
         public string value = ""; // For enum fields, stores the enum value.
 
         /**
-         * @brief Determines the AdHoc data type string for the field based on its OpenAPI schema.
-         * @param schema The OpenAPI schema.
+   * @brief Public entry point to determine the AdHoc data type string for the field.
+   * This method initializes the cycle detection set.
+   * @return The AdHoc data type string.
+   */
+        public string get_type_string()
+        {
+            // Start the type resolution process with a new set of visited schemas to detect recursion.
+            return type(this.Schema, new HashSet<OpenApiSchema>());
+        }
+
+        /**
+         * @brief Determines the AdHoc data type string for a schema, with cycle detection.
+         * @param schema The OpenAPI schema to resolve.
+         * @param visited A set of schemas already seen in the current resolution chain.
          * @return The AdHoc data type string.
          */
-        string type(OpenApiSchema schema)
+        public string type(OpenApiSchema schema, HashSet<OpenApiSchema> visited)
         {
-            if (inline_type != "") return inline_type; // Return inline type if defined (e.g., enum).
+            if (schema == null) return "Binary";
 
-            if (schema.Reference != null) // Handle schema references.
-                switch (get(schema.Reference.ReferenceV3)) // Resolve reference path.
+            // --- CYCLE DETECTION ---
+            // If we have already seen this schema instance in this resolution path, we have a cycle.
+            if (!visited.Add(schema))
+            {
+                // If the schema is a reference, its Pack has been created. Return the Pack's name to break the loop.
+                if (schema.Reference != null)
                 {
-                    case Field fld:
-                        return fld.type(fld.Schema!); // Recursively get type from referenced field.
-                    case Pack pk:
-                        return pk!.ToString()!;      // Return Pack name for schema reference.
-                    case null:
-                        Console.Out.WriteLine($"ERROR: Unknown type: {schema.Reference.ReferenceV3}");
-                        break;
+                    // Use the (already cycle-proof) get() method to find the corresponding pack.
+                    object target = get(GetReferencePath(schema.Reference));
+                    if (target is Pack pk) { return pk.ToString(); }
                 }
 
-            switch (schema.Type) // Map OpenAPI schema types to AdHoc types.
+                // Fallback for cycles in inline schemas that don't have a reference.
+                return "Binary";
+            }
+
+            try // Use a finally block to ensure we remove the schema from the visited set on our way out.
             {
-                case JsonSchemaType.Integer:
+                if (!string.IsNullOrEmpty(inline_type)) return inline_type; // For enums, which are terminal types.
 
-                    return schema.Format == "int64" ?
-                               "long" :
-                               "int";
-                case JsonSchemaType.Number:
+                if (schema.Reference != null)
+                {
+                    switch (get(GetReferencePath(schema.Reference))) // Resolve the reference.
+                    {
+                        case Field fld:
+                            // A reference to another field. Recursively determine its type, passing the visited set.
+                            return fld.type(fld.Schema!, visited);
+                        case Pack pk:
+                            // A reference to a complex type (a Pack). This is the most common case.
+                            return pk.ToString()!;
+                        case null:
+                            Console.Out.WriteLine($"ERROR: Unknown type: {GetReferencePath(schema.Reference)}");
+                            return "Binary";
+                    }
+                }
 
-                    return schema.Format == "float" ?
-                               "float" :
-                               "double";
-                case JsonSchemaType.String:
-
-                    if (!string.IsNullOrEmpty(schema.Format)) // Apply format-specific attributes for string types.
-                        attributes += schema.Format switch
+                switch (schema.Type) // Map OpenAPI schema types to AdHoc types.
+                {
+                    case "integer":
+                        return schema.Format == "int64" ?
+                                   "long" :
+                                   "int";
+                    case "number":
+                        return schema.Format == "float" ?
+                                   "float" :
+                                   "double";
+                    case "string":
+                        if (!string.IsNullOrEmpty(schema.Format))
+                            attributes += schema.Format switch
+                            {
+                                "binary" => "",
+                                "byte" => add_attribute("Base64", Array.Empty<string>(), []) + '\n',
+                                "date" => add_attribute("Date", Array.Empty<string>(), []) + '\n',
+                                "date-time" => add_attribute("DateTime", Array.Empty<string>(), []) + '\n',
+                                "password" => add_attribute("Password", Array.Empty<string>(), []) + '\n',
+                                _ => add_attribute(char.ToUpper(schema.Format[0]) + schema.Format.Substring(1), Array.Empty<string>(), []) + '\n'
+                            };
+                        return schema.Format == "binary" ?
+                                   "Bynary" :
+                                   "string";
+                    case "boolean": return "bool";
+                    case "array":
+                        // Recursively call type for the array's item schema, passing the visited set.
+                        return $"{type(schema.Items, visited)}[{(schema.Maximum.HasValue ? ",," : "")}]";
+                    case "object":
+                        if (schema.AdditionalProperties != null)
                         {
-                            "binary" => "",                                                                                          // binary file contents
-                            "byte" => add_attribute("Base64", null, []) + '\n', // base64-encoded file contents
-                            "date" => add_attribute("Date", null, []) + '\n',
-                            "date-time" => add_attribute("DateTime", null, []) + '\n',
-                            "password" => add_attribute("Password", null, []) + '\n',
-                            _ => add_attribute(char.ToUpper(schema.Format[0]) + schema.Format.Substring(1), null, []) + '\n'
-                        };
-                    return schema.Format == "binary" ?
-                               "Bynary" :
-                               "string";
-                case JsonSchemaType.Boolean: return "bool";
-                case JsonSchemaType.Array:
+                            // Recursively call type for the map's value schema, passing the visited set.
+                            return $"Map< string , {type(schema.AdditionalProperties, visited)}>";
+                        }
 
-                    return $"{type(schema.Items)}[{(schema.Maximum.HasValue ? ",," : "")}]"; // Variable length array if MaxLength is defined.
-                case JsonSchemaType.Object:
-
-                    return schema.AdditionalProperties == null ?
-                               "Binary" : // Represent generic Object as Binary type.
-                               $"Map< string , {type(schema.AdditionalProperties)}>"; // Map type if AdditionalProperties is defined.
-                default:
-                    return "Binary"; // Default to Binary for unknown types.
+                        return "Binary";
+                    default:
+                        return "Binary"; // Default to Binary for unknown types.
+                }
+            }
+            finally
+            {
+                // IMPORTANT: Backtrack by removing the schema from the set when we are done processing it at this level.
+                // This allows the schema to be visited again through a different, non-circular path.
+                visited.Remove(schema);
             }
         }
 
         /**
-         * @brief Writes the Field's AdHoc definition to a StringBuilder.
-         * @param dst The StringBuilder to write to.
-         */
+       * @brief Writes the Field's AdHoc definition to a StringBuilder.
+       * @param dst The StringBuilder to write to.
+       */
         public override void write(StringBuilder dst)
         {
             if (Schema == null) // Handle enum fields.
@@ -781,13 +853,13 @@ namespace com.my.company // Your company namespace. Required!
             }
 
             var V = "";
-            var T = type(Schema); // Get AdHoc data type.
+            var T = get_type_string();          // <--- CHANGE IS HERE
             if (has_Set_type) T = $"Set<{T}>"; // Wrap type in Set if it's a Set.
             else if (has_Map_type)
                 if (T.Contains("Map<")) // Handle nested Map types.
                 {
                     V = $"class {name}_V {{ {T} V;   }} "; // Create inline class for nested Map value type.
-                    T = $"Map< string , {name}_V>"; // Map to the inline class.
+                    T = $"Map< string , {name}_V>";        // Map to the inline class.
                 }
                 else T = $"Map< string , {T}>"; // Map type with resolved value type.
 
@@ -818,15 +890,45 @@ namespace com.my.company // Your company namespace. Required!
     static StringBuilder tmp = new StringBuilder(); // Temporary StringBuilder for ToString() method.
 
     /**
-     * @brief Retrieves an Entity (Pack or Field) by its reference path.
-     *
-     * Traverses the Pack hierarchy based on the path segments.
-     * @param ref_path The reference path string (e.g., "components/schemas/MySchema").
-     * @return The found Entity, or null if not found.
-     */
+       * @brief Retrieves an Entity (Pack or Field) by its reference path, resolving intermediate references.
+       * This is the public entry point for resolving a reference path.
+       * @param ref_path The reference path string (e.g., "components/schemas/MySchema").
+       * @return The found Entity, or null if not found.
+       */
     public static object? get(string ref_path)
     {
-        var p = root; // Start from the root Pack.
+        // Start the resolution process with a new set of visited paths.
+        return get(ref_path, new HashSet<string>());
+    }
+
+    /**
+      * @brief Private implementation for retrieving an Entity, with cycle detection.
+      * Traverses the Pack hierarchy based on the path segments and resolves references.
+      * @param ref_path The reference path string to resolve.
+      * @param visited A set of reference paths already seen in the current resolution chain to prevent infinite recursion.
+      * @return The found Entity, or null if not found.
+      */
+    private static object? get(string ref_path, HashSet<string> visited)
+    {
+        // Cycle detected: If we've already tried to resolve this path in this chain,
+        // we stop here to prevent a stack overflow. Returning null might be an option,
+        // but returning the unresolved Pack is better as the caller can still get its name.
+        if (!visited.Add(ref_path))
+        {
+            // We can't resolve further, so we find the pack without trying to resolve its reference.
+            // This is a simplified lookup that doesn't follow p.Reference.
+            var p_no_resolve = root;
+            foreach (var n in clean_path(ref_path).Split('/'))
+            {
+                var name = brush(n, p_no_resolve.name);
+                p_no_resolve = p_no_resolve.children.FirstOrDefault(pack => pack.name == name);
+                if (p_no_resolve == null) return null; // Path doesn't exist.
+            }
+
+            return p_no_resolve;
+        }
+
+        var p = root;                            // Start from the root Pack.
         var path = clean_path(ref_path).Split('/'); // Split path into segments.
 
         for (var i = 0; i < path.Length; i++)
@@ -835,21 +937,34 @@ namespace com.my.company // Your company namespace. Required!
 
             if (i == path.Length - 1) // Last segment - look for Field or Pack.
             {
-                var fld = p.fields.FirstOrDefault(fld => fld.name == name); // Check for Field with matching name.
-                return fld ?? ((p = p.children.FirstOrDefault(pack => pack.name == name)) == null ? // Check for Pack with matching name.
-                                   null :
-                                   p.Reference == "" ? // If Pack found, check if it's a reference or definition.
-                                       p :         // Return Pack definition.
-                                       get(p.Reference)); // Resolve and return referenced Pack.
+                var fld = p.fields.FirstOrDefault(f => f.name == name); // Check for Field with matching name.
+                if (fld != null) { return fld; }
+
+                var foundPack = p.children.FirstOrDefault(pack => pack.name == name);
+                if (foundPack == null)
+                {
+                    return null; // Not found at all.
+                }
+
+                // If the pack we found is just an alias for another one, resolve the reference recursively.
+                // The 'visited' set will prevent infinite loops if the reference is circular.
+                if (!string.IsNullOrEmpty(foundPack.Reference))
+                {
+                    return get(foundPack.Reference, visited); // Resolve the reference.
+                }
+
+                // This is a direct definition (Reference is empty). Return the object we found.
+                return foundPack;
             }
 
             var next = p.children.FirstOrDefault(pack => pack.name == name); // Find child Pack with matching name.
-            if (next == null) return null; // Path segment not found.
-            p = next; // Move to the next Pack in the hierarchy.
+            if (next == null) return null;                                  // Path segment not found.
+            p = next;                                                        // Move to the next Pack in the hierarchy.
         }
 
         return p; // Return the final Pack if path traversal successful.
     }
+
 
     // --- Pack Class (Represents a group of Fields and child Packs) ---
     /**
@@ -861,10 +976,10 @@ namespace com.my.company // Your company namespace. Required!
      */
     public class Pack : Entity
     {
-        public List<Field> fields = [];    // List of Fields within the Pack.
-        public List<Pack> children = [];  // List of child Packs.
-        public HashSet<string> inherits = [];  // Set of paths to inherited Packs.
-        public string Reference = "";    // Path to referenced Pack (if this Pack is just a reference).
+        public List<Field> fields = []; // List of Fields within the Pack.
+        public List<Pack> children = []; // List of child Packs.
+        public HashSet<string> inherits = []; // Set of paths to inherited Packs.
+        public string Reference = ""; // Path to referenced Pack (if this Pack is just a reference).
 
         /**
          * @brief Adds an inheritance path to the Pack.
@@ -880,39 +995,46 @@ namespace com.my.company // Your company namespace. Required!
          * If an enum Pack already exists at the given path, it is returned; otherwise, a new enum Pack is created,
          * registered, and returned.
          * @param ref_path The reference path for the enum Pack.
-         * @param Enum List of JsonNode representing enum values.
+         * @param Enum List of IOpenApiAny representing enum values.
          * @return The registered enum Pack.
          */
-        public static Pack get_enum(string ref_path, IList<System.Text.Json.Nodes.JsonNode> Enum)
+        public static Pack get_enum(string ref_path, IList<IOpenApiAny> Enum)
         {
             var en = get_or_new(ref_path); // Get or create Pack at the given path.
-            en.is_enum = true; // Mark Pack as enum.
+            en.is_enum = true;             // Mark Pack as enum.
 
             foreach (var fld in Enum) // Iterate through enum values.
                 switch (fld)
                 {
-                    case System.Text.Json.Nodes.JsonValue val when val.TryGetValue(out long longVal):
-                        new Field(en, "x" + longVal, null) // Create Field for long enum value.
+                    case OpenApiLong val:
+                        new Field(en, "x" + val.Value, (string)null!)
                         {
-                            value = longVal.ToString() // Set enum value string.
+                            value = val.Value.ToString()
                         };
                         break;
-                    case System.Text.Json.Nodes.JsonValue val when val.TryGetValue(out double doubleVal):
-                        new Field(en, "x" + doubleVal, null) // Create Field for double enum value.
+                    case OpenApiInteger val:
+                        new Field(en, "x" + val.Value, (string)null!)
                         {
-                            value = doubleVal.ToString() // Set enum value string.
+                            value = val.Value.ToString()
                         };
                         break;
-
-                    case System.Text.Json.Nodes.JsonValue val when val.TryGetValue(out bool boolVal):
-                        new Field(en, "x" + boolVal, null); // Create Field for boolean enum value.
-
+                    case OpenApiDouble val:
+                        new Field(en, "x" + val.Value.ToString(CultureInfo.InvariantCulture), (string)null!)
+                        {
+                            value = val.Value.ToString(CultureInfo.InvariantCulture)
+                        };
                         break;
-                    case System.Text.Json.Nodes.JsonValue val:
-                        if (val.TryGetValue(out string? strVal))
-                            new Field(en, strVal, null); // Create Field for string enum value.
-
-
+                    case OpenApiFloat val:
+                        new Field(en, "x" + val.Value.ToString(CultureInfo.InvariantCulture), (string)null!)
+                        {
+                            value = val.Value.ToString(CultureInfo.InvariantCulture)
+                        };
+                        break;
+                    case OpenApiBoolean val:
+                        new Field(en, "x" + val.Value, (string)null!);
+                        break;
+                    case OpenApiString val:
+                        new Field(en, val.Value, (string)null!);
                         break;
                 }
 
@@ -929,10 +1051,10 @@ namespace com.my.company // Your company namespace. Required!
          */
         public static Pack get_or_new(string ref_path)
         {
-            var p = root; // Start from the root Pack.
+            var p = root;                                       // Start from the root Pack.
             foreach (var n in clean_path(ref_path).Split('/')) // Split path into segments.
             {
-                var name = brush(n, p.name); // Brush path segment name.
+                var name = brush(n, p.name);                                     // Brush path segment name.
                 var next = p.children.FirstOrDefault(pack => pack.name == name); // Check if child Pack exists.
 
                 if (next == null)
@@ -951,7 +1073,7 @@ namespace com.my.company // Your company namespace. Required!
          */
         public override void write(StringBuilder dst)
         {
-            if (this != root) // Don't write root Pack definition.
+            if (this != root)  // Don't write root Pack definition.
                 dst.Append($@"
                             {_comment(comment)}
                             {string.Join('\n', attributes)}
@@ -959,21 +1081,21 @@ namespace com.my.company // Your company namespace. Required!
                             public {(is_enum ? "enum" : "class")} {name} {{
                             "); // Start Pack/enum definition.
 
-            if (is_enum && fields.Count < 2) // Ensure enums have at least two fields for valid AdHoc enum.
-                new Field(this, "one_more_field", null); // Add dummy field if enum has only one.
+            if (is_enum && fields.Count < 2)                     // Ensure enums have at least two fields for valid AdHoc enum.
+                new Field(this, "one_more_field", (string)null!); // Add dummy field if enum has only one.
 
             foreach (var fld in fields) fld.write(dst); // Write Field definitions.
 
-            foreach (var pack in children.Where(p => p.Reference == "")) pack.write(dst); // Recursively write child Pack definitions.
+            foreach (var pack in children.Where(p => string.IsNullOrEmpty(p.Reference))) pack.write(dst); // Recursively write child Pack definitions.
 
             if (this != root) dst.Append("\n}\n"); // End Pack/enum definition.
         }
     }
 
     public static Pack root = new Pack(); // Root Pack of the AdHoc protocol definition hierarchy.
-    public static List<Stage> stages = [];        // List of stages for client-server channel definition.
+    public static List<Stage> stages = [];         // List of stages for client-server channel definition.
 
-    public static string hosts; // String to accumulate host definitions.
+    public static string hosts = ""; // String to accumulate host definitions.
 
     /**
      * @brief Processes OpenAPI Servers information and generates AdHoc Host definitions.
@@ -981,7 +1103,6 @@ namespace com.my.company // Your company namespace. Required!
      */
     public static void read_servers(IList<OpenApiServer> Servers)
     {
-
         var id = 0;
         foreach (var server in Servers) // Iterate through OpenAPI servers.
         {
@@ -1012,7 +1133,7 @@ struct  Server{id++}: Host{{}}
      */
     public static void add_stage(Branch client_branch, Branch server_branch)
     {
-        client_branch.dstStage = stages.Count; // Set destination stage index for client branch.
+        client_branch.dstStage = stages.Count;        // Set destination stage index for client branch.
         stages[0].client_branches.Add(client_branch); // Add client branch to the first stage.
 
         var st = new Stage(); // Create a new stage for the server branch.
@@ -1042,8 +1163,8 @@ struct  Server{id++}: Host{{}}
      */
     public class Branch
     {
-        public List<Pack> packs; // List of Packs in this branch.
-        public int dstStage; // Destination stage index for this branch.
+        public List<Pack> packs = []; // List of Packs in this branch.
+        public int dstStage;   // Destination stage index for this branch.
     }
 
     /**
@@ -1057,11 +1178,38 @@ struct  Server{id++}: Host{{}}
      */
     public static string brush(string name, string class_name)
     {
-        name = name.Trim().Replace('/', '_').Replace("-", "_").Replace('.', '_').Replace("[", "").Replace("]", "").Replace(" ", "_");
+        name = name.Trim().Replace('/', '_').Replace("-", "_").Replace('.', 'ˍ').Replace("[", "").Replace("]", "").Replace(" ", "_");
 
 
         if (name != class_name && (name.Equals("_DefaultMaxLengthOf") || !HasDocs.is_prohibited(name))) return name; // Return cleaned name if not prohibited.
 
         return HasDocs.brush(name, class_name); // Brush name using HasDocs if prohibited or reserved.
+    }
+
+    /// <summary>
+    /// Reconstructs the JSON Pointer path for an internal reference.
+    /// </summary>
+    /// <param name="reference">The OpenApiReference object.</param>
+    /// <returns>A string like "#/components/schemas/MySchema".</returns>
+    private static string GetReferencePath(OpenApiReference reference)
+    {
+        if (reference == null || !reference.Type.HasValue) return string.Empty;
+
+        string typeSegment;
+        switch (reference.Type)
+        {
+            // Handle special pluralization cases as per OpenAPI specification for components object
+            case ReferenceType.RequestBody:
+                typeSegment = "requestBodies";
+                break;
+            case ReferenceType.SecurityScheme:
+                typeSegment = "securitySchemes";
+                break;
+            default:
+                typeSegment = reference.Type.ToString().ToLowerInvariant() + "s";
+                break;
+        }
+
+        return $"#/components/{typeSegment}/{reference.Id}";
     }
 }

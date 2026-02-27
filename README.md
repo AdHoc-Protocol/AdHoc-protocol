@@ -56,6 +56,8 @@ AdHoc is particularly well-suited for systems where data volume, speed, and effi
 - **Financial Trading:** Managing real-time, high-frequency market data with minimal latency.
 - **Customer Relationship Management (CRM):** Processing large datasets of customer interactions and transactions efficiently.
 - **Enterprise Resource Planning (ERP):** Handling high-volume, real-time data updates in logistics, inventory, and operations.
+- **Scientific & Industrial Data Acquisition:** Collecting, exchanging, and monitoring massive volumes of binary sensor data for factory automation,
+  engineering analysis, and scientific research.
 - **Game Servers:** Facilitating low-latency, real-time communication and state synchronization for multiplayer online games.
 - **IoT Systems:** Processing extensive sensor data streams with high throughput and low latency demands.
 - **Real-Time Analytics Platforms:** Analyzing vast amounts of streaming data (logs, sensor data) where speed is critical.
@@ -1472,7 +1474,7 @@ To exclude specific entities from a `PackSet`, use the `org.unirail.Meta.X<>` ut
 **Named Pack Sets** simplify the management of frequently used or recurring packets by grouping them under a single, reusable name. This improves code
 readability and reduces complexity when referencing multiple packets in your project.
 
-To define a **Named Pack Set**, use C# interface construct. For example:
+To define a **Named Pack Set**, use the C# interface construct. For example:
 
 ```csharp
 interface Info_Result:
@@ -1487,35 +1489,38 @@ In this example:
 - `Info_Result` is the name of the set.
 - `Server.Info` and `Server.Result` are the packets that are grouped together.
 
-**Named packet sets** can be declared anywhere within your project and may contain references to individual pack, other **Named packet sets**,
-projects, or hosts. Once you have defined a **Named Pack Set**, you can reference it in your code wherever the set of packets is needed. For example:
+**Named packet sets** can be declared anywhere within your project and may contain references to individual packs, other **Named packet sets**,
+projects, or hosts. Once you have defined a **Named Pack Set**, you can reference it in your code wherever the set of packets is needed.
 
 #### Filtering
 
 To further refine a **Named Pack Set**, you can apply the `[Keep...]` or `[Skip...]` attributes from the `org.unirail.Meta` namespace. This allows you
 to sieve the contents of a set using Regular Expressions based on the **full pack's type name** or **doc comment**.
 
-The filters are applied **after** the set has been resolved (including all additions and exclusions).
+You can **stack multiple attributes** of the same type. The logic is applied as follows:
 
-* **Keep**: Acts as a **Whitelist**. Only items matching the regex are preserved.
-* **Skip**: Acts as a **Blacklist**. Items matching the regex are removed.
+1. **Keep Attributes (Additive OR):** If **any** `[Keep...]` attributes are present, the packet is retained **only if** it matches **at least one** of
+   the patterns. If no `[Keep...]` attributes are present, all packets are initially candidates for inclusion.
+2. **Skip Attributes (Subtractive OR):** The packet is removed if it matches **any** of the provided `[Skip...]` patterns.
 
-This is particularly useful for applying rules based on naming conventions, specific namespaces, or doc comments without manually listing every
-packet.
+This allows for complex filtering logic (e.g., "Keep items from Module A OR Module B, but Remove anything marked Internal OR Deprecated").
 
 #### 1. Name Filtering (`[KeepName]` & `[SkipName]`)
 
 These attributes filter packets based on their **full type names** (namespace + name).
 
-* **`[KeepName]`**: Retains only the packets that **match** the pattern.
-* **`[SkipName]`**: Removes any packets that **match** the pattern.
+* **`[KeepName]`**: Retains packets that match **any** of the provided patterns.
+* **`[SkipName]`**: Removes packets that match **any** of the provided patterns.
 
 ```csharp
-// Example: Select all 'Monitoring' packets, but exclude any 'Debug' tools.
+// Example: Select packets from 'Account' OR 'Billing' namespaces, 
+// but exclude 'Test' packets and 'Draft' packets.
 
-[KeepName(@"\.Monitoring\.")] // Step 1: Keep only packets in the Monitoring namespace
-[SkipName(@"Debug")]          // Step 2: Remove any packet containing "Debug"
-interface ProductionMonitoring : _< @Project > {}
+[KeepName(@"\.Account\.")]  // Match #1
+[KeepName(@"\.Billing\.")]  // Match #2 (OR logic)
+[SkipName(@"Test")]         // Remove #1
+[SkipName(@"Draft")]        // Remove #2 (OR logic)
+interface FinancePackets : _< @Project > {}
 ```
 
 #### 2. Documentation Filtering (`[KeepDoc]` & `[SkipDoc]`)
@@ -1523,45 +1528,50 @@ interface ProductionMonitoring : _< @Project > {}
 These attributes filter packets based on their **documentation comments**. This is a powerful way to organize packets using visual tags, emojis, or
 specific keywords.
 
-* **`[KeepDoc]`**: Retains only packets where the documentation **contains** the pattern.
-* **`[SkipDoc]`**: Removes packets where the documentation **contains** the pattern.
+* **`[KeepDoc]`**: Retains packets where the documentation contains **any** of the provided patterns.
+* **`[SkipDoc]`**: Removes packets where the documentation contains **any** of the provided patterns.
 
 **Visual Tagging Example:**
-Users can include specific symbols (e.g., ⛔, 🔒, ⚡) in their documentation to categorize packets.
+Users can include specific symbols (e.g., 📈, 🔒, ⛔) in their documentation to categorize packets, then use stacked attributes to aggregate them.
 
 ```csharp
 // --- Packet Definitions ---
 
-/// 🔒 This packet contains PII and must be encrypted.
-interface UserProfile : ... {}
+/// 🔒 User credentials.
+interface Credentials : ... {}
 
-/// ⛔ DEPRECATED: Use NewLogin instead.
-interface OldLogin : ... {}
+/// 📈 Server performance metrics.
+interface CpuStats : ... {}
 
-/// ⚡ High-priority realtime update.
-interface PositionUpdate : ... {}
+/// 📈 Network throughput.
+interface NetStats : ... {}
+
+/// ⛔ Legacy payload.
+interface V1Payload : ... {}
 
 
 // --- Named Pack Sets ---
 
-// 1. Security Group: ONLY keep packets marked with the lock emoji
+// 1. Dashboard Set: Collects all Metrics (📈) AND Security (🔒) items.
+[KeepDoc(@"📈")] 
 [KeepDoc(@"🔒")]
-interface SecurePackets : _< @Project > {}
+interface DashboardFeed : _< @Project > {}
 
-// 2. Clean List: Include everything, but SKIP anything marked as deprecated
+// 2. Clean Export: Everything except Deprecated (⛔) or Internal (🙈) items.
 [SkipDoc(@"⛔")]
-interface ActivePackets : _< @Project > {}
+[SkipDoc(@"🙈")]
+interface PublicApi : _< @Project > {}
 
-// 3. Complex Logic: High-priority updates in the Physics namespace
-[KeepName(@"\.Physics\.")]
-[KeepDoc(@"⚡")]
-interface CriticalPhysicsUpdates : _< @Project > {}
+// 3. Specific Logic: 
+// Keep items tagged with "👉" followed by "📈" (Source pointing to Graph)
+// OR items tagged with "👉" followed by "👀" (Source pointing to View)
+[KeepDoc(@"👉📈")]
+[KeepDoc(@"👉👀")]
+interface DataFlowVisualization : _< @Project > {}
 ```
 
 **Note:** The filters scan the raw text of the documentation. Since modern source files are typically UTF-8, symbols and emojis are fully supported in
 the regex.
-
----
 
 ### Project, Host, or Pack as a Named Pack Set
 
@@ -1581,9 +1591,9 @@ interface Info_Result:
 To include **all transmittable packets recursively** (including those in nested structures) within a **Project**, **Host**, or **Pack**, prefix the
 reference with the `@` symbol.
 
->**Crucially:**  
+> **Crucially:**  
 > When using the recursive @ prefix, the container itself is excluded from the set. This prevents accidental inclusion of parent "wrapper"
->packets when you only intend to target their children.
+> packets when you only intend to target their children.
 
 ```csharp
 interface Info_Result:
@@ -1776,60 +1786,226 @@ declarations of other packs.
 > [!NOTE]  
 > A pack can be used as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the pack hierarchy.
 
-To include or inherit:
+### Inheritance
 
-- **All fields** from other packs: Use C# class inheritance (to inherit fields from multiple packs, use the `org.unirail.Meta._<>` wrapper) or use the
-  `<see cref='Path.To.Pack'/>+` line in the target pack’s XML documentation.
-- **Specific fields** from other packs: Use the `<see cref='Path.To.Pack.field'/>+` line in the target pack’s XML documentation.
+AdHoc Packs utilize a **hybrid composition model**. This allows you to construct complex data structures by mixing fields from various sources (
+Mixins) or inheriting them (OOP).
 
-> [!NOTE]
-> Inherited fields cannot override existing or previously inherited fields with the same name.
+The Core Principle: Name Occupation
+The generator builds the final field list by checking sources in a strict order. **Once a field name is "occupied" (defined), any subsequent attempt
+to add a field with the same name is skipped.**
 
-To remove:
+Resolution Hierarchy
+The order of precedence for defining a field is:
 
-- **All fields** matching names in another `Pack`: Use the `<see cref="Full.Path.To.Source.Pack"/>-` line in the target pack’s XML documentation.
-- **Specific fields** matching referenced names: Use the `<see cref="Full.Path.To.OtherPack.RemoveField"/>-` line in the target pack’s XML
-  documentation.
+1. **Native Fields** (Highest Priority)
+	* Fields explicitly written in the C# class body always win. They cannot be overwritten by XML or Inheritance.
+2. **XML Documentation Includes** (`<see .../>+`)
+	* Fields imported via standard XML tags.
+	* Processed top-to-bottom. If two XML tags import the same field name, the first one wins.
+3. **Inheritance** (`base` / `_<...>`)
+	* Fields from base classes are added last.
+	* If a field name already exists (from Native or XML sources), the inherited field is ignored.
 
-<details>
- <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
+---
+
+1. XML-Driven Composition (Mixins)
+   Use XML documentation to inject or remove fields *before* the generator resolves inheritance.
+
+Syntax Reference
+
+| Operator | Action      | Description                                                                                               |
+|:--------:|:------------|:----------------------------------------------------------------------------------------------------------|
+| **`+`**  | **Include** | Imports fields from the target if the name is not yet taken.                                              |
+| **`-`**  | **Exclude** | **Pre-emptively blocks** a field name. Used to prevent a specific field from being imported or inherited. |
+
+> **Note:** Exclusions (`-`) run first logic-wise. They mark a name as "blocked" so that subsequent layers (Inheritance) cannot add it.
+
+This is the "Miracle" of AdHoc Packs. Because fields are imported via **symbolic XML references** (`<see cref="..."/>`), the Pack does not copy static
+text—it creates a **live link** to the original definition.
+
+**Single Source of Truth (SSOT)**
+Your data model (the source class) is the only place definitions exist. All Update Packs are just "projections" of that model.
+
+* **Refactoring Safe:** If you rename a field in the source (e.g., via IDE refactoring), the XML tag updates automatically. The generated Pack
+  immediately reflects the new name.
+* **Type Evolution:** If you change a field's type (e.g., `int` to `long`), all Packs referencing that field automatically adopt the new type.
+* **Attribute Sync:** Validation attributes (e.g., `[D(+1024)]`) are inherited. You never have to update logic in multiple places.
+
+#### Example: The "Miracle" in Action
+
+Consider a `Player` class and a packet responsible for updating the player's score.
+
+**Step 1: The Initial Definition**
+
+```csharp
+class Player {
+    /// <summary>Unique ID</summary>
+    public int id;
+    
+    /// <summary>Current game score</summary>
+    public int score;
+
+    // 📉 The Update Pack: Defines a packet { int id; int score; }
+    /// <see cref="Player.id"/>+
+    /// <see cref="Player.score"/>+
+    class Update_score { } 
+}
+```
+
+**Step 2: The Evolution (Refactoring)**
+Later, you realize `score` needs to be renamed to `experience` and requires a `long` (64-bit) to prevent overflow.
+
+You simply change the **Player** class. You **do not** touch the Pack.
+
+```csharp
+class Player {
+    public int id;
+    
+    // ✏️ CHANGE: Renamed 'score' -> 'experience' and changed type 'int' -> 'long'
+    public long experience; 
+
+    // ✅ MIRACLE: This pack is ALREADY fixed.
+    // The IDE automatically updated the XML reference during the rename.
+    // The Generator automatically pulls the new 'long' type.
+    
+    /// <see cref="Player.id"/>+
+    /// <see cref="Player.experience"/>+   <-- Updated automatically by IDE
+    class Update_score { } 
+}
+```
+
+**Result:** The `Update_score` pack is now generated as `{ int id; long experience; }`. Zero desynchronization, zero manual boilerplate maintenance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+2. Overriding & Conflict Resolution
+
+Because of the "First-Occupied" rule, you cannot simply add a new field to overwrite an old one. You must explicitly **vacate** the name first using
+the Exclusion operator.
+
+How to Override a Field
+If you import a Pack but want to change the type or source of one specific field, use the **"Exclude-then-Add"** pattern:
+
+1. **Exclude (`-`)** the field from the source Pack.
+2. **Add (`+`)** the field from the new source (or define it natively).
+
+```csharp
+/// <remarks>
+/// Scenario: We want everything from 'Header', 
+/// BUT we want 'id' to come from 'ExtendedHeader' instead.
+/// </remarks>
+/// 
+/// 1. Import Header, but BLOCK 'id' so the name remains available.
+/// <see cref="Header"/>+
+/// <see cref="Header.id"/>-
+/// 
+/// 2. Import 'id' from the new source.
+/// <see cref="ExtendedHeader.id"/>+
+class MyPacket { ... }
+```
+
+---
+
+3. C# Inheritance Support
+
+Single Inheritance
+Standard C# syntax. Base class fields are added strictly as a fallback.
+
+```csharp
+// 'MyPack' will have all fields from 'BasePack'
+// EXCEPT those that are already defined in 'MyPack' or imported via XML.
+class MyPack : BasePack { ... }
+```
+
+Multiple Inheritance
+AdHoc supports multiple inheritance via the `_<...>` helper.
+
+```csharp
+// Inherits from BaseA, BaseB, and BaseC.
+class MyPack : Base, _<BaseA, BaseB, BaseC> { ... }
+```
+
+**Conflict Logic:** If `BaseA` and `BaseB` both have a field named `timestamp`, `BaseA` (left-most) wins. `BaseB.timestamp` is skipped because the
+name is already occupied.
+
+---
+
+Comprehensive Example
 
 ```csharp
 using org.unirail.Meta;
 
-namespace com.my.company2 {
-    public interface MyProject {
-        public class AnyPacksFields {
-            long   received_time;
-            long   global_uid;
-            string client_hashcode;
-        }
+namespace com.my.project
+{
+    // Source A
+    class CommonHeader 
+    { 
+        public int id; 
+        public int version; 
+        public string debug_tag; 
+    }
 
-        ///<see cref = 'InJAVA'/>
-        struct Server : Host {
-            ///<see cref="AnyPacksFields"/> Embeds all fields from AnyPacksFields.
-            ///<see cref="AnyPacksFields.client_hashcode"/> but excludes the `client_hashcode` field.
-            class ServerPack { } // Packets that the Server can create and send
-        }
+    // Source B
+    class SessionInfo 
+    { 
+        public string token; 
+        public long expires; 
+    }
+
+    // ---------------------------------------------------------
+    // CASE 1: NATIVE PRIORITY
+    // ---------------------------------------------------------
+    /// <see cref="CommonHeader"/>+
+    struct CustomHeader
+    {
+        // This NATIVE field takes priority. 
+        // The generator skips 'CommonHeader.version' because 'version' exists here.
+        public string version; 
+    }
+
+    // ---------------------------------------------------------
+    // CASE 2: FILTERING (Allow-list / Block-list)
+    // ---------------------------------------------------------
+    /// <remarks>
+    /// 1. Import CommonHeader.
+    /// 2. Remove 'debug_tag' (it will not exist in the final struct).
+    /// 3. Add SessionInfo fields.
+    /// </remarks>
+    /// <see cref="CommonHeader"/>+
+    /// <see cref="CommonHeader.debug_tag"/>-
+    /// <see cref="SessionInfo"/>+
+    struct LoginPacket { }
 
 
-        ///<see cref = 'InTS'/>
-        struct Client : Host {
-            class Login : _<AnyPacksFields> // Embeds all fields from AnyPacksFields
-            {
-                string user;
-                string password;
-            }
-        }
-
-        interface CommunicationConnection : Connects<Server, Client> { }
+    // ---------------------------------------------------------
+    // CASE 3: EXPLICIT OVERRIDE
+    // ---------------------------------------------------------
+    /// <remarks>
+    /// We want CommonHeader, but we want 'id' to be a 'long' (Native).
+    /// </remarks>
+    /// <see cref="CommonHeader"/>+
+    /// <see cref="CommonHeader.id"/>-  <-- CRITICAL: Prevent import of 'int id'
+    struct BigIdPacket 
+    {
+        public long id; // Native field fills the now-empty 'id' slot.
     }
 }
 ```
-
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/c3cd9f94-7c6f-486e-a60b-c156b5342d5f)
-
-</details>
 
 ### Field Injection
 
@@ -2156,7 +2332,8 @@ At the code level, this is implemented through the `org.unirail.AdHoc.Connection
 **Defining Protocol Flow**
 
 To define the logical message flows within a connection—including packet ordering and response patterns—populate the connection interface body with [
-`stages`](#stages) and [`branches`](#branches). These elements define your protocol's context and data flow logic.
+`stages`](#stages) and [`branches`](#branches), or define straightforward request-response pairs using [
+`RPC Declarations`](#rpc-declarations). These elements define your protocol's context and data flow logic.
 
 > [!NOTE]
 > **Actor Analogy: Finite State Machines (FSM)**
@@ -2479,6 +2656,84 @@ interface Start : L,
 ![Symmetric example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/8637f064-75e7-4ab0-8c66-c7625a7aa813)
 
 ---
+
+### RPC
+
+While [`stages`](#stages) and [`branches`](#branches) provide a powerful way to define complex, stateful asynchronous flows (like FSMs), you often
+need a simpler approach for standard **Request-Response** interactions.
+
+To support this, the AdHoc protocol allows you to declare Remote Procedure Calls (RPC) directly within your connection interfaces.
+
+> [!WARNING]  
+> **RPC is a Primitive**
+> While convenient, it is important to understand that RPC is fundamentally a **primitive** mechanism. It lacks the built-in state machine
+> capabilities of `stages` and `branches`. It cannot natively enforce complex multi-step workflows, contextual packet validation, or strict protocol
+> lifecycle phases. Use RPC strictly for straightforward, stateless request-reply interactions, and rely on `stages` for advanced, stateful protocol
+> flows.
+
+#### Defining
+
+An RPC method is defined by declaring a method signature that takes a request packet and returns a reply packet.
+
+Because an RPC must be executed by a specific endpoint, you use the generic **`[HostedBy<THost>]`** attribute to specify **where the function is
+located**. The code generator uses this to understand which host acts as the server (the side that implements and executes the function) and which
+acts as the client (the side that calls it).
+
+If the attribute is omitted, the RPC method is treated as **bidirectional**, meaning both hosts implement the handler, and either host can initiate
+the call.
+
+#### Grouping
+
+As your protocol grows, placing all RPC methods at the root of the connection interface can become cluttered. To organize your API, you can group
+related RPC methods by declaring nested interfaces. The code generator will treat these nested interfaces as logical service groupings (similar to
+namespaces or controller classes), keeping your generated code clean and highly organized.
+
+**Example:**
+
+```csharp
+using org.unirail.Meta;
+
+namespace com.company {
+    public interface MyProject {
+        
+        // Defines a connection between Monitoring and MonitoringObserver
+        interface MonitoringToMonitoringObserver : Connects<Monitoring, MonitoringObserver> {
+            
+            int Connects<Monitoring, MonitoringObserver>.MaxChannelInstances => 16;
+            
+            // 1. Unidirectional RPC (Root level): 
+            // The 'MonitoringObserver' hosts this method (acts as the server).
+            // Therefore, only the 'Monitoring' host is permitted to call it.
+            [HostedBy<MonitoringObserver>]
+            HelloReply SayHelloToObserver(HelloRequest pack);
+
+            // Grouping related functions into a logical "Service"
+            interface AccountingService {
+                
+                // 2. Unidirectional RPC (Nested): 
+                // The 'Monitoring' host implements and runs this method.
+                // Only the 'MonitoringObserver' can initiate this call.[HostedBy<Monitoring>]
+                HelloReply SayHelloToMonitoring(HelloRequest pack);
+            }
+            
+            // Another logical grouping
+            interface GreetingDepartment {
+                
+                // 3. Bidirectional RPC (Nested): 
+                // No attribute is specified. 
+                // Both sides host this function, meaning both can initiate the call to the other.
+                HelloReply SayHelloBidirectional(HelloRequest pack);
+            }
+        }
+    }
+}
+```
+
+> [!TIP]
+> **Code Generator Metadata**
+> Developers **will never implement or invoke these interface methods directly**. These method signatures act purely as a declarative schema (DSL).
+> The code generator parses the `[HostedBy<THost>]` metadata and interface hierarchy to automatically scaffold the underlying request/response packet
+> routing, grouped handler stubs, and awaitable tasks on the correct sides of the connection.
 
 ### Modifying Imported Connections
 

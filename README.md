@@ -1342,7 +1342,7 @@ Pack Sets are the primary mechanism for defining a Scope—the target group of p
 
 ### In-Place Pack Sets
 
-The `org.unirail.Meta._<> ` interface is a special utility that creates an **Ad-Hoc Pack Set**, allowing flexible grouping of packet types.
+The `org.unirail.Meta._<> `  interface is a special utility that creates an **Ad-Hoc Pack Set**, allowing flexible grouping of packet types.
 To exclude specific entities from a `PackSet`, use the `org.unirail.Meta.X<>` utility interface.
 
 ### Named Pack Sets

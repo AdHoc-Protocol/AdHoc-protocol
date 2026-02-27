@@ -1055,12 +1055,6 @@ In this example, the `AdHocProtocolWithBackend` protocol description imports all
 > If your solution requires working with multiple protocols, you cannot easily combine their generated protocol-processing code within the same VM
 > instance due to `lib` **org.unirail** namespace clashes. To resolve this, assign each project’s `lib` to a distinct namespace.
 
-Of course. Based on your clarifications, I will now rewrite the "Hosts" chapter.
-
-The revised text incorporates more universal descriptions for parsing strategies, provides clear rationale to help users make informed decisions,
-explicitly defines the top-down scoping and rule application logic, and adds more concrete details to the `MultiChannelHost` concept.
-
-Here is the improved chapter:
 
 ### Selective Entities Import
 
@@ -1250,9 +1244,7 @@ This allows you to apply specific modifiers to entire branches of your data hier
 /// 
 /// // Revert back to '+-' for any subsequent packs in this host
 /// <see cref="InTS"/>+-
-struct MonitoringObserver : MultiChannelHost {
-    // Defines the maximum number of logical channels this host can manage over a connection
-    public int Channels => 256;
+struct MonitoringObserver : Host {
 }
 ```
 
@@ -1315,122 +1307,6 @@ This system gives you granular control to optimize for performance where needed 
 convenience elsewhere (using full objects for command-and-control packs).
 
 ---
-
-### Advanced Host Concepts
-
-#### The Multi-Channel Host
-
-The **Multi-Channel Host** enables multiple independent packet exchanges to run concurrently over a single network connection. Instead of opening
-separate connections for each independent task, AdHoc multiplexes them all onto one connection and automatically routes packets to the correct
-destination using Channel IDs.
-
-**Connection Multiplexing**
-
-Multi-Channel solves a fundamental networking problem: performing multiple independent tasks over one connection exactly as other solutions achieve by
-opening multiple separate physical sockets.
-
-Without channels, handling three independent tasks requires either:
-
-- Opening three separate TCP connections (overhead: 3 handshakes, 3 socket descriptors, 3 sets of buffers)
-- Implementing your own packet-tagging and routing logic on one connection
-
-With a Multi-Channel Host, you get:
-
-- **One physical connection** with multiple logical Channels
-- Automatic packet tagging and routing by the AdHoc runtime
-- Complete isolation between independent tasks
-
-**How It Works**
-
-When a packet is sent through a Channel, the runtime tags it with that Channel's ID. When a reply arrives, the runtime reads the Channel ID and
-automatically delivers the packet to the correct Channel's handler. Each Channel maintains its own independent state, even though all packets share
-the same underlying connection.
-
-**Declaration**
-
-Implement the `org.unirail.MultiChannelHost` interface instead of `Host`, and define the `Channels` property to specify the maximum number of
-concurrent channels:
-
-```csharp
-using org.unirail.Meta;
-
-struct Server : MultiChannelHost
-{
-    // This server can handle up to 10 independent tasks on a single connection.
-    public int Channels => 10;
-}
-```
-
-In the generated code, the connection maintains a collection of `Channel` objects. Each Channel can optionally track its own current `Stage` (for
-state machine logic), and you can extend the generated `Channel` to add custom state variables for each session if needed.
-
-**Channel Multicast**
-
-A **Multicast Channel** allows multiple subscribers to listen to the same packet stream without consuming additional Channel IDs. Instead of creating
-separate channels for each subscriber (which would waste channel slots and require coordination), you create a single Multicast channel and subscribe
-any number of regular channels to it.
-
-*How it works:*
-
-1. Create a `Channel.Multicast` instance
-2. Subscribe one or more regular Channel instances to the multicast group
-3. Register the Multicast channel to the connection
-
-The Multicast channel receives a unique Channel ID on the connection. When packets arrive for this Channel ID, they are automatically delivered to *
-*all subscribed channels**. Each subscriber's event handlers (`OnReceived`, `OnConnected`, `OnClosed`, etc.) are invoked, allowing multiple
-independent components to process the same data stream.
-
-*Use case:*  
-Multiple UI components need to display real-time updates from the same data source (e.g., a stock ticker, system monitoring feed, or chat room).
-Instead of opening separate channels for each component:
-
-- One Multicast channel handles the server communication
-- Each UI component subscribes its own Channel to receive updates
-- All components stay synchronized with minimal connection overhead
-
-**Use Cases**
-
-**UI Data Routing (Database Proxy)**  
-An application communicates with an intermediate server to fetch SQL data. Multiple windows (e.g., *Product Catalog* and *Inventory Manager*) may
-request the **exact same response type**, such as `List<Item>`.
-
-**Solution:**
-
-- **Client:** Implemented as a `MultiChannelHost`. Each window creates its own `Channel` and attaches a unique **channel tag** to its request, while
-  sharing a single connection.
-- **Server:** Simple single-channel design. It processes the request normally and **echoes back the received channel tag** unchanged in the response
-  packet.
-- **Result:** Responses are reliably routed back to the correct window using the channel tag, eliminating any risk of cross-talk even when multiple
-  identical-type packets (`List<Item>`) are in flight simultaneously.
-
-*Remote Procedure Call (RPC)*  
-In a request-response pattern, a procedure is called by sending a packet whose name matches the procedure name and whose fields contain the arguments.
-
-* A channel is **registered** for the specific call on the existing connection.
-* The application "awaits" the reply within that specific channel.
-* When the reply arrives, the runtime uses the Channel ID to deliver it exactly to where the request originated, providing a seamless
-  synchronous-style flow over an asynchronous connection.
-
-*Parallel Task Processing (Worker Nodes)*  
-A client sends 10 different heavy computational tasks to a high-performance server.
-
-* Each task is assigned to one of the 10 available Channels on a single connection.
-* As the server finishes tasks (possibly out of order), it sends the results back.
-* The client's Multi-Channel Host ensures each result is routed to the correct channel handler, regardless of completion order.
-
-*Isolated Plugin/Module Communication*  
-A "Main" application manages a connection, but various independent plugins use that connection to talk to their respective cloud counterparts.
-
-* Each plugin is assigned a range of Channels on the shared connection.
-* Plugins operate independently without knowing about each other's packet structures or logic.
-* The Multi-Channel Host acts as a multiplexer, ensuring plugin-specific packets never reach the wrong channel handler.
-
-> **Note:** The optional state machine tracking within each Channel is a convenient utility if your application logic needs per-session state.
-> However, the core value of Multi-Channel is the connection multiplexing itself—keeping independent packet exchanges separate without opening
-> additional connections.
-
-> **Warning:** Each active Channel consumes memory to store its state. Choose a number of Channels that balances your application's concurrency needs
-> with its resource budget.
 
 #### Modifying Imported Hosts
 
@@ -2097,10 +1973,10 @@ stream identification, and session management.
 
 Header fields are added to standalone packets in three ways:
 
-1. **Implicit (Automatic)**: Every standalone packet includes a `packet_id` for identification.
-2. **Conditional (Feature-Based)**: If the [MultiChannelHost](#the-multi-context-host) is used, a `channel_id` field is added to the headers to
-   facilitate logical message routing.
-3. **Explicit (User-Defined)**: You can define custom header fields by creating a "Header" class that implements the `HeaderFor< PackSet >` interface.
+> 1. **Implicit (Automatic)**: Every standalone packet includes a `packet_id` for identification.
+> 2. **Conditional (Feature-Based)**: Additional fields are included based on specific features. For example, **Multi-Channel** connections add
+     channel identifiers for message routing, and **RPC** calls add unique identifiers to link callers with repliers.
+> 3. **Explicit (User-Defined)**: Custom header fields can be defined by creating a `Header` class that implements the `HeaderFor<PackSet>` interface.
 
 #### Header Scope
 
@@ -2120,63 +1996,6 @@ The scope of an explicit header depends on its declaration context:
 
 **Precedence Rule**: Connection-Specific **▷** Host-Specific **▷** Project Scope.
 
-**Example**
-
-```csharp
-// Project-scope header for Point2d packets
-class HeaderFor2dEntities : HeaderFor<Point2d> {
-    int plain_id;
-    int session;
-}
-
-struct NodeB : Host {
-    // Host-specific header for Point3d packets
-    class HeaderFor3dEntities : HeaderFor<Point3d> {
-        int world_id;
-        int session;
-    }
-}
-
-// Packet definitions
-class Point2d { float X; float Y; }
-class Point3d { float X; float Y; float Z; }
-
-// Communication connection definition
-interface CommunicationConnection : Connects<NodeA, NodeB> {
-    // Connection-specific header for TeamCoordination packets
-    class CommunicationConnectionHeader : HeaderFor<TeamCoordination> {
-        uint sequence_num;
-        ushort priority;
-    }
-}
-```
-
-**Resulting On-the-Wire Structure**
-
-**`Point3d` Packet (Host-Specific Header)**:
-
-```
-[-- HEADER --]
-  packet_id   (Implicit)
-  channel_id  (Conditional: if MultiChannelHost is used)
-  world_id    (Host-Specific: from HeaderFor3dEntities)
-  session     (Host-Specific: from HeaderFor3dEntities)
-[-- PAYLOAD --]
-  X, Y, Z
-```
-
-**`TeamCoordination` Packet (Connection-Specific Header)**:
-Sent via `CommunicationConnection`:
-
-```
-[-- HEADER --]
-  packet_id      (Implicit)
-  channel_id     (Conditional: if MultiChannelHost is used)
-  sequence_num   (Connection-Specific: from CommunicationConnectionHeader)
-  priority       (Connection-Specific: from CommunicationConnectionHeader)
-[-- PAYLOAD --]
-  ... (TeamCoordination fields)
-```
 
 #### Modify Imported Header
 

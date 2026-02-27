@@ -1389,7 +1389,7 @@ These attributes filter packets based on their **full type names** (namespace + 
 * **`[SkipName]`**: Removes packets that match **any** of the provided patterns.
 
 ```csharp
-// Example: Select packets from 'Account' OR 'Billing' namespaces, 
+// Example: Select packets from  'Account' OR 'Billing' namespaces, 
 // but exclude 'Test' packets and 'Draft' packets.
 
 [KeepName(@"\.Account\.")]  // Match #1

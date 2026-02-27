@@ -2682,7 +2682,7 @@ acts as the client (the side that calls it).
 If the attribute is omitted, the RPC method is treated as **bidirectional**, meaning both hosts implement the handler, and either host can initiate
 the call.
 
-#### Grouping
+#### Nesting
 
 As your protocol grows, placing all RPC methods at the root of the connection interface can become cluttered. To organize your API, you can group
 related RPC methods by declaring nested interfaces. The code generator will treat these nested interfaces as logical service groupings (similar to
@@ -2693,40 +2693,42 @@ namespaces or controller classes), keeping your generated code clean and highly 
 ```csharp
 using org.unirail.Meta;
 
-namespace com.company {
-    public interface MyProject {
+        public interface MyProject {
         
-        // Defines a connection between Monitoring and MonitoringObserver
-        interface MonitoringToMonitoringObserver : Connects<Monitoring, MonitoringObserver> {
+            // Defines a connection between Monitoring and MonitoringObserver
+            interface MonitoringToMonitoringObserver : Connects<Monitoring, MonitoringObserver> {
             
-            int Connects<Monitoring, MonitoringObserver>.MaxChannelInstances => 16;
+                int Connects<Monitoring, MonitoringObserver>.MaxChannelInstances => 16;
             
-            // 1. Unidirectional RPC (Root level): 
-            // The 'MonitoringObserver' hosts this method (acts as the server).
-            // Therefore, only the 'Monitoring' host is permitted to call it.
-            [HostedBy<MonitoringObserver>]
-            HelloReply SayHelloToObserver(HelloRequest pack);
+                // 1. Unidirectional RPC (Root level): 
+                // The 'MonitoringObserver' hosts this method (acts as the server).
+                // Therefore, only the 'Monitoring' host is permitted to call it.
+                [HostedBy<MonitoringObserver>]
+                HelloReply SayHelloToObserver(HelloRequest pack);
 
-            // Grouping related functions into a logical "Service"
-            interface AccountingService {
+                // Grouping related functions into a logical "Service"
+                interface AccountingService {
                 
-                // 2. Unidirectional RPC (Nested): 
-                // The 'Monitoring' host implements and runs this method.
-                // Only the 'MonitoringObserver' can initiate this call.[HostedBy<Monitoring>]
-                HelloReply SayHelloToMonitoring(HelloRequest pack);
-            }
+                    // 2. Unidirectional RPC (Nested): 
+                    // The 'Monitoring' host implements and runs this method.
+                    // Only the 'MonitoringObserver' can initiate this call.[HostedBy<Monitoring>]
+                    HelloReply SayHelloToMonitoring(HelloRequest pack);
+                }
             
-            // Another logical grouping
-            interface GreetingDepartment {
-                
-                // 3. Bidirectional RPC (Nested): 
-                // No attribute is specified. 
-                // Both sides host this function, meaning both can initiate the call to the other.
-                HelloReply SayHelloBidirectional(HelloRequest pack);
+                // Another logical grouping
+                interface SecretBranch{
+                    Passsword SayPassword(Request pack);
+                    
+                    interface GreetingDepartment{
+
+                        // 3. Bidirectional RPC (Nested): 
+                        // No attribute is specified. 
+                        // Both sides host this function, meaning both can initiate the call to the other.
+                        HelloReply SayHelloBidirectional(HelloRequest pack);
+                    }
+                }
             }
         }
-    }
-}
 ```
 
 > [!TIP]

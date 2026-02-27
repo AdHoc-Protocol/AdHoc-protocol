@@ -1753,20 +1753,6 @@ class Player {
 
 **Result:** The `Update_score` pack is now generated as `{ int id; long experience; }`. Zero desynchronization, zero manual boilerplate maintenance.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ---
 
 2. Overriding & Conflict Resolution

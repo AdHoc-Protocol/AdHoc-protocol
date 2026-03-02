@@ -56,6 +56,8 @@ AdHoc is particularly well-suited for systems where data volume, speed, and effi
 - **Financial Trading:** Managing real-time, high-frequency market data with minimal latency.
 - **Customer Relationship Management (CRM):** Processing large datasets of customer interactions and transactions efficiently.
 - **Enterprise Resource Planning (ERP):** Handling high-volume, real-time data updates in logistics, inventory, and operations.
+- **Scientific & Industrial Data Acquisition:** Collecting, exchanging, and monitoring massive volumes of binary sensor data for factory automation,
+  engineering analysis, and scientific research.
 - **Game Servers:** Facilitating low-latency, real-time communication and state synchronization for multiplayer online games.
 - **IoT Systems:** Processing extensive sensor data streams with high throughput and low latency demands.
 - **Real-Time Analytics Platforms:** Analyzing vast amounts of streaming data (logs, sensor data) where speed is critical.
@@ -1472,7 +1474,7 @@ To exclude specific entities from a `PackSet`, use the `org.unirail.Meta.X<>` ut
 **Named Pack Sets** simplify the management of frequently used or recurring packets by grouping them under a single, reusable name. This improves code
 readability and reduces complexity when referencing multiple packets in your project.
 
-To define a **Named Pack Set**, use C# interface construct. For example:
+To define a **Named Pack Set**, use the C# interface construct. For example:
 
 ```csharp
 interface Info_Result:
@@ -1487,35 +1489,38 @@ In this example:
 - `Info_Result` is the name of the set.
 - `Server.Info` and `Server.Result` are the packets that are grouped together.
 
-**Named packet sets** can be declared anywhere within your project and may contain references to individual pack, other **Named packet sets**,
-projects, or hosts. Once you have defined a **Named Pack Set**, you can reference it in your code wherever the set of packets is needed. For example:
+**Named packet sets** can be declared anywhere within your project and may contain references to individual packs, other **Named packet sets**,
+projects, or hosts. Once you have defined a **Named Pack Set**, you can reference it in your code wherever the set of packets is needed.
 
 #### Filtering
 
 To further refine a **Named Pack Set**, you can apply the `[Keep...]` or `[Skip...]` attributes from the `org.unirail.Meta` namespace. This allows you
 to sieve the contents of a set using Regular Expressions based on the **full pack's type name** or **doc comment**.
 
-The filters are applied **after** the set has been resolved (including all additions and exclusions).
+You can **stack multiple attributes** of the same type. The logic is applied as follows:
 
-* **Keep**: Acts as a **Whitelist**. Only items matching the regex are preserved.
-* **Skip**: Acts as a **Blacklist**. Items matching the regex are removed.
+1. **Keep Attributes (Additive OR):** If **any** `[Keep...]` attributes are present, the packet is retained **only if** it matches **at least one** of
+   the patterns. If no `[Keep...]` attributes are present, all packets are initially candidates for inclusion.
+2. **Skip Attributes (Subtractive OR):** The packet is removed if it matches **any** of the provided `[Skip...]` patterns.
 
-This is particularly useful for applying rules based on naming conventions, specific namespaces, or doc comments without manually listing every
-packet.
+This allows for complex filtering logic (e.g., "Keep items from Module A OR Module B, but Remove anything marked Internal OR Deprecated").
 
 #### 1. Name Filtering (`[KeepName]` & `[SkipName]`)
 
 These attributes filter packets based on their **full type names** (namespace + name).
 
-* **`[KeepName]`**: Retains only the packets that **match** the pattern.
-* **`[SkipName]`**: Removes any packets that **match** the pattern.
+* **`[KeepName]`**: Retains packets that match **any** of the provided patterns.
+* **`[SkipName]`**: Removes packets that match **any** of the provided patterns.
 
 ```csharp
-// Example: Select all 'Monitoring' packets, but exclude any 'Debug' tools.
+// Example: Select packets from 'Account' OR 'Billing' namespaces, 
+// but exclude 'Test' packets and 'Draft' packets.
 
-[KeepName(@"\.Monitoring\.")] // Step 1: Keep only packets in the Monitoring namespace
-[SkipName(@"Debug")]          // Step 2: Remove any packet containing "Debug"
-interface ProductionMonitoring : _< @Project > {}
+[KeepName(@"\.Account\.")]  // Match #1
+[KeepName(@"\.Billing\.")]  // Match #2 (OR logic)
+[SkipName(@"Test")]         // Remove #1
+[SkipName(@"Draft")]        // Remove #2 (OR logic)
+interface FinancePackets : _< @Project > {}
 ```
 
 #### 2. Documentation Filtering (`[KeepDoc]` & `[SkipDoc]`)
@@ -1523,45 +1528,50 @@ interface ProductionMonitoring : _< @Project > {}
 These attributes filter packets based on their **documentation comments**. This is a powerful way to organize packets using visual tags, emojis, or
 specific keywords.
 
-* **`[KeepDoc]`**: Retains only packets where the documentation **contains** the pattern.
-* **`[SkipDoc]`**: Removes packets where the documentation **contains** the pattern.
+* **`[KeepDoc]`**: Retains packets where the documentation contains **any** of the provided patterns.
+* **`[SkipDoc]`**: Removes packets where the documentation contains **any** of the provided patterns.
 
 **Visual Tagging Example:**
-Users can include specific symbols (e.g., ⛔, 🔒, ⚡) in their documentation to categorize packets.
+Users can include specific symbols (e.g., 📈, 🔒, ⛔) in their documentation to categorize packets, then use stacked attributes to aggregate them.
 
 ```csharp
 // --- Packet Definitions ---
 
-/// 🔒 This packet contains PII and must be encrypted.
-interface UserProfile : ... {}
+/// 🔒 User credentials.
+interface Credentials : ... {}
 
-/// ⛔ DEPRECATED: Use NewLogin instead.
-interface OldLogin : ... {}
+/// 📈 Server performance metrics.
+interface CpuStats : ... {}
 
-/// ⚡ High-priority realtime update.
-interface PositionUpdate : ... {}
+/// 📈 Network throughput.
+interface NetStats : ... {}
+
+/// ⛔ Legacy payload.
+interface V1Payload : ... {}
 
 
 // --- Named Pack Sets ---
 
-// 1. Security Group: ONLY keep packets marked with the lock emoji
+// 1. Dashboard Set: Collects all Metrics (📈) AND Security (🔒) items.
+[KeepDoc(@"📈")] 
 [KeepDoc(@"🔒")]
-interface SecurePackets : _< @Project > {}
+interface DashboardFeed : _< @Project > {}
 
-// 2. Clean List: Include everything, but SKIP anything marked as deprecated
+// 2. Clean Export: Everything except Deprecated (⛔) or Internal (🙈) items.
 [SkipDoc(@"⛔")]
-interface ActivePackets : _< @Project > {}
+[SkipDoc(@"🙈")]
+interface PublicApi : _< @Project > {}
 
-// 3. Complex Logic: High-priority updates in the Physics namespace
-[KeepName(@"\.Physics\.")]
-[KeepDoc(@"⚡")]
-interface CriticalPhysicsUpdates : _< @Project > {}
+// 3. Specific Logic: 
+// Keep items tagged with "👉" followed by "📈" (Source pointing to Graph)
+// OR items tagged with "👉" followed by "👀" (Source pointing to View)
+[KeepDoc(@"👉📈")]
+[KeepDoc(@"👉👀")]
+interface DataFlowVisualization : _< @Project > {}
 ```
 
 **Note:** The filters scan the raw text of the documentation. Since modern source files are typically UTF-8, symbols and emojis are fully supported in
 the regex.
-
----
 
 ### Project, Host, or Pack as a Named Pack Set
 
@@ -1581,9 +1591,9 @@ interface Info_Result:
 To include **all transmittable packets recursively** (including those in nested structures) within a **Project**, **Host**, or **Pack**, prefix the
 reference with the `@` symbol.
 
->**Crucially:**  
+> **Crucially:**  
 > When using the recursive @ prefix, the container itself is excluded from the set. This prevents accidental inclusion of parent "wrapper"
->packets when you only intend to target their children.
+> packets when you only intend to target their children.
 
 ```csharp
 interface Info_Result:
@@ -1776,60 +1786,226 @@ declarations of other packs.
 > [!NOTE]  
 > A pack can be used as a [set of packs](#projecthost-as-a-named-pack-set). Keep this in mind when organizing the pack hierarchy.
 
-To include or inherit:
+### Inheritance
 
-- **All fields** from other packs: Use C# class inheritance (to inherit fields from multiple packs, use the `org.unirail.Meta._<>` wrapper) or use the
-  `<see cref='Path.To.Pack'/>+` line in the target pack’s XML documentation.
-- **Specific fields** from other packs: Use the `<see cref='Path.To.Pack.field'/>+` line in the target pack’s XML documentation.
+AdHoc Packs utilize a **hybrid composition model**. This allows you to construct complex data structures by mixing fields from various sources (
+Mixins) or inheriting them (OOP).
 
-> [!NOTE]
-> Inherited fields cannot override existing or previously inherited fields with the same name.
+The Core Principle: Name Occupation
+The generator builds the final field list by checking sources in a strict order. **Once a field name is "occupied" (defined), any subsequent attempt
+to add a field with the same name is skipped.**
 
-To remove:
+Resolution Hierarchy
+The order of precedence for defining a field is:
 
-- **All fields** matching names in another `Pack`: Use the `<see cref="Full.Path.To.Source.Pack"/>-` line in the target pack’s XML documentation.
-- **Specific fields** matching referenced names: Use the `<see cref="Full.Path.To.OtherPack.RemoveField"/>-` line in the target pack’s XML
-  documentation.
+1. **Native Fields** (Highest Priority)
+	* Fields explicitly written in the C# class body always win. They cannot be overwritten by XML or Inheritance.
+2. **XML Documentation Includes** (`<see .../>+`)
+	* Fields imported via standard XML tags.
+	* Processed top-to-bottom. If two XML tags import the same field name, the first one wins.
+3. **Inheritance** (`base` / `_<...>`)
+	* Fields from base classes are added last.
+	* If a field name already exists (from Native or XML sources), the inherited field is ignored.
 
-<details>
- <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
+---
+
+1. XML-Driven Composition (Mixins)
+   Use XML documentation to inject or remove fields *before* the generator resolves inheritance.
+
+Syntax Reference
+
+| Operator | Action      | Description                                                                                               |
+|:--------:|:------------|:----------------------------------------------------------------------------------------------------------|
+| **`+`**  | **Include** | Imports fields from the target if the name is not yet taken.                                              |
+| **`-`**  | **Exclude** | **Pre-emptively blocks** a field name. Used to prevent a specific field from being imported or inherited. |
+
+> **Note:** Exclusions (`-`) run first logic-wise. They mark a name as "blocked" so that subsequent layers (Inheritance) cannot add it.
+
+This is the "Miracle" of AdHoc Packs. Because fields are imported via **symbolic XML references** (`<see cref="..."/>`), the Pack does not copy static
+text—it creates a **live link** to the original definition.
+
+**Single Source of Truth (SSOT)**
+Your data model (the source class) is the only place definitions exist. All Update Packs are just "projections" of that model.
+
+* **Refactoring Safe:** If you rename a field in the source (e.g., via IDE refactoring), the XML tag updates automatically. The generated Pack
+  immediately reflects the new name.
+* **Type Evolution:** If you change a field's type (e.g., `int` to `long`), all Packs referencing that field automatically adopt the new type.
+* **Attribute Sync:** Validation attributes (e.g., `[D(+1024)]`) are inherited. You never have to update logic in multiple places.
+
+#### Example: The "Miracle" in Action
+
+Consider a `Player` class and a packet responsible for updating the player's score.
+
+**Step 1: The Initial Definition**
+
+```csharp
+class Player {
+    /// <summary>Unique ID</summary>
+    public int id;
+    
+    /// <summary>Current game score</summary>
+    public int score;
+
+    // 📉 The Update Pack: Defines a packet { int id; int score; }
+    /// <see cref="Player.id"/>+
+    /// <see cref="Player.score"/>+
+    class Update_score { } 
+}
+```
+
+**Step 2: The Evolution (Refactoring)**
+Later, you realize `score` needs to be renamed to `experience` and requires a `long` (64-bit) to prevent overflow.
+
+You simply change the **Player** class. You **do not** touch the Pack.
+
+```csharp
+class Player {
+    public int id;
+    
+    // ✏️ CHANGE: Renamed 'score' -> 'experience' and changed type 'int' -> 'long'
+    public long experience; 
+
+    // ✅ MIRACLE: This pack is ALREADY fixed.
+    // The IDE automatically updated the XML reference during the rename.
+    // The Generator automatically pulls the new 'long' type.
+    
+    /// <see cref="Player.id"/>+
+    /// <see cref="Player.experience"/>+   <-- Updated automatically by IDE
+    class Update_score { } 
+}
+```
+
+**Result:** The `Update_score` pack is now generated as `{ int id; long experience; }`. Zero desynchronization, zero manual boilerplate maintenance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+2. Overriding & Conflict Resolution
+
+Because of the "First-Occupied" rule, you cannot simply add a new field to overwrite an old one. You must explicitly **vacate** the name first using
+the Exclusion operator.
+
+How to Override a Field
+If you import a Pack but want to change the type or source of one specific field, use the **"Exclude-then-Add"** pattern:
+
+1. **Exclude (`-`)** the field from the source Pack.
+2. **Add (`+`)** the field from the new source (or define it natively).
+
+```csharp
+/// <remarks>
+/// Scenario: We want everything from 'Header', 
+/// BUT we want 'id' to come from 'ExtendedHeader' instead.
+/// </remarks>
+/// 
+/// 1. Import Header, but BLOCK 'id' so the name remains available.
+/// <see cref="Header"/>+
+/// <see cref="Header.id"/>-
+/// 
+/// 2. Import 'id' from the new source.
+/// <see cref="ExtendedHeader.id"/>+
+class MyPacket { ... }
+```
+
+---
+
+3. C# Inheritance Support
+
+Single Inheritance
+Standard C# syntax. Base class fields are added strictly as a fallback.
+
+```csharp
+// 'MyPack' will have all fields from 'BasePack'
+// EXCEPT those that are already defined in 'MyPack' or imported via XML.
+class MyPack : BasePack { ... }
+```
+
+Multiple Inheritance
+AdHoc supports multiple inheritance via the `_<...>` helper.
+
+```csharp
+// Inherits from BaseA, BaseB, and BaseC.
+class MyPack : Base, _<BaseA, BaseB, BaseC> { ... }
+```
+
+**Conflict Logic:** If `BaseA` and `BaseB` both have a field named `timestamp`, `BaseA` (left-most) wins. `BaseB.timestamp` is skipped because the
+name is already occupied.
+
+---
+
+Comprehensive Example
 
 ```csharp
 using org.unirail.Meta;
 
-namespace com.my.company2 {
-    public interface MyProject {
-        public class AnyPacksFields {
-            long   received_time;
-            long   global_uid;
-            string client_hashcode;
-        }
+namespace com.my.project
+{
+    // Source A
+    class CommonHeader 
+    { 
+        public int id; 
+        public int version; 
+        public string debug_tag; 
+    }
 
-        ///<see cref = 'InJAVA'/>
-        struct Server : Host {
-            ///<see cref="AnyPacksFields"/> Embeds all fields from AnyPacksFields.
-            ///<see cref="AnyPacksFields.client_hashcode"/> but excludes the `client_hashcode` field.
-            class ServerPack { } // Packets that the Server can create and send
-        }
+    // Source B
+    class SessionInfo 
+    { 
+        public string token; 
+        public long expires; 
+    }
+
+    // ---------------------------------------------------------
+    // CASE 1: NATIVE PRIORITY
+    // ---------------------------------------------------------
+    /// <see cref="CommonHeader"/>+
+    struct CustomHeader
+    {
+        // This NATIVE field takes priority. 
+        // The generator skips 'CommonHeader.version' because 'version' exists here.
+        public string version; 
+    }
+
+    // ---------------------------------------------------------
+    // CASE 2: FILTERING (Allow-list / Block-list)
+    // ---------------------------------------------------------
+    /// <remarks>
+    /// 1. Import CommonHeader.
+    /// 2. Remove 'debug_tag' (it will not exist in the final struct).
+    /// 3. Add SessionInfo fields.
+    /// </remarks>
+    /// <see cref="CommonHeader"/>+
+    /// <see cref="CommonHeader.debug_tag"/>-
+    /// <see cref="SessionInfo"/>+
+    struct LoginPacket { }
 
 
-        ///<see cref = 'InTS'/>
-        struct Client : Host {
-            class Login : _<AnyPacksFields> // Embeds all fields from AnyPacksFields
-            {
-                string user;
-                string password;
-            }
-        }
-
-        interface CommunicationConnection : Connects<Server, Client> { }
+    // ---------------------------------------------------------
+    // CASE 3: EXPLICIT OVERRIDE
+    // ---------------------------------------------------------
+    /// <remarks>
+    /// We want CommonHeader, but we want 'id' to be a 'long' (Native).
+    /// </remarks>
+    /// <see cref="CommonHeader"/>+
+    /// <see cref="CommonHeader.id"/>-  <-- CRITICAL: Prevent import of 'int id'
+    struct BigIdPacket 
+    {
+        public long id; // Native field fills the now-empty 'id' slot.
     }
 }
 ```
-
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/c3cd9f94-7c6f-486e-a60b-c156b5342d5f)
-
-</details>
 
 ### Field Injection
 
@@ -2110,16 +2286,19 @@ This approach allows you to add, remove, and replace fields from an imported pac
 
 > [!NOTE]  
 > A modifier pack can function as a normal pack.
+> Here is the rewritten concept text. Since we are renaming **Channel** to **Actor** and **Stage** to **State**, the previous "Actor Analogies" are no
+> longer analogies—they are the actual architecture. I have integrated those explanations directly into the core text for a much clearer, unified
+> explanation.
+
+---
 
 ## Connections
 
 In the **AdHoc protocol**, a connection establishes a communication link between two hosts. Connections are declared as C# interfaces within your
 project and must extend the built-in `org.unirail.Meta.Connects<HostA, HostB>` interface, which specifies the two hosts being linked.
 
-> [!TIP]
-> **Actor Analogy: The Remoting Association**
-> Think of a **Connection** as the static definition of an **Actor System Association** or a Remoting Link. It is the physical pipe through which all
-> actors (Channels) on one node communicate with actors on a remote node.
+Think of a **Connection** as the static definition of an **Actor System Association** or a Remoting Link. It is the physical supervisor and pipe
+through which all **Actors** on one node communicate with Actors on a remote node.
 
 **Example:**
 
@@ -2156,12 +2335,10 @@ At the code level, this is implemented through the `org.unirail.AdHoc.Connection
 **Defining Protocol Flow**
 
 To define the logical message flows within a connection—including packet ordering and response patterns—populate the connection interface body with [
-`stages`](#stages) and [`branches`](#branches). These elements define your protocol's context and data flow logic.
+`States`](#states) and [`branches`](#branches).
 
-> [!NOTE]
-> **Actor Analogy: Finite State Machines (FSM)**
-> defining `stages` and `branches` is analogous to defining an **Actor FSM**. Just as an Actor switches behaviors (e.g., `Become(WaitingForAuth)`),
-> the Connection tracks which `stage` the communication is currently in to validate incoming messages.
+These elements define your Actor's **Finite State Machine (FSM)**. Just as an Actor switches behaviors (e.g., `Become(WaitingForAuth)`), the
+Connection tracks which `State` the communication is currently in to validate incoming messages.
 
 **Importing and Composing Connections:**
 
@@ -2174,73 +2351,65 @@ interface CommunicationConnection : Connects<Server, Client>,
                                     SwapHosts<TheConnection> { }
 ```
 
-### Channels
+### Actors
 
-A **channel** is a virtual communication pathway within a physical connection. Every connection contains at least one channel: the **default channel
-**, which uses the connection's body scope to declare its entities. Additional named channels can be created, each operating independently within its
-parent connection.
+An **Actor** is a stateful entity  each operating independently and can communicate via connection. Every connection contains Actor system on each end.
 
-Named channels (beyond the default) are declared within the connection scope as C# interfaces that implement `org.unirail.Meta.Channel`.
+Actors are declare within a Connection interface body.
+there is a one default unnamed Actor, that use the Connection interface body do declate it internal state
 
-> [!TIP]
-> **Actor Analogy: Actor Classes vs. Actor Refs**
-> * **The Channel Interface** is the **Actor Class** (the blueprint/type definition).
-> * **The Channel Instance** is the running **Actor Reference** (the actual worker in memory).
->
-> A single Connection acts as a supervisor that manages multiple types of Actors (Channels) running over the same network socket.
+Named Actors (beyond the default) are declared within the connection scope as C# interfaces that implement `org.unirail.Meta.Actor`.
 
-The instance capacity for **all** channels (both the default and named channels) is controlled by a single property in the `Connects` interface:
+* **The Actor Interface** serves as your Actor Class (the blueprint and type definition).
+* **The Actor Instance** is the running Actor Reference (the actual worker in memory).
+
+A single Connection acts as a supervisor that manages multiple types of Actors running over the same network socket. The instance capacity for **all**
+Actors (both the default and named Actors) is controlled by a single property in the `Connects` interface:
 
 ```csharp
 public interface Connects<L, R> : _
     where L : struct, Host
     where R : struct, Host {
-    int MaxChannelInstances => 1;
+    int MaxActorInstances => 1;
 }
 ```
 
-- `MaxChannelInstances`: Defines the maximum number of instances allowed for **each** channel type defined in the connection. This setting applies to
-  all connection channels, default and named.
+- `MaxActorInstances`: Defines the maximum number of instances allowed for **each** Actor type defined in the connection. This setting applies to all
+  connection Actors, default and named.
 
 #### Addressing and Broadcasting (Multi-Entity Rule)
 
-When a connection contains **multiple channels** or is configured for **multiple instances**, the protocol utilizes a power-of-2 memory alignment to
+When a connection contains **multiple Actors** or is configured for **multiple instances**, the protocol utilizes a power-of-2 memory alignment to
 create a dedicated **Broadcast ID**.
 
 **The Alignment Rule:**
-The total address space ($N$) is aligned to the **next power of 2** based on the count of items (Channels or Instances).
+The total address space ($N$) is aligned to the **next power of 2** based on the count of items (Actors or Instances).
 
 **The Broadcast ID:**
-The **last index** of this aligned space ($N - 1$) is reserved as a special **Broadcast ID**.
+The **last index** of this aligned space ($N - 1$) is reserved as a special **Broadcast ID**, which functions exactly like a **Broadcast Group Router
+**.
 
-* Sending a packet to this ID broadcasts the message to **all** active participants in that scope.
-* **Valid Unicast IDs** are restricted to the range `0` to `N - 2`.
+* Sending a packet to IDs `0` to `N - 2` acts as a Unicast to a specific child Actor.
+* Sending a packet to ID `N - 1` triggers the router to Broadcast the message to the entire pool of active participants.
 
-> [!NOTE]  
-> **Single Entity Exception**
-> This logic does **not** apply if configured only one channel or only one instance.
-> **Actor Analogy: The Broadcast Router**
-> The **Broadcast ID** functions exactly like an **Akka Broadcast Group Router**.
-> * Sending to **ID 0...N-2** is like sending a message to a specific child Actor (Unicast).
-> * Sending to **ID N-1** triggers the Router to forward the message to the entire pool of Actors (Broadcast).
->
-> Unlike software routers, AdHoc bakes this routing logic directly into the binary addressing scheme for zero-overhead multiplexing.
+Unlike software routers, AdHoc bakes this routing logic directly into the binary addressing scheme for zero-overhead multiplexing. *(Note: This logic
+does **not** apply if configured with only one Actor and one instance).*
 
 **Example Scenarios:**
 
-1. **Multi-Instance Case (`MaxChannelInstances => 7`)**
+1. **Multi-Instance Case (`MaxActorInstances => 7`)**
 	* **Alignment:** 7 aligns to **8**.
 	* **Address Space:** `0` to `7`.
 	* **Valid Instance IDs:** `0, 1, 2, 3, 4, 5, 6` (Exactly 7 instances).
 	* **Broadcast ID:** `7`. (Sending here reaches all instances).
 
-2. **Multi-Channel Case (Default + 2 Named Channels = 3 Total)**
+2. **Multi-Actor Case (Default + 2 Named Actors = 3 Total)**
 	* **Alignment:** 3 aligns to **4**.
 	* **Address Space:** `0` to `3`.
-	* **Valid Channel IDs:** `0, 1, 2` (Mapped to the 3 defined channels).
-	* **Broadcast ID:** `3`. (Sending here reaches all channels).
+	* **Valid Actor IDs:** `0, 1, 2` (Mapped to the 3 defined Actors).
+	* **Broadcast ID:** `3`. (Sending here reaches all Actors).
 
-3. **Overflow Case (`MaxChannelInstances => 9`)**
+3. **Overflow Case (`MaxActorInstances => 9`)**
 	* **Alignment:** 9 aligns to **16**.
 	* **Valid Instance IDs:** `0` to `14` (Allows up to 15 instances).
 	* **Broadcast ID:** `15`.
@@ -2255,29 +2424,24 @@ namespace com.company {
         // Defines a connection between the Client and the Server
         interface Communication : Connects<Client, Server> {
             
-            // Configure ALL channels (Default + Named) to allow up to 7 instances each
-            int Connects<Client, Server>.MaxChannelInstances => 7;
+            // Configure ALL Actors (Default + Named) to allow up to 7 instances each
+            int Connects<Client, Server>.MaxActorInstances => 7;
             
-            // Declare additional named channel
-            // This channel also supports up to 7 instances, defined by the connection setting
-            interface CPUMetricsChannel : Channel {
+            // Declare additional named Actor
+            // This Actor also supports up to 7 instances, defined by the connection setting
+            interface CPUMetricsActor : Actor {
             }
         }
     }
 }
 ```
 
-Each channel instance maintains its own stage state.
+Each Actor instance maintains its own State, effectively implementing a **Share-Nothing Architecture**. Just as two instances of the same Actor type
+do not share variables, `CPUMetricsActor[0]` and `CPUMetricsActor[1]` track their protocol State completely independently.
 
-> [!TIP]
-> **Actor Analogy: State Isolation**
-> "Each channel instance maintains its own stage state" effectively means **Share Nothing Architecture**.
-> Just like two Actors of the same type do not share variables, `CPUMetricsChannel[0]` and `CPUMetricsChannel[1]` track their protocol state
-> completely independently.
+### States
 
-### Stages
-
-Stages represent distinct processing states within a channel's lifecycle. They define the current context—what messages are expected and what logic
+States represent distinct processing phases within an Actor's lifecycle. They define the current context—what messages are expected and what logic
 should execute. The implementation follows established [state machine patterns](https://en.wikipedia.org/wiki/Finite-state_machine) similar to
 frameworks like:
 
@@ -2293,12 +2457,12 @@ frameworks like:
 > The AdHoc server generates code from your dataflow description. Developers integrate this code into their implementations, adding custom logic and
 > handling edge cases as needed.
 >
-> For usage examples, search for `Communication.Stages` in
+> For usage examples, search for `Communication.States` in
 > the [ConnectsToServer.cs](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/src/ChannelToServer.cs) file.
 
 **Practical Example: Communication Lifecycle**
 
-Let's examine the communication channel from [
+Let's examine the communication Actor from [
 `AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/acfc582c971914a4a86f3458d4b85a141a787d3c/AdHocProtocol.cs#L443):
 
 <details>
@@ -2315,19 +2479,40 @@ AdHocAgent.exe /path/to/AdHocProtocol.cs?
 Right-click on a connection link to open the connections window and resize to see all available connections.
 
 **Top Diagram: Agent ↔ Server Communication**
+```mermaid
+stateDiagram-v2
+    [*] --> Start
 
+    Start --> VersionMatching : Agent.Version
+
+    VersionMatching --> Login : Server.Invitation
+    VersionMatching --> Exit : Server.Info
+
+    Login --> LoginResponse : Agent.Login
+
+    LoginResponse --> TodoJobRequest : Server.Invitation\nServer.InvitationUpdate
+    LoginResponse --> Exit : Server.Info
+
+    TodoJobRequest --> Project : Agent.Project
+    TodoJobRequest --> Proto : Agent.Proto
+
+    Project --> Exit : Server.Info\nServer.Result
+    Proto --> Exit : Server.Info\nServer.Result
+
+    Exit --> [*]
+```
 This illustrates stateful communication between an `Agent` and `Server`, progressing from connection establishment through task processing.
 
 **1. Initialization & Version Validation**
 
-* **Agent starts** in the `Start` state and sends its `Version` to the `Server`
-* **Server validates** the version while in the `VersionMatching` state:
+* **Agent starts** in the `Start` State and sends its `Version` to the `Server`
+* **Server validates** the version while in the `VersionMatching` State:
 	* **Mismatch:** Server sends an `Info` packet with error details, then terminates (⛔)
 	* **Match:** Server sends an `Invitation`, advancing to authentication
 
 **2. Authentication**
 
-* **Agent transitions** to `Login` state; Server enters `LoginResponse` state
+* **Agent transitions** to `Login` State; Server enters `LoginResponse` State
 * **Agent sends** either `Login` (existing user) or `Signup` (new user)
 * **Server processes** credentials:
 	* **Failure:** Sends `Info` packet with error
@@ -2348,16 +2533,16 @@ This shows a persistent connection for monitoring and control.
 
 **1. Initialization**
 
-* **Agent** sends initial state: `Layout` (UI structure) and `Project` (data)
+* **Agent** sends initial State: `Layout` (UI structure) and `Project` (data)
 * **Observer** renders the initial view
 
 **2. Interactive Loop**
 
-* **Observer** (in `Operate` stage) can send:
+* **Observer** (in `Operate` State) can send:
 	* `Up_max_date`: Check for data updates
 	* `Show_Code`: Request code display in IDE
 	* `Layout`: Save modified diagram layout
-* **Agent** (in `RefreshProject` stage) responds:
+* **Agent** (in `RefreshProject` State) responds:
 	* Updated `Project` if needed
 	* `Up_max_date` confirmation if no update required
 
@@ -2367,14 +2552,14 @@ This creates a continuous synchronization loop.
 
 ---
 
-#### Declaring Stages
+#### Declaring States
 
-Stages are declared within the connection or channel scope as C# interfaces. The interface name becomes the stage name, and the topmost stage
-represents the initial state.
+States are declared within the connection or Actor scope as C# interfaces. The interface name becomes the State name, and the topmost State represents
+the initial State.
 
-The code generator traverses from the top stage; unreachable stages are ignored.
+The code generator traverses from the top State; unreachable States are ignored.
 
-A stage interface must extend one of:
+A State interface must extend one of:
 
 - `org.unirail.Meta.L` (left host)
 - `org.unirail.Meta.R` (right host)
@@ -2384,7 +2569,7 @@ Branch declarations follow immediately after the host designation.
 
 ![Host designation example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/1cd6ad55-7e0e-4167-9d4a-fef279b4fa11)
 
-Stages can be unidirectional (only one side sends):
+States can be unidirectional (only one side sends):
 
 ![Unidirectional example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/f1cdc9e3-9e14-4781-af7b-ce46b3dc5234)
 
@@ -2392,14 +2577,14 @@ Stages can be unidirectional (only one side sends):
 > Short block comments like `/*įĂ*/` contain auto-generated unique identifiers. These identify entities uniquely across renames and relocations. *
 *Never edit or clone these identifiers.**
 
-#### Stage Timeouts
+#### State Timeouts
 
-Use built-in attributes to define maximum stage duration (in seconds):
+Use built-in attributes to define maximum State duration (in seconds):
 
 - `[ReceiveTimeout(seconds)]`
 - `[TransmitTimeout(seconds)]`
 
-Without these attributes, stages persist indefinitely.
+Without these attributes, States persist indefinitely.
 
 ---
 
@@ -2407,14 +2592,14 @@ Without these attributes, stages persist indefinitely.
 
 After declaring a host side (`L`, `R`, or `LR`), outgoing packets are organized into **branches**. Each branch contains:
 
-1. A [`PackSet`](#projecthost-as-a-named-pack-set) of packets that can be sent
-2. Optionally, a target `stage` to transition to after sending
+1. A `PackSet` of packets that can be sent
+2. Optionally, a target `State` to transition to after sending
 
 **Transition rules:**
 
-- **No target specified:** Implicitly transitions to itself (persistent stage)
+- **No target specified:** Implicitly transitions to itself (persistent State)
 - **`org.unirail.Meta.Exit` target:** Receiving host terminates the connection
-- **Named stage target:** Transitions to that stage
+- **Named State target:** Transitions to that specific State
 
 #### Implicit vs Explicit Self-Reference
 
@@ -2447,7 +2632,7 @@ interface Login /*ā*/ : L,
 
 #### Symmetric Branches with `LR`
 
-When both hosts share identical branch structure, use `LR` to avoid duplication:
+When both hosts share an identical branch structure, use `LR` to avoid duplication:
 
 **Recommended:**
 
@@ -2455,7 +2640,7 @@ When both hosts share identical branch structure, use `LR` to avoid duplication:
 interface Start : LR,
                   _< 
                       LayoutFile.UID,
-                      GoToStage
+                      GoToState
                   >
 { };
 ```
@@ -2466,12 +2651,12 @@ interface Start : LR,
 interface Start : L,
                   _< 
                       LayoutFile.UID,
-                      GoToStage
+                      GoToState
                   >,
                   R,
                   _< 
                       LayoutFile.UID,
-                      GoToStage
+                      GoToState
                   >
 { };
 ```
@@ -2482,11 +2667,11 @@ interface Start : L,
 
 ### Modifying Imported Connections
 
-You can customize imported connections and their components (stages, channels, branches) without modifying the original definitions.
+You can customize imported connections and their components (States, Actors, branches) without modifying the original definitions.
 
 #### Modification Syntax
 
-**For connections or stages:**
+**For connections or States:**
 
 - Replicate the target's structure with custom naming
 - Extend `org.unirail.Meta.Modify<TargetEntity>` or `org.unirail.Meta.Modify<TargetConnection, HostA, HostB>`
@@ -2499,10 +2684,10 @@ You can customize imported connections and their components (stages, channels, b
 
 - **Delete:** Wrap entities in `org.unirail.Meta.X<>`: `X<Agent.Login>`
 - **Add:** Reference new entities normally
-- **Modify transitions:** Explicitly reference the target stage (even if self-referencing)
+- **Modify transitions:** Explicitly reference the target State (even if self-referencing)
 
 > [!NOTE]  
-> Modified branches are identified by their transition target stage.
+> Modified branches are identified by their transition target State.
 
 #### Example: Removing Entities from a Branch
 
@@ -2513,14 +2698,14 @@ interface UpdateLogin : Modify<Login>,
                             X<Agent.Login>,    // Remove packet
                             X<Agent.Signup>,   // Remove packet
                             X<Login>,          // Remove self-transition
-                            Update_to_stage    // Set new target
+                            Update_to_state    // Set new target
                         >
 { }
 ```
 
 #### Example: Changing Implicit Self-Reference
 
-Original stage (implicitly self-referencing):
+Original State (implicitly self-referencing):
 
 ```csharp
 interface Login : L,
@@ -2531,14 +2716,14 @@ interface Login : L,
 { }
 ```
 
-To redirect the transition, explicitly reference `Login`:
+To redirect the transition, explicitly reference the target `State`:
 
 ```csharp
 interface UpdateLogin : Modify<Login>, 
                         L, 
                         _
                             X<Login>,          // Remove implicit self-transition
-                            Update_to_stage    // Set new target
+                            Update_to_state    // Set new target State
                         >
 { }
 ```
@@ -2559,16 +2744,16 @@ interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
                                        X<Server.Info>  // Remove this packet
                                    > { }
 
-    // Add timeout and change stage transition
+    // Add timeout and change State transition
     [TransmitTimeout(30)]
     interface Updated_Start : Modify<AdHocProtocol.Communication.Start>,
                               L,
                               _
                                   X<AdHocProtocol.Communication.VersionMatching>,  // Remove transition
-                                  NewStage                                         // Set new target
+                                  NewState                                         // Set new target State
                               > { }
 
-    // Replace packet in existing stage
+    // Replace packet in existing State
     interface UpdatedVersionMatching : Modify<AdHocProtocol.Communication.VersionMatching>,
                                        R,
                                        _
@@ -2576,8 +2761,8 @@ interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
                                            Authorizer             // Add
                                        > { }
 
-    // Define new stage
-    interface NewStage : L,
+    // Define new State
+    interface NewState : L,
                          _
                              Sending_Pack
                          > { }

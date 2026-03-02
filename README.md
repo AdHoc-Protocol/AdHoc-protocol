@@ -2481,7 +2481,7 @@ Right-click on a connection link to open the connections window and resize to se
 **Top Diagram: Agent ↔ Server Communication**
 ```mermaid
 stateDiagram-v2
-    [*] --> Start
+    [*] --> Start4
 
     Start --> VersionMatching : Agent.Version
 

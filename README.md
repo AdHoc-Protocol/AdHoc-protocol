@@ -1673,10 +1673,6 @@ tasks such as routing, stream management, actor and actor instance identificatio
   When a packet is sent **indirectly** (i.e. it is referenced as a field type inside another packet), only its **payload** is included — **no header**
   is attached in this case.
 
-For any packet type that declares / supports a header:
-
-- When sent **directly** over a connection → header is attached
-- When sent **indirectly** (referenced by a field inside another packet) → **no header** is attached
 
 #### Adding Header Fields
 
@@ -1912,6 +1908,150 @@ The Pairwise Actor System makes **network boundaries safe and predictable** thro
    permission. This provides lock-free, race-condition-free synchronization.
 4. **Epoch sequencing:** Every state transition increments a shared "Epoch," creating a localized logical clock. Stale messages from past epochs are
    automatically dropped.
+
+<details>
+ <summary><span style="font-size:30px">👉</span><b><u>Why AdHoc Uses Actors — and Why async/await Is the Wrong Model for Network Protocols</u></b></summary>
+
+**The Origin of async/await**
+
+To understand why `async/await` is a poor fit for protocol-level networking, you must first understand what problem it was actually designed to solve.
+
+`async/await` was born from a single use case: **Remote Procedure Call**. The mental model is seductive — you call a function, it travels over the
+network, executes somewhere else, and returns a result. The network hop is invisible. The programmer writes linear code. It looks like this:
+
+```csharp
+var result = await RemoteService.ComputeAsync(input);
+```
+
+This is clean, readable, and for that one pattern — completely reasonable.
+
+The catastrophe begins when you try to use this model for everything else.
+
+---
+
+**What Real Network Applications Actually Do**
+
+RPC is a vanishingly small fraction of what a networked application actually does. Consider what a real protocol session looks like:
+
+1. A connection is established — **hold state**
+2. A handshake packet arrives — **validate, transition state**
+3. A partial payload arrives — **buffer it, wait for more**
+4. The rest of the payload arrives — **reassemble, transition state**
+5. An authentication challenge is issued — **wait for response, hold state**
+6. A heartbeat timeout fires — **react, maybe send, maybe close**
+7. A second channel opens on the same connection — **manage parallel state**
+8. A downstream dependency responds out of order — **correlate, reconcile state**
+
+This is not a call stack. It is a **state machine**. It has memory. It reacts to events from multiple sources. It lives for seconds, minutes,
+sometimes hours. It holds resources deliberately across many message exchanges.
+
+`async/await` models computation as a **suspended call stack** — a coroutine that pauses waiting for one thing and resumes when that one thing
+arrives. To force a state machine into this model, you end up doing one of two things:
+
+- You fragment the state machine logic across dozens of `await` points, destroying the coherence of the protocol flow
+- Or you build elaborate orchestration around `async/await` — `CancellationToken`, `TaskCompletionSource`, `SemaphoreSlim`, `Channel<T>`,
+  `IAsyncEnumerable` — an entire bureaucracy of infrastructure to recover the expressiveness that was stripped away by choosing the wrong primitive in
+  the first place
+
+Every `await` is a potential heap allocation. Every suspended coroutine is a live object the garbage collector must track. In a server processing
+thousands of concurrent sessions, each with dozens of in-flight protocol states, this is not a theoretical concern — it is the reason your latency
+spikes, your GC pauses grow, and your memory profile looks like a staircase.
+
+---
+
+**The Actor Model Fits Protocols Naturally**
+
+An actor is exactly what a protocol session is:
+
+- It has **identity** — it is a specific session, with a specific peer, with specific negotiated parameters
+- It has **state** — it remembers where the protocol is, what has been sent, what is pending, what has been negotiated
+- It has a **mailbox** — it receives messages one at a time, in order, without data races
+- It **reacts** — it processes an incoming message, updates its state, and optionally sends messages to other actors
+- It **persists** — it lives for the duration of the session or as long as needed, not for the duration of a single request
+
+There is no suspension. There is no heap-allocated coroutine waiting for a `TaskCompletionSource` to be resolved. There is no cancellation token
+threaded through fifteen function signatures. The actor is simply **alive**, holding its state, processing the next message when it arrives.
+
+The protocol logic becomes a single coherent state machine — readable, auditable, and trivially testable by injecting messages.
+
+```
+[session actor state]
+  → receives LOGIN_REQUEST
+  → validates credentials
+  → transitions to AUTHENTICATED
+  → sends LOGIN_RESPONSE
+  → receives SUBSCRIBE_REQUEST
+  → registers subscription (state mutation)
+  → sends SUBSCRIBE_ACK
+  → receives HEARTBEAT
+  → resets timeout timer (state mutation)
+  → ... continues for the lifetime of the session
+```
+
+Every step is explicit. Every state transition is visible. No hidden suspension points. No invisible allocations. [No
+`async` infection spreading through
+your entire call graph.](https://archive.is/bDczv)
+
+---
+
+**Actors Subsume RPC. RPC Cannot Subsume Actors.**
+
+This is the critical asymmetry, and it is not subtle.
+
+**Actors can express RPC trivially.** If you need request/response semantics, an actor sends a message and waits for a reply.
+This is a standard pattern in any actor system, and it looks like this:
+
+```
+Actor A sends REQUEST(id=42, payload) → Actor B
+Actor B processes, sends RESPONSE(id=42, result) → Actor A
+Actor A matches id=42, delivers result to waiting logic
+```
+
+The actor doesn't suspend the thread. It simply holds the pending correlation in its state and handles the response when it arrives — alongside
+heartbeats, errors, timeouts, and any other messages that might interleave. You get RPC semantics without giving up any of the generality of the actor
+model.
+
+**RPC cannot express actors.** The moment your protocol requires:
+
+- Holding state across more than one request/response cycle
+- Reacting to unsolicited server-initiated messages
+- Managing multiple interleaved exchanges on the same session
+- Handling timeouts that are decoupled from any specific call
+- Receiving streaming or fragmented data
+
+...`async/await` has no native answer. You find yourself bolting on state, fighting the call stack model, and building the actor model badly in the
+gaps between your `await` expressions.
+
+`async/await` is a **degenerate special case** of the actor model. It models the single-message, single-response, single-waiter case — and it models
+that case well. But a general network protocol is not a collection of isolated request/response pairs. It is a living, stateful conversation between
+two systems, and it requires a model that is alive for the duration of that conversation.
+
+---
+
+**What This Means for AdHoc**
+
+AdHoc is built around the recognition that **the protocol is the state machine, and the state machine is the actor**.
+
+Generated protocol code in AdHoc does not produce `async` methods returning `Task<T>`. It produces actors — entities with explicit state, explicit
+message handlers, and explicit transitions. The generated code is:
+
+- **Allocation-minimal** — no coroutine objects, no `TaskCompletionSource`, no intermediate promise chains
+- **GC-friendly** — state lives in the actor's fields, not in heap-allocated closure captures
+- **Readable** — the protocol flow is visible as a state machine, not scattered across `await` points
+- **Composable** — actors communicate with other actors; RPC is available as a pattern, not as a constraint
+
+When a developer using AdHoc wants RPC semantics, they use them — one actor sends a message, another response, correlation is handled in a few lines
+of state. When they need streaming, subscription, long-lived session management, or server-push — they already have everything they need, because they
+were always writing actors.
+
+The reverse is not true. A developer committed to `async/await` who discovers they need session-level state must fight their way uphill to recover
+what the actor model gives you for free from the start.
+
+**The expressive power flows in one direction. Actors contain async. Async does not contain actors.**
+
+</details>
+
+
 
 Actors are declared within the connection scope as C# interfaces. Their concurrency limits, identity, and addressing schemes are defined by
 implementing one of the following `org.unirail.Meta` interfaces:

@@ -5,7 +5,7 @@ Performance should never be an afterthought.
 ![image](https://user-images.githubusercontent.com/29354319/204679188-d5b0bdc7-4e47-4f32-87bb-2bfaf9d09d78.png)
 
 When system components need to communicate efficiently across languages and platforms, manually coding serialization and deserialization becomes a
-real burden — slow to write, prone to subtle bugs, and increasingly painful as the system grows, new languages are added, or data structures change.
+real burden - slow to write, prone to subtle bugs, and increasingly painful as the system grows, new languages are added, or data structures change.
 
 **Domain-Specific Languages (DSLs) for protocol description** solve this by letting you declare your data structures, message types, and communication
 protocols once, then automatically generate consistent, high-performance implementation code for any supported language. The benefits are concrete:
@@ -27,7 +27,7 @@ Many established frameworks use this approach:
 - [**Apache Avro**](https://avro.apache.org/docs/1.8.2/idl.html): Schema-based serialization for big data.
 
 After evaluating these options, particularly for scenarios demanding maximum binary efficiency and application-specific protocol control, we developed
-**AdHoc Protocol** — a next-generation code generator built for those demands.
+**AdHoc Protocol** - a next-generation code generator built for those demands.
 
 AdHoc currently supports **C#, Java, and TypeScript**, with C++, Rust, and Go planned. It handles translation between binary data streams and
 structured objects ("packs"), making high-performance cross-language communication straightforward.
@@ -36,7 +36,7 @@ structured objects ("packs"), making high-performance cross-language communicati
 
 AdHoc is built for **data-oriented applications** that need high performance and efficient handling of structured binary data, whether for network
 communication or custom storage formats. Unlike frameworks that require buffering entire messages in memory, **AdHoc uses a streaming architecture.**
-Data is processed in small, reusable chunks, dramatically reducing memory usage and enabling efficient handling of messages of any size — including
+Data is processed in small, reusable chunks, dramatically reducing memory usage and enabling efficient handling of messages of any size - including
 messages larger than available RAM.
 
 ### 1. Best Fit: Data-Intensive Applications
@@ -77,10 +77,10 @@ AdHoc is well-suited for systems where data volume, speed, and efficiency matter
 
 The **AdHoc** generator provides:
 
-- C# as the protocol description language — familiar and well-tooled.
+- C# as the protocol description language - familiar and well-tooled.
 - Entities that can import (inherit) or subtract (remove) properties of others.
 - Projects composable from other projects, or able to selectively import specific components such as **connections**, constants, or individual packs.
-- **Connections** constructable from other connections or their components (stages, branches).
+- **Connections** constructable from other connections or their components (states, branches).
 - Packs that can import or subtract individual fields or all fields of other packs.
 - A [`custom code injection point`](#custom-code-injection-point) for safely integrating custom code with generated code.
 - Built-in visualization through the **AdHoc Observer**, which renders interactive diagrams of network topology, pack field layouts, and data flow
@@ -102,7 +102,7 @@ The **AdHoc** generator provides:
 
 The **AdHoc Code Generator** is a [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service) platform providing cloud-based code generation.
 
-First, you'll need a personal [UUID](#uuid). A UUID — rather than a login and password — lets you automate code generation and embed the **AdHocAgent
+First, you'll need a personal [UUID](#uuid). A UUID - rather than a login and password - lets you automate code generation and embed the **AdHocAgent
 ** utility into your delivery pipeline.
 
 To get started:
@@ -176,7 +176,7 @@ receive live protocol data and renders it as a series of interconnected diagrams
 The Observer lets you:
 
 * **Visualize high-level architecture:** See all hosts, the packs they handle, and the **connections** linking them in a clear, interactive graph.
-* **Drill into data flow logic:** Right-click a **connection** to open a detailed pop-up view of its state machine, including all stages and branching
+* **Drill into data flow logic:** Right-click a **connection** to open a detailed pop-up view of its state machine, including all states and branching
   logic.
 * **Inspect data structures:** Left-click a pack to view its fields, data types, and nested structures.
 * **Annotate and document:** Double-click the background to create, edit, and save rich-text notes ("stickers") directly on the diagrams.
@@ -221,7 +221,7 @@ Converts a file or directory of [Protocol Buffers](https://developers.google.com
 > The second argument can be a path to a directory containing additional imported `.proto` files, such as [
 `well_known`](https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf) files.
 
-The result of `.proto` file conversion is only a starting point for migrating to AdHoc — it cannot be used as-is. Review it with the full capabilities
+The result of `.proto` file conversion is only a starting point for migrating to AdHoc - it cannot be used as-is. Review it with the full capabilities
 of AdHoc protocol in mind.
 
 ## `.json` or `.yaml`
@@ -251,7 +251,7 @@ system. AdHocAgent will only repeat the deployment process for source files alre
 		- [Windows](https://www.7-zip.org/a/7zr.exe) | [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz) | [macOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
 	- Paths to source code formatter binaries:
 		- [clang-format](https://releases.llvm.org/download.html)
-		- [prettier](https://prettier.io/docs/en/install.html) — install globally: `npm install -g prettier`
+		- [prettier](https://prettier.io/docs/en/install.html) - install globally: `npm install -g prettier`
 		- [astyle](https://sourceforge.net/projects/astyle/files/)
 
 AdHocAgent searches for `AdHocAgent.toml` in its own directory. If not found, it generates a template to fill in.
@@ -278,7 +278,7 @@ AdHocAgent 100b9fd2-e593-485b-a2fe-9b9c82bc1e3f
 The utility saves the `volatile UUID` in `AdHocAgent.toml`.
 
 > [!NOTE]  
-> The UUID may be automatically renewed during new code generation requests and cannot be reused. Keep your `AdHocAgent.toml` file — it stores the
+> The UUID may be automatically renewed during new code generation requests and cannot be reused. Keep your `AdHocAgent.toml` file - it stores the
 > updated UUID. If your UUID is rejected, repeat the sign-up process to get a new one.
 
 > [!NOTE]  
@@ -370,12 +370,12 @@ Add `⛔` to a line or use an empty target `[]()` to exclude from deployment:
 
 #### Advanced Processing: Execution Instructions
 
-Run scripts or tools on source files *before* they are deployed — for formatting, linting, or other transformations. Instructions are defined in code
+Run scripts or tools on source files *before* they are deployed - for formatting, linting, or other transformations. Instructions are defined in code
 blocks and executed in order.
 
 ##### File Path Placeholder & Root Path
 
-* Use the `FILE_PATH` placeholder — it is replaced with the actual file path at runtime.
+* Use the `FILE_PATH` placeholder - it is replaced with the actual file path at runtime.
 * Paths starting with `/InCS/`, `/InJAVA/`, etc., are treated as relative to the source files root directory.
 
 ##### Shell Execution
@@ -477,7 +477,7 @@ Inside an injection point, you may find pre-written code snippets wrapped in spe
 
 * ✅ **Enable/Disable:** Comment out **the entire block (including tags)** to disable; uncomment to enable.
 * ✅ **Reorder:** Move an entire block (tags and all) within its injection point.
-* ❌ **Do not edit** the code *inside* a generated block — changes are discarded on the next deployment.
+* ❌ **Do not edit** the code *inside* a generated block - changes are discarded on the next deployment.
 * ❌ **Do not modify** the tags: block markers (e.g., `//❗<`).
 
 #### Smart Update Notifications
@@ -496,10 +496,17 @@ generator changes for your review:
   your logic, it is commented out with a warning rather than permanently deleted. You free to review and remove it.
   ```csharp
   //todo 🔴 The following code block was removed by the code generator. Please review.
-  // //❗<
-  //    callObsoleteFunction();
-  // //❗/>
+  //   callObsoleteFunction();
   ```
+
+💡 **Best Practice for Notifications:**
+It is highly recommended to investigate all `//todo 🔴` warnings immediately to understand how the protocol update affects your custom logic. Once you
+have reviewed the changes and adjusted your code, **manually delete the warning lines and the obsolete commented-out blocks** to keep your codebase
+clean.
+
+**Auto-Cleanup:** If you forget to remove them, don't worry. During the *next* code refresh cycle, the AdHoc Agent will automatically and silently
+clean up any lingering `//todo 🔴` warning lines. Furthermore, any generated blocks that are both disabled (commented out) and no longer exist in the
+new protocol will simply disappear.
 
 #### Orphaned Code Protection
 
@@ -624,7 +631,7 @@ To upload a file and get generated source code: `AdHocAgent.exe /dir/minimal_des
 > **The `protocol description file` follows a specific naming convention:**
 >
 > - Names must not start or end with an underscore `_`.
-> - C# prohibits a class from having a field or nested class with the same name as the class itself — a `Pack` cannot have a field or nested pack
+> - C# prohibits a class from having a field or nested class with the same name as the class itself - a `Pack` cannot have a field or nested pack
     sharing its name.
 > - Names must not match keywords in any language the code generator supports. **AdHocAgent** checks for these conflicts before uploading.
 
@@ -831,7 +838,7 @@ interface MyProject : OtherProjects, MoreProjects
 ```
 
 > [!NOTE]  
-> The order of extended interfaces determines priority for name or pack ID conflicts — earlier ones take precedence.
+> The order of extended interfaces determines priority for name or pack ID conflicts - earlier ones take precedence.
 
 For example, the [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) description defines public,
 external connections. Backend infrastructure on the **Server** side often requires an internal protocol for tasks like:
@@ -843,9 +850,9 @@ external connections. Backend infrastructure on the **Server** side often requir
 
 **Options:**
 
-1. **Create a separate `Backend` protocol description** — best when the external and internal protocols don't share packet instances.
+1. **Create a separate `Backend` protocol description** - best when the external and internal protocols don't share packet instances.
 
-2. **Extend the existing `AdHocProtocol` description** — use when you want both protocols integrated within a single `Server` host:
+2. **Extend the existing `AdHocProtocol` description** - use when you want both protocols integrated within a single `Server` host:
    
    ```csharp
    using org.unirail.Meta;
@@ -949,8 +956,8 @@ namespace org.unirail {
 
 This example introduces two new hosts (`Metrics` in C#, `Authorizer` in Java), several packs, and two connections:
 
-* `ConnectionToMetrics` — links `Server` and `Metrics`.
-* `ConnectionToAuthorizer` — links `Server` and `Authorizer`, with a request/reply pattern.
+* `ConnectionToMetrics` - links `Server` and `Metrics`.
+* `ConnectionToAuthorizer` - links `Server` and `Authorizer`, with a request/reply pattern.
 
 > [!IMPORTANT]
 > When working with multiple protocols, you cannot combine their generated protocol-processing code in the same VM instance due to `lib` **org.unirail
@@ -976,14 +983,14 @@ To import only specific connections, enums, or constant sets:
 ```
 
 > [!NOTE]  
-> Note the **plus** character after the attribute. You cannot import `Stages` this way.
+> Note the **plus** character after the attribute. You cannot import `State` this way.
 
 To exclude specific entities:
 
 ```csharp
 /// <see cref="MoreProjects.UnnecessaryPack"/>-
 /// <see cref="OtherProjects.UnnecessaryConnection"/>-
-/// <see cref="OtherProjects.UnnecessaryConnection.Stage"/>-
+/// <see cref="OtherProjects.UnnecessaryConnection.State"/>-
 interface MyProject : OtherProjects, MoreProjects
 {
 }
@@ -1017,19 +1024,19 @@ public interface AdHocProtocol :
 	* **Enums / Constant Sets:**
 		* **Project level** (`interface Project : _<Enum>`): Included in **every** host in the project.
 		* **Host level** (`struct Host : _<Enum>`): Included in that **specific** host regardless of field references.
-	* **Hosts:** Restricted — hosts must be referenced as endpoints within a **Connection**.
-	* **Packs:** Restricted — packs must be referenced within a **Branch** of a **Stage**.
+	* **Hosts:** Restricted - hosts must be referenced as endpoints within a **Connection**.
+	* **Packs:** Restricted - packs must be referenced within a **Branch** of a **State**.
 
 2. **`X<T>` (Remove)**
 	* **Connections:** Removes the connection.
 	* **Enums / Constant Sets:** Removes from project scope.
 	* **Hosts:** Removes the host *and* any Connection referencing it.
-	* **Packs:** Removes the pack from the project and from every Stage Branch where it appears.
+	* **Packs:** Removes the pack from the project and from every State Branch where it appears.
 
 3. **`_<(TYPE_A, TYPE_B, ...)>`:** Use C# tuple syntax for multiple types.
 
 > [!NOTE]  
-> To import a **host**, reference it as an endpoint within a **connection**. To import a **pack**, reference it within a branch of a stage.
+> To import a **host**, reference it as an endpoint within a **connection**. To import a **pack**, reference it within a branch of a state.
 
 [Learn how to modify imported packs](#modify-imported-packs).  
 [Learn how to modify imported connections](#modify-imported-connections).
@@ -1051,22 +1058,22 @@ When specifying a target language, append a two-character modifier (e.g., `++`, 
 
 #### First Position: Parsing Strategy (`+` or `-`)
 
-* `+` — **Full Object Deserialization (Concrete Implementation)**
+* `+` - **Full Object Deserialization (Concrete Implementation)**
 	* The streaming parser reads the entire message and constructs a complete, in-memory object. All data is deserialized before your code accesses
 	  it.
-	* Best for most application and business logic — simple, stateful objects that can be passed to methods or stored.
+	* Best for most application and business logic - simple, stateful objects that can be passed to methods or stored.
 
-* `-` — **Streaming Event-Based Parsing (Abstract Interface)**
+* `-` - **Streaming Event-Based Parsing (Abstract Interface)**
 	* Activates an event-driven parsing model. The generator creates an abstract base class you must implement. As the parser reads data from the
 	  stream, it immediately calls methods on your implementation for each field encountered. **The full object is never allocated on the heap.**
-	* Best for high-throughput, low-latency scenarios — network routers, data loggers, or services that must process messages larger than available
+	* Best for high-throughput, low-latency scenarios - network routers, data loggers, or services that must process messages larger than available
 	  RAM.
 
 #### Second Position: Hash Support (`+` or `-`)
 
-* `+` — Generates `Equals()` and `GetHashCode()` implementations (or signatures in abstract mode). Use when storing packet objects in hash-based
+* `+` - Generates `Equals()` and `GetHashCode()` implementations (or signatures in abstract mode). Use when storing packet objects in hash-based
   collections.
-* `-` — Skips `Equals()` and `GetHashCode()`. Reduces generated code and avoids minor overhead when hash-based storage is not needed.
+* `-` - Skips `Equals()` and `GetHashCode()`. Reduces generated code and avoids minor overhead when hash-based storage is not needed.
 
 #### Modifier Summary Table
 
@@ -1077,7 +1084,7 @@ When specifying a target language, append a two-character modifier (e.g., `++`, 
 |   `-+`   | `<see cref='InCS'/>-+` | Streaming Event-Based Parsing | Enabled          |
 |   `--`   | `<see cref='InCS'/>--` | Streaming Event-Based Parsing | Disabled         |
 
-> **Default: `++`** — If a language tag has no modifier (e.g., `<see cref='InCS'/>`), it defaults to `++`.
+> **Default: `++`** - If a language tag has no modifier (e.g., `<see cref='InCS'/>`), it defaults to `++`.
 
 ---
 
@@ -1085,7 +1092,7 @@ When specifying a target language, append a two-character modifier (e.g., `++`, 
 
 * **No configuration, no code.** If a host has no `<see.../>` tag for a given language, no code is generated in that language.
 * **Top-down and persistent.** The generator reads `<see.../>` tags top to bottom. When it encounters a language marker, that rule becomes the *
-  *active rule** for that language and applies to all following entities — until another rule for the same language appears.
+  *active rule** for that language and applies to all following entities - until another rule for the same language appears.
 * **Grouped application.** When specific packs or [Pack Sets](#pack-set) are listed immediately after a language marker, that rule is **confined** to
   that group only. The previously active rule resumes afterward.
 
@@ -1136,7 +1143,7 @@ public interface MyProject
 
 How the generator interprets this:
 
-1. **Rule 1 (`InCS+-`):** `+-` applies to **every** pack in `Server` — no further C# rules override it.
+1. **Rule 1 (`InCS+-`):** `+-` applies to **every** pack in `Server` - no further C# rules override it.
 2. **Rule 2 (`InJAVA`):** Defaults to `++`, but is **confined** to the four listed entities. All other Java packs are unaffected.
 3. **Rule 3 (`InJAVA--`):** `--` applies to **all remaining** packs in `Server` not covered by Rule 2.
 
@@ -1223,7 +1230,7 @@ interface FinancePackets : _< @Project > {}
 
 #### 2. Documentation Filtering (`[KeepDoc]` & `[SkipDoc]`)
 
-Filter packets based on their **documentation comments** — useful for organizing packets with visual tags, emojis, or keywords.
+Filter packets based on their **documentation comments** - useful for organizing packets with visual tags, emojis, or keywords.
 
 ```csharp
 /// 🔒 User credentials.
@@ -1298,7 +1305,7 @@ interface Info_Result:
 
 ### Empty Packs
 
-A **transmittable** (referenced in a connection) C# class-based pack with no instance fields — only [constants](#constants) or nested pack
+A **transmittable** (referenced in a connection) C# class-based pack with no instance fields - only [constants](#constants) or nested pack
 declarations. Implemented as singletons, it is the most efficient way to signal simple events or states over a connection.
 
 > [!NOTE]  
@@ -1448,7 +1455,7 @@ project's scope.
 Instance **fields** represent the data transmitted. A pack may also contain [constants](#constants) or nested pack declarations.
 
 > [!NOTE]  
-> A pack can act as a [set of packs](#projecthost-as-a-named-pack-set) — keep this in mind when organizing the pack hierarchy.
+> A pack can act as a [set of packs](#projecthost-as-a-named-pack-set) - keep this in mind when organizing the pack hierarchy.
 
 ### Inheritance
 
@@ -1460,9 +1467,9 @@ occupied," any subsequent attempt to add a field with the same name is skipped.
 
 **Resolution hierarchy:**
 
-1. **Native fields** (highest priority) — fields written explicitly in the class body always win.
-2. **XML documentation includes** (`<see .../>+`) — processed top-to-bottom; first occurrence wins.
-3. **Inheritance** (`base` / `_<...>`) — base class fields are added last; already-occupied names are skipped.
+1. **Native fields** (highest priority) - fields written explicitly in the class body always win.
+2. **XML documentation includes** (`<see .../>+`) - processed top-to-bottom; first occurrence wins.
+3. **Inheritance** (`base` / `_<...>`) - base class fields are added last; already-occupied names are skipped.
 
 ---
 
@@ -1475,7 +1482,7 @@ Use XML documentation to inject or remove fields before the generator resolves i
 | **`+`**  | Include | Imports fields from the target if the name is not yet taken.                       |
 | **`-`**  | Exclude | Pre-emptively blocks a field name, preventing it from being imported or inherited. |
 
-Because fields are imported via **symbolic XML references**, the pack creates a **live link** to the original definition — not a static copy.
+Because fields are imported via **symbolic XML references**, the pack creates a **live link** to the original definition - not a static copy.
 
 **Single Source of Truth (SSOT):** The source class is the only place definitions exist. Update Packs are projections of that model. Rename a field in
 the source via IDE refactoring and the XML tag updates automatically. Change a field's type and all referencing Packs adopt the new type.
@@ -1670,9 +1677,8 @@ tasks such as routing, stream management, actor and actor instance identificatio
 
 - **Scope and attachment rules**  
   A header is attached to a packet **only** when that packet is sent **directly** over a connection.  
-  When a packet is sent **indirectly** (i.e. it is referenced as a field type inside another packet), only its **payload** is included — **no header**
+  When a packet is sent **indirectly** (i.e. it is referenced as a field type inside another packet), only its **payload** is included - **no header**
   is attached in this case.
-
 
 #### Adding Header Fields
 
@@ -1804,7 +1810,7 @@ class DeviceStatus { PowerLevel? power; }
 // Result: class DeviceStatus { float? power; }
 ```
 
-The following fields all result in the same underlying type — `Set<float?>`:
+The following fields all result in the same underlying type - `Set<float?>`:
 
 ```csharp
 Set<FloatWrapper?>          set_a;
@@ -1836,7 +1842,7 @@ class Pack : Modify<TargetPack> {
 A **Connection** establishes a communication link between two hosts. Connections are declared as C# interfaces within your project and must extend
 `org.unirail.Meta.Connects<HostA, HostB>`.
 
-Think of a **Connection** as the static definition of a remoting link — the supervisor and pipe through which all Actors on one node communicate with
+Think of a **Connection** as the static definition of a remoting link - the supervisor and pipe through which all Actors on one node communicate with
 Actors on a remote node.
 
 **Example:**
@@ -1888,42 +1894,42 @@ Use `SwapHosts<Connection>` to reverse the host roles of imported content.
 
 ### Actors
 
-The Pairwise Actor System is a specialized, highly constrained model — a **Distributed, Choreographed 1-to-1 Protocol Engine**. It bridges the gap
+The Pairwise Actor System is a specialized, highly constrained model - a **Distributed, Choreographed 1-to-1 Protocol Engine**. It bridges the gap
 between rigid stateless RPC and raw, unstructured WebSockets.
 
 **What it is NOT:**
 
-* Not a general-purpose message router — Actors only communicate with their exact mirror counterpart on the other side of the network.
-* Not a stateless request/response framework — Actors are inherently stateful and context-aware.
-* Not a raw socket wrapper — it enforces a strict, developer-defined state machine on every interaction.
+* Not a general-purpose message router - Actors only communicate with their exact mirror counterpart on the other side of the network.
+* Not a stateless request/response framework - Actors are inherently stateful and context-aware.
+* Not a raw socket wrapper - it enforces a strict, developer-defined state machine on every interaction.
 
 **What it IS:**
 
 The Pairwise Actor System makes **network boundaries safe and predictable** through four traits:
 
 1. **Strictly bipartite (1-to-1 mirroring):** An interaction consists of exactly two peers. If you need 100 users in a chat room, build 100 Pairwise
-   Actors between clients and the room manager — not one giant actor.
-2. **Synchronized via FSM:** Both actors run identical replicas of a shared FSM — the single source of truth for what is allowed to happen next.
+   Actors between clients and the room manager - not one giant actor.
+2. **Synchronized via FSM:** Both actors run identical replicas of a shared FSM - the single source of truth for what is allowed to happen next.
 3. **Asymmetric authority:** In any given state, only one actor is "Main" (the leader) who dictates state transitions. The Follower requests
    permission. This provides lock-free, race-condition-free synchronization.
 4. **Epoch sequencing:** Every state transition increments a shared "Epoch," creating a localized logical clock. Stale messages from past epochs are
    automatically dropped.
 
 <details>
- <summary><span style="font-size:30px">👉</span><b><u>Why AdHoc Uses Actors — and Why async/await Is the Wrong Model for Network Protocols</u></b></summary>
+ <summary><span style="font-size:30px">👉</span><b><u>Why AdHoc Uses Actors - and Why async/await Is the Wrong Model for Network Protocols</u></b></summary>
 
 **The Origin of async/await**
 
 To understand why `async/await` is a poor fit for protocol-level networking, you must first understand what problem it was actually designed to solve.
 
-`async/await` was born from a single use case: **Remote Procedure Call**. The mental model is seductive — you call a function, it travels over the
+`async/await` was born from a single use case: **Remote Procedure Call**. The mental model is seductive - you call a function, it travels over the
 network, executes somewhere else, and returns a result. The network hop is invisible. The programmer writes linear code. It looks like this:
 
 ```csharp
 var result = await RemoteService.ComputeAsync(input);
 ```
 
-This is clean, readable, and for that one pattern — completely reasonable.
+This is clean, readable, and for that one pattern - completely reasonable.
 
 The catastrophe begins when you try to use this model for everything else.
 
@@ -1933,28 +1939,28 @@ The catastrophe begins when you try to use this model for everything else.
 
 RPC is a vanishingly small fraction of what a networked application actually does. Consider what a real protocol session looks like:
 
-1. A connection is established — **hold state**
-2. A handshake packet arrives — **validate, transition state**
-3. A partial payload arrives — **buffer it, wait for more**
-4. The rest of the payload arrives — **reassemble, transition state**
-5. An authentication challenge is issued — **wait for response, hold state**
-6. A heartbeat timeout fires — **react, maybe send, maybe close**
-7. A second channel opens on the same connection — **manage parallel state**
-8. A downstream dependency responds out of order — **correlate, reconcile state**
+1. A connection is established - **hold state**
+2. A handshake packet arrives - **validate, transition state**
+3. A partial payload arrives - **buffer it, wait for more**
+4. The rest of the payload arrives - **reassemble, transition state**
+5. An authentication challenge is issued - **wait for response, hold state**
+6. A heartbeat timeout fires - **react, maybe send, maybe close**
+7. A second channel opens on the same connection - **manage parallel state**
+8. A downstream dependency responds out of order - **correlate, reconcile state**
 
 This is not a call stack. It is a **state machine**. It has memory. It reacts to events from multiple sources. It lives for seconds, minutes,
 sometimes hours. It holds resources deliberately across many message exchanges.
 
-`async/await` models computation as a **suspended call stack** — a coroutine that pauses waiting for one thing and resumes when that one thing
+`async/await` models computation as a **suspended call stack** - a coroutine that pauses waiting for one thing and resumes when that one thing
 arrives. To force a state machine into this model, you end up doing one of two things:
 
 - You fragment the state machine logic across dozens of `await` points, destroying the coherence of the protocol flow
-- Or you build elaborate orchestration around `async/await` — `CancellationToken`, `TaskCompletionSource`, `SemaphoreSlim`, `Channel<T>`,
-  `IAsyncEnumerable` — an entire bureaucracy of infrastructure to recover the expressiveness that was stripped away by choosing the wrong primitive in
+- Or you build elaborate orchestration around `async/await` - `CancellationToken`, `TaskCompletionSource`, `SemaphoreSlim`, `Channel<T>`,
+  `IAsyncEnumerable` - an entire bureaucracy of infrastructure to recover the expressiveness that was stripped away by choosing the wrong primitive in
   the first place
 
 Every `await` is a potential heap allocation. Every suspended coroutine is a live object the garbage collector must track. In a server processing
-thousands of concurrent sessions, each with dozens of in-flight protocol states, this is not a theoretical concern — it is the reason your latency
+thousands of concurrent sessions, each with dozens of in-flight protocol states, this is not a theoretical concern - it is the reason your latency
 spikes, your GC pauses grow, and your memory profile looks like a staircase.
 
 ---
@@ -1963,16 +1969,16 @@ spikes, your GC pauses grow, and your memory profile looks like a staircase.
 
 An actor is exactly what a protocol session is:
 
-- It has **identity** — it is a specific session, with a specific peer, with specific negotiated parameters
-- It has **state** — it remembers where the protocol is, what has been sent, what is pending, what has been negotiated
-- It has a **mailbox** — it receives messages one at a time, in order, without data races
-- It **reacts** — it processes an incoming message, updates its state, and optionally sends messages to other actors
-- It **persists** — it lives for the duration of the session or as long as needed, not for the duration of a single request
+- It has **identity** - it is a specific session, with a specific peer, with specific negotiated parameters
+- It has **state** - it remembers where the protocol is, what has been sent, what is pending, what has been negotiated
+- It has a **mailbox** - it receives messages one at a time, in order, without data races
+- It **reacts** - it processes an incoming message, updates its state, and optionally sends messages to other actors
+- It **persists** - it lives for the duration of the session or as long as needed, not for the duration of a single request
 
 There is no suspension. There is no heap-allocated coroutine waiting for a `TaskCompletionSource` to be resolved. There is no cancellation token
 threaded through fifteen function signatures. The actor is simply **alive**, holding its state, processing the next message when it arrives.
 
-The protocol logic becomes a single coherent state machine — readable, auditable, and trivially testable by injecting messages.
+The protocol logic becomes a single coherent state machine - readable, auditable, and trivially testable by injecting messages.
 
 ```
 [session actor state]
@@ -2007,7 +2013,7 @@ Actor B processes, sends RESPONSE(id=42, result) → Actor A
 Actor A matches id=42, delivers result to waiting logic
 ```
 
-The actor doesn't suspend the thread. It simply holds the pending correlation in its state and handles the response when it arrives — alongside
+The actor doesn't suspend the thread. It simply holds the pending correlation in its state and handles the response when it arrives - alongside
 heartbeats, errors, timeouts, and any other messages that might interleave. You get RPC semantics without giving up any of the generality of the actor
 model.
 
@@ -2022,7 +2028,7 @@ model.
 ...`async/await` has no native answer. You find yourself bolting on state, fighting the call stack model, and building the actor model badly in the
 gaps between your `await` expressions.
 
-`async/await` is a **degenerate special case** of the actor model. It models the single-message, single-response, single-waiter case — and it models
+`async/await` is a **degenerate special case** of the actor model. It models the single-message, single-response, single-waiter case - and it models
 that case well. But a general network protocol is not a collection of isolated request/response pairs. It is a living, stateful conversation between
 two systems, and it requires a model that is alive for the duration of that conversation.
 
@@ -2032,16 +2038,16 @@ two systems, and it requires a model that is alive for the duration of that conv
 
 AdHoc is built around the recognition that **the protocol is the state machine, and the state machine is the actor**.
 
-Generated protocol code in AdHoc does not produce `async` methods returning `Task<T>`. It produces actors — entities with explicit state, explicit
+Generated protocol code in AdHoc does not produce `async` methods returning `Task<T>`. It produces actors - entities with explicit state, explicit
 message handlers, and explicit transitions. The generated code is:
 
-- **Allocation-minimal** — no coroutine objects, no `TaskCompletionSource`, no intermediate promise chains
-- **GC-friendly** — state lives in the actor's fields, not in heap-allocated closure captures
-- **Readable** — the protocol flow is visible as a state machine, not scattered across `await` points
-- **Composable** — actors communicate with other actors; RPC is available as a pattern, not as a constraint
+- **Allocation-minimal** - no coroutine objects, no `TaskCompletionSource`, no intermediate promise chains
+- **GC-friendly** - state lives in the actor's fields, not in heap-allocated closure captures
+- **Readable** - the protocol flow is visible as a state machine, not scattered across `await` points
+- **Composable** - actors communicate with other actors; RPC is available as a pattern, not as a constraint
 
-When a developer using AdHoc wants RPC semantics, they use them — one actor sends a message, another response, correlation is handled in a few lines
-of state. When they need streaming, subscription, long-lived session management, or server-push — they already have everything they need, because they
+When a developer using AdHoc wants RPC semantics, they use them - one actor sends a message, another response, correlation is handled in a few lines
+of state. When they need streaming, subscription, long-lived session management, or server-push - they already have everything they need, because they
 were always writing actors.
 
 The reverse is not true. A developer committed to `async/await` who discovers they need session-level state must fight their way uphill to recover
@@ -2051,19 +2057,32 @@ what the actor model gives you for free from the start.
 
 </details>
 
+#### Declaring
 
+Actors are declared within the connection scope as C# interfaces. Their concurrency limits, identity, and addressing schemes are defined by inheriting
+from the **`org.unirail.Meta.Actor`** interface and configuring the **`MaxActiveInstances`** property via Default Interface Members (DIM).
 
-Actors are declared within the connection scope as C# interfaces. Their concurrency limits, identity, and addressing schemes are defined by
-implementing one of the following `org.unirail.Meta` interfaces:
+The system distinguishes between actors that possess fixed, predefined addresses and those that are assigned dynamic addresses at runtime:
 
-* **`Actor` (Singleton):** Defines a singleton-style actor with a **fixed, well-known identity**. Because only one instance exists, the destination
-  address is always stable and predictable. If an actor of this type is defined with only a **single state**, it is treated as a global entity, shared
-  on the server across all connections.
+* **Singleton (`MaxActiveInstances => 1` or left default):**
+  Defines a singleton-style actor allocated with a **fixed, predefined address**, making its destination stable and immediately known to peers. Its
+  lifecycle and scope depend on its state machine:
+	* **Single-state:** Operates as a **host-wide global singleton** (shared across all connections).
+	* **Multi-state:** Operates as a **per-connection singleton** (one unique instance per network connection).
 
-* **`ActorSwarm` (Multi-instance):** A dynamic collective of actors where each instance generates a **unique, temporary identity**. To communicate,
-  the sender must first discover the specific instance's ID.
-* **`ActorSwarm_WithMulticasting` (Pub-Sub):** A multi-instance swarm that shares a **single, well-known address**. Sending a message to this address
-  automatically fans out (multicasts) the message to all active instances of this type within the connection.
+* **Swarm / Multi-instance (`int MaxActiveInstances => 14;`):**
+  A collective of actors with a concurrency limit (e.g., 14). Each instance is allocated a **unique, dynamically generated address** at runtime. Both
+  the actor and its remote counterpart share this exact address. To communicate, the sender holds a local reference to their actor instance. On the
+  receiver side, if the counterpart does not exist, the framework creates it on the fly.
+
+* **Unlimited Swarm (`int MaxActiveInstances => UNLIMITED;`):**
+  Functions identically to a standard swarm but entirely disables the allocation limit checks. This eliminates the runtime overhead of tracking and
+  validating active instance counts, saving CPU resources. This is ideal for private, trusted environments, or **short-lived RPC actors** (see below).
+
+* **Multicasting (Prefixing with `+`, e.g., `int MaxActiveInstances => +22;`):**
+  Activates built-in Publish-Subscribe behavior. While individual instances retain dynamic identities, the system allocates a **fixed, predefined
+  address** that acts as a proxy for the multicast group. Sending a message to this address automatically fans out to all active instances within the
+  connection.
 
 **Example:**
 
@@ -2074,27 +2093,408 @@ namespace com.company {
     public interface MyProject {
         interface Communication : Connects<Client, Server> {
 
-            // Singleton: Fixed identity, stable address
+            // Singleton: Max 1 instance. Fixed identity.
             interface MainControllerActor : Actor { }
+            
+            // Swarm: Max 14 instances. Dynamic identities.
+            interface CPUMetricsActor : Actor { int MaxActiveInstances => 14; }
 
-            // Swarm: Dynamic identities, requires ID discovery to address specific instances
-            interface CPUMetricsActor : ActorSwarm { }
+            // Unlimited Swarm: Dynamic identities, zero limit-check overhead.
+            interface BackgroundTaskActor : Actor { int MaxActiveInstances => UNLIMITED; }
 
-            // Swarm + PubSub: Shared fixed address multicasts to all active instances of this type
-            interface ChatRoomMemberActor : ActorSwarm_WithMulticasting { }
+            // Swarm + PubSub: Shared fixed address multicasts to all active.
+            interface ChatRoomMemberActor : Actor { int MaxActiveInstances => +22; }
         }
     }
 }
 ```
 
+#### Shorthand
+
+The full FSM syntax gives you precise control over complex, multi-step protocol flows. However, many interactions are simple one-shot operations — a
+notification, a query, a command. Expressing these as full actor/state/branch declarations produces significant boilerplate for what is conceptually a
+single function call.
+
+To eliminate this noise, you can declare short-lived actors using **standard C# method signatures**. The code generator parses these signatures and
+expands them into the equivalent full FSM actor automatically.
+
+---
+
+##### Fire-and-Forget
+
+A one-way notification: one host sends a packet, no response is expected, and the FSM remains in the current state permanently.
+
+Each fire-and-forget function is declared as its own **single-state actor** using a **follower branch** (lowercase `l____________` or
+`____________r`). Because the actor has only one state with no transitions, it automatically becomes a **host-wide global singleton** — no
+`MaxActiveInstances` declaration is needed.
+
+This pattern is already compact enough that no shorthand form is necessary. The full declaration is the idiomatic way to write it.
+
+---
+
+**Example 1 — Right host fires, three overloads**
+
+Traditional equivalent:
+
+```csharp
+void LogEvent(StringMessage msg);
+void LogEvent(WarningEvent ev);
+void LogEvent(ErrorEvent ev);
+```
+
+Full FSM declaration:
+
+```csharp
+interface LogEventActor : Actor {
+    interface LogEvent : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
+}
+```
+
+The three overloads collapse into a single tuple. Right host sends one of them at any time. No transition occurs. The actor persists for the lifetime
+of the connection.
+
+---
+
+**Example 2 — Left host fires**
+
+Traditional equivalent:
+
+```csharp
+void PushNotification(AlertMessage msg);
+void PushNotification(SilentUpdate update);
+```
+
+Full FSM declaration:
+
+```csharp
+interface PushNotificationActor : Actor {
+    interface PushNotification : l____________<(AlertMessage, OR_SilentUpdate)> { }
+}
+```
+
+---
+
+**Example 3 — Multiple related fire-and-forget functions grouped under one actor**
+
+Related fire-and-forget functions can be grouped as multiple states under a single actor. This is the preferred compact form — each state is a named,
+always-available function group, and because none have transitions they all coexist permanently as independent handlers within one host-wide global
+singleton.
+
+Traditional equivalent:
+
+```csharp
+void LogEvent(StringMessage msg);
+void LogEvent(WarningEvent ev);
+void LogEvent(ErrorEvent ev);
+
+void UpdateStatus(StatusPayload status);
+void UpdateStatus(PartialStatus patch);
+```
+
+Full FSM declaration:
+
+```csharp
+interface MyFunctions : Actor {
+    interface LogEvent     : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
+    interface UpdateStatus : ____________r<(StatusPayload, OR_PartialStatus)> { }
+}
+```
+
+##### No-Argument Overloads
+
+The FSM packet system requires every branch to carry a concrete packet type. There is no native "void argument" concept — a state transition must
+always be associated with a specific message. To declare a function that takes no argument, create a reusable empty class as a sentinel packet:
+
+```csharp
+class NoArg { }
+```
+
+The name is arbitrary. The class body must be empty. One declaration per project is sufficient — reuse it wherever a no-argument overload is needed.
+
+**Example — Bare notification with no payload**
+
+Traditional equivalent:
+
+```csharp
+void LogEvent();
+```
+
+Full FSM declaration:
+
+```csharp
+interface LogEventActor : Actor {
+    interface LogEvent : ____________r<NoArg> { }
+}
+```
+
+**Example — Mixed overloads, some typed, one bare**
+
+Traditional equivalent:
+
+```csharp
+void LogEvent();
+void LogEvent(StringMessage msg);
+void LogEvent(WarningEvent ev);
+void LogEvent(ErrorEvent ev);
+```
+
+Full FSM declaration:
+
+```csharp
+class NoArg { }
+
+interface LogEventActor : Actor {
+    interface LogEvent : ____________r<(NoArg, StringMessage, WarningEvent, ErrorEvent)> { }
+}
+```
+
+`NoArg` occupies a slot in the tuple exactly like any other packet type. The receiver distinguishes it from the typed overloads by the incoming packet
+type — receiving a `NoArg` instance is equivalent to receiving the no-argument call.
+
+> [!NOTE]
+> `NoArg` is a **project-level declaration**, not a per-actor one. Define it once at the namespace level and reference it from any actor that needs a
+> no-argument overload. Avoid declaring multiple structurally identical empty classes — a single shared sentinel keeps the generated dispatch table
+> clean.
+
+---
+
+---
+
+##### Unidirectional Request-Response
+
+One host initiates a call and expects a results (or an errors) from the other. This is the classic RPC pattern.
+
+The direction marker placed **inside the return tuple** names the host that **sends the request**. The opposite host always sends the reply.
+
+> [!NOTE]
+> Unlike fire-and-forget, request-response actors require two states (`Call` → `Return`) and must transition to `End` to destroy the actor pair after
+> completion.
+
+---
+
+**Example 1 — Simple call, single argument, single return type**
+
+Traditional equivalent:
+
+```csharp
+UserProfile GetUser(UserId id);
+```
+
+Full FSM declaration:
+
+```csharp
+interface GetUser : Actor {
+    int MaxActiveInstances => 17;
+
+    // Right host initiates: sends UserId, FSM moves to Return
+    interface Call : ____________R<UserId, Return> { }
+
+    // Left host replies: sends UserProfile, actor pair destroyed
+    interface Return : L____________<UserProfile, End> { }
+}
+```
+
+**Shorthand:**
+
+```csharp
+(____________R, UserProfile) GetUser(UserId id);
+```
+
+> [!NOTE]
+> All shorthand-declared **request-response** actors are implicitly assigned `MaxActiveInstances => UNLIMITED`. Because they execute a single
+> interaction and immediately transition to `End`, they never accumulate on the server, so allocation-limit tracking would serve no purpose. This
+> gives
+> maximum throughput at zero overhead.
+
+---
+
+**Example 2 — Multiple argument overloads, multiple return types including error**
+
+Traditional equivalent:
+
+```csharp
+FileData FetchFile(FileName name);
+FileData FetchFile(FileId id);
+// may return FileData OR NotFound
+```
+
+Full FSM declaration:
+
+```csharp
+interface FetchFile : Actor {
+    int MaxActiveInstances => UNLIMITED;
+
+    interface Call : ____________R<(FileName, OR_FileId), Return> { }
+    interface Return : L____________<(FileData, OR_NotFound), End> { }
+}
+```
+
+**Shorthand:**
+
+```csharp
+(____________R, FileData, OR_NotFound) FetchFile((FileName, OR_FileId) query);
+```
+
+---
+
+**Example 3 — Left host initiates**
+
+Traditional equivalent:
+
+```csharp
+// Server pushes a config update to the Client and waits for acknowledgment
+ApplyResult PushConfig(ConfigPayload config);
+ApplyResult PushConfig(PartialConfig patch);
+// may return ApplyResult OR ApplyError
+```
+
+Full FSM declaration:
+
+```csharp
+interface PushConfig : Actor {
+    int MaxActiveInstances => UNLIMITED;
+
+    interface Call : L____________<(ConfigPayload, OR_PartialConfig), Return> { }
+    interface Return : ____________R<(ApplyResult, OR_ApplyError), End> { }
+}
+```
+
+**Shorthand:**
+
+```csharp
+(L____________, ApplyResult, OR_ApplyError) PushConfig((ConfigPayload, OR_PartialConfig) config);
+```
+
+---
+
+##### Bidirectional Request-Response
+
+When **either host** may independently initiate the exact same interaction, omit the direction marker from the return tuple entirely. The code
+generator produces **two distinct actors** — one for each direction — so both hosts can act as initiator without any race condition.
+
+---
+
+**Example 1 — Either side can look up a user**
+
+Traditional equivalent:
+
+```csharp
+// Both Client and Server need to be able to call this
+UserInfo LookupUser(UserId id);
+// may return UserInfo OR NotFound
+```
+
+Full FSM declaration (two actors the generator produces):
+
+```csharp
+// Actor 1: Left host initiates
+interface LookupUserL : Actor {
+    int MaxActiveInstances => UNLIMITED;
+
+    interface Call   : L____________<UserId, Return> { }
+    interface Return : ____________R<(UserInfo, OR_NotFound), End> { }
+}
+
+// Actor 2: Right host initiates
+interface LookupUserR : Actor {
+    int MaxActiveInstances => UNLIMITED;
+
+    interface Call   : ____________R<UserId, Return> { }
+    interface Return : L____________<(UserInfo, OR_NotFound), End> { }
+}
+```
+
+**Shorthand (no direction marker — generates both actors above):**
+
+```csharp
+(UserInfo, OR_NotFound) LookupUser(UserId id);
+```
+
+---
+
+**Example 2 — Bidirectional with multiple argument overloads and error return**
+
+Traditional equivalent:
+
+```csharp
+// Either host can request a metric snapshot
+MetricSnapshot QueryMetric(MetricName name);
+MetricSnapshot QueryMetric(MetricId id);
+// may return MetricSnapshot OR QueryError
+```
+
+Full FSM declaration (two actors):
+
+```csharp
+interface QueryMetricL : Actor {
+    int MaxActiveInstances => UNLIMITED;
+
+    interface Call   : L____________<(MetricName, OR_MetricId), Return> { }
+    interface Return : ____________R<(MetricSnapshot, OR_QueryError), End> { }
+}
+
+interface QueryMetricR : Actor {
+    int MaxActiveInstances => UNLIMITED;
+
+    interface Call   : ____________R<(MetricName, OR_MetricId), Return> { }
+    interface Return : L____________<(MetricSnapshot, OR_QueryError), End> { }
+}
+```
+
+**Shorthand:**
+
+```csharp
+(MetricSnapshot, OR_QueryError) QueryMetric((MetricName, OR_MetricId) query);
+```
+
+---
+
+**Shorthand syntax reference summary:**
+
+| Intent                                 | Shorthand Form                                   | Notes                                              |
+|:---------------------------------------|:-------------------------------------------------|:---------------------------------------------------|
+| Fire-and-Forget (Right host fires)     | *(use full FSM — already compact)*               | Single-state singleton, follower branch            |
+| Fire-and-Forget (Left host fires)      | *(use full FSM — already compact)*               | Single-state singleton, follower branch            |
+| Fire-and-Forget (no argument)          | *(use full FSM with `NoArg` sentinel)*           | `____________r<NoArg>` or mixed into tuple         |
+| Request-Response, Right host initiates | `(____________R, RetVal, OR_Err) Func(Arg arg);` | Direction marker first in return tuple             |
+| Request-Response, Left host initiates  | `(L____________, RetVal, OR_Err) Func(Arg arg);` | Direction marker first in return tuple             |
+| Request-Response (no argument, Right)  | `(____________R, RetVal) Func(NoArg _);`         | Pass `NoArg` as the sole argument                  |
+| Request-Response (no argument, Left)   | `(L____________, RetVal) Func(NoArg _);`         | Pass `NoArg` as the sole argument                  |
+| Bidirectional Request-Response         | `(RetVal, OR_Err) Func(Arg arg);`                | No marker — generates two actors                   |
+| Bidirectional, no argument             | `(RetVal, OR_Err) Func(NoArg _);`                | No marker — generates two actors                   |
+| Any overload set including bare call   | *(use full FSM with `NoArg` in tuple)*           | `(NoArg, TypeA, OR_TypeB)` — one slot per overload |
+
+> [!NOTE]
+> `NoArg` pack apply whenever a traditional signature would have an empty parameter list. The sentinel participates in dispatch exactly like any typed
+> packet — the receiver identifies a no-argument call by the arrival of a `NoArg` instance.
+
+#### Lifecycle
+
+The code generator produces a runtime engine that automatically enforces the following lifecycle rules:
+
+* **Allocation Limits:** The system strictly prevents the allocation of more than `MaxActiveInstances` for a given actor type. Attempting to exceed a
+  numerical limit **closes the network connection**. *(Note: Standard swarms configured with `UNLIMITED` and all **RPC Shorthand Actors** bypass these
+  checks completely).*
+* **Timeouts:** If a `[ReceiveTimeout]` or `[TransmitTimeout]` is reached, the **network connection is closed** by default to prevent hangs.
+* **The `End` State:** Transitioning to the `org.unirail.Meta.End` state triggers the **deletion of the actor pair**. This frees the instances while
+  keeping the underlying physical connection open. *(RPC Shorthand actors utilize this automatically).*
+* **The `Close` State:** Transitioning to the `org.unirail.Meta.Close` state triggers a **graceful connection closure**. It shuts down the physical
+  link after draining transmission buffers, then cleans up all actors.
+* **Customization:** Developers can **override these actions** in the generated code to implement custom error handling or alternative recovery
+  strategies.
+* **User Responsibility:** In all scenarios outside the explicit limits and terminal states, managing the actor’s lifecycle is the **responsibility of
+  the user**.
+
+---
+
 ### States
 
-States represent distinct processing phases within an Actor's lifecycle — what messages are expected and what logic should execute. The topmost State
-declared represents the initial State.
+States represent distinct processing phases in an Actor’s lifecycle-defining which messages are expected and which logic executes.  
+The topmost state declared inside the actor becomes the **initial state**.
 
 > [!NOTE]  
-> The state machine is event-driven by packet transmission and timeouts. The AdHoc server generates code from your dataflow description; developers
-> integrate this code, adding custom logic as needed.
+> The state machine is purely event-driven (packet transmission and timeouts). The AdHoc generates all state-transition code from your dataflow
+> description. You only need to integrate the generated code and add your custom business logic.
 
 **Practical Example: Communication Lifecycle**
 
@@ -2105,13 +2505,13 @@ From [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/
 
 <img src="https://github.com/user-attachments/assets/3b059e62-6fb3-482a-b6d3-1ba56ef8af56" />
 
-To view in the Observer:
+**To view in the Observer:**
 
 ```cmd
 AdHocAgent.exe /path/to/AdHocProtocol.cs?
 ```
 
-Right-click a connection link to open the connections window.
+Right-click any connection link to open the connections window.
 
 ```mermaid
 stateDiagram-v2
@@ -2120,56 +2520,79 @@ stateDiagram-v2
     Start --> VersionMatching : Agent.Version
 
     VersionMatching --> Login : Server.Invitation
-    VersionMatching --> Exit : Server.Info
+    VersionMatching --> Close : Server.Info
 
     Login --> LoginResponse : Agent.Login
 
     LoginResponse --> TodoJobRequest : Server.Invitation\nServer.InvitationUpdate
-    LoginResponse --> Exit : Server.Info
+    LoginResponse --> Close : Server.Info
 
     TodoJobRequest --> Project : Agent.Project
     TodoJobRequest --> Proto : Agent.Proto
 
-    Project --> Exit : Server.Info\nServer.Result
-    Proto --> Exit : Server.Info\nServer.Result
+    Project --> Close : Server.Info\nServer.Result
+    Proto --> Close : Server.Info\nServer.Result
 
-    Exit --> [*]
+    Close --> [*]
 ```
 
 </details>
 
 ---
 
-#### Declaring States
+#### Declaring
 
-States are declared as C# interfaces within the Actor scope. The code generator traverses from the top State; unreachable States are ignored.
+States are declared as C# interfaces inside the Actor class. By default, the **topmost declared state** serves as the initial entry point for the
+FSM (though it is highly recommended to name it clearly, such as `Start` or `Init`).
 
-Branch declarations follow immediately after the host designation.
+The code generator enforces strict FSM integrity. It traverses the state graph starting from the initial state and will **throw a compilation error**
+if it detects any "orphaned" (unreachable) states. This prevents broken transitions and accidental dead code.
+
+**Exception for Stateless Actors:** If an Actor consists entirely of non-transitioning, fire-and-forget branches (e.g., `l____________`), the
+reachability check is bypassed, allowing multiple independent states to coexist side-by-side permanently.
+
+Branch declarations must immediately follow the host designation:
 
 ![Host designation example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/1cd6ad55-7e0e-4167-9d4a-fef279b4fa11)
 
-States can be unidirectional:
+States can also be unidirectional:
 
 ![Unidirectional example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/f1cdc9e3-9e14-4781-af7b-ce46b3dc5234)
 
-> [!WARNING]
-> Short block comments like `/*įĂ*/` contain auto-generated unique identifiers. **Never edit or clone these.**
+> [!WARNING]  
+> Short block comments such as `/*įĂ*/` contain auto-generated unique identifiers. **Never edit or duplicate them.**
 
-#### State Timeouts
+---
 
-Use built-in attributes to define maximum State duration (in seconds):
+#### Built-in States
 
-- `[ReceiveTimeout(seconds)]`
-- `[TransmitTimeout(seconds)]`
+**`org.unirail.Meta.End`**  
+A special terminal target state that deallocates the current actor instance.  
+This deletes the linked actor while leaving the underlying physical connection open for other actors to reuse.
 
-Without these attributes, States persist indefinitely.
+**`org.unirail.Meta.Close`**  
+A special terminal target state that gracefully terminates the physical connection.  
+It guarantees the transmission queue is fully drained before closing the pipe. Once all pending data has been sent, the communication link between
+hosts is safely shut down.
+
+#### Attributes
+
+You can limit how long an actor may remain in a state using built-in attributes (values in seconds):
+
+- `[ReceiveTimeout(seconds)]`  maximum time allowed to wait for an incoming message
+- `[TransmitTimeout(seconds)]` maximum time allowed to send an outgoing message
+
+In addition to these built-in attributes, **you are free to add any custom attributes** to your entities. These custom attributes are preserved by the
+code generator and will automatically be made available as constant or static fields on the corresponding entities in the generated code. This allows
+you to easily attach your own application-specific metadata (such as routing tags, UI labels, or custom configuration data) directly to your protocol
+FSM.
 
 ---
 
 ### Branches
 
 Inside a **State**, **Branches** determine which host has authority to advance the conversation and which is restricted to sending data within the
-current context.
+current context. Branch declarations must immediately follow the host designation.
 
 | Syntax                         | Host Role            | Action Type    | Result                                                      |
 |:-------------------------------|:---------------------|:---------------|:------------------------------------------------------------|
@@ -2194,7 +2617,7 @@ For states with multiple possible outcomes (e.g., Success/Failure), you can list
 ```csharp
 interface Evaluating : ____________R<
     (AccessGranted, LimitAccessGranted), VaultOpen, // Path 1: Success
-    AccessDenied, Exit                              // Path 2: Failure
+    AccessDenied, Close                              // Path 2: Failure
 > { }
 ```
 
@@ -2203,13 +2626,14 @@ interface Evaluating : ____________R<
 > When defining a transition branch (`L____________<PACKS, STATE>` or `____________R<PACKS, STATE>`), the target `STATE` does not have to be local to
 > the current Actor or Connection. You can reference a state defined in a completely different Actor.
 >
-> When this happens, **the parser performs a graph traversal and copies the referenced state**—along with all of its subsequently linked states and
-> branches—directly into the current Actor's flow. This enables developers to create modular, reusable FSM blocks (e.g., standard error handling or
+> When this happens, **the parser performs a graph traversal and copies the referenced state**-along with all of its subsequently linked states and
+> branches-directly into the current Actor's flow. This enables developers to create modular, reusable FSM blocks (e.g., standard error handling or
 > teardown sequences) that can be easily grafted across multiple Actors.
 
 ---
 
 **Example 1: The "Baton Pass" (Swapping Authority)**
+The "Boss" role passes back and forth. Only one side is "Main" at any given time, preventing race conditions.
 
 ```csharp
 interface SecureHandshake : Actor {
@@ -2217,7 +2641,7 @@ interface SecureHandshake : Actor {
     interface Initializing :
         L____________<ClientHello, AwaitingChallenge> { }
 
-    // STATE 2: Server is now the Boss. They control the validation.
+    // STATE 2: Server is now the Boss.
     interface AwaitingChallenge :
         ____________R<(AuthChallenge, UpgradeRequest), Verifying> { }
 
@@ -2231,8 +2655,6 @@ interface SecureHandshake : Actor {
 }
 ```
 
-The "Boss" role passes back and forth. Only one side is "Main" at any given time, preventing race conditions.
-
 ---
 
 **Example 2: Developer-Defined Governance**
@@ -2242,7 +2664,7 @@ interface TelemetryStream : Actor {
     interface Active :
         l____________<(SensorData, GPSCoords)>, // Agent pumps data
         ____________R<PauseCmd, Paused>,        // Server controls state
-        ____________R<Terminate, Exit>          // Server kills connection
+        ____________R<Terminate, Close>          // Server kills connection
     { }
 
     interface Paused :
@@ -2258,7 +2680,9 @@ The Server governs state transitions not because it is a "server" but because th
 **Example 3: Shared Authority with a Designated Governor**
 
 ```csharp
-interface CollaborativeEdit : ActorSwarm {
+interface CollaborativeEdit : Actor {
+    int MaxActiveInstances => 5;
+
     interface Editing :
         _____lr_____<(TextInsert, TextDelete, CursorMove)>, // Both sides can edit
         L____________<FinalizeDoc, Reviewing>               // Only Left can finalize
@@ -2284,10 +2708,12 @@ interface CommonFlows : Actor {
         ____________R<AckDisconnect, End> { }
 }
 
-interface DataSync : ActorSwarm {
+interface DataSync : Actor { 
+    int MaxActiveInstances => 14; // Multi-instance swarm
+
     interface Syncing :
         _____lr_____<DataChunk>,
-        // The parser will copy CommonFlows.GracefulDisconnect AND CommonFlows.Closed directly into the DataSync FSM.
+        // Parser copies CommonFlows.GracefulDisconnect directly into this FSM.
         L____________<SyncComplete, CommonFlows.GracefulDisconnect> { } 
 }
 ```
@@ -2307,7 +2733,7 @@ using org.unirail.Meta;
 interface FactoryLink : Connects<Agent, Server> {
 
     interface Infrastructure {
-
+        // Singleton
         interface HealthMonitor : Actor {
             interface Active :
                 l____________<(BatteryLevel, Temperature, CpuLoad)>,
@@ -2322,8 +2748,10 @@ interface FactoryLink : Connects<Agent, Server> {
     }
 
     interface Production {
+        // Multi-instance Swarm
+        interface TaskRunner : Actor { 
+            int MaxActiveInstances => 14; 
 
-        interface TaskRunner : ActorSwarm {
             interface Idle : L____________<RequestJob, Assignment> { }
 
             interface Assignment : ____________R<
@@ -2340,7 +2768,10 @@ interface FactoryLink : Connects<Agent, Server> {
             interface Stopped : L____________<ManualOverride, Idle> { }
         }
 
-        interface AssetSync : ActorSwarm {
+        // Multi-instance Swarm
+        interface AssetSync : Actor { 
+            int MaxActiveInstances => 14; 
+
             interface Start : L____________<CheckUpdates, UpdateCheck> { }
 
             interface UpdateCheck : ____________R<
@@ -2465,8 +2896,8 @@ const double ConstantField = 0; // Result: ConstantField = Math.Sin(23)
 
 ## Attributes
 
-Attributes communicate metadata to the code generator for optimized implementation. They can be applied to **Hosts**, **Packs**, **Fields**, *
-*Connections**, and **Stages**.
+Attributes communicate metadata to the code generator for optimized implementation. They can be applied to **Hosts**, **Packs**, **Fields**,
+**Connections**, **Actors**, **States**.
 
 ### Built-in Attributes
 
@@ -2492,7 +2923,7 @@ Custom attributes are transformed by the generator into a hierarchy of constants
 - For **fields**, attributes are the primary method for specifying metadata.
 - For other entities, metadata can use attributes or constants directly.
 
-Example using a `Description` attribute on a connection stage:
+Example using a `Description` attribute on a connection state:
 
 ```csharp
 [AttributeUsage(AttributeTargets.Interface)]
@@ -2562,12 +2993,12 @@ The AdHoc generator uses a 3-layer approach for field values:
 |:------|:----------------------------------------------------------------------------------------------------------------|
 | exT   | **External type.** The representation required for external consumers (matches language data type granularity). |
 | inT   | **Internal type.** The representation optimized for storage (matches language data type granularity).           |
-| ioT   | **IO wire type.** The network transmission format — transmitted as a byte stream with no language granularity.  |
+| ioT   | **IO wire type.** The network transmission format - transmitted as a byte stream with no language granularity.  |
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/180a331d-3d55-4878-8dfe-794ceb9297f3)
 
 For a field with values from 1,000,000 to 1,080,000, shifting at the `exT ↔ inT` layer yields no memory savings in C# or Java due to fixed type
-quantization. However, subtracting 1,000,000 before transmission (`ioT`) reduces the data to 3 bytes — restored on receipt by adding 1,000,000 back.
+quantization. However, subtracting 1,000,000 before transmission (`ioT`) reduces the data to 3 bytes - restored on receipt by adding 1,000,000 back.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/0b8f90cc-aafc-4923-8c90-1fed53775bb3)
 
@@ -2579,7 +3010,7 @@ transitions can be costly and impractical.
 ## Varint Type
 
 For numeric fields with randomly distributed values spanning the full type range, compression is typically inefficient. However, when values cluster
-within a narrower range, [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding becomes highly effective — it skips
+within a narrower range, [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding becomes highly effective - it skips
 leading zero bytes and restores them on the receiving end.
 
 Three patterns are worth recognizing:
@@ -2616,12 +3047,12 @@ enum _DefaultMaxLengthOf {
 
 Types omitted retain the default limit.
 
-### The `[D]` Attribute: `N` vs `+N`
+**The `[D]` Attribute: `N` vs `+N`**
 
 The `[D]` attribute controls length limits and appears in two forms:
 
-* **`[D(N)]`** — applies to **array fields**. `N` is the element count: the number of items in the array, list, or collection.
-* **`[D(+N)]`** — applies to **non-array entities that have their own intrinsic length**, such as `string`, `Set`, and `Map`. The `+` prefix
+* **`[D(N)]`** - applies to **array fields**. `N` is the element count: the number of items in the array, list, or collection.
+* **`[D(+N)]`** - applies to **non-array entities that have their own intrinsic length**, such as `string`, `Set`, and `Map`. The `+` prefix
   distinguishes the item-count limit from an array dimension. For example, `[D(+6)]` on a `string` limits it to 6 characters, while `[D(6)]` on a
   `string[]` limits the array to 6 string elements.
 
@@ -2677,6 +3108,7 @@ class Packet {
 
 > [!NOTE]  
 > **AdHoc uses `Varint` encoding for string transmission instead of UTF-8.**
+> native string → [encode] → varint bytes on wire → [decode] → native string
 > <details>
 > <summary><b>Why</b></summary>
 >
@@ -2690,7 +3122,7 @@ class Packet {
 > **1. Framing Makes Self-Synchronization Redundant**
 >
 > UTF-8's self-synchronizing byte pattern is designed for parsing corrupted or truncated streams. In a framed TCP connection, we don't operate on an
-> undifferentiated byte stream — we read a length header, read exactly that many bytes, and repeat.
+> undifferentiated byte stream - we read a length header, read exactly that many bytes, and repeat.
 >
 > In this model, UTF-8's self-synchronization solves a problem that no longer exists. If a byte is lost, the frame's length won't match and the entire
 > frame is invalidated at the frame level. Attempting to resynchronize mid-message is an anti-pattern.
@@ -2703,19 +3135,31 @@ class Packet {
 > For the "Face with Tears of Joy" emoji (😂), U+1F602:
 >
 > * **UTF-8:** 4 bytes (`0xF0 0x9F 0x98 0x82`)
-> * **Varint:** 3 bytes — a **25% reduction** per character.
+> * **Varint:** 3 bytes - a **25% reduction** per character.
 >
 > For purely ASCII text, the encodings are identical in size. Varint is better optimized for the full Unicode spectrum.
 >
 > **3. Simpler Implementation**
 >
-> Varint encoding/decoding is a simple loop of bitwise shifts and continuation-bit checks. A fully compliant UTF-8 decoder requires a more complex
-> state machine to handle multi-byte sequences and validate against overlong encoding attacks. Varint has fewer edge cases and is typically faster.
+> Varint encoding/decoding is a simple loop of bitwise shifts and continuation-bit checks - typically under 10 lines per direction. A fully compliant
+> UTF-8 decoder requires a complex state machine to handle multibyte sequences, overlong encoding attacks, invalid sequences, and surrogate pair
+> rejection - running to hundreds or thousands of lines to be spec-correct. Varint has far fewer edge cases and is typically faster.
 >
 > **Conclusion**
 >
 > UTF-8 was designed to bring order to unstructured text streams. Within a framed binary protocol, that problem is already solved by the protocol's
 > structure. By leveraging protocol-level framing guarantees, **Varint encoding is the more efficient choice for text transmission.**
+> Every major binary protocol encodes string *content* as UTF-8, using varint only for the **length prefix**:
+> SAD table
+> | Protocol | String length | String content |
+> |------------------|---------------|----------------|
+> | Protocol Buffers | varint | UTF-8 |
+> | MessagePack | varint | UTF-8 |
+> | Cap'n Proto | varint | UTF-8 |
+> | FlatBuffers | uint32 | UTF-8 |
+> | Avro | varint | UTF-8 |
+> | CBOR | varint | UTF-8 |
+> | Thrift | int32 | UTF-8 |
 > </details>
 
 ### Map/Set
@@ -2840,9 +3284,9 @@ class Result
 **Usage guidance:**
 
 * **In-memory data:** Use `Binary` when data is already in RAM (a cryptographic hash, a generated thumbnail, an active memory buffer).
-* **External sources (disk/database):** Use `Stream` or `File` types instead — they support **Direct Transfer**, piping bytes from the external source
+* **External sources (disk/database):** Use `Stream` or `File` types instead - they support **Direct Transfer**, piping bytes from the external source
   directly to the socket buffer without loading into managed memory. This reduces memory pressure, GC overhead, and redundant memory copies.
-  Stream-based fields require an explicit size limit via `[S(N)]` — see [Size Limits](#size-limits-sn).
+  Stream-based fields require an explicit size limit via `[S(N)]` - see [Size Limits](#size-limits-sn).
 
 | If the data is...    | Use...               | Benefit                                                                    |
 |:---------------------|:---------------------|:---------------------------------------------------------------------------|
@@ -2954,7 +3398,7 @@ namespace com.my.company{
 
 ## Streams
 
-In high-performance architectures — message routers, binary object stores, drone telemetry proxies — a service often needs to transmit data without
+In high-performance architectures - message routers, binary object stores, drone telemetry proxies - a service often needs to transmit data without
 inspecting its contents. AdHoc handles these scenarios via **Contextual Scoping**: a field's behavior changes dynamically based on the communication
 path (the **Endpoint**) it travels.
 
@@ -2965,8 +3409,8 @@ path (the **Endpoint**) it travels.
 Stream modifiers (`ToStream` and `FromStream`) break the standard symmetry between sender and receiver:
 
 * **`ToStream<Endpoint, T>`:** The **Sender** serializes `T` as a structured pack. The **Receiver** (on the matching `Endpoint` path) treats it as *
-  *raw bytes** — an opaque sink (e.g., a database saving a BLOB).
-* **`FromStream<Endpoint, T>`:** The **Sender** (on the matching `Endpoint` path) treats the field as **raw bytes** — an opaque source (e.g., a disk
+  *raw bytes** - an opaque sink (e.g., a database saving a BLOB).
+* **`FromStream<Endpoint, T>`:** The **Sender** (on the matching `Endpoint` path) treats the field as **raw bytes** - an opaque source (e.g., a disk
   reading bytes into the connection). The **Receiver** rehydrates the bytes back into a structured `T`.
 
 This asymmetry keeps middle-tier infrastructure (proxies, routers, stores) lean and decoupled from the internal evolution of the packs they transport.
@@ -3000,15 +3444,15 @@ class StoreResponse {
 The `Stream<To, From, Pack>` (Universal Stream) combines both asymmetric behaviors into a single field declaration. Its behavior is
 endpoint-dependent:
 
-* On the `To` endpoint path: acts like `ToStream` — the sender serializes `Pack`, the receiver gets raw bytes.
-* On the `From` endpoint path: acts like `FromStream` — the sender provides raw bytes, the receiver rehydrates a `Pack`.
+* On the `To` endpoint path: acts like `ToStream` - the sender serializes `Pack`, the receiver gets raw bytes.
+* On the `From` endpoint path: acts like `FromStream` - the sender provides raw bytes, the receiver rehydrates a `Pack`.
 * On all other paths: both sides treat it as a fully-serialized nested `Pack`.
 
 ```csharp
 /// On 'LoggingEndpoints' (from Router via RouterToLoggerChannel):
-///   Acts like ToStream<Payload> — serializes to a chunked stream.
+///   Acts like ToStream<Payload> - serializes to a chunked stream.
 /// On 'DeserializingEndpoints' (from Router to Consumer):
-///   Acts like FromStream<Payload> — deserializes from a standard stream.
+///   Acts like FromStream<Payload> - deserializes from a standard stream.
 /// On any other Endpoint (e.g., from Producer to Router):
 ///   Acts as a standard, fully-serialized nested Payload pack.
 [S(65536)] // Mandatory size limit: max 64 KB.
@@ -3071,10 +3515,10 @@ class Pack
 
 ### 2. Absolute Time (`DateTimeDef`)
 
-Use `org.unirail.Meta.DateTimeDef` for long-term records anchored to a fixed point in history — birth dates, registration timestamps, audit logs.
+Use `org.unirail.Meta.DateTimeDef` for long-term records anchored to a fixed point in history - birth dates, registration timestamps, audit logs.
 
 * **Mechanism:** `Value = (ActualTime - MinAnchor) / Precision`
-* **Alignment:** Bit-level — AdHoc allocates the exact bits needed to cover the range.
+* **Alignment:** Bit-level - AdHoc allocates the exact bits needed to cover the range.
 
 ```csharp
 public interface DateTimeDef
@@ -3136,7 +3580,7 @@ namespace org.unirail.Meta
 In a cyclic system, network latency can cause a packet to arrive after the cycle boundary has rolled over. For example, a 24-hour cycle:
 
 * **Sender at 23:59:59:** Sends `time: 0` (start of current cycle).
-* **Receiver at 00:00:01 (2 seconds later):** The cycle has rolled over. Receiver interprets `time: 0` as the start of the *new* cycle — a **24-hour
+* **Receiver at 00:00:01 (2 seconds later):** The cycle has rolled over. Receiver interprets `time: 0` as the start of the *new* cycle - a **24-hour
   time jump error**.
 
 #### The Solution: 1-Minute Protection Gap
@@ -3161,10 +3605,10 @@ AdHoc reserves an extra **1 minute** of capacity beyond the requested `interval`
 * New precision = `(Interval + 1 Minute) / Container Capacity`
 * The interval floats slightly to align with the new precision.
 
-**Example — CPU Monitor, last 27 hours with 1s precision:**
+**Example - CPU Monitor, last 27 hours with 1s precision:**
 
 * 27 hours = 97,200 ticks. Requires 3 bytes (2²⁴ = 16,777,216).
-* Spare space far exceeds 60 ticks — gap fits.
+* Spare space far exceeds 60 ticks - gap fits.
 * Total coverage: 97,260,000 ms ÷ 16,777,216 steps = ~6 ms precision.
 * Result: 3 bytes, upgraded from 1s to ~6ms precision automatically. All runtime calculations use integer arithmetic.
 

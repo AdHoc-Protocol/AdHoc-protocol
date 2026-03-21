@@ -2559,7 +2559,7 @@ States can also be unidirectional:
 
 ![Unidirectional example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/f1cdc9e3-9e14-4781-af7b-ce46b3dc5234)
 
-> [!WARNING]  
+> [!WARNING ]  
 > Short block comments such as `/*įĂ*/` contain auto-generated unique identifiers. **Never edit or duplicate them.**
 
 ---

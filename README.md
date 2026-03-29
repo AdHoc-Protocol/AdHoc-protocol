@@ -209,7 +209,6 @@ Converts a file or directory of [Protocol Buffers](https://developers.google.com
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
-
 ```cmd
     AdHocAgent.exe MyProtocol.proto
 ```
@@ -218,8 +217,13 @@ Converts a file or directory of [Protocol Buffers](https://developers.google.com
  </details>
 
 > [!NOTE]  
-> The second argument can be a path to a directory containing additional imported `.proto` files, such as [
-`well_known`](https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf) files.
+> Additional arguments can be paths to directories containing supplemental imported `.proto` files, such as
+> [`well_known`](https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf) files.
+> Multiple directories are supported — for example, when imports are spread across several roots:
+> ```cmd
+>     AdHocAgent.exe influxdb  influxdb  google.proto
+> ```
+> If the last argument does not end with `.proto`, it is treated as the output destination directory rather than an import search path.
 
 The result of `.proto` file conversion is only a starting point for migrating to AdHoc - it cannot be used as-is. Review it with the full capabilities
 of AdHoc protocol in mind.
@@ -596,7 +600,7 @@ namespace com.my.company // Required
         }
 
         interface Connection : Connects<Client, Server>{
-            interface Start :
+            struct Start :
                 l____________<
                    (
                     CommonPacket,
@@ -757,7 +761,7 @@ namespace com.my.company2
         struct FreeClient/*Ā*/ : Host{ }
 
         interface TrialConnection/*ÿ*/ : Connects<FrontendServer, TrialClient>{
-            interface Start/*ÿ*/ : l____________</*ÿ*/
+            struct Start/*ÿ*/ : l____________</*ÿ*/
                                   (Point3,
                                   Root,
                                   TrialClient.TrialClientPack)
@@ -769,7 +773,7 @@ namespace com.my.company2
         }
 
         interface MainConnection/*Ā*/ : Connects<FrontendServer, FullFeaturedClient>{
-            interface Start/*Ā*/ : l____________</*ÿ*/
+            struct Start/*Ā*/ : l____________</*ÿ*/
                                   (Point3,
                                   Root,
                                   TrialClient.TrialClientPack,
@@ -784,7 +788,7 @@ namespace com.my.company2
         }
 
         interface TheConnection/*ā*/ : Connects<FrontendServer, FreeClient>{
-            interface Start/*ā*/ : l____________</*ÿ*/
+            struct Start/*ā*/ : l____________</*ÿ*/
                                   (Point3,
                                   Root)
                               >,
@@ -794,7 +798,7 @@ namespace com.my.company2
         }
 
         interface BackendConnection/*Ă*/ : Connects<FrontendServer, BackendServer>{
-            interface Start/*Ă*/ : l____________</*ÿ*/
+            struct Start/*Ă*/ : l____________</*ÿ*/
                                   (FrontendServer.QueryDatabase,
                                   Point3,
                                   FrontendServer.PackB)
@@ -934,13 +938,13 @@ namespace org.unirail {
         }
 
         interface ConnectionToMetrics : Connects<Server, Metrics> {
-            interface One : l____________<
+            struct One : l____________<
                                 MetricsData
                             > { }
         }
 
         interface ConnectionToAuthorizer : Connects<Server, Authorizer> {
-            interface Start : l____________<
+            struct Start : l____________<
                                   AuthorisationRequest
                               >,
                               ____________r<
@@ -1301,6 +1305,29 @@ interface Info_Result:
     >{}
 ```
 
+Imagine you are building a protocol for a connected car. The car generates dozens of different data points: GPS location, speed, engine temperature,
+tire pressure, and battery health.
+
+Instead of writing out every single packet every time you define a communication state, you can group them logically.
+
+```csharp
+// 1. Define the packets under a specific scope/project
+interface VehicleTelemetryProject {
+    class GpsLocationPack(...)
+    class EngineTempPack(...)
+    class TirePressurePack(...)
+    // ... potentially 50 more packets
+}
+
+// 2. Use the Pack Set in the protocol
+public interface DashboardConnection : Connects<CarSensorBus, DashboardDisplay> {
+    interface StreamingActor : Actor {
+        // Send ALL telemetry packets from Left (Sensor) to Right (Dashboard) continuously
+        interface ActiveState : l__________<@VehicleTelemetryProject> {}
+    }
+}
+```
+
 ## Empty Packs, Constants, Enums
 
 ### Empty Packs
@@ -1487,7 +1514,7 @@ Because fields are imported via **symbolic XML references**, the pack creates a 
 **Single Source of Truth (SSOT):** The source class is the only place definitions exist. Update Packs are projections of that model. Rename a field in
 the source via IDE refactoring and the XML tag updates automatically. Change a field's type and all referencing Packs adopt the new type.
 
-#### Example
+**Example**
 
 ```csharp
 class Player {
@@ -1662,69 +1689,80 @@ class FieldInjectionModifier : Modify<TargetFieldInjection>, _<(AddPack, X<Remov
 
 ---
 
-### Packet Headers
+### Pack Headers
 
-A **packet header** contains protocol-level metadata that is separate from the application payload. These fields are used to handle essential network
-tasks such as routing, stream management, actor and actor instance identification, and session control.
+A **packet header** contains protocol-level metadata that is strictly segregated from the application payload. These fields handle essential network
+tasks such as routing, stream sequence management, actor identification, and session control.
 
-**Key characteristics:**
+Under the hood, the AdHoc compiler treats headers as injected, artificial fields (e.g., `_header0`) that are prepended to the packet during
+transmission but do not pollute your application-level data models.
 
-- **Transmission order**  
-  Headers are sent and received **after** the pack identifier but **before** the payload. They are directly accessible in network event handlers.
+#### Key Characteristics & Strict Constraints
 
-- **Data types**  
-  All header fields must use primitive, **non-nullable** types (e.g. `bool`, `int`, `long`, `double`, `float`, `short`, `byte`, `ulong`, etc.).
+The protocol parser enforces highly rigid rules for header definitions to ensure fast, deterministic parsing at the network edge:
 
-- **Scope and attachment rules**  
-  A header is attached to a packet **only** when that packet is sent **directly** over a connection.  
-  When a packet is sent **indirectly** (i.e. it is referenced as a field type inside another packet), only its **payload** is included - **no header**
-  is attached in this case.
+- **Transmission Order**
+  Headers are transmitted and parsed **after** the pack identifier but **before** the main payload. They are immediately accessible to network event
+  handlers before the full payload is deserialized.
+- **Standalone Packets Only**
+  Headers are attached **only** to explicitly transmittable packets (root packets sent via Connection FSM branches).
+  *If a packet is embedded as a field inside another packet (a Sub-packet), its header is completely stripped and ignored.*
+- **Strict Data Type Limitations**
+  Because headers must be parsed blindly at the transport layer, they are heavily restricted:
+	- Must use **single, primitive, non-nullable** types (`bool`, `int`, `long`, `double`, `float`, `short`, `byte`, `ulong`, etc.).
+	- **NO** Nullables (`int?`).
+	- **NO** Arrays, Maps, Sets, or Strings (`string`, `byte[]`).
+	- **NO** VarInt Compression. You cannot use `[V]`, `[A]`, or `[X]` attributes on header fields. They must have fixed wire sizes.
+- **Automatic Conflict Resolution**
+  If a header field shares a name with a payload field (or a field in another header), the compiler will automatically rename it (appending `_1`,
+  `_2`, etc.) and issue a compilation warning to prevent data loss.
 
-#### Adding Header Fields
+#### Contextual Scope & Declaration
 
-1. **Implicit (automatic):** Every standalone packet includes a `packet_id`.
-2. **Explicit (user-defined):** Create a "Header" class implementing `HeaderFor< PackSet >`.
+Headers are defined by creating a class that implements `HeaderFor<PackSet>`. Where you declare this class dictates its scope. In fact, `HeaderFor` is
+the **only** pack type allowed to be declared directly inside a `Connection` interface.
 
-#### Header Scope
+1. **Project Scope (Global):** Declared at the root level. Applies to the targeted packs everywhere in the project.
+2. **Host Scope:** Declared inside a `Host` struct. Applies to the targeted packs only when transmitted or received by that specific Host.
+3. **Connection Scope:** Declared inside a `Connects<A, B>` interface. Applies to the targeted packs only when transmitted over this specific
+   connection.
 
-1. **Connection-specific (highest precedence):** Declare `HeaderFor<PackSet>` within a `Connection` interface.
-2. **Host-specific:** Declare `HeaderFor<PackSet>` within a `Host` definition.
-3. **Project scope (lowest precedence):** Declare `HeaderFor<PackSet>` at the project's top level.
-
-**Precedence:** Connection-Specific **▷** Host-Specific **▷** Project Scope.
-
-### Example Usage
+**Example Usage:**
 
 ```csharp
-// 1. Project-scope header for Point2d packets
+// 1. Project-scope header: Applies globally to Point2d
 class SessionHeader : HeaderFor<Point2d> {
     int plain_id;
     int session;
-}
-
-// 2. Host-specific header for Point3d and Point2d packets
-// (This overrides the project-scope SessionHeader for Point2d when sent from NodeB)
-struct NodeB : Host {
-    class WorldHeader : HeaderFor<(Point3d, Point2d)> {
-        int world_id;
-        long timestamp;
-    }
 }
 
 // Packet payload definitions
 class Point2d { float X; float Y; }
 class Point3d { float X; float Y; float Z; }
 
-// 3. Connection-specific header for TeamCoordination packets
+// 2. Host-specific scope
+struct NodeB : Host {
+    // Overlays a WorldHeader onto both Point3d and Point2d, 
+    // but ONLY when NodeB is involved.
+    class WorldHeader : HeaderFor<(Point3d, Point2d)> {
+        int world_id;
+        long timestamp;
+    }
+}
+
+// 3. Connection-specific scope
 interface CommunicationConnection : Connects<NodeA, NodeB> {
+    // NOTE: Normal packs cannot be declared here. Only Headers and Modifiers!
     class CoordinationHeader : HeaderFor<TeamCoordination> {
         uint sequence_num;
         ushort priority;
     }
+    
+    // ... Actors and States ...
 }
 ```
 
-### Resulting On-the-Wire Structure
+**Resulting On-the-Wire Structure**
 
 **`Point3d` Packet (Sent from `NodeB`)**:
 Applies the *Host-Specific* header.
@@ -1752,12 +1790,30 @@ Applies the *Connection-Specific* header.
   ... (TeamCoordination fields)
 ```
 
-#### Modifying Imported Headers
+
+The protocol allows you to mutate imported or existing headers without rewriting them. By implementing `Modify<TargetHeader>`, you can inject new
+fields into an existing header, overwrite existing fields, or change which packets the header applies to.
+
+**Modifier Capabilities:**
+
+1. **Field Injection/Override:** Any field declared in the modifier will be injected into the target header. If a field with the same name already
+   exists in the target header, the modifier **overwrites** it.
+2. **Target Pack Expansion:** By inheriting from packs or pack sets, you add them to the header's target list.
+3. **Target Pack Reduction:** By inheriting from `X<PackToSkip>`, you explicitly remove a packet from the header's target list.
+
+**Modifier Example:**
 
 ```csharp
-class HeaderModifier : Modify<TargetHeader>, (AddPack, X<RemovePack)>  {
-    string name;
-    int length;
+// We want to modify the globally defined 'SessionHeader'
+// 1. We add 'Point3d' to the packets that get this header.
+// 2. We remove 'Point2d' from getting this header (using the X<> exclusion modifier).
+class SessionHeaderModifier : Modify<SessionHeader>, Point3d, X<Point2d> {
+    
+    // This field is injected into SessionHeader
+    long routing_hash; 
+    
+    // If SessionHeader already had a 'session' field, this overrides it
+    uint session; 
 }
 ```
 
@@ -2146,7 +2202,7 @@ Full FSM declaration:
 
 ```csharp
 interface LogEventActor : Actor {
-    interface LogEvent : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
+    struct LogEvent : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
 }
 ```
 
@@ -2168,7 +2224,7 @@ Full FSM declaration:
 
 ```csharp
 interface PushNotificationActor : Actor {
-    interface PushNotification : l____________<(AlertMessage, OR_SilentUpdate)> { }
+    struct PushNotification : l____________<(AlertMessage, OR_SilentUpdate)> { }
 }
 ```
 
@@ -2195,8 +2251,8 @@ Full FSM declaration:
 
 ```csharp
 interface MyFunctions : Actor {
-    interface LogEvent     : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
-    interface UpdateStatus : ____________r<(StatusPayload, OR_PartialStatus)> { }
+    struct LogEvent     : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
+    struct UpdateStatus : ____________r<(StatusPayload, OR_PartialStatus)> { }
 }
 ```
 
@@ -2223,7 +2279,7 @@ Full FSM declaration:
 
 ```csharp
 interface LogEventActor : Actor {
-    interface LogEvent : ____________r<NoArg> { }
+    struct LogEvent : ____________r<NoArg> { }
 }
 ```
 
@@ -2244,7 +2300,7 @@ Full FSM declaration:
 class NoArg { }
 
 interface LogEventActor : Actor {
-    interface LogEvent : ____________r<(NoArg, StringMessage, WarningEvent, ErrorEvent)> { }
+    struct LogEvent : ____________r<(NoArg, StringMessage, WarningEvent, ErrorEvent)> { }
 }
 ```
 
@@ -2284,13 +2340,13 @@ Full FSM declaration:
 
 ```csharp
 interface GetUser : Actor {
-    int MaxActiveInstances => 17;
+    int MaxActiveInstances => UNLIMITED;
 
     // Right host initiates: sends UserId, FSM moves to Return
-    interface Call : ____________R<UserId, Return> { }
+    struct Call : ____________R<UserId, Return> { }
 
     // Left host replies: sends UserProfile, actor pair destroyed
-    interface Return : L____________<UserProfile, End> { }
+    struct Return : L____________<UserProfile, End> { }
 }
 ```
 
@@ -2324,8 +2380,8 @@ Full FSM declaration:
 interface FetchFile : Actor {
     int MaxActiveInstances => UNLIMITED;
 
-    interface Call : ____________R<(FileName, OR_FileId), Return> { }
-    interface Return : L____________<(FileData, OR_NotFound), End> { }
+    struct Call : ____________R<(FileName, OR_FileId), Return> { }
+    struct Return : L____________<(FileData, OR_NotFound), End> { }
 }
 ```
 
@@ -2354,8 +2410,8 @@ Full FSM declaration:
 interface PushConfig : Actor {
     int MaxActiveInstances => UNLIMITED;
 
-    interface Call : L____________<(ConfigPayload, OR_PartialConfig), Return> { }
-    interface Return : ____________R<(ApplyResult, OR_ApplyError), End> { }
+    struct Call : L____________<(ConfigPayload, OR_PartialConfig), Return> { }
+    struct Return : ____________R<(ApplyResult, OR_ApplyError), End> { }
 }
 ```
 
@@ -2391,16 +2447,16 @@ Full FSM declaration (two actors the generator produces):
 interface LookupUserL : Actor {
     int MaxActiveInstances => UNLIMITED;
 
-    interface Call   : L____________<UserId, Return> { }
-    interface Return : ____________R<(UserInfo, OR_NotFound), End> { }
+    struct Call   : L____________<UserId, Return> { }
+    struct Return : ____________R<(UserInfo, OR_NotFound), End> { }
 }
 
 // Actor 2: Right host initiates
 interface LookupUserR : Actor {
     int MaxActiveInstances => UNLIMITED;
 
-    interface Call   : ____________R<UserId, Return> { }
-    interface Return : L____________<(UserInfo, OR_NotFound), End> { }
+    struct Call   : ____________R<UserId, Return> { }
+    struct Return : L____________<(UserInfo, OR_NotFound), End> { }
 }
 ```
 
@@ -2429,15 +2485,15 @@ Full FSM declaration (two actors):
 interface QueryMetricL : Actor {
     int MaxActiveInstances => UNLIMITED;
 
-    interface Call   : L____________<(MetricName, OR_MetricId), Return> { }
-    interface Return : ____________R<(MetricSnapshot, OR_QueryError), End> { }
+    struct Call   : L____________<(MetricName, OR_MetricId), Return> { }
+    struct Return : ____________R<(MetricSnapshot, OR_QueryError), End> { }
 }
 
 interface QueryMetricR : Actor {
     int MaxActiveInstances => UNLIMITED;
 
-    interface Call   : ____________R<(MetricName, OR_MetricId), Return> { }
-    interface Return : L____________<(MetricSnapshot, OR_QueryError), End> { }
+    struct Call   : ____________R<(MetricName, OR_MetricId), Return> { }
+    struct Return : L____________<(MetricSnapshot, OR_QueryError), End> { }
 }
 ```
 
@@ -2542,7 +2598,7 @@ stateDiagram-v2
 
 #### Declaring
 
-States are declared as C# interfaces inside the Actor class. By default, the **topmost declared state** serves as the initial entry point for the
+States are declared as C# struct inside the Actor class. By default, the **topmost declared state** serves as the initial entry point for the
 FSM (though it is highly recommended to name it clearly, such as `Start` or `Init`).
 
 The code generator enforces strict FSM integrity. It traverses the state graph starting from the initial state and will **throw a compilation error**
@@ -2615,7 +2671,7 @@ For states with multiple possible outcomes (e.g., Success/Failure), you can list
 **Example: The "Decision" Pattern**
 
 ```csharp
-interface Evaluating : ____________R<
+struct Evaluating : ____________R<
     (AccessGranted, LimitAccessGranted), VaultOpen, // Path 1: Success
     AccessDenied, Close                              // Path 2: Failure
 > { }
@@ -2638,19 +2694,19 @@ The "Boss" role passes back and forth. Only one side is "Main" at any given time
 ```csharp
 interface SecureHandshake : Actor {
     // STATE 1: Agent is the Boss. They initiate the request.
-    interface Initializing :
+    struct Initializing :
         L____________<ClientHello, AwaitingChallenge> { }
 
     // STATE 2: Server is now the Boss.
-    interface AwaitingChallenge :
+    struct AwaitingChallenge :
         ____________R<(AuthChallenge, UpgradeRequest), Verifying> { }
 
     // STATE 3: Agent is back in control. They must provide the solution.
-    interface Verifying :
+    struct Verifying :
         L____________<ChallengeResponse, Finalizing> { }
 
     // STATE 4: Server has the final word.
-    interface Finalizing :
+    struct Finalizing :
         ____________R<(Welcome, AccessDenied), End> { }
 }
 ```
@@ -2661,13 +2717,13 @@ interface SecureHandshake : Actor {
 
 ```csharp
 interface TelemetryStream : Actor {
-    interface Active :
+    struct Active :
         l____________<(SensorData, GPSCoords)>, // Agent pumps data
         ____________R<PauseCmd, Paused>,        // Server controls state
         ____________R<Terminate, Close>          // Server kills connection
     { }
 
-    interface Paused :
+    struct Paused :
         ____________R<Resume, Active>
     { }
 }
@@ -2683,12 +2739,12 @@ The Server governs state transitions not because it is a "server" but because th
 interface CollaborativeEdit : Actor {
     int MaxActiveInstances => 5;
 
-    interface Editing :
+    struct Editing :
         _____lr_____<(TextInsert, TextDelete, CursorMove)>, // Both sides can edit
         L____________<FinalizeDoc, Reviewing>               // Only Left can finalize
     { }
 
-    interface Reviewing : ____________R<(Approved, NeedsChanges), Editing> { }
+    struct Reviewing : ____________R<(Approved, NeedsChanges), Editing> { }
 }
 ```
 
@@ -2701,17 +2757,17 @@ You get the flexibility of a raw socket with the safety of a formal state machin
 ```csharp
 interface CommonFlows : Actor {
     // A generic teardown sequence we want to reuse
-    interface GracefulDisconnect : 
+    struct GracefulDisconnect : 
         L____________<Goodbye, Closed> { }
 
-    interface Closed : 
+    struct Closed : 
         ____________R<AckDisconnect, End> { }
 }
 
 interface DataSync : Actor { 
     int MaxActiveInstances => 14; // Multi-instance swarm
 
-    interface Syncing :
+    struct Syncing :
         _____lr_____<DataChunk>,
         // Parser copies CommonFlows.GracefulDisconnect directly into this FSM.
         L____________<SyncComplete, CommonFlows.GracefulDisconnect> { } 
@@ -2735,12 +2791,12 @@ interface FactoryLink : Connects<Agent, Server> {
     interface Infrastructure {
         // Singleton
         interface HealthMonitor : Actor {
-            interface Active :
+            struct Active :
                 l____________<(BatteryLevel, Temperature, CpuLoad)>,
                 ____________R<RequestSelfTest, DiagnosticMode>
             { }
 
-            interface DiagnosticMode :
+            struct DiagnosticMode :
                 l____________<TestProgress>,
                 ____________R<TestResult, Active>
             { }
@@ -2752,34 +2808,34 @@ interface FactoryLink : Connects<Agent, Server> {
         interface TaskRunner : Actor { 
             int MaxActiveInstances => 14; 
 
-            interface Idle : L____________<RequestJob, Assignment> { }
+            struct Idle : L____________<RequestJob, Assignment> { }
 
-            interface Assignment : ____________R<
+            struct Assignment : ____________R<
                 (JobManifest, ToolingSpecs), Executing,
                 WaitCommand, Idle
             > { }
 
-            interface Executing :
+            struct Executing :
                 l____________<Telemetry>,
                 L____________<JobComplete, Idle>,
                 ____________R<EmergencyStop, Stopped>
             { }
 
-            interface Stopped : L____________<ManualOverride, Idle> { }
+            struct Stopped : L____________<ManualOverride, Idle> { }
         }
 
         // Multi-instance Swarm
         interface AssetSync : Actor { 
             int MaxActiveInstances => 14; 
 
-            interface Start : L____________<CheckUpdates, UpdateCheck> { }
+            struct Start : L____________<CheckUpdates, UpdateCheck> { }
 
-            interface UpdateCheck : ____________R<
+            struct UpdateCheck : ____________R<
                 NewFirmware, Downloading,
                 UpToDate, End
             > { }
 
-            interface Downloading :
+            struct Downloading :
                 l____________<ChunkAck>,
                 ____________r<FileChunk>,
                 L____________<DownloadComplete, End>
@@ -2807,7 +2863,7 @@ Customize imported connections and their components without modifying the origin
 #### Example: Removing Entities from a Branch
 
 ```csharp
-interface UpdateLogin : Modify<Login>,
+struct UpdateLogin : Modify<Login>,
                         L____________<
                             (
                             X<Agent.Login>,
@@ -2824,19 +2880,19 @@ interface UpdateLogin : Modify<Login>,
 ```csharp
 interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
 
-    interface Change_Info_Result : Modify<AdHocProtocol.Communication.Info_Result>,
+    struct Change_Info_Result : Modify<AdHocProtocol.Communication.Info_Result>,
                                    ____________R<
                                        X<Server.Info>
                                    > { }
 
     [TransmitTimeout(30)]
-    interface Updated_Start : Modify<AdHocProtocol.Communication.Start>,
+    struct Updated_Start : Modify<AdHocProtocol.Communication.Start>,
                               ____________R<
                                   X<AdHocProtocol.Communication.VersionMatching>,
                                   NewState
                               > { }
 
-    interface UpdatedVersionMatching : Modify<AdHocProtocol.Communication.VersionMatching>,
+    struct UpdatedVersionMatching : Modify<AdHocProtocol.Communication.VersionMatching>,
                                        ____________r<
                                            (
                                            X<Server.Invitation>,
@@ -2844,11 +2900,57 @@ interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
                                            )
                                        > { }
 
-    interface NewState : l____________<
+    struct NewState : l____________<
                              Sending_Pack
                          > { }
 }
 ```
+
+#### All-in-one
+
+**Scenario: A Multiplayer Game Server Architecture**
+In a multiplayer game, you have different types of nodes: Player Clients, Matchmaking Servers, and Game Servers. You need strict rules about who is
+allowed to talk to whom, and in what direction. Sometimes, once connected, you just want a single state where *everything* can be sent freely between
+the client and the server.
+
+```csharp
+interface GameProject {
+
+    // --- PACKS ---
+    class UserPoint {
+        float X;
+        float Y;
+        float Z;
+    }
+    class PlayerAction { int ActionId; }
+    class ServerUpdate { int Health; }
+    // ... potentially hundreds of other packs ...
+
+    // --- HOSTS ---
+    struct PlayerClient : Host { }
+    struct GameServer : Host { }
+
+    // --- CONNECTION ---
+    public interface GameplayCommunication : Connects<PlayerClient, GameServer> {
+        interface MainActor : Actor {
+            // Creates an open, bidirectional channel using the entire project scope
+            struct PlayingState : _____lr_____<@GameProject> { }
+        }
+    }
+}
+```
+
+**Breaking down the Connection rules:**
+
+* **`Connects<PlayerClient, GameServer>`**: Establishes the topological rule. `PlayerClient` is strictly mapped as `HostL` (Left) and `GameServer` is
+  mapped as `HostR` (Right).
+* **`@GameProject` (Pack Set)**: Grabs a collection of *all* packs declared anywhere inside the `GameProject` scope (`UserPoint`, `PlayerAction`,
+  `ServerUpdate`, etc.).
+* **`_____lr_____` (Bidirectional Follower)**: Expresses that the packets contained in the Pack Set can be sent in **both directions** (`HostL` to
+  `HostR`, AND `HostR` to `HostL`) as a peer-to-peer transmission that does not break the current state.
+
+With just one line of code—`_____lr_____<@GameProject>`—you have defined a fully-duplex, boilerplate-free connection state where the Client and Server
+can freely exchange any packet defined in the game!
 
 # Fields
 
@@ -2925,15 +3027,16 @@ Custom attributes are transformed by the generator into a hierarchy of constants
 
 Example using a `Description` attribute on a connection state:
 
+
 ```csharp
-[AttributeUsage(AttributeTargets.Interface)]
+[AttributeUsage(AttributeTargets.Struct)]
 public class DescriptionAttribute : Attribute {
     public DescriptionAttribute(string description) { }
 }
 
 interface Communication : Connects<Agent, Server> {
     [Description("The state either responds with the result if successful or provides an error message with relevant information in case of failure.")]
-    interface State :
+    struct State :
         _<
            (Server.Info,
             Server.Result)
@@ -2945,7 +3048,7 @@ Equivalent using a constant:
 
 ```csharp
 interface Communication : Connects<Agent, Server> {
-    interface State :
+    struct State :
         _<
             (Server.Info,
             Server.Result)
@@ -3482,10 +3585,17 @@ Assume **Endpoint E** is the designated route where the host acts as the "Opaque
 
 ---
 
-### Size Limits `[S(N)]`
+### Limits `[S(N)]`
 
 All stream-based fields (`ToStream`, `FromStream`, `Stream`, and `File`) require an explicit maximum total size in bytes via the **`[S(N)]`**
 attribute.
+
+### Stream
+
+While `Stream<To, From, Pack>` is topology-aware and carries a structured `Pack`, the bare `Stream` type is a pure, untyped binary conduit. The source
+is not assumed to be a `Pack` at all — it may be a file handle, a network socket, or any arbitrary byte producer. The receiver consumes it as raw
+bytes via the `Connection.Receiver.BytesDst` interface. The on-the-wire format is a simple length-prefixed stream optimized for maximum throughput and
+minimal memory overhead, making it the right choice for proxying or piping data where the middle tier must remain entirely content-agnostic.
 
 ### File
 
@@ -3523,8 +3633,8 @@ Use `org.unirail.Meta.DateTimeDef` for long-term records anchored to a fixed poi
 ```csharp
 public interface DateTimeDef
 {
-    DateTime min       { get; } // Anchor point. Default: DateTime.MinValue
-    DateTime max       { get; } // End of range. Default: DateTime.MaxValue
+    DateTime min       { get; } // Anchor point. Default: 0
+    DateTime max       { get; } // End of range. Default: DateTimeOffset.MaxValue.LocalDateTime
     TimeSpan precision { get; } // Step size. Default: TimeSpan.FromMinutes(1)
 }
 ```
@@ -3613,17 +3723,72 @@ AdHoc reserves an extra **1 minute** of capacity beyond the requested `interval`
 * Result: 3 bytes, upgraded from 1s to ~6ms precision automatically. All runtime calculations use integer arithmetic.
 
 ---
+### 4. Elapsed Time (`Duration`)
+
+Use `org.unirail.Meta.Duration` for fields that measure **how long something took** — a non-negative elapsed duration from zero up to a known maximum.
+Suited for request latency, task runtimes, timeout intervals, and heartbeat periods.
+
+* **No calendar anchor** — unlike `DateTimeDef`, it carries no fixed origin point in history.
+* **Non-cyclic** — unlike `TimeSpanDef`, it is linear and never rolls over, so no boundary-crossing protection is needed.
+* **Mechanism:** `Value = ElapsedTime / Precision`, encoded as a step count in `[0, max]`.
+* **Sizing:** Byte-level — AdHoc allocates the smallest whole-byte container (1 to 7 bytes) required for your requested `max` step count. **Note:** AdHoc automatically scales the actual operational `max` up to completely fill the allocated bytes.
+
+```csharp
+public interface Duration
+{
+    long     max       { get; } // Upper bound in steps of precision.
+                                // AdHoc strictly caps this at JS MAX_SAFE_INTEGER: (1L << 53) - 1.
+                                // This guarantees lossless cross-platform compatibility using plain
+                                // Numbers, avoiding the performance overhead of BigInt entirely.
+                                // Any provided value above this limit is automatically clamped.
+                                // Default: (1L << 53) - 1 
+
+    TimeSpan precision { get; } // Granularity of one step. Evaluated as total milliseconds.
+                                // Values are clamped to a minimum of 1 ms, and an upper
+                                // limit of JS MAX_SAFE_INTEGER: (1L << 53) - 1.
+                                // Default: TimeSpan.FromSeconds(1)
+}
+```
+
+**Example:**
+```csharp
+struct RequestLatency : Duration
+{
+    public long     max       => 30_000;                    // Requires 2 bytes (UInt16). 
+                                                            // AdHoc expands the actual max to 65,535.
+    
+    public TimeSpan precision => TimeSpan.FromMilliseconds(19); // 19 ms per step.
+                                                                // Expanded limits allow up to ~20 minutes 
+                                                                // of duration (65,535 steps * 19 ms).
+}
+
+class ApiCall
+{
+    RequestLatency latency;
+}
+```
+#### Spare Bits: `max` Expansion
+
+After byte allocation, unused bit capacity is turned into a **larger representable range**: AdHoc silently increases `max` so that every bit in the
+allocated bytes is used. Precision is never altered — the step size you declared stays fixed, and you simply get headroom beyond what you explicitly
+requested.
+
+> **Example — task runtime, up to 3 600 steps of 1 s (1 hour):**
+> * 3 600 steps requires ⌈log₂ 3 601⌉ = 12 bits → **2 bytes** (65 536 capacity).
+> * Spare capacity: 65 536 − 3 601 = **61 935 steps**.
+> * Effective `max` promoted to **65 535 steps** → ~18.2 hours at 1 s precision.
+> * Wire cost: still 2 bytes.
 
 ### Summary Table
 
-| Feature           | `DateTimeDef` (Absolute)             | `TimeSpanDef` (Relative) |
-|:------------------|:-------------------------------------|:-------------------------|
-| **Concept**       | Linear Timeline                      | Cyclic Ring Buffer       |
-| **Anchor**        | Fixed date (`min`)                   | Floating (`now`)         |
-| **Sizing**        | Bit-level                            | Byte-level (1, 2, 3...)  |
-| **Safety**        | Clamps to range                      | 1-minute protection gap  |
-| **Spare space**   | Extends `max` OR refines `precision` | Refines `precision`      |
-| **Latency error** | Immune                               | Protected by gap         |
+| Feature           | `DateTimeDef` (Absolute)             | `TimeSpanDef` (Relative) | `Duration` (Elapsed) |
+|:------------------|:-------------------------------------|:-------------------------|:---------------------|
+| **Concept**       | Linear timeline                      | Cyclic ring buffer       | Linear elapsed time  |
+| **Anchor**        | Fixed date (`min`)                   | Floating (`now`)         | Zero (no anchor)     |
+| **Sizing**        | Bit-level                            | Byte-level               | Byte-level           |
+| **Safety**        | Clamps to range                      | 1-minute protection gap  | None needed          |
+| **Spare space**   | Extends `max` or refines `precision` | Refines `precision`      | Extends `max`        |
+| **Latency error** | Immune                               | Protected by gap         | Immune               |
 
 ## Meta
 

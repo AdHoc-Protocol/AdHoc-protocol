@@ -1195,6 +1195,103 @@ mechanism for defining the target group of packets for a rule or operation.
 The `org.unirail.Meta._<>` interface creates an **ad-hoc Pack Set** for flexible grouping. Use `org.unirail.Meta.X<>` to exclude specific entities
 from a Pack Set.
 
+Here is the new chapter for the AdHoc protocol concept, formatted to match your existing documentation.
+
+---
+
+#### Tag-Based Discovery (`WithCommentTags`)
+
+The `org.unirail.Meta.WithCommentTags` interface is a dynamic placeholder used to populate a Pack Set based on visual tags (ideally emojis or short
+keywords) found in documentation comments.
+
+Unlike attributes which apply to an entire interface, `WithCommentTags` performs **inline filtering** based on the comment at the end of the line
+where it is declared.
+
+1. **Placement:** anywhere.
+2. **The Comment:** The tags must be provided in a trailing comment (`//`) on the **same line** as the `WithCommentTags` keyword.
+3. **Separators:** Multiple tags are separated by the pipe symbol `|`. Leading and trailing whitespace around tags is ignored.
+4. **Discovery:** The generator scans the entire project for packets containing these tags in their documentation.
+
+
+* **Standard Tag (`Emoji`):** Matches individual packets that contain the tag in their doc comment.
+* **Recursive Tag (`@Emoji`):** Matches any container (Project, Host, or Pack) containing the tag, and recursively includes all transmittable packets
+  found inside that container.
+
+```csharp
+interface Users : Actor {
+    int Actor.MaxActiveInstances => +8;
+
+    struct One : 
+        // Pulls all packs tagged with 📈👈👀 globally, 
+        // plus specific monitoring requests.
+        ____________r< 
+            (
+            WithCommentTags, //️ 📈👈👀 |  ️📈👉👀
+            UpdateUsers,
+            Monitoring.User.RequestForRange
+            )
+        >,
+        // Pulls all packs tagged with 📈👉👀
+        l____________< 
+             WithCommentTags  // 📈👉👀
+        >
+    { }
+}
+```
+
+```csharp
+// --- 1. Define packets and containers with tags ---
+
+/// 🌡️ Core environmental data
+class Temperature(...)
+
+/// 🌡️ Internal status
+class BatteryHeat(...)
+
+/// 🏎️ Chassis Systems Container
+interface WheelSubsystem {
+    class TirePressure(...)
+    class BrakeWear(...)
+    
+    /// 🏎️ Advanced telemetry
+    interface Aerodynamics {
+        class Downforce(...)
+    }
+}
+
+/// 🚨 Urgent alerts
+class EngineFailure(...)
+
+// --- 2. Use WithCommentTags to group them ---
+
+interface TelemetryStream : _<
+    (
+        // Includes any packet with the 🌡️ emoji (Temperature, BatteryHeat)
+        WithCommentTags, // 🌡️
+        
+        // Includes 🚨 packets AND everything inside containers tagged 🏎️
+        // (@🏎️ will include TirePressure, BrakeWear, and Downforce)
+        WithCommentTags, // 🚨 | @🏎️
+        
+        // You can also use it inside exclusion blocks
+        X< 
+            WithCommentTags // 🧪 | @Internal 
+        >
+    )
+> {}
+```
+
+**Key Advantages**
+
+* **Visual Organization:** Emojis provide instant visual recognition of what data is being grouped without reading complex regex.
+* **Decoupled Grouping:** You can include a packet in a specific protocol state just by adding an emoji to its documentation, without modifying the
+  protocol definition itself.
+* **Granular Control:** Because it is line-based, you can mix and match global tag searches with recursive container searches in a single, readable
+  list.
+
+> **Note:** The generator performs a literal string match or a "contains" check on the raw UTF-8 documentation text. Ensure your IDE and source files
+> are saved with UTF-8 encoding to support emojis reliably.
+
 ### Named Pack Sets
 
 **Named Pack Sets** group packets under a reusable name, improving readability and reducing complexity when referencing multiple packets.
@@ -1790,7 +1887,6 @@ Applies the *Connection-Specific* header.
   ... (TeamCoordination fields)
 ```
 
-
 The protocol allows you to mutate imported or existing headers without rewriting them. By implementing `Modify<TargetHeader>`, you can inject new
 fields into an existing header, overwrite existing fields, or change which packets the header applies to.
 
@@ -1893,15 +1989,12 @@ class Pack : Modify<TargetPack> {
 
 ---
 
-## Connections
+# Connections
 
-A **Connection** establishes a communication link between two hosts. Connections are declared as C# interfaces within your project and must extend
-`org.unirail.Meta.Connects<HostA, HostB>`.
+A **Connection** is the static definition of a remoting link — the typed pipe through which all protocol logic flows between two hosts. Every
+message, every state transition, every RPC call is declared inside a Connection.
 
-Think of a **Connection** as the static definition of a remoting link - the supervisor and pipe through which all Actors on one node communicate with
-Actors on a remote node.
-
-**Example:**
+Connections are declared as C# interfaces that extend `org.unirail.Meta.Connects< HostLeft, HostRight >`:
 
 ```csharp
 using org.unirail.Meta;
@@ -1913,32 +2006,23 @@ namespace com.company {
 }
 ```
 
-![image](https://github.com/user-attachments/assets/dd47301d-4f2b-4648-ab1b-8f00f40ce271)
-
-**Connection Architecture**
-
-At the endpoint level, each Connection is implemented as a layered structure. Each layer has both an **EXT**ernal side (facing the network) and an *
-*INT**ernal side (facing the host application).
-
-<details>
- <summary><span style="font-size:30px">👉</span><b><u>Click to see architecture diagram</u></b></summary>
-
-![image](https://user-images.githubusercontent.com/29354319/234749384-73a1ce13-59c1-4730-89a7-0a182e6012eb.png)
-
-</details>
-
-Implemented through `org.unirail.AdHoc.Connection.External` and `org.unirail.AdHoc.Connection.Internal` interfaces.
-
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > **[Data is represented on the wire in little-endian format.](https://news.ycombinator.com/item?id=25611514)**
 
-**Defining Protocol Flow**
+---
 
-Populate the connection interface body with [`States`](#states) and [`Branches`](#branches) to define logical message flows, packet ordering, and
-response patterns. These define an Actor's **Finite State Machine (FSM)**, tracking which `State` the communication is in to validate incoming
-messages.
+The body of a Connection interface is where you define its **protocol flow**: the logical sequence of messages, the ordering of packets, and the
+valid response patterns. You do this by declaring [`Actors`](#actors), [`States`](#states), and [`Branches`](#branches).
 
-**Importing and composing connections:**
+Together, these constructs define a **Finite State Machine (FSM)** for each participating actor. The FSM tracks which `State` the communication is
+currently in, which in turn determines which messages are valid to send or receive at that moment.
+
+---
+
+## Importing and Composing Connections
+
+Connections can be based on other connections. Use standard C# interface inheritance, and use `SwapHosts<Connection>` to reverse the host roles
+of imported content:
 
 ```csharp
 interface CommunicationConnection : Connects<Server, Client>,
@@ -1946,199 +2030,261 @@ interface CommunicationConnection : Connects<Server, Client>,
                                     SwapHosts<TheConnection> { }
 ```
 
-Use `SwapHosts<Connection>` to reverse the host roles of imported content.
+---
 
-### Actors
+## Actors
 
-The Pairwise Actor System is a specialized, highly constrained model - a **Distributed, Choreographed 1-to-1 Protocol Engine**. It bridges the gap
-between rigid stateless RPC and raw, unstructured WebSockets.
+An **Actor** is the unit of concurrent, stateful behavior inside a Connection. Each Actor owns an independent FSM — an isolated logical thread of
+conversation between two hosts.
 
-**What it is NOT:**
+1. **Exactly One Linked Chain:** An Actor may contain only **one** sequence of states connected by transitional branches (`L____________` or
+   `____________R`).
+   This represents the Actor’s "Main Thread" or synchronized FSM.
+2. **Unlimited Isolated States:** An Actor may contain **any number** of isolated states. These states use **non-transitional** branches (
+   `l____________`,   `____________r`, or `_____lr_____`) that **do not change the Actor's state**. Isolated states use the Actor scope as
+   a **logical grouping unit**.
+   Related fire-and-forget notifications or status updates that don't drive a workflow are grouped into the same Actor to keep the API organized.
 
-* Not a general-purpose message router - Actors only communicate with their exact mirror counterpart on the other side of the network.
-* Not a stateless request/response framework - Actors are inherently stateful and context-aware.
-* Not a raw socket wrapper - it enforces a strict, developer-defined state machine on every interaction.
+### The Default Actor (Actor0)
 
-**What it IS:**
+Every connection interface contains one implicit, host-wide actor known as **Actor0**. This is the "Primary Pipe." You do not need to declare it; it
+is always there to handle global logic, discovery, or fire-and-forget notifications.
 
-The Pairwise Actor System makes **network boundaries safe and predictable** through four traits:
+The connection body itself acts as the declaration scope for Actor0. How Actor0 is populated depends on how you use the interface body:
 
-1. **Strictly bipartite (1-to-1 mirroring):** An interaction consists of exactly two peers. If you need 100 users in a chat room, build 100 Pairwise
-   Actors between clients and the room manager - not one giant actor.
-2. **Synchronized via FSM:** Both actors run identical replicas of a shared FSM - the single source of truth for what is allowed to happen next.
-3. **Asymmetric authority:** In any given state, only one actor is "Main" (the leader) who dictates state transitions. The Follower requests
-   permission. This provides lock-free, race-condition-free synchronization.
-4. **Epoch sequencing:** Every state transition increments a shared "Epoch," creating a localized logical clock. Stale messages from past epochs are
-   automatically dropped.
+| Declaration Style    | Resulting Structure                          |
+|:---------------------|:---------------------------------------------|
+| ** `struct` States** | Actor0 uses these states as its primary FSM. |
+| ** RPC Methods**     | These methods are Actors nested into Actor0. |
 
-<details>
- <summary><span style="font-size:30px">👉</span><b><u>Why AdHoc Uses Actors - and Why async/await Is the Wrong Model for Network Protocols</u></b></summary>
+Actors declared in the Connection body create own hierarchy and never nested into Actor0.
 
-**The Origin of async/await**
+---
 
-To understand why `async/await` is a poor fit for protocol-level networking, you must first understand what problem it was actually designed to solve.
+### Singleton Actor
 
-`async/await` was born from a single use case: **Remote Procedure Call**. The mental model is seductive - you call a function, it travels over the
-network, executes somewhere else, and returns a result. The network hop is invisible. The programmer writes linear code. It looks like this:
+| Property      | Description                                                                                                                                                                                                                                                           |
+|:--------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Identity**  | Bound to the **Type** — fixed, predefined address                                                                                                                                                                                                                     |
+| **Lifecycle** | Permanent; always available on both hosts                                                                                                                                                                                                                             |
+| **FSM**       | Isolated, non-linked states; uses **non-transitional branches** exclusively (`l____________`, `____________r`, or `_____lr_____`). Because there are no transitions, neither host acts as "Main" — **both sides are equal**. Each state acts as a logical aggregator. |
+| **Memory**    | Zero — no instance is ever created                                                                                                                                                                                                                                    |
+
+Singleton actors are the workhorse of **fire-and-forget** messaging. Because they have no linked state transitions, no session needs to be tracked,
+and no actor instance is ever allocated. A group of related fire-and-forget functions is simply a host-wide global singleton with multiple independent
+non-transitional branches.
+
+---
+
+### RPC Actor — Transient / Asymmetric
+
+| Property      | Description                                                          |
+|:--------------|:---------------------------------------------------------------------|
+| **Identity**  | Bound to a **Dynamic Address** (the callback address)                |
+| **Lifecycle** | Created on call; destroyed on reply                                  |
+| **Memory**    | Initiator-only: **only the caller** allocates a small context object |
+
+All C# method-based declarations and simple request-response flow Actors. The design and implementation is intentionally asymmetric:
+
+- **The Initiator (Stateful):** Spawns a local actor instance to hold the callback context. It waits in the `Return` state to ensure the returning
+  packet is valid and directed to the right logic.
+- **The Replier (Stateless):** Receives the request, processes it, and sends the reply to the dynamic address. **The replier never allocates an actor
+  instance.**
+
+---
+
+### Stateful Actor — Synchronized / 1-to-1
+
+A Stateful Actor owns a **single chain of linked states** — at least one state in the chain must contain a **transitional branch** (`L____________` or
+`____________R`) that advances the FSM to another user-defined state.
+
+| Property            | Description                                                     |
+|:--------------------|:----------------------------------------------------------------|
+| **Identity**        | Bound to **Type + Instance** — unique dynamic address per pair  |
+| **Lifecycle**       | Managed via `End` or `Close` terminal states                    |
+| **Synchronization** | A shared "Epoch" (logical clock) increments on every transition |
+
+When the initiator creates an actor instance, a peer instance is automatically created on the other host - both sides allocate a real, stateful
+object. The two instances are permanently bound by sharing the same dynamic address, so every message travels directly between these exact
+counterparts. Both run identical replicas of the shared FSM - the single source of truth.
+
+Within the state chain, the presence of a transitional branch assigns the **Main** role to that host, granting it sole authority to advance the state,
+while the opposite host acts as the **Follower** (limited to executing non-transitional branches within that state). This asymmetric authority
+prevents race conditions; stale messages carrying an outdated Epoch are silently dropped.
+
+Use Stateful Actors for complex, multistep workflows: handshakes, file streaming, collaborative editing.
+
+---
+
+### Declaring Actors
+
+#### Fire-and-Forget
+
+A fire-and-forget operation is a one-way notification: one host sends a packet, no response is expected, and the FSM remains in its current state.
+These are declared with states using **non-transitional branches**:
+
+- `l____________` - Left host initiates (send)
+- `____________r` - Right host initiates
+- `_____lr_____` - Either side may call function (send function argument pack)
+
+Each isolated state acts as a named function group: a logical aggregator of related fire-and-forget operations.
+
+**Example: Left initiates, overloads**
+
+*Traditional C# equivalent:*
 
 ```csharp
-var result = await RemoteService.ComputeAsync(input);
+void LogEvent();
+void LogEvent(StringMessage msg);
+void LogEvent(WarningEvent ev);
+void LogEvent(ErrorEvent ev);
 ```
 
-This is clean, readable, and for that one pattern - completely reasonable.
+The overloads are collapsed into a single FSM state using a tuple.
 
-The catastrophe begins when you try to use this model for everything else.
+*AdHoc FSM declaration:*
+
+```csharp
+interface ClientServerConnection : Connects<Client, Server>{
+	interface LogEventActor : Actor {
+	    struct LogEvent : l____________<(NoArg, StringMessage, WarningEvent, ErrorEvent)> { }
+	}
+}
+```
+
+**No-Argument Overloads**
+
+The packet system requires every branch to carry a concrete type — there is no native "void argument." To declare a function that takes no argument,
+create a reusable empty sentinel class **once** per project:
+
+```csharp
+class NoArg { }
+```
+
+Reuse it anywhere a no-argument overload is needed.
+
+**Example: Grouping related fire-and-forget functions**
+
+Related fire-and-forget functions can be grouped as multiple states under a single actor. This is the preferred compact form — each state is a named,
+always-available function group.
+
+*Traditional C# equivalent:*
+
+```csharp
+void LogEvent((StringMessage, WarningEvent, ErrorEvent) msg);
+void UpdateStatus(StatusPayload status);
+```
+
+*AdHoc FSM declaration:*
+
+```csharp
+```csharp
+interface ClientServerConnection : Connects<Client, Server>{
+	interface MyFunctions : Actor {
+	    struct LogEvent     : l____________<(StringMessage, WarningEvent, ErrorEvent)> { }
+	    struct UpdateStatus : l____________<(StatusPayload, OR_PartialStatus)> { }
+	}
+}
+```
+
+Because there are no transitions, the actor is automatically a host-wide global singleton. No `MaxActiveInstances` declaration is needed.
 
 ---
 
-**What Real Network Applications Actually Do**
+#### Unidirectional Request-Response (RPC)
 
-RPC is a vanishingly small fraction of what a networked application actually does. Consider what a real protocol session looks like:
+One host initiates a call and expects a result from the other. The direction marker placed **inside the return tuple** names the host that **sends the
+request**. The opposite host always sends the reply.
 
-1. A connection is established - **hold state**
-2. A handshake packet arrives - **validate, transition state**
-3. A partial payload arrives - **buffer it, wait for more**
-4. The rest of the payload arrives - **reassemble, transition state**
-5. An authentication challenge is issued - **wait for response, hold state**
-6. A heartbeat timeout fires - **react, maybe send, maybe close**
-7. A second channel opens on the same connection - **manage parallel state**
-8. A downstream dependency responds out of order - **correlate, reconcile state**
+> [!NOTE]
+> Unlike fire-and-forget, a request-response actor requires two states (`Call` → `Return`) and must transition to `End` to destroy the actor after
+> completion.
 
-This is not a call stack. It is a **state machine**. It has memory. It reacts to events from multiple sources. It lives for seconds, minutes,
-sometimes hours. It holds resources deliberately across many message exchanges.
+**Example: Simple call, single argument, single return type**
 
-`async/await` models computation as a **suspended call stack** - a coroutine that pauses waiting for one thing and resumes when that one thing
-arrives. To force a state machine into this model, you end up doing one of two things:
+*Traditional C# equivalent:*
 
-- You fragment the state machine logic across dozens of `await` points, destroying the coherence of the protocol flow
-- Or you build elaborate orchestration around `async/await` - `CancellationToken`, `TaskCompletionSource`, `SemaphoreSlim`, `Channel<T>`,
-  `IAsyncEnumerable` - an entire bureaucracy of infrastructure to recover the expressiveness that was stripped away by choosing the wrong primitive in
-  the first place
+```csharp
+UserProfile GetUser(UserId id);
+```
 
-Every `await` is a potential heap allocation. Every suspended coroutine is a live object the garbage collector must track. In a server processing
-thousands of concurrent sessions, each with dozens of in-flight protocol states, this is not a theoretical concern - it is the reason your latency
-spikes, your GC pauses grow, and your memory profile looks like a staircase.
+*AdHoc FSM declaration (Left initiates):*
+
+```csharp
+interface ClientServerConnection : Connects<Client, Server> {
+        (l____________, UserProfile) GetUser(UserId id);
+}
+```
+
+**Example: Multiple argument overloads, multiple return types including errors**
+
+*Traditional C# equivalent:*
+
+```csharp
+FileData FetchFile(FileName name);
+OR_NotFound FetchFile(FileId id);
+```
+
+*AdHoc FSM declaration:*
+
+```csharp
+interface ClientServerConnection : Connects<Client, Server> {
+	(l____________, FileData, OR_NotFound) FetchFile((FileName, FileId) query);
+}
+```
+
+in this shorthand form, implicitly `int MaxActiveInstances => UNLIMITED;`.
+use [Full-Featured form](#full-featured-actor) to declare MaxActiveInstances explicitly.
+
+```csharp
+interface FetchFile: Actor{
+	int MaxActiveInstances => 14;
+	struct Call: L____________<(FileName, FileId), Return>{}
+	struct Return: ____________R<(FileData, OR_NotFound), End>{}
+}
+```
 
 ---
 
-**The Actor Model Fits Protocols Naturally**
+#### Bidirectional Request-Response
 
-An actor is exactly what a protocol session is:
+When **either host** may independently initiate the same interaction, omit the direction marker from the return tuple entirely. The code generator
+produces **two distinct state** — one for each direction — so both sides can initiate without race conditions.
 
-- It has **identity** - it is a specific session, with a specific peer, with specific negotiated parameters
-- It has **state** - it remembers where the protocol is, what has been sent, what is pending, what has been negotiated
-- It has a **mailbox** - it receives messages one at a time, in order, without data races
-- It **reacts** - it processes an incoming message, updates its state, and optionally sends messages to other actors
-- It **persists** - it lives for the duration of the session or as long as needed, not for the duration of a single request
+**Example: Either host can look up a user**
 
-There is no suspension. There is no heap-allocated coroutine waiting for a `TaskCompletionSource` to be resolved. There is no cancellation token
-threaded through fifteen function signatures. The actor is simply **alive**, holding its state, processing the next message when it arrives.
+*Traditional C# equivalent:*
 
-The protocol logic becomes a single coherent state machine - readable, auditable, and trivially testable by injecting messages.
-
-```
-[session actor state]
-  → receives LOGIN_REQUEST
-  → validates credentials
-  → transitions to AUTHENTICATED
-  → sends LOGIN_RESPONSE
-  → receives SUBSCRIBE_REQUEST
-  → registers subscription (state mutation)
-  → sends SUBSCRIBE_ACK
-  → receives HEARTBEAT
-  → resets timeout timer (state mutation)
-  → ... continues for the lifetime of the session
+```csharp
+// Both sides can call this
+(UserInfo, OR_NotFound) LookupUser(UserId id);
 ```
 
-Every step is explicit. Every state transition is visible. No hidden suspension points. No invisible allocations. [No
-`async` infection spreading through
-your entire call graph.](https://archive.is/bDczv)
+*AdHoc FSM declaration (produces two symmetric actors):*
+
+```csharp
+interface ClientServerConnection : Connects<Client, Server> {
+	(UserInfo, OR_NotFound) LookupUser(UserId id);
+}    
+```
 
 ---
 
-**Actors Subsume RPC. RPC Cannot Subsume Actors.**
+#### Full-Featured Actor
 
-This is the critical asymmetry, and it is not subtle.
+For complex workflows requiring **multiple states**, declare a full Actor explicitly. Actors are C# interfaces inside the Connection scope that extend
+`org.unirail.Meta.Actor`. Their concurrency mode is configured by inheriting from `Actor` and setting `MaxActiveInstances`.
 
-**Actors can express RPC trivially.** If you need request/response semantics, an actor sends a message and waits for a reply.
-This is a standard pattern in any actor system, and it looks like this:
+##### Concurrency Modes
 
-```
-Actor A sends REQUEST(id=42, payload) → Actor B
-Actor B processes, sends RESPONSE(id=42, result) → Actor A
-Actor A matches id=42, delivers result to waiting logic
-```
+| Mode                   | Declaration                            | Identity                                | Behavior                                                      |
+|:-----------------------|:---------------------------------------|:----------------------------------------|:--------------------------------------------------------------|
+| **Singleton**          | `int MaxActiveInstances => 1`          | Fixed, predefined address               | One per connection; stable destination                        |
+| **Swarm**              | `int MaxActiveInstances => 14;`        | Dynamic per-instance address            | Up to N concurrent instances                                  |
+| **Unlimited Swarm**    | `int MaxActiveInstances => UNLIMITED;` | Dynamic per-instance address            | No limit checks — ideal for short-lived RPC actors            |
+| **Multicast (PubSub)** | `int MaxActiveInstances => +22;`       | Dynamic instances + fixed group address | Sending to the group address fans out to all active instances |
 
-The actor doesn't suspend the thread. It simply holds the pending correlation in its state and handles the response when it arrives - alongside
-heartbeats, errors, timeouts, and any other messages that might interleave. You get RPC semantics without giving up any of the generality of the actor
-model.
-
-**RPC cannot express actors.** The moment your protocol requires:
-
-- Holding state across more than one request/response cycle
-- Reacting to unsolicited server-initiated messages
-- Managing multiple interleaved exchanges on the same session
-- Handling timeouts that are decoupled from any specific call
-- Receiving streaming or fragmented data
-
-...`async/await` has no native answer. You find yourself bolting on state, fighting the call stack model, and building the actor model badly in the
-gaps between your `await` expressions.
-
-`async/await` is a **degenerate special case** of the actor model. It models the single-message, single-response, single-waiter case - and it models
-that case well. But a general network protocol is not a collection of isolated request/response pairs. It is a living, stateful conversation between
-two systems, and it requires a model that is alive for the duration of that conversation.
-
----
-
-**What This Means for AdHoc**
-
-AdHoc is built around the recognition that **the protocol is the state machine, and the state machine is the actor**.
-
-Generated protocol code in AdHoc does not produce `async` methods returning `Task<T>`. It produces actors - entities with explicit state, explicit
-message handlers, and explicit transitions. The generated code is:
-
-- **Allocation-minimal** - no coroutine objects, no `TaskCompletionSource`, no intermediate promise chains
-- **GC-friendly** - state lives in the actor's fields, not in heap-allocated closure captures
-- **Readable** - the protocol flow is visible as a state machine, not scattered across `await` points
-- **Composable** - actors communicate with other actors; RPC is available as a pattern, not as a constraint
-
-When a developer using AdHoc wants RPC semantics, they use them - one actor sends a message, another response, correlation is handled in a few lines
-of state. When they need streaming, subscription, long-lived session management, or server-push - they already have everything they need, because they
-were always writing actors.
-
-The reverse is not true. A developer committed to `async/await` who discovers they need session-level state must fight their way uphill to recover
-what the actor model gives you for free from the start.
-
-**The expressive power flows in one direction. Actors contain async. Async does not contain actors.**
-
-</details>
-
-#### Declaring
-
-Actors are declared within the connection scope as C# interfaces. Their concurrency limits, identity, and addressing schemes are defined by inheriting
-from the **`org.unirail.Meta.Actor`** interface and configuring the **`MaxActiveInstances`** property via Default Interface Members (DIM).
-
-The system distinguishes between actors that possess fixed, predefined addresses and those that are assigned dynamic addresses at runtime:
-
-* **Singleton (`MaxActiveInstances => 1` or left default):**
-  Defines a singleton-style actor allocated with a **fixed, predefined address**, making its destination stable and immediately known to peers. Its
-  lifecycle and scope depend on its state machine:
-	* **Single-state:** Operates as a **host-wide global singleton** (shared across all connections).
-	* **Multi-state:** Operates as a **per-connection singleton** (one unique instance per network connection).
-
-* **Swarm / Multi-instance (`int MaxActiveInstances => 14;`):**
-  A collective of actors with a concurrency limit (e.g., 14). Each instance is allocated a **unique, dynamically generated address** at runtime. Both
-  the actor and its remote counterpart share this exact address. To communicate, the sender holds a local reference to their actor instance. On the
-  receiver side, if the counterpart does not exist, the framework creates it on the fly.
-
-* **Unlimited Swarm (`int MaxActiveInstances => UNLIMITED;`):**
-  Functions identically to a standard swarm but entirely disables the allocation limit checks. This eliminates the runtime overhead of tracking and
-  validating active instance counts, saving CPU resources. This is ideal for private, trusted environments, or **short-lived RPC actors** (see below).
-
-* **Multicasting (Prefixing with `+`, e.g., `int MaxActiveInstances => +22;`):**
-  Activates built-in Publish-Subscribe behavior. While individual instances retain dynamic identities, the system allocates a **fixed, predefined
-  address** that acts as a proxy for the multicast group. Sending a message to this address automatically fans out to all active instances within the
-  connection.
+You have to set the `MaxActiveInstances` explicitly.
 
 **Example:**
 
@@ -2149,425 +2295,336 @@ namespace com.company {
     public interface MyProject {
         interface Communication : Connects<Client, Server> {
 
-            // Singleton: Max 1 instance. Fixed identity.
-            interface MainControllerActor : Actor { }
-            
-            // Swarm: Max 14 instances. Dynamic identities.
+            // Per-connection singleton (fixed address, one instance).
+            interface MainControllerActor : Actor { int MaxActiveInstances => 1; }
+
+            // Swarm of up to 14 instances (dynamic addresses).
             interface CPUMetricsActor : Actor { int MaxActiveInstances => 14; }
 
-            // Unlimited Swarm: Dynamic identities, zero limit-check overhead.
+            // Unlimited swarm — zero limit-check overhead.
             interface BackgroundTaskActor : Actor { int MaxActiveInstances => UNLIMITED; }
 
-            // Swarm + PubSub: Shared fixed address multicasts to all active.
+            // Swarm + PubSub — one shared fixed address multicasts to all active instances.
             interface ChatRoomMemberActor : Actor { int MaxActiveInstances => +22; }
         }
     }
 }
 ```
 
-#### Shorthand
+---
 
-The full FSM syntax gives you precise control over complex, multi-step protocol flows. However, many interactions are simple one-shot operations — a
-notification, a query, a command. Expressing these as full actor/state/branch declarations produces significant boilerplate for what is conceptually a
-single function call.
+### Nesting Actors
 
-To eliminate this noise, you can declare short-lived actors using **standard C# method signatures**. The code generator parses these signatures and
-expands them into the equivalent full FSM actor automatically.
+In large systems, nest actor interfaces inside the Connection scope to group related actors logically. The code generator respects the hierarchy and
+organizes the generated API accordingly.
+
+**Example: Smart Factory Protocol**
+
+```csharp
+using org.unirail.Meta;
+
+interface FactoryLink : Connects<Agent, Server> {
+
+    interface Infrastructure {
+
+        // Singleton health monitor
+        interface HealthMonitor : Actor {
+            struct Active :
+                l____________<(BatteryLevel, Temperature, CpuLoad)>,
+                ____________R<RequestSelfTest, DiagnosticMode>
+            { }
+
+            struct DiagnosticMode :
+                l____________<TestProgress>,
+                ____________R<TestResult, Active>
+            { }
+        }
+    }
+
+    interface Production {
+
+        // Multi-instance task runner
+        interface TaskRunner : Actor {
+            int MaxActiveInstances => 14;
+
+            struct Idle : L____________<RequestJob, Assignment> { }
+
+            struct Assignment : ____________R<
+                (JobManifest, ToolingSpecs), Executing,
+                WaitCommand, Idle
+            > { }
+
+            struct Executing :
+                l____________<Telemetry>,
+                L____________<JobComplete, Idle>,
+                ____________R<EmergencyStop, Stopped>
+            { }
+
+            struct Stopped : L____________<ManualOverride, Idle> { }
+        }
+
+        // Multi-instance asset sync
+        interface AssetSync : Actor {
+            int MaxActiveInstances => 14;
+
+            struct Start : L____________<CheckUpdates, UpdateCheck> { }
+
+            struct UpdateCheck : ____________R<
+                NewFirmware, Downloading,
+                UpToDate, End
+            > { }
+
+            struct Downloading :
+                l____________<ChunkAck>,
+                ____________r<FileChunk>,
+                L____________<DownloadComplete, End>
+            { }
+        }
+    }
+}
+```
 
 ---
 
-##### Fire-and-Forget
+### Actor Lifecycle
 
-A one-way notification: one host sends a packet, no response is expected, and the FSM remains in the current state permanently.
+The runtime engine automatically enforces the following rules:
 
-Each fire-and-forget function is declared as its own **single-state actor** using a **follower branch** (lowercase `l____________` or
-`____________r`). Because the actor has only one state with no transitions, it automatically becomes a **host-wide global singleton** — no
-`MaxActiveInstances` declaration is needed.
-
-This pattern is already compact enough that no shorthand form is necessary. The full declaration is the idiomatic way to write it.
-
----
-
-**Example 1 — Right host fires, three overloads**
-
-Traditional equivalent:
-
-```csharp
-void LogEvent(StringMessage msg);
-void LogEvent(WarningEvent ev);
-void LogEvent(ErrorEvent ev);
-```
-
-Full FSM declaration:
-
-```csharp
-interface LogEventActor : Actor {
-    struct LogEvent : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
-}
-```
-
-The three overloads collapse into a single tuple. Right host sends one of them at any time. No transition occurs. The actor persists for the lifetime
-of the connection.
+- **Allocation Limits:** Exceeding `MaxActiveInstances` **closes the network connection**. Standard swarms configured with `UNLIMITED` and all RPC
+  Shorthand Actors bypass these checks completely.
+- **Timeouts:** If a `[ReceiveTimeout]` or `[TransmitTimeout]` is reached, the **network connection is closed** by default to prevent hangs.
+- **`End` State:** Transitions to `org.unirail.Meta.End` **delete the actor pair**, freeing instances while keeping the physical connection open for
+  other actors.
+- **`Close` State:** Transitions to `org.unirail.Meta.Close` trigger a **graceful connection shutdown** — the transmission queue is fully drained
+  before the physical link closes.
+- **Customization:** All default lifecycle actions can be overridden in generated code for custom error-handling or recovery strategies.
+- **User Responsibility:** Everything outside explicit limits and terminal states is the **developer's responsibility** to manage.
 
 ---
 
-**Example 2 — Left host fires**
+## States
 
-Traditional equivalent:
+States represent the distinct processing phases in an Actor's lifecycle. They define which messages are valid and which logic should execute. The
+**topmost declared state** inside an Actor is the **initial state** — name it clearly (e.g., `Start` or `Init`).
 
-```csharp
-void PushNotification(AlertMessage msg);
-void PushNotification(SilentUpdate update);
-```
-
-Full FSM declaration:
-
-```csharp
-interface PushNotificationActor : Actor {
-    struct PushNotification : l____________<(AlertMessage, OR_SilentUpdate)> { }
-}
-```
-
----
-
-**Example 3 — Multiple related fire-and-forget functions grouped under one actor**
-
-Related fire-and-forget functions can be grouped as multiple states under a single actor. This is the preferred compact form — each state is a named,
-always-available function group, and because none have transitions they all coexist permanently as independent handlers within one host-wide global
-singleton.
-
-Traditional equivalent:
-
-```csharp
-void LogEvent(StringMessage msg);
-void LogEvent(WarningEvent ev);
-void LogEvent(ErrorEvent ev);
-
-void UpdateStatus(StatusPayload status);
-void UpdateStatus(PartialStatus patch);
-```
-
-Full FSM declaration:
-
-```csharp
-interface MyFunctions : Actor {
-    struct LogEvent     : ____________r<(StringMessage, WarningEvent, ErrorEvent)> { }
-    struct UpdateStatus : ____________r<(StatusPayload, OR_PartialStatus)> { }
-}
-```
-
-##### No-Argument Overloads
-
-The FSM packet system requires every branch to carry a concrete packet type. There is no native "void argument" concept — a state transition must
-always be associated with a specific message. To declare a function that takes no argument, create a reusable empty class as a sentinel packet:
-
-```csharp
-class NoArg { }
-```
-
-The name is arbitrary. The class body must be empty. One declaration per project is sufficient — reuse it wherever a no-argument overload is needed.
-
-**Example — Bare notification with no payload**
-
-Traditional equivalent:
-
-```csharp
-void LogEvent();
-```
-
-Full FSM declaration:
-
-```csharp
-interface LogEventActor : Actor {
-    struct LogEvent : ____________r<NoArg> { }
-}
-```
-
-**Example — Mixed overloads, some typed, one bare**
-
-Traditional equivalent:
-
-```csharp
-void LogEvent();
-void LogEvent(StringMessage msg);
-void LogEvent(WarningEvent ev);
-void LogEvent(ErrorEvent ev);
-```
-
-Full FSM declaration:
-
-```csharp
-class NoArg { }
-
-interface LogEventActor : Actor {
-    struct LogEvent : ____________r<(NoArg, StringMessage, WarningEvent, ErrorEvent)> { }
-}
-```
-
-`NoArg` occupies a slot in the tuple exactly like any other packet type. The receiver distinguishes it from the typed overloads by the incoming packet
-type — receiving a `NoArg` instance is equivalent to receiving the no-argument call.
+States are declared as C# `struct`s inside the Actor interface.
 
 > [!NOTE]
-> `NoArg` is a **project-level declaration**, not a per-actor one. Define it once at the namespace level and reference it from any actor that needs a
-> no-argument overload. Avoid declaring multiple structurally identical empty classes — a single shared sentinel keeps the generated dispatch table
-> clean.
-
----
-
----
-
-##### Unidirectional Request-Response
-
-One host initiates a call and expects a results (or an errors) from the other. This is the classic RPC pattern.
-
-The direction marker placed **inside the return tuple** names the host that **sends the request**. The opposite host always sends the reply.
-
-> [!NOTE]
-> Unlike fire-and-forget, request-response actors require two states (`Call` → `Return`) and must transition to `End` to destroy the actor pair after
-> completion.
-
----
-
-**Example 1 — Simple call, single argument, single return type**
-
-Traditional equivalent:
-
-```csharp
-UserProfile GetUser(UserId id);
-```
-
-Full FSM declaration:
-
-```csharp
-interface GetUser : Actor {
-    int MaxActiveInstances => UNLIMITED;
-
-    // Right host initiates: sends UserId, FSM moves to Return
-    struct Call : ____________R<UserId, Return> { }
-
-    // Left host replies: sends UserProfile, actor pair destroyed
-    struct Return : L____________<UserProfile, End> { }
-}
-```
-
-**Shorthand:**
-
-```csharp
-(____________R, UserProfile) GetUser(UserId id);
-```
-
-> [!NOTE]
-> All shorthand-declared **request-response** actors are implicitly assigned `MaxActiveInstances => UNLIMITED`. Because they execute a single
-> interaction and immediately transition to `End`, they never accumulate on the server, so allocation-limit tracking would serve no purpose. This
-> gives
-> maximum throughput at zero overhead.
-
----
-
-**Example 2 — Multiple argument overloads, multiple return types including error**
-
-Traditional equivalent:
-
-```csharp
-FileData FetchFile(FileName name);
-FileData FetchFile(FileId id);
-// may return FileData OR NotFound
-```
-
-Full FSM declaration:
-
-```csharp
-interface FetchFile : Actor {
-    int MaxActiveInstances => UNLIMITED;
-
-    struct Call : ____________R<(FileName, OR_FileId), Return> { }
-    struct Return : L____________<(FileData, OR_NotFound), End> { }
-}
-```
-
-**Shorthand:**
-
-```csharp
-(____________R, FileData, OR_NotFound) FetchFile((FileName, OR_FileId) query);
-```
-
----
-
-**Example 3 — Left host initiates**
-
-Traditional equivalent:
-
-```csharp
-// Server pushes a config update to the Client and waits for acknowledgment
-ApplyResult PushConfig(ConfigPayload config);
-ApplyResult PushConfig(PartialConfig patch);
-// may return ApplyResult OR ApplyError
-```
-
-Full FSM declaration:
-
-```csharp
-interface PushConfig : Actor {
-    int MaxActiveInstances => UNLIMITED;
-
-    struct Call : L____________<(ConfigPayload, OR_PartialConfig), Return> { }
-    struct Return : ____________R<(ApplyResult, OR_ApplyError), End> { }
-}
-```
-
-**Shorthand:**
-
-```csharp
-(L____________, ApplyResult, OR_ApplyError) PushConfig((ConfigPayload, OR_PartialConfig) config);
-```
-
----
-
-##### Bidirectional Request-Response
-
-When **either host** may independently initiate the exact same interaction, omit the direction marker from the return tuple entirely. The code
-generator produces **two distinct actors** — one for each direction — so both hosts can act as initiator without any race condition.
-
----
-
-**Example 1 — Either side can look up a user**
-
-Traditional equivalent:
-
-```csharp
-// Both Client and Server need to be able to call this
-UserInfo LookupUser(UserId id);
-// may return UserInfo OR NotFound
-```
-
-Full FSM declaration (two actors the generator produces):
-
-```csharp
-// Actor 1: Left host initiates
-interface LookupUserL : Actor {
-    int MaxActiveInstances => UNLIMITED;
-
-    struct Call   : L____________<UserId, Return> { }
-    struct Return : ____________R<(UserInfo, OR_NotFound), End> { }
-}
-
-// Actor 2: Right host initiates
-interface LookupUserR : Actor {
-    int MaxActiveInstances => UNLIMITED;
-
-    struct Call   : ____________R<UserId, Return> { }
-    struct Return : L____________<(UserInfo, OR_NotFound), End> { }
-}
-```
-
-**Shorthand (no direction marker — generates both actors above):**
-
-```csharp
-(UserInfo, OR_NotFound) LookupUser(UserId id);
-```
-
----
-
-**Example 2 — Bidirectional with multiple argument overloads and error return**
-
-Traditional equivalent:
-
-```csharp
-// Either host can request a metric snapshot
-MetricSnapshot QueryMetric(MetricName name);
-MetricSnapshot QueryMetric(MetricId id);
-// may return MetricSnapshot OR QueryError
-```
-
-Full FSM declaration (two actors):
-
-```csharp
-interface QueryMetricL : Actor {
-    int MaxActiveInstances => UNLIMITED;
-
-    struct Call   : L____________<(MetricName, OR_MetricId), Return> { }
-    struct Return : ____________R<(MetricSnapshot, OR_QueryError), End> { }
-}
-
-interface QueryMetricR : Actor {
-    int MaxActiveInstances => UNLIMITED;
-
-    struct Call   : ____________R<(MetricName, OR_MetricId), Return> { }
-    struct Return : L____________<(MetricSnapshot, OR_QueryError), End> { }
-}
-```
-
-**Shorthand:**
-
-```csharp
-(MetricSnapshot, OR_QueryError) QueryMetric((MetricName, OR_MetricId) query);
-```
-
----
-
-**Shorthand syntax reference summary:**
-
-| Intent                                 | Shorthand Form                                   | Notes                                              |
-|:---------------------------------------|:-------------------------------------------------|:---------------------------------------------------|
-| Fire-and-Forget (Right host fires)     | *(use full FSM — already compact)*               | Single-state singleton, follower branch            |
-| Fire-and-Forget (Left host fires)      | *(use full FSM — already compact)*               | Single-state singleton, follower branch            |
-| Fire-and-Forget (no argument)          | *(use full FSM with `NoArg` sentinel)*           | `____________r<NoArg>` or mixed into tuple         |
-| Request-Response, Right host initiates | `(____________R, RetVal, OR_Err) Func(Arg arg);` | Direction marker first in return tuple             |
-| Request-Response, Left host initiates  | `(L____________, RetVal, OR_Err) Func(Arg arg);` | Direction marker first in return tuple             |
-| Request-Response (no argument, Right)  | `(____________R, RetVal) Func(NoArg _);`         | Pass `NoArg` as the sole argument                  |
-| Request-Response (no argument, Left)   | `(L____________, RetVal) Func(NoArg _);`         | Pass `NoArg` as the sole argument                  |
-| Bidirectional Request-Response         | `(RetVal, OR_Err) Func(Arg arg);`                | No marker — generates two actors                   |
-| Bidirectional, no argument             | `(RetVal, OR_Err) Func(NoArg _);`                | No marker — generates two actors                   |
-| Any overload set including bare call   | *(use full FSM with `NoArg` in tuple)*           | `(NoArg, TypeA, OR_TypeB)` — one slot per overload |
-
-> [!NOTE]
-> `NoArg` pack apply whenever a traditional signature would have an empty parameter list. The sentinel participates in dispatch exactly like any typed
-> packet — the receiver identifies a no-argument call by the arrival of a `NoArg` instance.
-
-#### Lifecycle
-
-The code generator produces a runtime engine that automatically enforces the following lifecycle rules:
-
-* **Allocation Limits:** The system strictly prevents the allocation of more than `MaxActiveInstances` for a given actor type. Attempting to exceed a
-  numerical limit **closes the network connection**. *(Note: Standard swarms configured with `UNLIMITED` and all **RPC Shorthand Actors** bypass these
-  checks completely).*
-* **Timeouts:** If a `[ReceiveTimeout]` or `[TransmitTimeout]` is reached, the **network connection is closed** by default to prevent hangs.
-* **The `End` State:** Transitioning to the `org.unirail.Meta.End` state triggers the **deletion of the actor pair**. This frees the instances while
-  keeping the underlying physical connection open. *(RPC Shorthand actors utilize this automatically).*
-* **The `Close` State:** Transitioning to the `org.unirail.Meta.Close` state triggers a **graceful connection closure**. It shuts down the physical
-  link after draining transmission buffers, then cleans up all actors.
-* **Customization:** Developers can **override these actions** in the generated code to implement custom error handling or alternative recovery
-  strategies.
-* **User Responsibility:** In all scenarios outside the explicit limits and terminal states, managing the actor’s lifecycle is the **responsibility of
-  the user**.
-
----
-
-### States
-
-States represent distinct processing phases in an Actor’s lifecycle-defining which messages are expected and which logic executes.  
-The topmost state declared inside the actor becomes the **initial state**.
-
-> [!NOTE]  
-> The state machine is purely event-driven (packet transmission and timeouts). The AdHoc generates all state-transition code from your dataflow
+> The state machine is purely event-driven (packet transmission and timeouts). AdHoc generates all state-transition code from your dataflow
 > description. You only need to integrate the generated code and add your custom business logic.
 
-**Practical Example: Communication Lifecycle**
+The code generator collects all states, resolves links via branch targets, and traverses the state graph starting from the initial state. A
+compilation error is raised if the generator detects duplicate state names or multiple independent state chains.
 
-From [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/acfc582c971914a4a86f3458d4b85a141a787d3c/AdHocProtocol.cs#L443):
+Branch targets are not restricted to the local Actor or Connection. You can reference a state defined in an entirely different Actor and Connection.
+In such cases, the parser performs a graph traversal and **copies the referenced state**—including all s ubsequent links and branches—directly into
+the
+current Actor’s flow. This mechanism allows you to build modular, reusable FSM blocks (e.g., standard error-handling or teardown sequences) that can
+be seamlessly grafted across multiple Actors.
 
-<details>
- <summary><span style="font-size:30px">👉</span><b><u>Click to view communication flow diagram</u></b></summary>
+---
 
-<img src="https://github.com/user-attachments/assets/3b059e62-6fb3-482a-b6d3-1ba56ef8af56" />
+### Built-in Terminal States
 
-**To view in the Observer:**
+**`org.unirail.Meta.End`**
+Deallocates the current actor instance. The linked actor pair is deleted, but the underlying physical connection remains open for other actors.
 
-```cmd
-AdHocAgent.exe /path/to/AdHocProtocol.cs?
+**`org.unirail.Meta.Close`**
+Gracefully terminates the physical connection. The transmission queue is fully drained before the link is shut down.
+
+---
+
+### State Attributes
+
+Limit how long an actor may wait in a state using built-in timeout attributes (values in seconds):
+
+- `[ReceiveTimeout(seconds)]` — maximum time to wait for an incoming message
+- `[TransmitTimeout(seconds)]` — maximum time to send an outgoing message
+
+You may also add **any custom attributes** to states, branches, or actors. The code generator preserves them and makes them available as constants or
+static fields in the generated code. Use this to attach routing tags, UI labels, or any application-specific metadata directly to your protocol FSM.
+
+---
+
+## Branches
+
+Inside a **State**, **Branches** define the data flow and assign host roles. Branches themselves are strictly either **transitional** or *
+*non-transitional**.
+
+By declaring a transitional branch for a specific host, you assign that host the **Main** role, granting it sole authority to advance the FSM. The
+opposite host acts as a **Follower**, limited to executing non-transitional branches. If a state contains only non-transitional branches, neither host
+holds the Main role, and **both sides are equal**.
+
+| Syntax                     | Host Side | Branch Type          | Effect                                                          |
+|:---------------------------|:----------|:---------------------|:----------------------------------------------------------------|
+| `L____________<P, S, ...>` | **Left**  | **Transitional**     | Left (as **Main**) sends `P`, FSM moves to `S`. Up to 9 pairs.  |
+| `l____________<P>`         | **Left**  | **Non-transitional** | Left sends payload `P`; FSM **stays** in current state.         |
+| `____________R<P, S, ...>` | **Right** | **Transitional**     | Right (as **Main**) sends `P`, FSM moves to `S`. Up to 9 pairs. |
+| `____________r<P>`         | **Right** | **Non-transitional** | Right sends payload `P`; FSM **stays** in current state.        |
+| `_____lr_____<P>`          | **Both**  | **Non-transitional** | Either side sends payload `P`; FSM **stays** in current state.  |
+
+For multiple packet types in a single branch, use C# tuple syntax: `<(PackA, PackB), TargetState>`.
+
+---
+
+### Multi-Path Transitions
+
+For states with multiple possible outcomes (e.g., Success/Failure), list multiple `<PackSet, TargetState>` pairs inside a single branch. Write each
+pair on its own line for readability.
+
+**The "Decision" pattern:**
+
+```csharp
+struct Evaluating : ____________R<
+    (AccessGranted, LimitAccessGranted), VaultOpen,   // Path 1: Success
+    AccessDenied,                        Close         // Path 2: Failure
+> { }
 ```
 
-Right-click any connection link to open the connections window.
+---
+
+### Cross-Actor State Grafting
+
+When defining a transition branch, the target `STATE` does not have to be local to the current Actor or Connection. You can reference a state defined
+in a completely different Actor. When this happens, the parser **performs a graph traversal and copies the referenced state** — along with all its
+subsequently linked states and branches — directly into the current Actor's flow. This lets you create modular, reusable FSM blocks (e.g., standard
+error-handling or teardown sequences) that can be grafted across multiple actors.
+
+> [!WARNING]
+> **State Name Collisions during Grafting:** Every state within a single Actor must have a unique name. If a grafted state collides with an existing
+> one, the parser halts with a **FSM Integrity Error** and prints a full state map identifying local vs. grafted states and their source locations.
+> Resolve conflicts by renaming states in either the target Actor or the source block.
+
+---
+
+### Branch Examples
+
+**Example 1: The "Baton Pass" — Swapping authority**
+
+The "Main" role passes back and forth, ensuring only one side is in control at any given moment.
+
+```csharp
+interface SecureHandshake : Actor {
+    // STATE 1: Agent holds authority — initiates the handshake.
+    struct Initializing :
+        L____________<ClientHello, AwaitingChallenge> { }
+
+    // STATE 2: Server holds authority — issues a challenge.
+    struct AwaitingChallenge :
+        ____________R<(AuthChallenge, UpgradeRequest), Verifying> { }
+
+    // STATE 3: Agent holds authority again — responds to the challenge.
+    struct Verifying :
+        L____________<ChallengeResponse, Finalizing> { }
+
+    // STATE 4: Server delivers the final verdict.
+    struct Finalizing :
+        ____________R<(Welcome, AccessDenied), End> { }
+}
+```
+
+---
+
+**Example 2: Server-Governed Data Stream**
+
+The Server controls state transitions. The Agent pumps data freely as a follower.
+
+```csharp
+interface TelemetryStream : Actor {
+    struct Active :
+        l____________<(SensorData, GPSCoords)>,  // Agent streams data
+        ____________R<PauseCmd, Paused>,          // Server pauses the stream
+        ____________R<Terminate, Close>            // Server kills the connection
+    { }
+
+    struct Paused :
+        ____________R<Resume, Active>
+    { }
+}
+```
+
+The Server governs state transitions not because it is a "server" but because the developer designed the `Active` state that way.
+
+---
+
+**Example 3: Shared Authority with a Designated Finalizer**
+
+Both sides collaborate freely, but only Left can finalize.
+
+```csharp
+interface CollaborativeEdit : Actor {
+    int MaxActiveInstances => 5;
+
+    struct Editing :
+        _____lr_____<(TextInsert, TextDelete, CursorMove)>, // Both sides can edit
+        L____________<FinalizeDoc, Reviewing>                // Only Left can finalize
+    { }
+
+    struct Reviewing : ____________R<(Approved, NeedsChanges), Editing> { }
+}
+```
+
+---
+
+**Example 4: Cross-Actor State Grafting — Reusable Teardown**
+
+A standard teardown sequence is defined once in `CommonFlows` and grafted into `DataSync`.
+
+```csharp
+interface CommonFlows : Actor {
+    struct GracefulDisconnect :
+        L____________<Goodbye, Closed> { }
+
+    struct Closed :
+        ____________R<AckDisconnect, End> { }
+}
+
+interface DataSync : Actor {
+    int MaxActiveInstances => 14;
+
+    struct Syncing :
+        _____lr_____<DataChunk>,
+        // Parser copies CommonFlows.GracefulDisconnect and Closed into this FSM.
+        L____________<SyncComplete, CommonFlows.GracefulDisconnect> { }
+}
+```
+
+---
+
+**Example 5: Entire-Project Pack Set — One-Line Full-Duplex Channel**
+
+Reference an entire project scope as a pack set with `@Project`. Combined with `_____lr_____`, this creates a fully-duplex connection state where
+both sides can freely exchange **every packet in the project** — all in a single line.
+
+```csharp
+interface GameProject {
+
+    class UserPoint  { float X; float Y; float Z; }
+    class PlayerAction { int ActionId; }
+    class ServerUpdate { int Health; }
+    // ... hundreds more packs ...
+
+    struct PlayerClient : Host { }
+    struct GameServer   : Host { }
+
+    public interface GameplayCommunication : Connects<PlayerClient, GameServer> {
+        interface MainActor : Actor {
+            // Full-duplex channel: both sides can send any packet in GameProject.
+            struct PlayingState : _____lr_____<@GameProject> { }
+        }
+    }
+}
+```
+
+- **`@GameProject`** — collects all packs declared anywhere inside the `GameProject` scope.
+- **`_____lr_____`** — both `PlayerClient` (Left) and `GameServer` (Right) can send any of those packets without breaking state.
+
+---
+
+## Real-World State Machine Diagram
+
+The following diagram illustrates the FSM from
+[`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/acfc582c971914a4a86f3458d4b85a141a787d3c/AdHocProtocol.cs#L443):
 
 ```mermaid
 stateDiagram-v2
@@ -2592,365 +2649,72 @@ stateDiagram-v2
     Close --> [*]
 ```
 
-</details>
-
----
-
-#### Declaring
-
-States are declared as C# struct inside the Actor class. By default, the **topmost declared state** serves as the initial entry point for the
-FSM (though it is highly recommended to name it clearly, such as `Start` or `Init`).
-
-The code generator enforces strict FSM integrity. It traverses the state graph starting from the initial state and will **throw a compilation error**
-if it detects any "orphaned" (unreachable) states. This prevents broken transitions and accidental dead code.
-
-**Exception for Stateless Actors:** If an Actor consists entirely of non-transitioning, fire-and-forget branches (e.g., `l____________`), the
-reachability check is bypassed, allowing multiple independent states to coexist side-by-side permanently.
-
-Branch declarations must immediately follow the host designation:
-
-![Host designation example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/1cd6ad55-7e0e-4167-9d4a-fef279b4fa11)
-
-States can also be unidirectional:
-
-![Unidirectional example](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/f1cdc9e3-9e14-4781-af7b-ce46b3dc5234)
-
-> [!WARNING ]  
+> [!WARNING]
 > Short block comments such as `/*įĂ*/` contain auto-generated unique identifiers. **Never edit or duplicate them.**
 
 ---
 
-#### Built-in States
+## Modifying Imported Connections
 
-**`org.unirail.Meta.End`**  
-A special terminal target state that deallocates the current actor instance.  
-This deletes the linked actor while leaving the underlying physical connection open for other actors to reuse.
+You can customize an imported Connection and all its components without touching the original definition.
 
-**`org.unirail.Meta.Close`**  
-A special terminal target state that gracefully terminates the physical connection.  
-It guarantees the transmission queue is fully drained before closing the pipe. Once all pending data has been sent, the communication link between
-hosts is safely shut down.
+### Modification Syntax
 
-#### Attributes
+- Replicate the target's structure with your own naming, and extend `org.unirail.Meta.Modify<TargetEntity>`.
+- To **delete** entities entirely, reference them with `/// <see cref="Delete.Connection"/>-`.
+- Within branches: use `X<Entity>` to delete a packet from the branch, reference new entities normally to add them, and explicitly reference the
+  target State to modify its transitions.
 
-You can limit how long an actor may remain in a state using built-in attributes (values in seconds):
-
-- `[ReceiveTimeout(seconds)]`  maximum time allowed to wait for an incoming message
-- `[TransmitTimeout(seconds)]` maximum time allowed to send an outgoing message
-
-In addition to these built-in attributes, **you are free to add any custom attributes** to your entities. These custom attributes are preserved by the
-code generator and will automatically be made available as constant or static fields on the corresponding entities in the generated code. This allows
-you to easily attach your own application-specific metadata (such as routing tags, UI labels, or custom configuration data) directly to your protocol
-FSM.
-
----
-
-### Branches
-
-Inside a **State**, **Branches** determine which host has authority to advance the conversation and which is restricted to sending data within the
-current context. Branch declarations must immediately follow the host designation.
-
-| Syntax                         | Host Role            | Action Type    | Result                                                      |
-|:-------------------------------|:---------------------|:---------------|:------------------------------------------------------------|
-| **`L____________<P, S, ...>`** | **Left (Main)**      | **Transition** | Left sends `P` to move FSM to `S`. Supports up to 9 pairs.  |
-| **`l____________<P>`**         | **Left (Follower)**  | Payload        | Left sends `P`; FSM **remains** in current state.           |
-| **`____________R<P, S, ...>`** | **Right (Main)**     | **Transition** | Right sends `P` to move FSM to `S`. Supports up to 9 pairs. |
-| **`____________r<P>`**         | **Right (Follower)** | Payload        | Right sends `P`; FSM **remains** in current state.          |
-| **`_____lr_____<P>`**          | **Both**             | Peer-to-Peer   | Both send `P`; FSM **remains** in current state.            |
-
-*For multiple packet types in a branch, use C# tuple syntax: `<(PackA, PackB), TargetState>`.*
-
-Multi-Path Transitions
-
-For states with multiple possible outcomes (e.g., Success/Failure), you can list multiple `<Pack, TargetState>` pairs in a single branch.
-
-> [!TIP]
-> **Readability First:** To maintain clarity, write each transition pair on its own line. Do not compress multiple transitions into a single
-> unreadable line.
-
-**Example: The "Decision" Pattern**
-
-```csharp
-struct Evaluating : ____________R<
-    (AccessGranted, LimitAccessGranted), VaultOpen, // Path 1: Success
-    AccessDenied, Close                              // Path 2: Failure
-> { }
-```
-
-> [!TIP]
-> **Cross-Actor-Connection State References:**
-> When defining a transition branch (`L____________<PACKS, STATE>` or `____________R<PACKS, STATE>`), the target `STATE` does not have to be local to
-> the current Actor or Connection. You can reference a state defined in a completely different Actor.
->
-> When this happens, **the parser performs a graph traversal and copies the referenced state**-along with all of its subsequently linked states and
-> branches-directly into the current Actor's flow. This enables developers to create modular, reusable FSM blocks (e.g., standard error handling or
-> teardown sequences) that can be easily grafted across multiple Actors.
-
----
-
-**Example 1: The "Baton Pass" (Swapping Authority)**
-The "Boss" role passes back and forth. Only one side is "Main" at any given time, preventing race conditions.
-
-```csharp
-interface SecureHandshake : Actor {
-    // STATE 1: Agent is the Boss. They initiate the request.
-    struct Initializing :
-        L____________<ClientHello, AwaitingChallenge> { }
-
-    // STATE 2: Server is now the Boss.
-    struct AwaitingChallenge :
-        ____________R<(AuthChallenge, UpgradeRequest), Verifying> { }
-
-    // STATE 3: Agent is back in control. They must provide the solution.
-    struct Verifying :
-        L____________<ChallengeResponse, Finalizing> { }
-
-    // STATE 4: Server has the final word.
-    struct Finalizing :
-        ____________R<(Welcome, AccessDenied), End> { }
-}
-```
-
----
-
-**Example 2: Developer-Defined Governance**
-
-```csharp
-interface TelemetryStream : Actor {
-    struct Active :
-        l____________<(SensorData, GPSCoords)>, // Agent pumps data
-        ____________R<PauseCmd, Paused>,        // Server controls state
-        ____________R<Terminate, Close>          // Server kills connection
-    { }
-
-    struct Paused :
-        ____________R<Resume, Active>
-    { }
-}
-```
-
-The Server governs state transitions not because it is a "server" but because the developer designed the `Active` state that way.
-
----
-
-**Example 3: Shared Authority with a Designated Governor**
-
-```csharp
-interface CollaborativeEdit : Actor {
-    int MaxActiveInstances => 5;
-
-    struct Editing :
-        _____lr_____<(TextInsert, TextDelete, CursorMove)>, // Both sides can edit
-        L____________<FinalizeDoc, Reviewing>               // Only Left can finalize
-    { }
-
-    struct Reviewing : ____________R<(Approved, NeedsChanges), Editing> { }
-}
-```
-
-You get the flexibility of a raw socket with the safety of a formal state machine.
-
----
-
-**Example 4: Cross-Actor State Reference**
-
-```csharp
-interface CommonFlows : Actor {
-    // A generic teardown sequence we want to reuse
-    struct GracefulDisconnect : 
-        L____________<Goodbye, Closed> { }
-
-    struct Closed : 
-        ____________R<AckDisconnect, End> { }
-}
-
-interface DataSync : Actor { 
-    int MaxActiveInstances => 14; // Multi-instance swarm
-
-    struct Syncing :
-        _____lr_____<DataChunk>,
-        // Parser copies CommonFlows.GracefulDisconnect directly into this FSM.
-        L____________<SyncComplete, CommonFlows.GracefulDisconnect> { } 
-}
-```
-
----
-
-**Nesting Actors for Organization**
-
-In large systems, nest interfaces within the connection scope to group related Actors logically. The code generator respects this hierarchy,
-organizing the generated API accordingly.
-
-**Example: "Smart Factory" Protocol**
-
-```csharp
-using org.unirail.Meta;
-
-interface FactoryLink : Connects<Agent, Server> {
-
-    interface Infrastructure {
-        // Singleton
-        interface HealthMonitor : Actor {
-            struct Active :
-                l____________<(BatteryLevel, Temperature, CpuLoad)>,
-                ____________R<RequestSelfTest, DiagnosticMode>
-            { }
-
-            struct DiagnosticMode :
-                l____________<TestProgress>,
-                ____________R<TestResult, Active>
-            { }
-        }
-    }
-
-    interface Production {
-        // Multi-instance Swarm
-        interface TaskRunner : Actor { 
-            int MaxActiveInstances => 14; 
-
-            struct Idle : L____________<RequestJob, Assignment> { }
-
-            struct Assignment : ____________R<
-                (JobManifest, ToolingSpecs), Executing,
-                WaitCommand, Idle
-            > { }
-
-            struct Executing :
-                l____________<Telemetry>,
-                L____________<JobComplete, Idle>,
-                ____________R<EmergencyStop, Stopped>
-            { }
-
-            struct Stopped : L____________<ManualOverride, Idle> { }
-        }
-
-        // Multi-instance Swarm
-        interface AssetSync : Actor { 
-            int MaxActiveInstances => 14; 
-
-            struct Start : L____________<CheckUpdates, UpdateCheck> { }
-
-            struct UpdateCheck : ____________R<
-                NewFirmware, Downloading,
-                UpToDate, End
-            > { }
-
-            struct Downloading :
-                l____________<ChunkAck>,
-                ____________r<FileChunk>,
-                L____________<DownloadComplete, End>
-            { }
-        }
-    }
-}
-```
-
----
-
-### Modifying Imported Connections
-
-Customize imported connections and their components without modifying the original definitions.
-
-#### Modification Syntax
-
-* Replicate the target's structure with custom naming and extend `org.unirail.Meta.Modify<TargetEntity>`.
-* To delete entities, reference them with `/// <see cref="Delete.Connection"/>-`.
-* Within branches: use `X<Entity>` to delete, reference new entities normally to add, and explicitly reference the target State to modify transitions.
-
-> [!NOTE]  
+> [!NOTE]
 > Modified branches are identified by their transition target State.
 
-#### Example: Removing Entities from a Branch
+### Example: Remove Specific Packets from a Branch
 
 ```csharp
 struct UpdateLogin : Modify<Login>,
-                        L____________<
-                            (
-                            X<Agent.Login>,
-                            X<Agent.Signup>,
-                            X<Login>
-                            ),
-                            Update_to_state
-                        >
+                     L____________<
+                         (
+                         X<Agent.Login>,
+                         X<Agent.Signup>,
+                         X<Login>
+                         ),
+                         Update_to_state
+                     >
 { }
 ```
 
-#### Complete Example
+### Complete Modification Example
 
 ```csharp
 interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
 
+    // Remove Server.Info from this branch's packet set.
     struct Change_Info_Result : Modify<AdHocProtocol.Communication.Info_Result>,
-                                   ____________R<
-                                       X<Server.Info>
-                                   > { }
+                                ____________R<
+                                    X<Server.Info>
+                                > { }
 
+    // Add a transmit timeout and introduce a new target state.
     [TransmitTimeout(30)]
     struct Updated_Start : Modify<AdHocProtocol.Communication.Start>,
-                              ____________R<
-                                  X<AdHocProtocol.Communication.VersionMatching>,
-                                  NewState
-                              > { }
+                           ____________R<
+                               X<AdHocProtocol.Communication.VersionMatching>,
+                               NewState
+                           > { }
 
+    // Swap out Server.Invitation for a custom Authorizer packet.
     struct UpdatedVersionMatching : Modify<AdHocProtocol.Communication.VersionMatching>,
-                                       ____________r<
-                                           (
-                                           X<Server.Invitation>,
-                                           Authorizer
-                                           )
-                                       > { }
+                                    ____________r<
+                                        (
+                                        X<Server.Invitation>,
+                                        Authorizer
+                                        )
+                                    > { }
 
-    struct NewState : l____________<
-                             Sending_Pack
-                         > { }
+    // A new state introduced by the modification above.
+    struct NewState : l____________<Sending_Pack> { }
 }
 ```
-
-#### All-in-one
-
-**Scenario: A Multiplayer Game Server Architecture**
-In a multiplayer game, you have different types of nodes: Player Clients, Matchmaking Servers, and Game Servers. You need strict rules about who is
-allowed to talk to whom, and in what direction. Sometimes, once connected, you just want a single state where *everything* can be sent freely between
-the client and the server.
-
-```csharp
-interface GameProject {
-
-    // --- PACKS ---
-    class UserPoint {
-        float X;
-        float Y;
-        float Z;
-    }
-    class PlayerAction { int ActionId; }
-    class ServerUpdate { int Health; }
-    // ... potentially hundreds of other packs ...
-
-    // --- HOSTS ---
-    struct PlayerClient : Host { }
-    struct GameServer : Host { }
-
-    // --- CONNECTION ---
-    public interface GameplayCommunication : Connects<PlayerClient, GameServer> {
-        interface MainActor : Actor {
-            // Creates an open, bidirectional channel using the entire project scope
-            struct PlayingState : _____lr_____<@GameProject> { }
-        }
-    }
-}
-```
-
-**Breaking down the Connection rules:**
-
-* **`Connects<PlayerClient, GameServer>`**: Establishes the topological rule. `PlayerClient` is strictly mapped as `HostL` (Left) and `GameServer` is
-  mapped as `HostR` (Right).
-* **`@GameProject` (Pack Set)**: Grabs a collection of *all* packs declared anywhere inside the `GameProject` scope (`UserPoint`, `PlayerAction`,
-  `ServerUpdate`, etc.).
-* **`_____lr_____` (Bidirectional Follower)**: Expresses that the packets contained in the Pack Set can be sent in **both directions** (`HostL` to
-  `HostR`, AND `HostR` to `HostL`) as a peer-to-peer transmission that does not break the current state.
-
-With just one line of code—`_____lr_____<@GameProject>`—you have defined a fully-duplex, boilerplate-free connection state where the Client and Server
-can freely exchange any packet defined in the game!
 
 # Fields
 
@@ -3026,7 +2790,6 @@ Custom attributes are transformed by the generator into a hierarchy of constants
 - For other entities, metadata can use attributes or constants directly.
 
 Example using a `Description` attribute on a connection state:
-
 
 ```csharp
 [AttributeUsage(AttributeTargets.Struct)]
@@ -3501,87 +3264,107 @@ namespace com.my.company{
 
 ## Streams
 
-In high-performance architectures - message routers, binary object stores, drone telemetry proxies - a service often needs to transmit data without
+In high-performance architectures—message routers, binary object stores, drone telemetry proxies—a service often needs to transmit data without
 inspecting its contents. AdHoc handles these scenarios via **Contextual Scoping**: a field's behavior changes dynamically based on the communication
 path (the **Endpoint**) it travels.
 
+### Defining Endpoints
+
+An **Endpoint** is defined by identifying a specific "Source" (who is sending) and the "Pipe" (which connection). This is declared using a dedicated
+interface:
+
+```csharp
+// Syntax: IfSendingFrom<fromHost, viaConnection>
+public interface FromProducer : IfSendingFrom<Producer, ProducerToRouterConnection> { }
+public interface FromRouter   : IfSendingFrom<Router, ProducerToRouterConnection> { }
+```
+
+By grouping these interfaces, you can create **Endpoint Sets** to apply behavior to multiple paths simultaneously:
+
+```csharp
+public interface ExternalTraffic : _<(FromProducer, FromRouter)> { }
+```
+
 ---
 
-**Channel Asymmetry**
+### Channel Asymmetry
 
-Stream modifiers (`ToStream` and `FromStream`) break the standard symmetry between sender and receiver:
+Stream modifiers (`ToStream` and `FromStream`) break the standard symmetry between sender and receiver based on the defined Endpoint:
 
-* **`ToStream<Endpoint, T>`:** The **Sender** serializes `T` as a structured pack. The **Receiver** (on the matching `Endpoint` path) treats it as *
-  *raw bytes** - an opaque sink (e.g., a database saving a BLOB).
-* **`FromStream<Endpoint, T>`:** The **Sender** (on the matching `Endpoint` path) treats the field as **raw bytes** - an opaque source (e.g., a disk
-  reading bytes into the connection). The **Receiver** rehydrates the bytes back into a structured `T`.
+* **`ToStream<Endpoint, T>`**: When the data originates at the specified `Endpoint`, the **Sender** serializes `T` as a structured pack. The *
+  *Receiver** (the other side of that specific connection) treats it as **raw bytes**—an opaque sink.
+* **`FromStream<Endpoint, T>`**: When the data originates at the specified `Endpoint`, the **Sender** treats the field as **raw bytes**—an opaque
+  source (e.g., streaming directly from a file handle). The **Receiver** rehydrates those bytes back into a structured `T`.
 
 This asymmetry keeps middle-tier infrastructure (proxies, routers, stores) lean and decoupled from the internal evolution of the packs they transport.
 
 ---
 
-**Usage Patterns**
+### Usage Patterns
 
-**1. The Binary Object Store**
+#### 1. The Binary Object Store
+
+In this scenario, a **Client** uploads a profile to a **StorageNode**. The StorageNode should not need the `UserProfile` metadata just to save the
+bytes to disk.
 
 ```csharp
+// 1. Define the participants
+public struct Client : Host { ... }
+public struct StorageNode : Host { ... }
+public interface ClientToStore : Connects<Client, StorageNode> { ... }
+
+// 2. Define the Endpoint
+public interface FromClient : IfSendingFrom<Client, ClientToStore> { }
+
+// 3. Apply to Packs
 class StoreRequest {
     public long object_id;
 
-    // Client sends a structured Pack → Store receives raw bytes (opaque sink)
+    // Client (at FromClient) sends structured Pack 
+    // StorageNode receives raw bytes (opaque sink)
     [S(1024 * 1024)]
-    public ToStream<StoreEndpoint, UserProfile> data;
-}
-
-class StoreResponse {
-    public long object_id;
-
-    // Store sends raw bytes from disk → Client receives a structured Pack
-    [S(1024 * 1024)]
-    public FromStream<StoreEndpoint, UserProfile> data;
+    public ToStream<FromClient, UserProfile> data;
 }
 ```
 
-**2. Robotics & Drones: Interleaving and Interrupts**
+#### 2. Robotics & Drones: Interleaving and Interrupts
 
-The `Stream<To, From, Pack>` (Universal Stream) combines both asymmetric behaviors into a single field declaration. Its behavior is
-endpoint-dependent:
+The `Stream<To, From, Pack>` (**Universal Stream**) combines both behaviors. Its behavior is path-dependent:
 
-* On the `To` endpoint path: acts like `ToStream` - the sender serializes `Pack`, the receiver gets raw bytes.
-* On the `From` endpoint path: acts like `FromStream` - the sender provides raw bytes, the receiver rehydrates a `Pack`.
-* On all other paths: both sides treat it as a fully-serialized nested `Pack`.
+* On the **`To`** endpoint path: Acts like `ToStream`.
+* On the **`From`** endpoint path: Acts like `FromStream`.
+* On all other paths: Both sides treat it as a standard nested `Pack`.
 
 ```csharp
-/// On 'LoggingEndpoints' (from Router via RouterToLoggerChannel):
-///   Acts like ToStream<Payload> - serializes to a chunked stream.
-/// On 'DeserializingEndpoints' (from Router to Consumer):
-///   Acts like FromStream<Payload> - deserializes from a standard stream.
-/// On any other Endpoint (e.g., from Producer to Router):
-///   Acts as a standard, fully-serialized nested Payload pack.
-[S(65536)] // Mandatory size limit: max 64 KB.
-public Stream<LoggingEndpoints, DeserializingEndpoints, Payload> event_payload;
+public interface FromDrone : IfSendingFrom<Drone, DroneToCloudConnection> { }
+public interface FromCloud : IfSendingFrom<Cloud, DroneToCloudConnection> { }
+
+class TelemetryFrame {
+    // From Drone: Serializes Pack -> Cloud receives bytes (for storage)
+    // From Cloud: Sends bytes (from storage) -> Drone UI rehydrates Pack
+    // On other connections (e.g. Drone to Controller): Standard nested Pack
+    [S(65536)] 
+    public Stream<FromDrone, FromCloud, VideoMetadata> metadata;
+}
 ```
 
-This is designed for real-time systems where high-bandwidth raw data (video, audio) must be interleaved with low-latency structured control packs over
-the same connection.
-
-* **Interleaving:** Because the stream is framed, the receiver can distinguish between a raw video chunk and a structured `StatusUpdate` pack on the
+* **Interleaving**: Because the stream is framed, the receiver can distinguish between a raw video chunk and a structured `StatusUpdate` pack on the
   same channel.
-* **Interruptibility:** `Stream` is the only **interruptible** flow. A sender can terminate a low-priority video stream immediately by sending a
-  zero-length terminal chunk, freeing bandwidth for an urgent `Command` pack. A new stream can begin afterward.
+* **Interruptibility**: `Stream` is the only **interruptible** flow. A sender can terminate a low-priority stream immediately by sending a zero-length
+  terminal chunk, freeing bandwidth for an urgent `Command` pack.
 
 ---
 
-**Comparison of Contextual Field Behaviors**
+### Comparison of Contextual Field Behaviors
 
-Assume **Endpoint E** is the designated route where the host acts as the "Opaque Pipe."
+Assume **Endpoint E** is defined as `IfSendingFrom<HostA, ConnectionAB>`.
 
-| Field Declaration          | Sender (at E)               | On-the-Wire Format | Receiver (from E)         | Behavior on Other Routes |
-|:---------------------------|:----------------------------|:-------------------|:--------------------------|:-------------------------|
-| `MyPack p;`                | `MyPack` object             | Standard AdHoc     | `MyPack` object           | Same                     |
-| `ToStream<E, MyPack> p;`   | `MyPack` object             | Raw Bytes          | Raw Bytes (`ExtBytesDst`) | Normal Pack              |
-| `FromStream<E, MyPack> p;` | Raw Bytes (`ExtBytesSrc`)   | Standard AdHoc     | `MyPack` object           | Normal Pack              |
-| `Stream<E, E2, MyPack> p;` | Depends on path (see above) | Depends on path    | Depends on path           | Normal Pack              |
+| Field Declaration          | Sender (at E)             | On-the-Wire Format | Receiver (from E)         | Behavior on Other Routes |
+|:---------------------------|:--------------------------|:-------------------|:--------------------------|:-------------------------|
+| `MyPack p;`                | `MyPack` object           | Standard AdHoc     | `MyPack` object           | Same                     |
+| `ToStream<E, MyPack> p;`   | `MyPack` object           | Raw Bytes          | Raw Bytes (`ExtBytesDst`) | Normal Pack              |
+| `FromStream<E, MyPack> p;` | Raw Bytes (`ExtBytesSrc`) | Standard AdHoc     | `MyPack` object           | Normal Pack              |
+| `Stream<E, E2, MyPack> p;` | Depends on path           | Depends on path    | Depends on path           | Normal Pack              |
 
 ---
 
@@ -3592,16 +3375,14 @@ attribute.
 
 ### Stream
 
-While `Stream<To, From, Pack>` is topology-aware and carries a structured `Pack`, the bare `Stream` type is a pure, untyped binary conduit. The source
-is not assumed to be a `Pack` at all — it may be a file handle, a network socket, or any arbitrary byte producer. The receiver consumes it as raw
-bytes via the `Connection.Receiver.BytesDst` interface. The on-the-wire format is a simple length-prefixed stream optimized for maximum throughput and
-minimal memory overhead, making it the right choice for proxying or piping data where the middle tier must remain entirely content-agnostic.
+While `Stream<To, From, Pack>` is topology-aware, the bare `Stream` type is a pure, untyped binary conduit. The source is not assumed to be a `Pack`
+—it may be a file handle or a network socket. The receiver consumes it as raw bytes via the `BytesDst` interface. It uses chunking (
+`[length][data]...[0]`) for unknown or continuous feeds and is **interruptible**.
 
 ### File
 
-While `Stream` uses chunking (`[length][data]...[0]`) for unknown or continuous feeds, `File` is optimized for data with a known size. It uses a
-single length prefix (`[total_length][data]`), making it the most efficient option for disk-based BLOBs or memory buffers. Unlike `Stream`, `File` is
-**not** interruptible.
+`File` is optimized for data with a known size. It uses a single length prefix (`[total_length][data]`), making it the most efficient option for
+disk-based BLOBs or memory buffers. Unlike `Stream`, `File` is **not** interruptible.
 
 ## DateTime
 
@@ -3723,6 +3504,7 @@ AdHoc reserves an extra **1 minute** of capacity beyond the requested `interval`
 * Result: 3 bytes, upgraded from 1s to ~6ms precision automatically. All runtime calculations use integer arithmetic.
 
 ---
+
 ### 4. Elapsed Time (`Duration`)
 
 Use `org.unirail.Meta.Duration` for fields that measure **how long something took** — a non-negative elapsed duration from zero up to a known maximum.
@@ -3731,7 +3513,8 @@ Suited for request latency, task runtimes, timeout intervals, and heartbeat peri
 * **No calendar anchor** — unlike `DateTimeDef`, it carries no fixed origin point in history.
 * **Non-cyclic** — unlike `TimeSpanDef`, it is linear and never rolls over, so no boundary-crossing protection is needed.
 * **Mechanism:** `Value = ElapsedTime / Precision`, encoded as a step count in `[0, max]`.
-* **Sizing:** Byte-level — AdHoc allocates the smallest whole-byte container (1 to 7 bytes) required for your requested `max` step count. **Note:** AdHoc automatically scales the actual operational `max` up to completely fill the allocated bytes.
+* **Sizing:** Byte-level — AdHoc allocates the smallest whole-byte container (1 to 7 bytes) required for your requested `max` step count. **Note:**
+  AdHoc automatically scales the actual operational `max` up to completely fill the allocated bytes.
 
 ```csharp
 public interface Duration
@@ -3751,6 +3534,7 @@ public interface Duration
 ```
 
 **Example:**
+
 ```csharp
 struct RequestLatency : Duration
 {
@@ -3767,6 +3551,7 @@ class ApiCall
     RequestLatency latency;
 }
 ```
+
 #### Spare Bits: `max` Expansion
 
 After byte allocation, unused bit capacity is turned into a **larger representable range**: AdHoc silently increases `max` so that every bit in the

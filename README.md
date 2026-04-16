@@ -1185,244 +1185,212 @@ struct ModifyServer : Modify<Server> { }
 A `Host` definition also implicitly acts as a named [Pack Set](#pack-set), allowing you to reference all packets defined directly within that host's
 scope by its name.
 
-## Pack Set
 
-A Pack Set groups related packet types under a single unit, simplifying rule application and improving reusability. Pack Sets are the primary
-mechanism for defining the target group of packets for a rule or operation.
 
-### In-Place Pack Sets
-
-The `org.unirail.Meta._<>` interface creates an **ad-hoc Pack Set** for flexible grouping. Use `org.unirail.Meta.X<>` to exclude specific entities
-from a Pack Set.
-
-Here is the new chapter for the AdHoc protocol concept, formatted to match your existing documentation.
+Here is the rewritten chapter for the AdHoc protocol concept. The obsolete `WithCommentTags` has been removed, and the documentation has been restructured to teach the new generic `<SCOPE>` filtering architecture, progressing from basic grouping to advanced composition.
 
 ---
 
-#### Tag-Based Discovery (`WithCommentTags`)
+### Pack Set
 
-The `org.unirail.Meta.WithCommentTags` interface is a dynamic placeholder used to populate a Pack Set based on visual tags (ideally emojis or short
-keywords) found in documentation comments.
+A Pack Set groups related packet types under a single unit, simplifying rule application and improving reusability. Pack Sets are the primary mechanism for defining the target group of packets for a protocol rule or operation (such as `l__________<...>`).
 
-Unlike attributes which apply to an entire interface, `WithCommentTags` performs **inline filtering** based on the comment at the end of the line
-where it is declared.
+#### In-Place Pack Sets
 
-1. **Placement:** anywhere.
-2. **The Comment:** The tags must be provided in a trailing comment (`//`) on the **same line** as the `WithCommentTags` keyword.
-3. **Separators:** Multiple tags are separated by the pipe symbol `|`. Leading and trailing whitespace around tags is ignored.
-4. **Discovery:** The generator scans the entire project for packets containing these tags in their documentation.
-
-
-* **Standard Tag (`Emoji`):** Matches individual packets that contain the tag in their doc comment.
-* **Recursive Tag (`@Emoji`):** Matches any container (Project, Host, or Pack) containing the tag, and recursively includes all transmittable packets
-  found inside that container.
+The `org.unirail.Meta._<>` interface creates an ad-hoc Pack Set for flexible, inline grouping. You can group multiple items using tuple syntax `(...)`. Conversely, use `org.unirail.Meta.X<>` to explicitly exclude specific entities from a Pack Set.
 
 ```csharp
-interface Users : Actor {
-    int Actor.MaxActiveInstances => +8;
-
-    struct One : 
-        // Pulls all packs tagged with 📈👈👀 globally, 
-        // plus specific monitoring requests.
-        ____________r< 
-            (
-            WithCommentTags, //️ 📈👈👀 |  ️📈👉👀
-            UpdateUsers,
-            Monitoring.User.RequestForRange
-            )
-        >,
-        // Pulls all packs tagged with 📈👉👀
-        l____________< 
-             WithCommentTags  // 📈👉👀
-        >
-    { }
-}
-```
-
-```csharp
-// --- 1. Define packets and containers with tags ---
-
-/// 🌡️ Core environmental data
-class Temperature(...)
-
-/// 🌡️ Internal status
-class BatteryHeat(...)
-
-/// 🏎️ Chassis Systems Container
-interface WheelSubsystem {
-    class TirePressure(...)
-    class BrakeWear(...)
-    
-    /// 🏎️ Advanced telemetry
-    interface Aerodynamics {
-        class Downforce(...)
-    }
-}
-
-/// 🚨 Urgent alerts
-class EngineFailure(...)
-
-// --- 2. Use WithCommentTags to group them ---
-
-interface TelemetryStream : _<
-    (
-        // Includes any packet with the 🌡️ emoji (Temperature, BatteryHeat)
-        WithCommentTags, // 🌡️
-        
-        // Includes 🚨 packets AND everything inside containers tagged 🏎️
-        // (@🏎️ will include TirePressure, BrakeWear, and Downforce)
-        WithCommentTags, // 🚨 | @🏎️
-        
-        // You can also use it inside exclusion blocks
-        X< 
-            WithCommentTags // 🧪 | @Internal 
-        >
-    )
-> {}
-```
-
-**Key Advantages**
-
-* **Visual Organization:** Emojis provide instant visual recognition of what data is being grouped without reading complex regex.
-* **Decoupled Grouping:** You can include a packet in a specific protocol state just by adding an emoji to its documentation, without modifying the
-  protocol definition itself.
-* **Granular Control:** Because it is line-based, you can mix and match global tag searches with recursive container searches in a single, readable
-  list.
-
-> **Note:** The generator performs a literal string match or a "contains" check on the raw UTF-8 documentation text. Ensure your IDE and source files
-> are saved with UTF-8 encoding to support emojis reliably.
-
-### Named Pack Sets
-
-**Named Pack Sets** group packets under a reusable name, improving readability and reducing complexity when referencing multiple packets.
-
-```csharp
-interface Info_Result:
+interface Info_Result :
     _<
-    	(Server.Info,
-    	Server.Result)
-    >{}
+        (
+            Server.Info,
+            Server.Result,
+            X<Server.Result.Deprecated> // Exclude a specific packet
+        )
+    > {}
 ```
 
-Named Pack Sets can be declared anywhere within your project and may contain individual packs, other Named Pack Sets, projects, or hosts.
+#### Project, Host, or Pack Scopes
 
-#### Filtering
-
-Refine a Named Pack Set using `[Keep...]` or `[Skip...]` attributes from `org.unirail.Meta`. These filter contents using regular expressions matched
-against the **full pack type name** or **doc comment**.
-
-Multiple attributes of the same type can be stacked:
-
-1. **Keep attributes (additive OR):** If any `[Keep...]` attributes are present, a packet is retained only if it matches at least one. If no
-   `[Keep...]` attributes are present, all packets are candidates.
-2. **Skip attributes (subtractive OR):** A packet is removed if it matches any provided pattern.
-
-#### 1. Name Filtering (`[KeepName]` & `[SkipName]`)
-
-Filter packets based on their **full type names** (namespace + name).
+Instead of listing individual packets manually, a `Project`, `Host`, or `Pack` can be used as a source scope to automatically include transmittable packets defined within them.
 
 ```csharp
-[KeepName(@"\.Account\.")]
-[KeepName(@"\.Billing\.")]
-[SkipName(@"Test")]
-[SkipName(@"Draft")]
-interface FinancePackets : _< @Project > {}
+interface ServerData :
+    _<
+        (
+            Server.Info,
+            Project,  // All transmittable packets directly in Project scope
+            Host      // All transmittable packets directly in Host scope
+        )
+    > {}
 ```
 
-#### 2. Documentation Filtering (`[KeepDoc]` & `[SkipDoc]`)
+#### Recursive Scopes (`@`)
 
-Filter packets based on their **documentation comments** - useful for organizing packets with visual tags, emojis, or keywords.
+To include all transmittable packets recursively (including all nested structures inside a container), prefix the reference with `@`.
+
+> **Important:** The `@` prefix extracts all the contents, but excludes the container itself from the set.
+
+```csharp
+interface AllTelemetry :
+    _<
+        (
+            @Project,           // Recursively includes all transmittable packets in Project
+            @Host.ExternalLib,  // Recursively includes packets from a specific host library
+            X< @ToDelete >      // Recursively exclude everything inside the ToDelete container
+        )
+    > {}
+```
+
+---
+
+#### Filtering Rules
+
+You can refine any scope using `[Keep...]` or `[Skip...]` attributes from `org.unirail.Meta`. These filter a scope using regular expressions matched against either the full pack type name or the documentation comment.
+
+*   **Keep attributes (Additive OR):** If any `[Keep...]` attributes are present, a packet is retained only if it matches at least one pattern. If no `[Keep...]` attributes exist, all packets in the scope are candidates.
+*   **Skip attributes (Subtractive OR):** A packet is immediately removed if it matches any provided pattern.
+
+##### By Name Filtering (`[KeepName]` & `[SkipName]`)
+Filters packets based on their full type names (namespace + name). This is excellent for protocol versioning or strict namespace targeting.
+
+```csharp
+[KeepName(@"\.V1\.")]
+// Keeps only packets containing ".V1." in their path
+
+[SkipName(@"Test")]
+// Removes any packet with "Test" in its name
+```
+
+##### By Documentation Filtering (`[KeepDoc]` & `[SkipDoc]`)
+Filters packets based on their documentation comments. Because the generator scans raw UTF-8 documentation text, this enables powerful visual tagging using emojis or short keywords directly in your packet definitions.
 
 ```csharp
 /// 🔒 User credentials.
-interface Credentials : ... {}
+class Credentials (...)
 
 /// 📈 Server performance metrics.
-interface CpuStats : ... {}
-
-/// 📈 Network throughput.
-interface NetStats : ... {}
+class CpuStats (...)
 
 /// ⛔ Legacy payload.
-interface V1Payload : ... {}
+class V1Payload (...)
 
-
-[KeepDoc(@"📈")]
-[KeepDoc(@"🔒")]
-interface DashboardFeed : _< @Project > {}
-
-[SkipDoc(@"⛔")]
-[SkipDoc(@"🙈")]
-interface PublicApi : _< @Project > {}
-
-[KeepDoc(@"👉📈")]
-[KeepDoc(@"👉👀")]
-interface DataFlowVisualization : _< @Project > {}
+// Filters:
+[KeepDoc(@"📈")]      // Keeps CpuStats[SkipDoc(@"⛔|🙈")]   // Skips V1Payload
+[KeepDoc(@"🚨Fatal")] // Keeps urgent alerts
 ```
 
-**Note:** Filters scan raw documentation text. Since source files are typically UTF-8, symbols and emojis are fully supported in regex.
+---
 
-### Project, Host, or Pack as a Named Pack Set
+##### Two Filtering Paradigms
 
-A **Project**, **Host**, or **Pack** can be treated as a Named Pack Set to automatically include all transmittable packets defined directly within
-their scope.
+AdHoc offers two ways to apply these filters: **Filter Templates** (separated generic scopes) for maximum reusability, and **Named Pack Sets** (bound inline scopes) for specific, pre-packaged aliases.
 
-```csharp
-interface Info_Result:
-    _<
-        (
-    	Server.Info,
-        Server.Result,
-        Project,  // All transmittable packets directly in Project scope
-        Host      // All transmittable packets directly in Host scope
-        )
-    >{}
-```
+###### 1. Filter Templates (Generic Scopes)
+By utilizing C#'s generic type syntax (`<SCOPE>`), you can separate the filtering logic from the data source. A Filter Template defines *how* to filter, and you provide *what* to filter by passing a scope on the fly.
 
-To include **all transmittable packets recursively** (including nested structures), prefix the reference with `@`.
-
-> **Important:** The `@` prefix excludes the container itself from the set.
+This functional style is perfect for enforcing global standards across a massive project.
 
 ```csharp
-interface Info_Result:
-    _<
-    	(
-        Server.Info,
-        Server.Result,
-        @Project,  // Recursively includes all transmittable packets in Project (excluding Project itself)
-        Host,      // Directly includes transmittable packets in Host scope
-        X<
-        	(
-            Packs,
-            Need,
-            @ToDelete
-            )
-        >
-        )
-    >{}
-```
+// 1. Define reusable filtering logic once[SkipDoc(@"⛔|Deprecated")]
+interface ActiveOnly<SCOPE> {}
 
-Imagine you are building a protocol for a connected car. The car generates dozens of different data points: GPS location, speed, engine temperature,
-tire pressure, and battery health.
+[KeepName(@"\.Telemetry\.")]
+interface OnlyTelemetry<SCOPE> {}
 
-Instead of writing out every single packet every time you define a communication state, you can group them logically.
-
-```csharp
-// 1. Define the packets under a specific scope/project
-interface VehicleTelemetryProject {
-    class GpsLocationPack(...)
-    class EngineTempPack(...)
-    class TirePressurePack(...)
-    // ... potentially 50 more packets
-}
-
-// 2. Use the Pack Set in the protocol
-public interface DashboardConnection : Connects<CarSensorBus, DashboardDisplay> {
+// 2. Apply filters to specific scopes dynamically
+interface GuestConnection : Connects<Server, Client> {
     interface StreamingActor : Actor {
-        // Send ALL telemetry packets from Left (Sensor) to Right (Dashboard) continuously
-        interface ActiveState : l__________<@VehicleTelemetryProject> {}
+        // Applies the ActiveOnly filter to the entire Project recursively
+        interface ActiveState : l__________< ActiveOnly<@Project> > {}
     }
 }
+```
+
+###### 2. Named Pack Sets (Bound Scopes)
+When a specific filtered subset represents a distinct, reusable protocol concept that doesn't need to be applied generically to other scopes, you can combine the filters and the scope into a single declaration using inheritance.
+
+The attributes apply directly to the base interfaces (`_<...>` and `X<...>`).
+
+```csharp
+// The filter and scope are bound together. 
+// Just use the name 'ImplementOnObserver' later.
+[KeepName(@"\.Sessions\.")]
+interface ImplementOnObserver : _<@Monitoring>, X<All_Lists_on_Observer_are_virtual> { }
+
+interface ObserverState : l__________< ImplementOnObserver > {}
+```
+
+---
+
+##### Advanced Composition & Use Cases
+
+Because filters, scopes, and sets are all evaluated as interfaces under the hood, they can be mixed and combined in highly expressive ways using native C# syntax.
+
+###### Multi-Scope Union
+You can pass multiple distinct scopes into a filter using tuple syntax. The generator merges them first, then applies the filter to the combined set.
+
+```csharp
+[KeepDoc(@"👁️Public")]
+interface PublicView<SCOPE> {}
+
+// Take packets from both local Project and Monitoring, then apply the filter
+interface Feed : l__________< PublicView< (@Project, @Monitoring.Session) > > {}
+```
+
+###### Filter Composition (Intersection / AND)
+A filtered set can be used as the `<SCOPE>` for another filter, creating an elegant functional pipeline. Because each filter sequentially narrows down the set, nesting them creates a logical intersection (AND). It reads from the inside out:
+
+```csharp
+// Example 1: Pipeline filtering
+// 1. Take everything in @Project
+// 2. Remove anything with ⛔ (ActiveOnly)
+// 3. Keep only packets with ".Telemetry." in their name (OnlyTelemetry)
+interface TelemetryStream : l__________< 
+    OnlyTelemetry< ActiveOnly<@Project> > 
+> {}
+
+// Example 2: Composing Role Views
+// 1. Take all packets recursively in Monitoring.Sessions
+// 2. Keep only packets matching the AdminView rules
+// 3. From those, keep only packets that ALSO match the PublicView rules
+// Result: Strictly packets that satisfy BOTH Admin and Public requirements.
+interface SharedSessionStream : l__________<
+    PublicView< AdminView<@Monitoring.Sessions> >
+> {}
+```
+
+###### Set Arithmetic & Mixed Paradigms
+Combine Generic Filters, Named Pack Sets, In-Place Sets (`_<...>`), and Exclusions (`X<...>`) to achieve exact protocol definitions.
+
+```csharp
+[KeepDoc(@"🚨")]
+interface CriticalAlerts<SCOPE> {}
+
+// A state that combines generic templates and bound pack sets
+interface AdminDashboardState : l__________<
+    _<
+        (
+            ImplementOnObserver,                   // The Bound Named Pack Set defined earlier
+            CriticalAlerts<@Host.ExternalLib>,     // PLUS all 🚨 packets from external host
+            X< ActiveOnly<@Project.Legacy> >       // EXCEPT active packets from the legacy folder
+        )
+    >
+> {}
+```
+
+###### Use Case: Role-Based Access Control (RBAC)
+Filter templates make it effortless to define exactly what packets different client permission levels are allowed to see, all driven by emojis or tags in your packet documentation.
+
+```csharp
+[KeepDoc(@"👁️Public")] interface PublicView<SCOPE> {}
+[KeepDoc(@"🛡️Admin")]  interface AdminView<SCOPE> {}
+
+// Guest connection only gets Public packets
+interface GuestStream : l__________< PublicView<@Project> > {}
+
+// Admin gets both Public and Admin packets using a Union (OR)
+interface AdminStream : l__________< (PublicView<@Project>, AdminView<@Project>) > {}
 ```
 
 ## Empty Packs, Constants, Enums
@@ -2047,8 +2015,9 @@ conversation between two hosts.
 
 ### The Default Actor (Actor0)
 
-Every connection interface contains one implicit, host-wide actor known as **Actor0**. This is the "Primary Pipe." You do not need to declare it; it
-is always there to handle global logic, discovery, or fire-and-forget notifications.
+Every connection interface contains one implicit, connection-wide actor known as **Actor0**. This is the "Primary Pipe." You do not need to declare
+it; it
+is always there to handle connection logic, discovery, or fire-and-forget notifications.
 
 The connection body itself acts as the declaration scope for Actor0. How Actor0 is populated depends on how you use the interface body:
 
@@ -2057,6 +2026,7 @@ The connection body itself acts as the declaration scope for Actor0. How Actor0 
 | ** `struct` States** | Actor0 uses these states as its primary FSM. |
 | ** RPC Methods**     | These methods are Actors nested into Actor0. |
 
+If `Actor0` FSM contains multiply states, this actor restricted to only one instance.   
 Actors declared in the Connection body create own hierarchy and never nested into Actor0.
 
 ---
@@ -2178,7 +2148,6 @@ void UpdateStatus(StatusPayload status);
 *AdHoc FSM declaration:*
 
 ```csharp
-```csharp
 interface ClientServerConnection : Connects<Client, Server>{
 	interface MyFunctions : Actor {
 	    struct LogEvent     : l____________<(StringMessage, WarningEvent, ErrorEvent)> { }
@@ -2244,6 +2213,8 @@ interface FetchFile: Actor{
 }
 ```
 
+RPC-like actors do not support multicasting due to their short-lived nature.
+
 ---
 
 #### Bidirectional Request-Response
@@ -2284,6 +2255,7 @@ For complex workflows requiring **multiple states**, declare a full Actor explic
 | **Unlimited Swarm**    | `int MaxActiveInstances => UNLIMITED;` | Dynamic per-instance address            | No limit checks — ideal for short-lived RPC actors            |
 | **Multicast (PubSub)** | `int MaxActiveInstances => +22;`       | Dynamic instances + fixed group address | Sending to the group address fans out to all active instances |
 
+RPC-like actors do not support multicasting due to their short-lived nature.
 You have to set the `MaxActiveInstances` explicitly.
 
 **Example:**
@@ -2464,6 +2436,39 @@ holds the Main role, and **both sides are equal**.
 | `_____lr_____<P>`          | **Both**  | **Non-transitional** | Either side sends payload `P`; FSM **stays** in current state.  |
 
 For multiple packet types in a single branch, use C# tuple syntax: `<(PackA, PackB), TargetState>`.
+
+> [!IMPORTANT]
+> **Packet ID Uniqueness & The "Always Active" Rule**
+> In an Actor, the outcome of a transmission is recognized and differentiated *solely* by the packet ID. Because of this, **a specific packet type
+transmission can only be declared once for a specific host within the active FSM context.**
+>
+> **Non-Transitional (Isolated) States are Always Active:**
+> Because non-transitional states (`l____________`, `____________r`) act merely as a logical grouping of functions and never change the Actor's state,
+> they are essentially *globally active* within the Actor. Therefore:
+>
+> - **In a Singleton Actor:** Since the actor consists *only* of non-transitional states, **all packets across all its states** must be strictly
+    unique.
+> - **In a Stateful Actor:** The packets transmitted in any active transitional state must be unique *and must not overlap* with any packets defined
+    in the actor's non-transitional states.
+>
+> **Need the same data to trigger different outcomes?**
+> If you need the same payload information to trigger different effects (e.g., a normal update that stays in state vs. a final update that triggers a
+> transition), do not declare the same packet twice. Instead, simply create a new packet
+> using [AdHoc Protocol packet inheritance](#inheritance) to generate a new Pack with unique Packet ID
+> carrying identical fields:
+>
+> ```csharp
+> // Original data packet
+> class StatusPayload { string Message; }
+> 
+> // New packet ID, exact same payload structure
+> class FinalStatusPayload : StatusPayload { } 
+> 
+> struct ProcessingState : 
+>     l____________<StatusPayload>,                   // ID 1: Stay in state
+>     L____________<FinalStatusPayload, DoneState>    // ID 2: Transition to DoneState
+> { }
+> ```
 
 ---
 

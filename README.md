@@ -58,8 +58,19 @@ AdHoc is well-suited for systems where data volume, speed, and efficiency matter
 
 ### 2. Performance Benefits
 
-- **Drastically reduced memory usage:** AdHoc's streaming parser processes network data in small, reusable buffers (at least 256 bytes). Buffer
-  allocation for the entire message is never required, preventing memory spikes even with very large payloads.
+- **No whole-message buffer - in either direction.** AdHoc's defining property is that the runtime **never** allocates a buffer sized to the entire
+  pack. Serialization is pull-based: bytes flow through one reusable socket buffer (user-chosen size, minimum 256 bytes - pick larger to amortize
+  kernel syscalls; the Monitoring server uses 1024), and the producer holds only its own small state machine. Parsing is the inverse - bytes are
+  consumed slot-by-slot directly off the wire.
+  
+  This is the opposite of how most binary protocols work. Protocol Buffers, FlatBuffers, Thrift, MessagePack and friends serialize the whole pack
+  into one contiguous byte array before any of it goes on the wire (`byte[] data = pack.toByteArray(); socket.write(data);`) and parse the inverse
+  way - read the full message into a single buffer before any field is accessible. For a 64-byte status update this is fine. For a 1 GB telemetry
+  blob, an arbitrarily-long live encoder feed, or a video stream relayed through a proxy, it's a non-starter - the sender would need a gigabyte of
+  RAM just to *prepare* the message before the first byte hits the socket.
+  
+  AdHoc has no such moment. A pack of any size - a `Stream` field of unbounded size - costs the same constant socket-buffer size of resident
+  memory on each side, independent of the pack's logical length.
 - **Lower GC pressure:** By avoiding large single-object allocations and reusing small buffers, AdHoc reduces garbage collector workload, leading to
   lower latency, fewer pauses, and more predictable throughput.
 - **Efficient serialization/deserialization:** The streaming model transforms data on-the-fly, reducing end-to-end latency.
@@ -82,7 +93,7 @@ The **AdHoc** generator provides:
 - Projects composable from other projects, or able to selectively import specific components such as **connections**, constants, or individual packs.
 - **Connections** constructable from other connections or their components (states, branches).
 - Packs that can import or subtract individual fields or all fields of other packs.
-- A [`custom code injection point`](#custom-code-injection-point) for safely integrating custom code with generated code.
+- A [`custom code injection point`](#injection-points) for safely integrating custom code with generated code.
 - Built-in visualization through the **AdHoc Observer**, which renders interactive diagrams of network topology, pack field layouts, and data flow
   state machines.
 - Bitfield support.
@@ -97,8 +108,10 @@ The **AdHoc** generator provides:
 - Circular reference handling and multiple inheritance. Reused entities can be modified for new projects.
 - Compression via [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding.
 - Fully functional generated code ready for network infrastructure.
-- **Built-in streaming parser:** Processes all incoming data in small, reusable buffers (e.g., 256 bytes). Buffer allocation for the entire object is
-  never required.
+- **Built-in streaming parser:** Processes all incoming data in a single reusable socket buffer (user-chosen size, minimum 256 bytes). Buffer
+  allocation for the entire object is never required.
+- **Inventory-First Dashboard:** A centralized, top-of-file inventory of all packets
+  with [reactive ID management](#c-id-management-system-managed--reactive), user-driven semantic tagging, and tag-based routing.
 
 The **AdHoc Code Generator** is a [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service) platform providing cloud-based code generation.
 
@@ -219,7 +232,7 @@ Converts a file or directory of [Protocol Buffers](https://developers.google.com
 > [!NOTE]  
 > Additional arguments can be paths to directories containing supplemental imported `.proto` files, such as
 > [`well_known`](https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf) files.
-> Multiple directories are supported — for example, when imports are spread across several roots:
+> Multiple directories are supported - for example, when imports are spread across several roots:
 > ```cmd
 >     AdHocAgent.exe influxdb  influxdb  google.proto
 > ```
@@ -581,6 +594,12 @@ namespace com.my.company // Required
 {
     public interface MyProject // Declares an AdHoc protocol description project
     {
+        /**
+            <see cref = 'CommonPacket' /> common
+            <see cref = 'Server.PacketToClient' /> server | 🖥️
+            <see cref = 'Client.PacketToServer' /> client | 🔑
+        */
+
         class CommonPacket{ } // A common empty packet used across different hosts
 
         /// <see cref="InTS"/>-   // Generates an abstract TypeScript version
@@ -600,19 +619,10 @@ namespace com.my.company // Required
         }
 
         interface Connection : Connects<Client, Server>{
-            struct Start :
-                l____________<
-                   (
-                    CommonPacket,
-                    Client.PacketToServer
-                    )
-                >,
-                ____________r<
-                    (
-                    CommonPacket,
-                    Server.PacketToClient
-                    )
-                >{ }
+
+            [l____________<@Connection>("common | 🔑")]
+            [____________r<@Connection>("common | 🖥️")]
+            struct Start { }
         }
     }
 }
@@ -680,6 +690,72 @@ public interface MyProject
 AdHoc protocol descriptions cover both the data structures (packets and fields) and the complete network topology: hosts, connections, and their
 logical interconnections.
 
+---
+
+## Packs Inventory
+
+The documentation block at the top of the protocol file is the primary **User Interface** for the protocol - the user's **workspace** for organizing,
+categorizing, and routing packets.
+
+### The Core Vision: Top-Down Control
+
+The goal is to give the user a single central place to see all available packets, categorize them semantically, and "spread" them across connections
+and states using those categories (tags), direct pack references, or both.
+
+### A. Automatic Discovery & Alphabetization
+
+On every run, the system scans the project for all potentially transmittable classes/structs (excluding enums, headers, and meta-types). It
+automatically maintains an alphabetical list (by full path) of these types at the top of the file.
+
+**Initial state (first run) - no IDs yet, just a clean menu of available "ingredients":**
+
+```csharp
+/**
+    <see cref = 'Agent.Login' />
+    <see cref = 'Server.Invitation' />
+    <see cref = 'Server.Result' />
+*/
+```
+
+### B. Semantic User Tagging
+
+Users "label" packets by adding text or emojis **after the `/>`** on each line. These tags are the user's workspace - the system **never deletes or
+modifies** them.
+
+```csharp
+/**
+    <see cref = 'Agent.Login' /> server | 🔑
+    <see cref = 'Server.Invitation' /> server to client | 🖥️👉📈
+    <see cref = 'Server.Result' /> metrics | 📈
+*/
+```
+
+### C. ID Management (System-Managed & Reactive)
+
+The `id = 'N'` attribute is **reactive**:
+
+- **Assigned:** If a packet is detected as "directly transmittable" in any connection branch, the system assigns and maintains its unique ID.
+- **Removed:** If a packet is no longer used by any branch, the system **removes the ID** but **keeps the line** and the user's tags.
+- **Result:** Users see a clean list where "active" packets have IDs and "inactive" packets do not.
+
+```csharp
+/**
+    <see cref = 'Agent.Login'      id = '5' /> server | 🔑
+    <see cref = 'Server.Invitation' id = '3' /> server to client | 🖥️👉📈
+    <see cref = 'Server.Result' /> metrics | 📈  ← ID removed because the branch using 📈 was deleted
+*/
+```
+
+### D. The User Workflow
+
+1. **Discovery:** User writes packet types; system lists them in the Dashboard (no IDs).
+2. **Tagging:** User categorizes packets in the Dashboard using emojis/tags after `/>`.
+3. **Spreading:** User declares branches on empty state structs - packs can be included directly via the `PACKS` generic (e.g.,
+   `[l____________<(PackA, PackB)>]`), filtered via KeepDoc/SkipDoc/KeepName/SkipName (e.g., `[l____________("📈")]`), or both combined.
+4. **Finalization:** System assigns IDs to all active packets in the Dashboard and generates the protocol "Glue" code.
+
+---
+
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Example protocol description file:</u></b></summary>
 
@@ -689,17 +765,17 @@ using org.unirail.Meta;
 namespace com.my.company2
 {
     /**
-		<see cref = 'BackendServer.ReplyInts'                      id = '7'/>
-		<see cref = 'BackendServer.ReplySet'                       id = '8'/>
-		<see cref = 'FrontendServer.PackB'                         id = '6'/>
-		<see cref = 'FrontendServer.QueryDatabase'                 id = '5'/>
-		<see cref = 'FullFeaturedClient.FullFeaturedClientPack'    id = '4'/>
-		<see cref = 'FullFeaturedClient.Login'                     id = '3'/>
-		<see cref = 'Point3'                                       id = '0'/>
-		<see cref = 'Root'                                         id = '1'/>
-		<see cref = 'TrialClient.TrialClientPack'                  id = '2'/>
-	*/
-	public interface MyProject{
+        <see cref = 'BackendServer.ReplyInts'                   id = '7' /> backend | 📊
+        <see cref = 'BackendServer.ReplySet'                    id = '8' /> backend | 📊
+        <see cref = 'FrontendServer.PackB'                      id = '6' /> frontend | 📦
+        <see cref = 'FrontendServer.QueryDatabase'              id = '5' /> frontend | query | 🔍
+        <see cref = 'FullFeaturedClient.FullFeaturedClientPack' id = '4' /> client | full | 📝
+        <see cref = 'FullFeaturedClient.Login'                  id = '3' /> client | auth | 🔑
+        <see cref = 'Point3'                                    id = '0' /> common | geo | 📍
+        <see cref = 'Root'                                      id = '1' /> common | base
+        <see cref = 'TrialClient.TrialClientPack'               id = '2' /> client | trial | 📝
+    */
+    public interface MyProject{
 
         public class Root/*Ā*/{ // Non-transmittable base entity
             long id;
@@ -761,52 +837,31 @@ namespace com.my.company2
         struct FreeClient/*Ā*/ : Host{ }
 
         interface TrialConnection/*ÿ*/ : Connects<FrontendServer, TrialClient>{
-            struct Start/*ÿ*/ : l____________</*ÿ*/
-                                  (Point3,
-                                  Root,
-                                  TrialClient.TrialClientPack)
-	                              >,
-	                              ____________r</*Ā*/
-	                                  Point3,
-	                                  TrialClient.TrialClientPack
-	                              >{ }
+
+            [l____________<@TrialConnection>("📍 | base | trial")]
+            [____________r<@TrialConnection>("📍 | trial")]
+            struct Start/*ÿ*/ { }
         }
 
         interface MainConnection/*Ā*/ : Connects<FrontendServer, FullFeaturedClient>{
-            struct Start/*Ā*/ : l____________</*ÿ*/
-                                  (Point3,
-                                  Root,
-                                  TrialClient.TrialClientPack,
-                                  FullFeaturedClient.Login,
-                                  FullFeaturedClient.FullFeaturedClientPack)
-                              >,
-                              ____________r</*Ā*/
-                                  (Point3,
-                                  TrialClient.TrialClientPack,
-                                  FullFeaturedClient.FullFeaturedClientPack)
-                              >{ }
+
+            [l____________<@MainConnection>("📍 | base | trial | 🔑 | full")]
+            [____________r<@MainConnection>("📍 | trial | full")]
+            struct Start/*Ā*/ { }
         }
 
         interface TheConnection/*ā*/ : Connects<FrontendServer, FreeClient>{
-            struct Start/*ā*/ : l____________</*ÿ*/
-                                  (Point3,
-                                  Root)
-                              >,
-                              ____________r</*Ā*/
-                                  Point3
-                              >{ }
+
+            [l____________<@TheConnection>("📍 | base")]
+            [____________r<@TheConnection>("📍")]
+            struct Start/*ā*/ { }
         }
 
         interface BackendConnection/*Ă*/ : Connects<FrontendServer, BackendServer>{
-            struct Start/*Ă*/ : l____________</*ÿ*/
-                                  (FrontendServer.QueryDatabase,
-                                  Point3,
-                                  FrontendServer.PackB)
-                              >,
-                              ____________r</*Ā*/
-                                  (BackendServer.ReplyInts,
-                                  BackendServer.ReplySet)
-                              >{ }
+
+            [l____________<@BackendConnection>("🔍 | 📍 | 📦")]
+            [____________r<@BackendConnection>("📊")]
+            struct Start/*Ă*/ { }
         }
     }
 }
@@ -824,12 +879,14 @@ Selecting a specific connection shows the packets involved and their destination
 ![image](https://github.com/user-attachments/assets/895b9268-1a06-467f-8337-7d4b14d7f87f)
 </details>
 
-After processing with AdHocAgent, the tool assigns packet ID numbers for identification and tracking.
+After processing with AdHocAgent, the tool assigns packet ID numbers in the Dashboard for identification and tracking. IDs are assigned to packets
+that are determined to be directly transmittable - whether they are matched by KeepDoc/SkipDoc/KeepName/SkipName filters, listed explicitly as types
+in the `<PACKS>` generic parameter of a branch, or included via a Pack Set.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/51163c18-3b49-4f4f-adea-c3450c0fe01c)
 
 > [!NOTE]  
-> A project can function as a [set of packs](#projecthost-as-a-named-pack-set).
+> A project can function as a [set of packs](#project-host-or-pack-scopes).
 
 ### Extending Other Projects
 
@@ -938,21 +995,16 @@ namespace org.unirail {
         }
 
         interface ConnectionToMetrics : Connects<Server, Metrics> {
-            struct One : l____________<
-                                MetricsData
-                            > { }
+
+            [l____________<@ConnectionToMetrics>("metrics")]
+            struct One { }
         }
 
         interface ConnectionToAuthorizer : Connects<Server, Authorizer> {
-            struct Start : l____________<
-                                  AuthorisationRequest
-                              >,
-                              ____________r<
-                              (
-                              Authorizer.AuthorisationConfirmed,
-                              Authorizer.AuthorisationRejected
-                               )
-                              > { }
+
+            [l____________<@ConnectionToAuthorizer>("auth_request")]
+            [____________r<@ConnectionToAuthorizer>("auth_confirmed | auth_rejected")]
+            struct Start { }
         }
     }
 }
@@ -1035,15 +1087,15 @@ public interface AdHocProtocol :
 	* **Connections:** Removes the connection.
 	* **Enums / Constant Sets:** Removes from project scope.
 	* **Hosts:** Removes the host *and* any Connection referencing it.
-	* **Packs:** Removes the pack from the project and from every State Branch where it appears.
+	* **Packs:** Removes the pack from the project and from every State where its tags are matched.
 
 3. **`_<(TYPE_A, TYPE_B, ...)>`:** Use C# tuple syntax for multiple types.
 
 > [!NOTE]  
 > To import a **host**, reference it as an endpoint within a **connection**. To import a **pack**, reference it within a branch of a state.
 
-[Learn how to modify imported packs](#modify-imported-packs).  
-[Learn how to modify imported connections](#modify-imported-connections).
+[Learn how to modify imported packs](#modifying-imported-packs).  
+[Learn how to modify imported connections](#modifying-imported-connections).
 
 ---
 
@@ -1072,6 +1124,10 @@ When specifying a target language, append a two-character modifier (e.g., `++`, 
 	  stream, it immediately calls methods on your implementation for each field encountered. **The full object is never allocated on the heap.**
 	* Best for high-throughput, low-latency scenarios - network routers, data loggers, or services that must process messages larger than available
 	  RAM.
+
+> [!NOTE]
+> The modifier set here is only the **host default**. It can be overridden per pack and even per field - the full
+> (host, language, entity) resolution model lives in [Implementation Management](#implementation-management-1).
 
 #### Second Position: Hash Support (`+` or `-`)
 
@@ -1158,6 +1214,11 @@ How the generator interprets this:
 
 </details>
 
+> [!TIP]
+> These same scoping rules resolve down to an **individual field**: a language marker followed by a `<see cref='Pack.field'/>` reference confines an
+> implementation strategy (concrete `+` / abstract `-`) to that one field, while the rest of the pack keeps the host default.
+> See [Implementation Management](#implementation-management-1).
+
 ---
 
 ### Advanced Host Concepts
@@ -1185,19 +1246,17 @@ struct ModifyServer : Modify<Server> { }
 A `Host` definition also implicitly acts as a named [Pack Set](#pack-set), allowing you to reference all packets defined directly within that host's
 scope by its name.
 
-
-
-Here is the rewritten chapter for the AdHoc protocol concept. The obsolete `WithCommentTags` has been removed, and the documentation has been restructured to teach the new generic `<SCOPE>` filtering architecture, progressing from basic grouping to advanced composition.
-
 ---
 
 ### Pack Set
 
-A Pack Set groups related packet types under a single unit, simplifying rule application and improving reusability. Pack Sets are the primary mechanism for defining the target group of packets for a protocol rule or operation (such as `l__________<...>`).
+A Pack Set groups related packet types under a single unit, simplifying rule application and improving reusability. Pack Sets are the primary
+mechanism for defining the target group of packets for a protocol rule or operation (such as branches on states).
 
 #### In-Place Pack Sets
 
-The `org.unirail.Meta._<>` interface creates an ad-hoc Pack Set for flexible, inline grouping. You can group multiple items using tuple syntax `(...)`. Conversely, use `org.unirail.Meta.X<>` to explicitly exclude specific entities from a Pack Set.
+The `org.unirail.Meta._<>` interface creates an ad-hoc Pack Set for flexible, inline grouping. You can group multiple items using tuple syntax
+`(...)`. Conversely, use `org.unirail.Meta.X<>` to explicitly exclude specific entities from a Pack Set.
 
 ```csharp
 interface Info_Result :
@@ -1212,7 +1271,8 @@ interface Info_Result :
 
 #### Project, Host, or Pack Scopes
 
-Instead of listing individual packets manually, a `Project`, `Host`, or `Pack` can be used as a source scope to automatically include transmittable packets defined within them.
+Instead of listing individual packets manually, a `Project`, `Host`, or `Pack` can be used as a source scope to automatically include transmittable
+packets defined within them.
 
 ```csharp
 interface ServerData :
@@ -1246,69 +1306,113 @@ interface AllTelemetry :
 
 #### Filtering Rules
 
-You can refine any scope using `[Keep...]` or `[Skip...]` attributes from `org.unirail.Meta`. These filter a scope using regular expressions matched against either the full pack type name or the documentation comment.
+You can refine any scope using `[Keep...]` or `[Skip...]` attributes from `org.unirail.Meta`. These filter a scope using regular expressions matched
+against either the full pack type name or the documentation comment.
 
-*   **Keep attributes (Additive OR):** If any `[Keep...]` attributes are present, a packet is retained only if it matches at least one pattern. If no `[Keep...]` attributes exist, all packets in the scope are candidates.
-*   **Skip attributes (Subtractive OR):** A packet is immediately removed if it matches any provided pattern.
+* **Keep attributes (Additive OR):** If any `[Keep...]` attributes are present, a packet is retained only if it matches at least one pattern. If no
+  `[Keep...]` attributes exist, all packets in the scope are candidates.
+* **Skip attributes (Subtractive OR):** A packet is immediately removed if it matches any provided pattern.
 
 ##### By Name Filtering (`[KeepName]` & `[SkipName]`)
-Filters packets based on their full type names (namespace + name). This is excellent for protocol versioning or strict namespace targeting.
+
+Filters packets based on their full type names (namespace + name). The regex is matched against the entire qualified path (e.g.,
+`com.my.company.Monitoring.VolatileInfo.DiskIO.BytesTime.Subscribe`). This is excellent for protocol versioning or strict namespace targeting.
+
+> [!IMPORTANT]
+> Because the match runs against the **full type name**, a bare name like `"MyPack"` will also match `MyPackExtended`, `NotMyPack`, or
+`Some.MyPackage.Data`. To target an exact pack name, anchor it with `\.` (preceding dot) and `$` (end of string):
+>
+> | Pattern                          | Matches                                 | Does NOT match                   |
+> |:---------------------------------|:----------------------------------------|:---------------------------------|
+> | `"MyPack"`                       | `X.MyPack`, `X.MyPackV2`, `X.NotMyPack` | - (too broad)                    |
+> | `"\.MyPack$"`                    | `X.MyPack`                              | `X.MyPackV2`, `X.NotMyPack`      |
+> | `"\.Subscribe$\|\.Unsubscribe$"` | `X.Y.Subscribe`, `X.Y.Unsubscribe`      | `X.Subscriber`, `X.Unsubscribed` |
 
 ```csharp
 [KeepName(@"\.V1\.")]
 // Keeps only packets containing ".V1." in their path
 
-[SkipName(@"Test")]
-// Removes any packet with "Test" in its name
+[SkipName(@"\.Test$")]
+// Removes packets whose name ends with exactly ".Test"
+
+// Filter for Subscribe/Unsubscribe packs at the end of the name
+[KeepName(@"\.Subscribe$|\.Unsubscribe$")]
+interface SubsUnsubs<SCOPE>{}
+// Matches: Monitoring.VolatileInfo.DiskIO.BytesTime.Subscribe
+// Matches: Monitoring.VolatileInfo.DiskIO.BytesTime.Unsubscribe
+// Skips:   Monitoring.VolatileInfo.DiskIO.Subscriber
 ```
 
 ##### By Documentation Filtering (`[KeepDoc]` & `[SkipDoc]`)
-Filters packets based on their documentation comments. Because the generator scans raw UTF-8 documentation text, this enables powerful visual tagging using emojis or short keywords directly in your packet definitions.
+
+Filters packets based on their documentation text. The generator scans a unified pool per pack that includes both `///` comments on the class
+definition and the text after `/>` on the pack's line in the Dashboard - there is no distinction between the two. This enables powerful visual tagging
+using emojis or short keywords in either location.
 
 ```csharp
 /// 🔒 User credentials.
-class Credentials (...)
+class Credentials { ... }
 
 /// 📈 Server performance metrics.
-class CpuStats (...)
+class CpuStats { ... }
 
 /// ⛔ Legacy payload.
-class V1Payload (...)
+class V1Payload { ... }
 
-// Filters:
-[KeepDoc(@"📈")]      // Keeps CpuStats[SkipDoc(@"⛔|🙈")]   // Skips V1Payload
-[KeepDoc(@"🚨Fatal")] // Keeps urgent alerts
+// Define filtered Pack Sets using these attributes:
+
+[KeepDoc(@"📈")]
+interface MetricsOnly<SCOPE> {}         // Keeps CpuStats
+
+[SkipDoc(@"⛔|🙈")]
+interface NoLegacy<SCOPE> {}            // Skips V1Payload
+
+[KeepDoc(@"📈")]
+[SkipDoc(@"⛔")]
+interface ActiveMetrics<SCOPE> {}       // Keeps CpuStats, skips V1Payload
+
+// Use in a branch:
+[l____________< ActiveMetrics<@Project> >]
+struct Dashboard { }
 ```
 
 ---
 
 ##### Two Filtering Paradigms
 
-AdHoc offers two ways to apply these filters: **Filter Templates** (separated generic scopes) for maximum reusability, and **Named Pack Sets** (bound inline scopes) for specific, pre-packaged aliases.
+AdHoc offers two ways to apply these filters: **Filter Templates** (separated generic scopes) for maximum reusability, and **Named Pack Sets** (bound
+inline scopes) for specific, pre-packaged aliases.
 
 ###### 1. Filter Templates (Generic Scopes)
-By utilizing C#'s generic type syntax (`<SCOPE>`), you can separate the filtering logic from the data source. A Filter Template defines *how* to filter, and you provide *what* to filter by passing a scope on the fly.
+
+By utilizing C#'s generic type syntax (`<SCOPE>`), you can separate the filtering logic from the data source. A Filter Template defines *how* to
+filter, and you provide *what* to filter by passing a scope on the fly.
 
 This functional style is perfect for enforcing global standards across a massive project.
 
 ```csharp
-// 1. Define reusable filtering logic once[SkipDoc(@"⛔|Deprecated")]
+// 1. Define reusable filtering logic once
+[SkipDoc(@"⛔|Deprecated")]
 interface ActiveOnly<SCOPE> {}
 
 [KeepName(@"\.Telemetry\.")]
 interface OnlyTelemetry<SCOPE> {}
 
-// 2. Apply filters to specific scopes dynamically
+// 2. Apply filters to specific scopes dynamically via branches
 interface GuestConnection : Connects<Server, Client> {
     interface StreamingActor : Actor {
-        // Applies the ActiveOnly filter to the entire Project recursively
-        interface ActiveState : l__________< ActiveOnly<@Project> > {}
+        // Applies the ActiveOnly filter to the entire Project recursively.
+        // The PACKS generic carries the full filtered scope - no tags needed.
+        [l____________< ActiveOnly<@Project> >]
+        struct ActiveState { }
     }
 }
 ```
 
 ###### 2. Named Pack Sets (Bound Scopes)
-When a specific filtered subset represents a distinct, reusable protocol concept that doesn't need to be applied generically to other scopes, you can combine the filters and the scope into a single declaration using inheritance.
+
+When a specific filtered subset represents a distinct, reusable protocol concept that doesn't need to be applied generically to other scopes, you can
+combine the filters and the scope into a single declaration using inheritance.
 
 The attributes apply directly to the base interfaces (`_<...>` and `X<...>`).
 
@@ -1318,16 +1422,19 @@ The attributes apply directly to the base interfaces (`_<...>` and `X<...>`).
 [KeepName(@"\.Sessions\.")]
 interface ImplementOnObserver : _<@Monitoring>, X<All_Lists_on_Observer_are_virtual> { }
 
-interface ObserverState : l__________< ImplementOnObserver > {}
+[l____________< ImplementOnObserver >]
+struct ObserverState { }
 ```
 
 ---
 
 ##### Advanced Composition & Use Cases
 
-Because filters, scopes, and sets are all evaluated as interfaces under the hood, they can be mixed and combined in highly expressive ways using native C# syntax.
+Because filters, scopes, and sets are all evaluated as interfaces under the hood, they can be mixed and combined in highly expressive ways using
+native C# syntax.
 
 ###### Multi-Scope Union
+
 You can pass multiple distinct scopes into a filter using tuple syntax. The generator merges them first, then applies the filter to the combined set.
 
 ```csharp
@@ -1335,40 +1442,42 @@ You can pass multiple distinct scopes into a filter using tuple syntax. The gene
 interface PublicView<SCOPE> {}
 
 // Take packets from both local Project and Monitoring, then apply the filter
-interface Feed : l__________< PublicView< (@Project, @Monitoring.Session) > > {}
+[l____________< PublicView< (@Project, @Monitoring.Session) > >]
+struct Feed { }
 ```
 
 ###### Filter Composition (Intersection / AND)
-A filtered set can be used as the `<SCOPE>` for another filter, creating an elegant functional pipeline. Because each filter sequentially narrows down the set, nesting them creates a logical intersection (AND). It reads from the inside out:
+
+A filtered set can be used as the `<SCOPE>` for another filter, creating an elegant functional pipeline. Because each filter sequentially narrows down
+the set, nesting them creates a logical intersection (AND). It reads from the inside out:
 
 ```csharp
 // Example 1: Pipeline filtering
 // 1. Take everything in @Project
 // 2. Remove anything with ⛔ (ActiveOnly)
 // 3. Keep only packets with ".Telemetry." in their name (OnlyTelemetry)
-interface TelemetryStream : l__________< 
-    OnlyTelemetry< ActiveOnly<@Project> > 
-> {}
+[l____________< OnlyTelemetry< ActiveOnly<@Project> > >]
+struct TelemetryStream { }
 
 // Example 2: Composing Role Views
 // 1. Take all packets recursively in Monitoring.Sessions
 // 2. Keep only packets matching the AdminView rules
 // 3. From those, keep only packets that ALSO match the PublicView rules
 // Result: Strictly packets that satisfy BOTH Admin and Public requirements.
-interface SharedSessionStream : l__________<
-    PublicView< AdminView<@Monitoring.Sessions> >
-> {}
+[l____________< PublicView< AdminView<@Monitoring.Sessions> > >]
+struct SharedSessionStream { }
 ```
 
 ###### Set Arithmetic & Mixed Paradigms
+
 Combine Generic Filters, Named Pack Sets, In-Place Sets (`_<...>`), and Exclusions (`X<...>`) to achieve exact protocol definitions.
 
 ```csharp
 [KeepDoc(@"🚨")]
 interface CriticalAlerts<SCOPE> {}
 
-// A state that combines generic templates and bound pack sets
-interface AdminDashboardState : l__________<
+// A state that combines generic templates and bound pack sets - all via PACKS generic
+[l____________<
     _<
         (
             ImplementOnObserver,                   // The Bound Named Pack Set defined earlier
@@ -1376,33 +1485,38 @@ interface AdminDashboardState : l__________<
             X< ActiveOnly<@Project.Legacy> >       // EXCEPT active packets from the legacy folder
         )
     >
-> {}
+>]
+struct AdminDashboardState { }
 ```
 
 ###### Use Case: Role-Based Access Control (RBAC)
-Filter templates make it effortless to define exactly what packets different client permission levels are allowed to see, all driven by emojis or tags in your packet documentation.
+
+Filter templates make it effortless to define exactly what packets different client permission levels are allowed to see, all driven by emojis or tags
+in pack documentation.
 
 ```csharp
 [KeepDoc(@"👁️Public")] interface PublicView<SCOPE> {}
 [KeepDoc(@"🛡️Admin")]  interface AdminView<SCOPE> {}
 
-// Guest connection only gets Public packets
-interface GuestStream : l__________< PublicView<@Project> > {}
+// Guest connection only gets Public packets - filter template via PACKS generic
+[l____________< PublicView<@Project> >]
+struct GuestStream { }
 
 // Admin gets both Public and Admin packets using a Union (OR)
-interface AdminStream : l__________< (PublicView<@Project>, AdminView<@Project>) > {}
+[l____________< (PublicView<@Project>, AdminView<@Project>) >]
+struct AdminStream { }
 ```
 
 ## Empty Packs, Constants, Enums
 
 ### Empty Packs
 
-A **transmittable** (referenced in a connection) C# class-based pack with no instance fields - only [constants](#constants) or nested pack
+A **transmittable** (referenced via a branch) C# class-based pack with no instance fields - only [constants](#constants) or nested pack
 declarations. Implemented as singletons, it is the most efficient way to signal simple events or states over a connection.
 
 > [!NOTE]  
 > If an empty pack's sole purpose is to define hierarchy structure and should not be transmitted, switch to a C#
-> struct-based [Constants Container](#constant-container), which is non-transmittable.
+> struct-based [Constants Container](#constants-container), which is non-transmittable.
 
 ### Constants Container
 
@@ -1506,10 +1620,33 @@ namespace com.my.company
 
 #### Distribution Over Hosts
 
-By default, a Constants Container is included in the host where it is declared. Override this with `_<T>`:
+A Constants Container ends up in a host's generated code when **any** of the following routes places it there - the rules are additive:
 
-* **Project level** (`interface Project : _<EnumOrConst>`): Included in **every** host in the project.
-* **Host level** (`struct Host : _<EnumOrConst>`): Included in that **specific** host.
+1. **Declared inside that host's body.** A constants container nested inside `struct SomeHost : Host { … }` is automatically included in `SomeHost`'s
+   const/enum scope and only there.
+
+2. **Declared at project level** - i.e. directly under the project interface, not inside any host struct - **broadcast to every host** in the project:
+   
+    ```csharp
+    public interface MyProject {
+        class GlobalLimits {                      // project-scope, outside any host
+            public const int MaxPayload = 65_000;
+        }
+
+        struct Client : Host { /* gets GlobalLimits */ }
+        struct Server : Host { /* gets GlobalLimits */ }
+    }
+    ```
+
+3. **Imported via `_<T>`**. This is the explicit routing override and may be placed at either project or host level:
+	
+	* **Project level** - `interface MyProject : _<EnumOrConst> { … }` → `EnumOrConst` is copied into **every** host in the project. Use this to pull
+	  a constants container from elsewhere (a nested host scope, an imported project, etc.) and make it globally available.
+	* **Host level** - `struct SomeHost : Host, _<EnumOrConst> { … }` → `EnumOrConst` is copied into **that specific host** only. Use this when only
+	  one host needs the import.
+
+In all three cases the code generator emits the constants as local, host-scoped static values; constants are never serialized on the wire (see the
+note below under **Enums**).
 
 ---
 
@@ -1526,16 +1663,57 @@ Enums organize sets of constants of the same primitive type:
 
 #### Distribution Over Hosts
 
-An Enum is included in a generated Host only if:
+An Enum or Constants Container is included in a generated Host only if one of the following is true:
 
-1. It is declared within that Host's body.
-2. It is referenced by a field in a pack transmitted by that Host.
+1. **Declared in host scope.** The enum / constants container is declared inside that Host's body.
+2. **Referenced by a field type.** It is referenced as the type of a field in a pack transmitted, received, or implemented by that Host.
+3. **Referenced by a constant expression** - described below.
 
-Override this with `_<T>` at project or host level (same as Constants Containers above).
+You can always override the default placement with `_<T>` at project or host level (same as Constants Containers above).
+
+#### Cross-Pack Constant References
+
+When a pack in a host's scope (transmitted, received, or implemented) defines a constant whose **initializer expression references
+constants from *another* constants / enum pack**, that other pack is automatically added to the host's const/enum scope - so the
+generated code can resolve the identifier at compile time.
+
+**Example.** A `Sessions.Event` pack declares composite event IDs by OR-ing flags and actions that live in two sibling constants
+packs - `Event.Mask` and `Event.Action`:
+
+```csharp
+public class Event {
+    // …regular fields…
+    public static class Mask   { public const uint REMOTE = 1u << 31; /* … */ }
+    public static class Action { public const uint CONNECT = 1;        /* … */ }
+
+    // The composite constants reference BOTH nested containers:
+    static uint REMOTE_CONNECT = Mask.REMOTE | Action.CONNECT;
+    static uint THIS_CONNECT   = Mask.THIS   | Action.CONNECT;
+    // …
+}
+```
+
+Every host that sends, receives, or implements `Event` must be able to resolve `Mask.REMOTE`, `Action.CONNECT`, etc.
+The generator therefore walks each constant's initializer, follows every identifier that resolves to a constant field in
+a *different* constants / enum pack, and pulls that owning pack into the host's scope alongside `Event`.
+
+Which hosts get `Event.Mask` and `Event.Action` pulled in:
+
+- **Monitoring** - transmits `Event` → pulled in.
+- **MonitoringObserver** - receives `Event` → pulled in.
+- **Server** - implements `Event` via `Modify<Server>` → pulled in.
+- Any host where `Event` is not in scope → not pulled in.
+
+> [!NOTE]
+> **Exception - pure constants only.** The cross-reference rule adds a referenced pack *only if the host does not already transmit
+> or receive that pack*. Packs already flowing through the normal pipeline are not duplicated into the constants/enums list.
+
+The rule is reference-driven, not structural. It works regardless of where the referenced pack is declared (sibling, nested,
+elsewhere in the tree), and it handles arbitrary expressions - bitwise, arithmetic, nested, chained member access.
 
 ### Modifying Enums and Constants
 
-Enums and constants can be modified like a [simple pack](#modify-imported-packs), but the modifier is discarded after the modification is applied.
+Enums and constants can be modified like a [simple pack](#modifying-imported-packs), but the modifier is discarded after the modification is applied.
 
 ---
 
@@ -1547,7 +1725,42 @@ project's scope.
 Instance **fields** represent the data transmitted. A pack may also contain [constants](#constants) or nested pack declarations.
 
 > [!NOTE]  
-> A pack can act as a [set of packs](#projecthost-as-a-named-pack-set) - keep this in mind when organizing the pack hierarchy.
+> A pack can act as a [set of packs](#project-host-or-pack-scopes) - keep this in mind when organizing the pack hierarchy.
+
+### Implementation Management
+
+A pack's **implementation kind** is decided per **(host, language, pack)** - see [Implementation Management](#implementation-management-1) in the
+Fields chapter for the full model, declaration rules, and resolution precedence. In short: `+` generates a concrete, fully materialized object; `-`
+generates an abstract base
+class whose fields are delivered to your implementation as they stream off the wire, with the whole object never allocated. By default a pack follows
+its host's [implementation modifier](#modifier-summary-table) for the language being generated; an explicit rule pins exactly one
+**(host, language, pack)** combination.
+
+Make one pack abstract on a host while its siblings keep the host default:
+
+```csharp
+/**
+    <see cref='InJAVA'/>                // Java default for this host: ++ (concrete, materialized objects)
+
+    <see cref='InJAVA'/>-               // confined scope: ABSTRACT implementation...
+    <see cref='Telemetry'/>             // ...applied to this pack only
+*/
+struct Collector : Host {
+
+    public class Telemetry {            // ABSTRACT in Java on this host - parsed field-by-field via your
+        long  sensorId;                 //   handler; the whole Telemetry object is never allocated
+        int   sequence;
+        float value;
+    }
+
+    public class Heartbeat {            // concrete in Java (host default) - an ordinary stored object
+        long timestamp;
+    }
+}
+```
+
+The same `Telemetry` pack delivered to (or generated for) a *different* host is unaffected by this rule - it follows that host's own configuration. To
+override the implementation of a single field within a pack, see [Implementation Management](#implementation-management-1).
 
 ### Inheritance
 
@@ -1699,7 +1912,7 @@ namespace com.my.project
 The `FieldsInjectInto` interface defines a "template" class whose fields are automatically injected into the payload of other packets. The template
 class itself is not preserved as a packet.
 
-`FieldsInjectInto< PackSet >` injects fields only into transmittable packets within the specified [`PackSet`](#projecthost-as-a-named-pack-set).
+`FieldsInjectInto< PackSet >` injects fields only into transmittable packets within the specified [`PackSet`](#pack-set).
 
 **Example:**
 
@@ -1770,7 +1983,7 @@ The protocol parser enforces highly rigid rules for header definitions to ensure
   Headers are transmitted and parsed **after** the pack identifier but **before** the main payload. They are immediately accessible to network event
   handlers before the full payload is deserialized.
 - **Standalone Packets Only**
-  Headers are attached **only** to explicitly transmittable packets (root packets sent via Connection FSM branches).
+  Headers are attached **only** to explicitly transmittable packets (root packets picked up by branches).
   *If a packet is embedded as a field inside another packet (a Sub-packet), its header is completely stripped and ignored.*
 - **Strict Data Type Limitations**
   Because headers must be parsed blindly at the transport layer, they are heavily restricted:
@@ -1938,6 +2151,44 @@ Set<FloatWrapperNullable>   set_b;
 Set<FloatWrapperNullable?>  set_c;
 ```
 
+#### Generated Representation per Language
+
+A Value Pack is a logical record collapsed into a single primitive (≤ 8 bytes). The generator preserves that zero-allocation, zero-indirection model
+in every target - the syntax differs, the runtime cost does not.
+
+**C# - `readonly struct`**
+A value type wrapping the primitive, with field accessors exposed as properties/methods. Stack-allocated, no GC, pass-by-value - a direct language
+match.
+
+**Java - `SlimStruct` + [SlimEnum](https://plugins.jetbrains.com/plugin/10316-slimenum)**
+Java has no user-defined value types, so the generator emits a class whose **instances are never created**. Every field access is a `static` method
+that bit-slices a `long`/`int` parameter - the "struct" is just a namespace over a primitive.
+
+The authoring ergonomics come from the **[SlimEnum IntelliJ plugin](https://github.com/cheblin/SlimEnum)**:
+
+- Generated parameters and fields are tagged with `@interface` constant sets.
+- The IDE then treats a plain `long` as if it were a typed enum or flag set - context-aware completion, switch-case narrowing, OR-combination
+  awareness for flags, and invalid-value detection.
+- Without it, users would face opaque `long`s and memorized bit layouts. With it, pack-manipulating Java reads like working with real enums - the same
+  authoring feel as C# enums, at zero runtime cost.
+
+SlimEnum is what closes the gap between Java and languages with native value types.
+
+**TypeScript - `type` alias + merged namespace**
+No value types exist, so the generator uses TS declaration merging:
+
+- `type Pack = number` - the pack *is* a number.
+- `namespace Pack { ... }` - holds per-field `get` / `set` / `hasValue` / `to_null` helpers that do the bit math.
+- Whole-pack nullability uses an out-of-range sentinel encoded as a literal type, so TS narrows it automatically.
+
+| Target     | Representation                                       | Zero alloc | IDE ergonomics via  |
+|:-----------|:-----------------------------------------------------|:----------:|:--------------------|
+| C#         | `readonly struct`                                    |   native   | language            |
+| Java       | static methods over a primitive + `@interface` tags  |    yes     | **SlimEnum plugin** |
+| TypeScript | `number` + merged namespace + literal-type sentinels |   native   | TS literal types    |
+
+All three produce identical bytes on the wire.
+
 ### Modifying Imported Packs
 
 Create a new pack implementing `org.unirail.Meta.Modify<TargetPack>` to merge fields into the target. Use XML comments to add or remove specific
@@ -1959,7 +2210,7 @@ class Pack : Modify<TargetPack> {
 
 # Connections
 
-A **Connection** is the static definition of a remoting link — the typed pipe through which all protocol logic flows between two hosts. Every
+A **Connection** is the static definition of a remoting link - the typed pipe through which all protocol logic flows between two hosts. Every
 message, every state transition, every RPC call is declared inside a Connection.
 
 Connections are declared as C# interfaces that extend `org.unirail.Meta.Connects< HostLeft, HostRight >`:
@@ -1980,7 +2231,7 @@ namespace com.company {
 ---
 
 The body of a Connection interface is where you define its **protocol flow**: the logical sequence of messages, the ordering of packets, and the
-valid response patterns. You do this by declaring [`Actors`](#actors), [`States`](#states), and [`Branches`](#branches).
+valid response patterns. You do this by declaring [`Actors`](#actors), [`States`](#states), and [`Branches`](#branches-routing-attributes).
 
 Together, these constructs define a **Finite State Machine (FSM)** for each participating actor. The FSM tracks which `State` the communication is
 currently in, which in turn determines which messages are valid to send or receive at that moment.
@@ -2002,12 +2253,12 @@ interface CommunicationConnection : Connects<Server, Client>,
 
 ## Actors
 
-An **Actor** is the unit of concurrent, stateful behavior inside a Connection. Each Actor owns an independent FSM — an isolated logical thread of
+An **Actor** is the unit of concurrent, stateful behavior inside a Connection. Each Actor owns an independent FSM - an isolated logical thread of
 conversation between two hosts.
 
 1. **Exactly One Linked Chain:** An Actor may contain only **one** sequence of states connected by transitional branches (`L____________` or
    `____________R`).
-   This represents the Actor’s "Main Thread" or synchronized FSM.
+   This represents the Actor's "Main Thread" or synchronized FSM.
 2. **Unlimited Isolated States:** An Actor may contain **any number** of isolated states. These states use **non-transitional** branches (
    `l____________`,   `____________r`, or `_____lr_____`) that **do not change the Actor's state**. Isolated states use the Actor scope as
    a **logical grouping unit**.
@@ -2035,10 +2286,10 @@ Actors declared in the Connection body create own hierarchy and never nested int
 
 | Property      | Description                                                                                                                                                                                                                                                           |
 |:--------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Identity**  | Bound to the **Type** — fixed, predefined address                                                                                                                                                                                                                     |
+| **Identity**  | Bound to the **Type** - fixed, predefined address                                                                                                                                                                                                                     |
 | **Lifecycle** | Permanent; always available on both hosts                                                                                                                                                                                                                             |
-| **FSM**       | Isolated, non-linked states; uses **non-transitional branches** exclusively (`l____________`, `____________r`, or `_____lr_____`). Because there are no transitions, neither host acts as "Main" — **both sides are equal**. Each state acts as a logical aggregator. |
-| **Memory**    | Zero — no instance is ever created                                                                                                                                                                                                                                    |
+| **FSM**       | Isolated, non-linked states; uses **non-transitional branches** exclusively (`l____________`, `____________r`, or `_____lr_____`). Because there are no transitions, neither host acts as "Main" - **both sides are equal**. Each state acts as a logical aggregator. |
+| **Memory**    | Zero - no instance is ever created                                                                                                                                                                                                                                    |
 
 Singleton actors are the workhorse of **fire-and-forget** messaging. Because they have no linked state transitions, no session needs to be tracked,
 and no actor instance is ever allocated. A group of related fire-and-forget functions is simply a host-wide global singleton with multiple independent
@@ -2046,7 +2297,7 @@ non-transitional branches.
 
 ---
 
-### RPC Actor — Transient / Asymmetric
+### RPC Actor - Transient / Asymmetric
 
 | Property      | Description                                                          |
 |:--------------|:---------------------------------------------------------------------|
@@ -2063,14 +2314,14 @@ All C# method-based declarations and simple request-response flow Actors. The de
 
 ---
 
-### Stateful Actor — Synchronized / 1-to-1
+### Stateful Actor - Synchronized / 1-to-1
 
-A Stateful Actor owns a **single chain of linked states** — at least one state in the chain must contain a **transitional branch** (`L____________` or
+A Stateful Actor owns a **single chain of linked states** - at least one state in the chain must contain a **transitional branch** (`L____________` or
 `____________R`) that advances the FSM to another user-defined state.
 
 | Property            | Description                                                     |
 |:--------------------|:----------------------------------------------------------------|
-| **Identity**        | Bound to **Type + Instance** — unique dynamic address per pair  |
+| **Identity**        | Bound to **Type + Instance** - unique dynamic address per pair  |
 | **Lifecycle**       | Managed via `End` or `Close` terminal states                    |
 | **Synchronization** | A shared "Epoch" (logical clock) increments on every transition |
 
@@ -2093,9 +2344,12 @@ Use Stateful Actors for complex, multistep workflows: handshakes, file streaming
 A fire-and-forget operation is a one-way notification: one host sends a packet, no response is expected, and the FSM remains in its current state.
 These are declared with states using **non-transitional branches**:
 
-- `l____________` - Left host initiates (send)
-- `____________r` - Right host initiates
-- `_____lr_____` - Either side may call function (send function argument pack)
+- `[l____________<PACKS>(...)]` or `[l____________(...)]` - Left host initiates (send)
+- `[____________r<PACKS>(...)]` or `[____________r(...)]` - Right host initiates
+- `[_____lr_____<PACKS>(...)]` or `[_____lr_____(...)]]` - Either side may send
+
+Where `(...)` stands for the optional constructor parameters `(KeepDoc, SkipDoc, KeepName, SkipName)`. Packs can be specified directly in the `PACKS`
+generic (without `@`), filtered via KeepDoc/SkipDoc/KeepName/SkipName over scopes (with `@`), or both.
 
 Each isolated state acts as a named function group: a logical aggregator of related fire-and-forget operations.
 
@@ -2110,49 +2364,51 @@ void LogEvent(WarningEvent ev);
 void LogEvent(ErrorEvent ev);
 ```
 
-The overloads are collapsed into a single FSM state using a tuple.
+The overloads are collapsed into a single FSM state using tag-based routing.
 
 *AdHoc FSM declaration:*
 
 ```csharp
 interface ClientServerConnection : Connects<Client, Server>{
-	interface LogEventActor : Actor {
-	    struct LogEvent : l____________<(NoArg, StringMessage, WarningEvent, ErrorEvent)> { }
-	}
+    interface LogEventActor : Actor {
+        // Direct packs - all overloads listed explicitly
+        [l____________<(NoArg, StringMessage, WarningEvent, ErrorEvent)>]
+        struct LogEvent { }//state  is groupping functions
+    }
 }
 ```
 
+> [!NOTE]
+> Alternatively, if these packs are documented (e.g., with `log_events` in their `///` comments or Dashboard line), you can use the KeepDoc form:
+> `[l____________("log_events")]`
+
 **No-Argument Overloads**
 
-The packet system requires every branch to carry a concrete type — there is no native "void argument." To declare a function that takes no argument,
+The packet system requires every branch to carry a concrete type - there is no native "void argument." To declare a function that takes no argument,
 create a reusable empty sentinel class **once** per project:
 
 ```csharp
 class NoArg { }
 ```
 
-Reuse it anywhere a no-argument overload is needed.
+Tag it in the Dashboard alongside the other packets for that state.
 
 **Example: Grouping related fire-and-forget functions**
 
-Related fire-and-forget functions can be grouped as multiple states under a single actor. This is the preferred compact form — each state is a named,
+Related fire-and-forget functions can be grouped as multiple states under a single actor. This is the preferred compact form - each state is a named,
 always-available function group.
-
-*Traditional C# equivalent:*
-
-```csharp
-void LogEvent((StringMessage, WarningEvent, ErrorEvent) msg);
-void UpdateStatus(StatusPayload status);
-```
 
 *AdHoc FSM declaration:*
 
 ```csharp
 interface ClientServerConnection : Connects<Client, Server>{
-	interface MyFunctions : Actor {
-	    struct LogEvent     : l____________<(StringMessage, WarningEvent, ErrorEvent)> { }
-	    struct UpdateStatus : l____________<(StatusPayload, OR_PartialStatus)> { }
-	}
+    interface MyFunctions : Actor {
+        [l____________<(StringMessage, WarningEvent, ErrorEvent)>]
+        struct LogEvent { }
+
+        [l____________<(StatusPayload, OR_PartialStatus)>]
+        struct UpdateStatus { }
+    }
 }
 ```
 
@@ -2181,7 +2437,7 @@ UserProfile GetUser(UserId id);
 
 ```csharp
 interface ClientServerConnection : Connects<Client, Server> {
-        (l____________, UserProfile) GetUser(UserId id);
+        (L____________, UserProfile) GetUser(UserId id);
 }
 ```
 
@@ -2198,7 +2454,7 @@ OR_NotFound FetchFile(FileId id);
 
 ```csharp
 interface ClientServerConnection : Connects<Client, Server> {
-	(l____________, FileData, OR_NotFound) FetchFile((FileName, FileId) query);
+    (L____________, FileData, OR_NotFound) FetchFile((FileName, FileId) query);
 }
 ```
 
@@ -2207,9 +2463,13 @@ use [Full-Featured form](#full-featured-actor) to declare MaxActiveInstances exp
 
 ```csharp
 interface FetchFile: Actor{
-	int MaxActiveInstances => 14;
-	struct Call: L____________<(FileName, FileId), Return>{}
-	struct Return: ____________R<(FileData, OR_NotFound), End>{}
+    int MaxActiveInstances => 14;
+
+    [L____________<Return, (FileName, FileId)>]
+    struct Call { }
+
+    [____________R<End, (FileData, OR_NotFound)>]
+    struct Return { }
 }
 ```
 
@@ -2220,7 +2480,7 @@ RPC-like actors do not support multicasting due to their short-lived nature.
 #### Bidirectional Request-Response
 
 When **either host** may independently initiate the same interaction, omit the direction marker from the return tuple entirely. The code generator
-produces **two distinct state** — one for each direction — so both sides can initiate without race conditions.
+produces **two distinct states** - one for each direction - so both sides can initiate without race conditions.
 
 **Example: Either host can look up a user**
 
@@ -2235,9 +2495,58 @@ produces **two distinct state** — one for each direction — so both sides can
 
 ```csharp
 interface ClientServerConnection : Connects<Client, Server> {
-	(UserInfo, OR_NotFound) LookupUser(UserId id);
+    (UserInfo, OR_NotFound) LookupUser(UserId id);
 }    
 ```
+
+---
+
+#### Cascading RPC (Multi-Hop Relay)
+
+When a host has no direct connection to the target, RPC calls can be **cascaded** through intermediate hosts. Each hop is an independent actor with
+its own lifecycle - the middle host receives the reply, then relays it forward.
+
+**Example: Browser downloads session files from Server via Monitoring**
+
+`MonitoringObserver` (a browser) has no direct connection to `Server`. It can only reach `Server` through `Monitoring`:
+
+```
+MonitoringObserver ←→ Monitoring ←→ Server
+     (browser)         (relay)      (data source)
+```
+
+The same RPC signature is declared on both connections:
+
+```csharp
+struct Server : Host { }
+struct Monitoring : Host {
+    public class Download { long session_id; }
+    public class Upload   { Binary[,,] data; }
+}
+struct MonitoringObserver : Host { }
+
+interface ServerToMonitoring : Connects<Server, Monitoring> {
+    (____________R, Monitoring.Upload) getSessionFiles(Monitoring.Download req);
+}
+
+interface MonitoringToObserver : Connects<Monitoring, MonitoringObserver> {
+    (____________R, Monitoring.Upload) getSessionFiles(Monitoring.Download req);
+}
+```
+
+**The fully async cascade:**
+
+1. **MonitoringObserver** (browser) calls `getSessionFiles` → a transient RPC actor is created on MonitoringObserver and Monitoring.
+2. **Monitoring** receives the request. In its handler code, it initiates a **new** `getSessionFiles` call toward Server → a second, independent RPC
+   actor is created on Monitoring and Server.
+3. **Server** processes the request, sends `Upload` reply, its actor is destroyed.
+4. **Monitoring** receives the reply from Server, its Server-side actor is destroyed. Monitoring then passes the data as a reply to
+   MonitoringObserver, its Observer-side actor is destroyed.
+5. **MonitoringObserver** receives the final reply, its actor is destroyed. User code gets the session files.
+
+Each hop is a self-contained actor pair. Monitoring holds two actors simultaneously for the duration of the relay - one facing the Observer, one
+facing the Server. The developer writes the relay logic in Monitoring's `getSessionFiles` handler; the protocol infrastructure handles actor creation,
+addressing, and cleanup at every hop.
 
 ---
 
@@ -2252,7 +2561,7 @@ For complex workflows requiring **multiple states**, declare a full Actor explic
 |:-----------------------|:---------------------------------------|:----------------------------------------|:--------------------------------------------------------------|
 | **Singleton**          | `int MaxActiveInstances => 1`          | Fixed, predefined address               | One per connection; stable destination                        |
 | **Swarm**              | `int MaxActiveInstances => 14;`        | Dynamic per-instance address            | Up to N concurrent instances                                  |
-| **Unlimited Swarm**    | `int MaxActiveInstances => UNLIMITED;` | Dynamic per-instance address            | No limit checks — ideal for short-lived RPC actors            |
+| **Unlimited Swarm**    | `int MaxActiveInstances => UNLIMITED;` | Dynamic per-instance address            | No limit checks - ideal for short-lived RPC actors            |
 | **Multicast (PubSub)** | `int MaxActiveInstances => +22;`       | Dynamic instances + fixed group address | Sending to the group address fans out to all active instances |
 
 RPC-like actors do not support multicasting due to their short-lived nature.
@@ -2273,10 +2582,10 @@ namespace com.company {
             // Swarm of up to 14 instances (dynamic addresses).
             interface CPUMetricsActor : Actor { int MaxActiveInstances => 14; }
 
-            // Unlimited swarm — zero limit-check overhead.
+            // Unlimited swarm - zero limit-check overhead.
             interface BackgroundTaskActor : Actor { int MaxActiveInstances => UNLIMITED; }
 
-            // Swarm + PubSub — one shared fixed address multicasts to all active instances.
+            // Swarm + PubSub - one shared fixed address multicasts to all active instances.
             interface ChatRoomMemberActor : Actor { int MaxActiveInstances => +22; }
         }
     }
@@ -2301,15 +2610,14 @@ interface FactoryLink : Connects<Agent, Server> {
 
         // Singleton health monitor
         interface HealthMonitor : Actor {
-            struct Active :
-                l____________<(BatteryLevel, Temperature, CpuLoad)>,
-                ____________R<RequestSelfTest, DiagnosticMode>
-            { }
 
-            struct DiagnosticMode :
-                l____________<TestProgress>,
-                ____________R<TestResult, Active>
-            { }
+            [l____________<(BatteryLevel, Temperature, CpuLoad)>]
+            [____________R<DiagnosticMode, RequestSelfTest>]
+            struct Active { }
+
+            [l____________<TestProgress>]
+            [____________R<Active, TestResult>]
+            struct DiagnosticMode { }
         }
     }
 
@@ -2319,38 +2627,37 @@ interface FactoryLink : Connects<Agent, Server> {
         interface TaskRunner : Actor {
             int MaxActiveInstances => 14;
 
-            struct Idle : L____________<RequestJob, Assignment> { }
+            [L____________<Assignment, RequestJob>]
+            struct Idle { }
 
-            struct Assignment : ____________R<
-                (JobManifest, ToolingSpecs), Executing,
-                WaitCommand, Idle
-            > { }
+            [____________R<Executing, (JobManifest, ToolingSpecs)>]
+            [____________R<Idle, WaitCommand>]
+            struct Assignment { }
 
-            struct Executing :
-                l____________<Telemetry>,
-                L____________<JobComplete, Idle>,
-                ____________R<EmergencyStop, Stopped>
-            { }
+            [l____________<Telemetry>]
+            [L____________<Idle, JobComplete>]
+            [____________R<Stopped, EmergencyStop>]
+            struct Executing { }
 
-            struct Stopped : L____________<ManualOverride, Idle> { }
+            [L____________<Idle, ManualOverride>]
+            struct Stopped { }
         }
 
         // Multi-instance asset sync
         interface AssetSync : Actor {
             int MaxActiveInstances => 14;
 
-            struct Start : L____________<CheckUpdates, UpdateCheck> { }
+            [L____________<UpdateCheck, CheckUpdates>]
+            struct Start { }
 
-            struct UpdateCheck : ____________R<
-                NewFirmware, Downloading,
-                UpToDate, End
-            > { }
+            [____________R<Downloading, NewFirmware>]
+            [____________R<End, UpToDate>]
+            struct UpdateCheck { }
 
-            struct Downloading :
-                l____________<ChunkAck>,
-                ____________r<FileChunk>,
-                L____________<DownloadComplete, End>
-            { }
+            [l____________<ChunkAck>]
+            [____________r<FileChunk>]
+            [L____________<End, DownloadComplete>]
+            struct Downloading { }
         }
     }
 }
@@ -2367,7 +2674,7 @@ The runtime engine automatically enforces the following rules:
 - **Timeouts:** If a `[ReceiveTimeout]` or `[TransmitTimeout]` is reached, the **network connection is closed** by default to prevent hangs.
 - **`End` State:** Transitions to `org.unirail.Meta.End` **delete the actor pair**, freeing instances while keeping the physical connection open for
   other actors.
-- **`Close` State:** Transitions to `org.unirail.Meta.Close` trigger a **graceful connection shutdown** — the transmission queue is fully drained
+- **`Close` State:** Transitions to `org.unirail.Meta.Close` trigger a **graceful connection shutdown** - the transmission queue is fully drained
   before the physical link closes.
 - **Customization:** All default lifecycle actions can be overridden in generated code for custom error-handling or recovery strategies.
 - **User Responsibility:** Everything outside explicit limits and terminal states is the **developer's responsibility** to manage.
@@ -2376,10 +2683,22 @@ The runtime engine automatically enforces the following rules:
 
 ## States
 
-States represent the distinct processing phases in an Actor's lifecycle. They define which messages are valid and which logic should execute. The
-**topmost declared state** inside an Actor is the **initial state** — name it clearly (e.g., `Start` or `Init`).
+States represent the distinct processing phases in an Actor's lifecycle. They define which messages are valid and which logic should execute.
 
-States are declared as C# `struct`s inside the Actor interface.
+The actor's **initial state** is the **topmost declared state with at least one transitional branch** (`L____________` or `____________R`) - the first
+station the actor *can be in* and *can leave*. Name it clearly (e.g., `Start` or `Handshake`).
+
+A state declared with **only non-transitional branches** (`l____________`, `____________r`, `_____lr_____`) is **not a station** the actor occupies -
+it
+is a *global overlay* that is always active alongside whichever linked state is current (see the **"Always Active" rule** below). For that reason,
+**a stateless state cannot serve as the initial state**: the actor never enters or leaves it. Place stateless overlays anywhere in the Actor - their
+position has no effect on the entry point.
+
+States are declared as C# **empty `struct`s** inside the Actor interface, with branches controlling their behavior.
+
+> [!IMPORTANT]
+> **States are empty.** A `struct` used as a State does not contain fields or methods. If the parser detects any members inside the struct, it
+> triggers a compilation error. All communication logic is expressed exclusively via branches (routing attributes) on the struct.
 
 > [!NOTE]
 > The state machine is purely event-driven (packet transmission and timeouts). AdHoc generates all state-transition code from your dataflow
@@ -2389,9 +2708,9 @@ The code generator collects all states, resolves links via branch targets, and t
 compilation error is raised if the generator detects duplicate state names or multiple independent state chains.
 
 Branch targets are not restricted to the local Actor or Connection. You can reference a state defined in an entirely different Actor and Connection.
-In such cases, the parser performs a graph traversal and **copies the referenced state**—including all s ubsequent links and branches—directly into
-the
-current Actor’s flow. This mechanism allows you to build modular, reusable FSM blocks (e.g., standard error-handling or teardown sequences) that can
+In such cases, the parser performs a graph traversal and **copies the referenced state**-including all subsequent links and branches-directly into
+the current Actor's flow. This mechanism allows you to build modular, reusable FSM blocks (e.g., standard error-handling or teardown sequences) that
+can
 be seamlessly grafted across multiple Actors.
 
 ---
@@ -2410,89 +2729,242 @@ Gracefully terminates the physical connection. The transmission queue is fully d
 
 Limit how long an actor may wait in a state using built-in timeout attributes (values in seconds):
 
-- `[ReceiveTimeout(seconds)]` — maximum time to wait for an incoming message
-- `[TransmitTimeout(seconds)]` — maximum time to send an outgoing message
+- `[ReceiveTimeout(seconds)]` - maximum time to wait for an incoming message
+- `[TransmitTimeout(seconds)]` - maximum time to send an outgoing message
 
-You may also add **any custom attributes** to states, branches, or actors. The code generator preserves them and makes them available as constants or
+You may also add **any custom attributes** to states or actors. The code generator preserves them and makes them available as constants or
 static fields in the generated code. Use this to attach routing tags, UI labels, or any application-specific metadata directly to your protocol FSM.
 
 ---
 
-## Branches
+## Branches (Routing Attributes)
 
-Inside a **State**, **Branches** define the data flow and assign host roles. Branches themselves are strictly either **transitional** or *
-*non-transitional**.
+On each **State**, **branches** define the data flow and assign host roles. Branches are strictly either **transitional** or **non-transitional**, and
+are declared using routing attributes on the state struct.
 
 By declaring a transitional branch for a specific host, you assign that host the **Main** role, granting it sole authority to advance the FSM. The
 opposite host acts as a **Follower**, limited to executing non-transitional branches. If a state contains only non-transitional branches, neither host
 holds the Main role, and **both sides are equal**.
 
-| Syntax                     | Host Side | Branch Type          | Effect                                                          |
-|:---------------------------|:----------|:---------------------|:----------------------------------------------------------------|
-| `L____________<P, S, ...>` | **Left**  | **Transitional**     | Left (as **Main**) sends `P`, FSM moves to `S`. Up to 9 pairs.  |
-| `l____________<P>`         | **Left**  | **Non-transitional** | Left sends payload `P`; FSM **stays** in current state.         |
-| `____________R<P, S, ...>` | **Right** | **Transitional**     | Right (as **Main**) sends `P`, FSM moves to `S`. Up to 9 pairs. |
-| `____________r<P>`         | **Right** | **Non-transitional** | Right sends payload `P`; FSM **stays** in current state.        |
-| `_____lr_____<P>`          | **Both**  | **Non-transitional** | Either side sends payload `P`; FSM **stays** in current state.  |
+| Attribute (with PACKS)                | Attribute (no PACKS)           | Host Side | Type                 | Effect                                                   |
+|:--------------------------------------|:-------------------------------|:----------|:---------------------|:---------------------------------------------------------|
+| `[L____________<Target, PACKS>(...)]` | `[L____________<Target>(...)]` | **Left**  | **Transitional**     | Left (as **Main**) sends packs, FSM moves to `Target`.   |
+| `[l____________<PACKS>(...)]`         | `[l____________(...)]`         | **Left**  | **Non-transitional** | Left sends packs; FSM **stays** in current state.        |
+| `[____________R<Target, PACKS>(...)]` | `[____________R<Target>(...)]` | **Right** | **Transitional**     | Right (as **Main**) sends packs, FSM moves to `Target`.  |
+| `[____________r<PACKS>(...)]`         | `[____________r(...)]`         | **Right** | **Non-transitional** | Right sends packs; FSM **stays** in current state.       |
+| `[_____lr_____<PACKS>(...)]`          | `[_____lr_____(...)]`          | **Both**  | **Non-transitional** | Either side sends packs; FSM **stays** in current state. |
 
-For multiple packet types in a single branch, use C# tuple syntax: `<(PackA, PackB), TargetState>`.
+Where `(...)` stands for the optional constructor parameters: `(KeepDoc, SkipDoc, KeepName, SkipName)`.
+
+The constructor takes four optional named parameters: `string KeepDoc = ""`, `string SkipDoc = ""`, `string KeepName = ""`, and
+`string SkipName = ""`. The `Doc` filters are regex patterns applied to each pack's documentation text (a unified pool of `///` class comments and
+Dashboard line text). The `Name` filters are regex patterns applied to each pack's full type name (namespace + name). `Keep` retains only matching
+packs; `Skip` removes matching packs. All use `|` as OR separator.
+
+Since all parameters are optional with defaults, you can use C# named parameter syntax to set only the ones you need, or pass empty strings
+positionally:
+
+```csharp
+// Named - skip straight to KeepName
+[l____________<@Project>(KeepName: @"\.V2\.")]
+
+// Positional - empty strings for KeepDoc and SkipDoc
+[l____________<@Project>("", "", @"\.V2\.")]
+```
+
+**How pack collection works:**
+
+The `PACKS` generic parameter contains type expressions where the `@` prefix controls how each type is interpreted:
+
+- **Without `@`** - the type is a **direct pack inclusion**. It is added to the branch unconditionally.
+- **With `@` prefix** - the type declares a **SCOPE**. The KeepDoc/SkipDoc/KeepName/SkipName filters are applied **exclusively** over this scope to
+  select packs. When `@` scopes are present, the filters are confined to those scopes only - they do not additionally scan all packs.
+
+Both direct packs and filter-selected packs are **merged** into the final packet set for the branch.
+
+**Without PACKS generic** - the KeepDoc/SkipDoc/KeepName/SkipName filters apply over the scope of **all packs** in the project.
+
+**Examples:**
+
+```csharp
+// 1. Direct packs only - no filtering, packs listed explicitly
+[l____________<(Monitoring.Sessions.ForPeriod, Monitoring.Sessions.ForRange)>]
+struct SessionMetrics { }
+
+// 2. KeepDoc filter over ALL packs (no PACKS generic)
+[l____________("📈")]
+struct SimpleMetrics { }
+
+// 3. KeepDoc + SkipDoc over ALL packs
+[l____________("📈 | server", "⛔")]
+struct FilteredMetrics { }
+
+// 4. KeepName filter over ALL packs - by type name regex
+[l____________(KeepName: @"\.Telemetry\.")]
+struct TelemetryOnly { }
+
+// 5. Mixed - direct packs + scoped filtering with KeepDoc/SkipDoc
+//    StringMessage is included directly (no @)
+//    @WarningEvent and @ErrorEvent are SCOPEs - filters applied over their contents
+[l____________<(StringMessage, @WarningEvent, @ErrorEvent)>("critical", "deprecated")]
+struct MixedBranch { }
+
+// 6. Scoped filtering with KeepName - filter by type name within @Project
+[l____________<@Project>(KeepName: @"\.V2\.")]
+struct V2Only { }
+
+// 7. Combined KeepDoc + SkipName on a scope
+[l____________<@Project>("📈", SkipName: @"Test")]
+struct MetricsNoTests { }
+
+// 8. Transitional, KeepDoc over all packs - advances to NextState
+[L____________<NextState>("handshake")]
+struct Start { }
+
+// 9. Transitional with direct packs - advances to NextState
+[L____________<NextState, (ClientHello, ClientVersion)>]
+struct StartWithPacks { }
+```
+
+### RPC Markers (Shorthand Call/Return)
+
+For simple interactions, method-signature-style interfaces synthesize a 2-state FSM:
+
+- `public interface L____________ { }` : Call from Left, **Return from Right**.
+- `public interface ____________R { }` : Call from Right, **Return from Left**.
 
 > [!IMPORTANT]
 > **Packet ID Uniqueness & The "Always Active" Rule**
-> In an Actor, the outcome of a transmission is recognized and differentiated *solely* by the packet ID. Because of this, **a specific packet type
-transmission can only be declared once for a specific host within the active FSM context.**
 >
-> **Non-Transitional (Isolated) States are Always Active:**
-> Because non-transitional states (`l____________`, `____________r`) act merely as a logical grouping of functions and never change the Actor's state,
-> they are essentially *globally active* within the Actor. Therefore:
+> In an Actor, the outcome of a transmission is recognized and differentiated *solely* by the packet ID on the wire. Because of this, **a specific
+> packet type transmission can only be declared once for a specific host within the active FSM context.**
 >
-> - **In a Singleton Actor:** Since the actor consists *only* of non-transitional states, **all packets across all its states** must be strictly
-    unique.
-> - **In a Stateful Actor:** The packets transmitted in any active transitional state must be unique *and must not overlap* with any packets defined
-    in the actor's non-transitional states.
+> **Non-transitional (isolated) states are Always Active.**
+> States declared with only `l____________`, `____________r`, or `_____lr_____` never change the Actor's state. They are not stations the actor
+> occupies - they are *global overlays* layered on top of whichever linked state is currently active. The actor never "enters" or "leaves" them; their
+> handlers are simply available all the time.
+>
+> The dispatcher's **active scope** while the actor is in any linked state X is therefore:
+>
+> > **Active scope = X's own branches ∪ every isolated state's branches** (per host side)
+>
+> The same packet ID cannot appear twice within this combined scope on the same host side - even if both occurrences are non-transitional (Stay)
+> branches. Two handlers would fire for the same wire packet, and the dispatcher has no way to choose between them.
+>
+> - **Singleton Actor** (only non-transitional states; no linked chain): every state is always active simultaneously, so **every packet across every
+    state must be strictly unique** for each host side.
+> - **Stateful Actor** (one linked chain plus zero or more isolated states): for each linked state X, the union of X's branches and every isolated
+    state's branches forms one flat dispatch table per host side; duplicates between them are an error.
 >
 > **Need the same data to trigger different outcomes?**
 > If you need the same payload information to trigger different effects (e.g., a normal update that stays in state vs. a final update that triggers a
-> transition), do not declare the same packet twice. Instead, simply create a new packet
-> using [AdHoc Protocol packet inheritance](#inheritance) to generate a new Pack with unique Packet ID
-> carrying identical fields:
+> transition), do not declare the same packet twice. Instead, create a new packet using [AdHoc Protocol packet inheritance](#inheritance) to generate
+> a new Pack with a unique Packet ID carrying identical fields:
 >
 > ```csharp
 > // Original data packet
 > class StatusPayload { string Message; }
-> 
+>
 > // New packet ID, exact same payload structure
-> class FinalStatusPayload : StatusPayload { } 
-> 
-> struct ProcessingState : 
->     l____________<StatusPayload>,                   // ID 1: Stay in state
->     L____________<FinalStatusPayload, DoneState>    // ID 2: Transition to DoneState
-> { }
+> class FinalStatusPayload : StatusPayload { }
+>
+> // Option A: Direct pack references (no filtering needed)
+> [l____________<StatusPayload>]                          // ID 1: Stay in state
+> [L____________<DoneState, FinalStatusPayload>]          // ID 2: Transition
+> struct ProcessingState { }
+>
+> // Option B: KeepDoc filtering (using documentation text from comments or Dashboard line)
+> // In Dashboard:
+> // <see cref = 'StatusPayload' />      status
+> // <see cref = 'FinalStatusPayload' /> final_status
+> [l____________("status")]                    // ID 1: Stay in state
+> [L____________<DoneState>("final_status")]   // ID 2: Transition
+> struct ProcessingState { }
 > ```
+
+> [!IMPORTANT]
+> **Trap: Broad inclusions in isolated states overlapping with the linked chain**
+>
+> A common pattern is to declare a global "background" overlay that lets one host send any pack of a host or scope as a fire-and-forget:
+>
+> ```csharp
+> interface ChannelH : Connects<DeviceA, DeviceB> {
+>     // 1. Linked chain - explicit per-state Stays on the right side
+>     [L____________<Configure, EmptyPack>]
+>     [____________r<EmptyPack2>]                              // Stay
+>     struct Handshake { }
+>
+>     [L____________<Active, (SerialControl, UseVarPack)>]
+>     [____________r<(SerialControl, EmptyPack)>]              // Stay
+>     struct Configure { }
+>
+>     [L____________<Close, TestBoolAndEmpty>]
+>     [____________r<Person>]                                  // Stay
+>     struct Maintenance { }
+>
+>     // 2. Global overlay - wants to allow ANY HTest pack from the right host as fire-and-forget
+>     //    BAD: pulls EmptyPack, EmptyPack2, SerialControl, Person back in - collides with the chain.
+>     [____________r<(DeviceB, @HTest)>]
+>     struct GlobalAck { }
+> }
+> ```
+>
+> Because `GlobalAck` is always active, while the actor is in `Handshake` the right-side dispatch table is `{EmptyPack2}` ∪ `{every HTest pack}` - and
+> `EmptyPack2` lands in both. The compiler rejects this with an FSM ambiguity error.
+>
+> Note that both occurrences may be non-transitional (Stay). That does **not** make the conflict harmless: the isolated state is always active
+> *alongside* the linked state, so both Stay handlers would receive the same packet. The same kind of conflict is reported when an actor has no
+> linked chain at all (Singleton) - every non-transitional state is simultaneously active, so a packet declared in two of them collides for the same
+> reason.
+>
+> **Resolution: subtract the chain-owned packs from the broad inclusion with `X<>`:**
+>
+> ```csharp
+> // GOOD - overlay explicitly excludes everything the chain has claimed on this host side.
+> [____________r<(DeviceB, @HTest, X<(EmptyPack, EmptyPack2, SerialControl, Person)>)>]
+> struct GlobalAck { }
+> ```
+>
+> **Mental model:** declare the explicit transitions and per-state Stays in the chain first; a global overlay using a broad inclusion
+> (`<Host>`, `<@Project>`, `<@SomeScope>`) must `X<>`-exclude every pack the chain owns on that host side. Apply this independently to **each** host
+> side that uses a broad inclusion - `l____________` (Left), `____________r` (Right), and both halves of `_____lr_____`. Per-side filtering matters:
+> it is fine for `EmptyPack` to be claimed by the chain on the Right and simultaneously be part of the Left overlay, because the two sides have
+> separate dispatch tables.
 
 ---
 
 ### Multi-Path Transitions
 
-For states with multiple possible outcomes (e.g., Success/Failure), list multiple `<PackSet, TargetState>` pairs inside a single branch. Write each
-pair on its own line for readability.
+For states with multiple possible outcomes (e.g., Success/Failure), use multiple transitional branches on the same state, each targeting a different
+state:
 
 **The "Decision" pattern:**
 
 ```csharp
-struct Evaluating : ____________R<
-    (AccessGranted, LimitAccessGranted), VaultOpen,   // Path 1: Success
-    AccessDenied,                        Close         // Path 2: Failure
-> { }
+// Using direct pack references:
+[____________R<VaultOpen, (AccessGranted, LimitAccessGranted)>]   // Path 1: Success
+[____________R<Close, AccessDenied>]                               // Path 2: Failure
+struct Evaluating { }
+
+// Or using KeepDoc filtering:
+[____________R<VaultOpen>("access_granted | limited_access")]   // Path 1: Success
+[____________R<Close>("access_denied")]                          // Path 2: Failure
+struct Evaluating { }
+
+// Or combined - direct packs plus KeepDoc-filtered packs merged:
+[____________R<VaultOpen, (AccessGranted, LimitAccessGranted)>("extra_success_packs")]
+[____________R<Close, AccessDenied>]
+struct Evaluating { }
 ```
 
 ---
 
 ### Cross-Actor State Grafting
 
-When defining a transition branch, the target `STATE` does not have to be local to the current Actor or Connection. You can reference a state defined
-in a completely different Actor. When this happens, the parser **performs a graph traversal and copies the referenced state** — along with all its
-subsequently linked states and branches — directly into the current Actor's flow. This lets you create modular, reusable FSM blocks (e.g., standard
+When defining a transitional branch, the target `STATE` does not have to be local to the current Actor or Connection. You can reference a state
+defined
+in a completely different Actor. When this happens, the parser **performs a graph traversal and copies the referenced state** - along with all its
+subsequently linked states and branches - directly into the current Actor's flow. This lets you create modular, reusable FSM blocks (e.g., standard
 error-handling or teardown sequences) that can be grafted across multiple actors.
 
 > [!WARNING]
@@ -2504,27 +2976,25 @@ error-handling or teardown sequences) that can be grafted across multiple actors
 
 ### Branch Examples
 
-**Example 1: The "Baton Pass" — Swapping authority**
+**Example 1: The "Baton Pass" - Swapping authority**
 
 The "Main" role passes back and forth, ensuring only one side is in control at any given moment.
 
 ```csharp
 interface SecureHandshake : Actor {
-    // STATE 1: Agent holds authority — initiates the handshake.
-    struct Initializing :
-        L____________<ClientHello, AwaitingChallenge> { }
 
-    // STATE 2: Server holds authority — issues a challenge.
-    struct AwaitingChallenge :
-        ____________R<(AuthChallenge, UpgradeRequest), Verifying> { }
+    // Direct pack references - clean and explicit
+    [L____________<AwaitingChallenge, ClientHello>]
+    struct Initializing { }
 
-    // STATE 3: Agent holds authority again — responds to the challenge.
-    struct Verifying :
-        L____________<ChallengeResponse, Finalizing> { }
+    [____________R<Verifying, (AuthChallenge, UpgradeRequest)>]
+    struct AwaitingChallenge { }
 
-    // STATE 4: Server delivers the final verdict.
-    struct Finalizing :
-        ____________R<(Welcome, AccessDenied), End> { }
+    [L____________<Finalizing, ChallengeResponse>]
+    struct Verifying { }
+
+    [____________R<End, (Welcome, AccessDenied)>]
+    struct Finalizing { }
 }
 ```
 
@@ -2536,15 +3006,15 @@ The Server controls state transitions. The Agent pumps data freely as a follower
 
 ```csharp
 interface TelemetryStream : Actor {
-    struct Active :
-        l____________<(SensorData, GPSCoords)>,  // Agent streams data
-        ____________R<PauseCmd, Paused>,          // Server pauses the stream
-        ____________R<Terminate, Close>            // Server kills the connection
-    { }
 
-    struct Paused :
-        ____________R<Resume, Active>
-    { }
+    // Mixed: direct packs for the follower stream, tags for transitions
+    [l____________<(SensorData, GPSCoords)>]               // Agent streams data (direct packs)
+    [____________R<Paused, PauseCmd>]                       // Server pauses (direct pack)
+    [____________R<Close, Terminate>]                       // Server kills connection (direct pack)
+    struct Active { }
+
+    [____________R<Active, Resume>]
+    struct Paused { }
 }
 ```
 
@@ -2560,46 +3030,47 @@ Both sides collaborate freely, but only Left can finalize.
 interface CollaborativeEdit : Actor {
     int MaxActiveInstances => 5;
 
-    struct Editing :
-        _____lr_____<(TextInsert, TextDelete, CursorMove)>, // Both sides can edit
-        L____________<FinalizeDoc, Reviewing>                // Only Left can finalize
-    { }
+    [_____lr_____<(TextInsert, TextDelete, CursorMove)>]   // Both sides can edit (direct packs)
+    [L____________<Reviewing, FinalizeDoc>]                  // Only Left can finalize
+    struct Editing { }
 
-    struct Reviewing : ____________R<(Approved, NeedsChanges), Editing> { }
+    [____________R<Editing, (Approved, NeedsChanges)>]
+    struct Reviewing { }
 }
 ```
 
 ---
 
-**Example 4: Cross-Actor State Grafting — Reusable Teardown**
+**Example 4: Cross-Actor State Grafting - Reusable Teardown**
 
 A standard teardown sequence is defined once in `CommonFlows` and grafted into `DataSync`.
 
 ```csharp
 interface CommonFlows : Actor {
-    struct GracefulDisconnect :
-        L____________<Goodbye, Closed> { }
 
-    struct Closed :
-        ____________R<AckDisconnect, End> { }
+    [L____________<Closed, Goodbye>]
+    struct GracefulDisconnect { }
+
+    [____________R<End, AckDisconnect>]
+    struct Closed { }
 }
 
 interface DataSync : Actor {
     int MaxActiveInstances => 14;
 
-    struct Syncing :
-        _____lr_____<DataChunk>,
-        // Parser copies CommonFlows.GracefulDisconnect and Closed into this FSM.
-        L____________<SyncComplete, CommonFlows.GracefulDisconnect> { }
+    [_____lr_____<DataChunk>]
+    // Parser copies CommonFlows.GracefulDisconnect and Closed into this FSM.
+    [L____________<CommonFlows.GracefulDisconnect, SyncComplete>]
+    struct Syncing { }
 }
 ```
 
 ---
 
-**Example 5: Entire-Project Pack Set — One-Line Full-Duplex Channel**
+**Example 5: Entire-Project Pack Set - One-Line Full-Duplex Channel**
 
 Reference an entire project scope as a pack set with `@Project`. Combined with `_____lr_____`, this creates a fully-duplex connection state where
-both sides can freely exchange **every packet in the project** — all in a single line.
+both sides can freely exchange **every packet in the project** - all in a single line.
 
 ```csharp
 interface GameProject {
@@ -2615,14 +3086,16 @@ interface GameProject {
     public interface GameplayCommunication : Connects<PlayerClient, GameServer> {
         interface MainActor : Actor {
             // Full-duplex channel: both sides can send any packet in GameProject.
-            struct PlayingState : _____lr_____<@GameProject> { }
+            [_____lr_____<@GameProject>]
+            struct PlayingState { }
         }
     }
 }
 ```
 
-- **`@GameProject`** — collects all packs declared anywhere inside the `GameProject` scope.
-- **`_____lr_____`** — both `PlayerClient` (Left) and `GameServer` (Right) can send any of those packets without breaking state.
+- **`@GameProject`** - collects all packs declared anywhere inside the `GameProject` scope (passed as `PACKS` generic).
+- **`_____lr_____`** - both `PlayerClient` (Left) and `GameServer` (Right) can send any of those packets without breaking state.
+- **No tags needed** - the `PACKS` generic alone provides the full set.
 
 ---
 
@@ -2667,7 +3140,7 @@ You can customize an imported Connection and all its components without touching
 
 - Replicate the target's structure with your own naming, and extend `org.unirail.Meta.Modify<TargetEntity>`.
 - To **delete** entities entirely, reference them with `/// <see cref="Delete.Connection"/>-`.
-- Within branches: use `X<Entity>` to delete a packet from the branch, reference new entities normally to add them, and explicitly reference the
+- Within branches: use `X<Entity>` to delete a packet from the matched set, reference new tags to add packets, and explicitly reference the
   target State to modify its transitions.
 
 > [!NOTE]
@@ -2676,16 +3149,8 @@ You can customize an imported Connection and all its components without touching
 ### Example: Remove Specific Packets from a Branch
 
 ```csharp
-struct UpdateLogin : Modify<Login>,
-                     L____________<
-                         (
-                         X<Agent.Login>,
-                         X<Agent.Signup>,
-                         X<Login>
-                         ),
-                         Update_to_state
-                     >
-{ }
+[L____________<Update_to_state, @Connection>("login"), X<Agent.Login>, X<Agent.Signup>]
+struct UpdateLogin : Modify<Login> { }
 ```
 
 ### Complete Modification Example
@@ -2694,34 +3159,515 @@ struct UpdateLogin : Modify<Login>,
 interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
 
     // Remove Server.Info from this branch's packet set.
-    struct Change_Info_Result : Modify<AdHocProtocol.Communication.Info_Result>,
-                                ____________R<
-                                    X<Server.Info>
-                                > { }
+    [____________R<@UpdateCommunication>("info_result"), X<Server.Info>]
+    struct Change_Info_Result : Modify<AdHocProtocol.Communication.Info_Result> { }
 
     // Add a transmit timeout and introduce a new target state.
     [TransmitTimeout(30)]
-    struct Updated_Start : Modify<AdHocProtocol.Communication.Start>,
-                           ____________R<
-                               X<AdHocProtocol.Communication.VersionMatching>,
-                               NewState
-                           > { }
+    [____________R<NewState, @UpdateCommunication>("start_packs"), X<AdHocProtocol.Communication.VersionMatching>]
+    struct Updated_Start : Modify<AdHocProtocol.Communication.Start> { }
 
     // Swap out Server.Invitation for a custom Authorizer packet.
-    struct UpdatedVersionMatching : Modify<AdHocProtocol.Communication.VersionMatching>,
-                                    ____________r<
-                                        (
-                                        X<Server.Invitation>,
-                                        Authorizer
-                                        )
-                                    > { }
+    [____________r<@UpdateCommunication>("version_matching"), X<Server.Invitation>]
+    struct UpdatedVersionMatching : Modify<AdHocProtocol.Communication.VersionMatching> { }
 
     // A new state introduced by the modification above.
-    struct NewState : l____________<Sending_Pack> { }
+    [l____________<@UpdateCommunication>("sending")]
+    struct NewState { }
 }
 ```
 
+## Virtual Connections
+
+Two hosts often have to talk but share no direct link - a browser-side **Observer** and a backend **Server** reachable
+only through a **Monitoring** relay; a device behind NAT reachable only via a rendezvous broker; a sensor whose bytes
+must pass through an aggregation tier.
+
+The naive way to bridge them is to make the middle tier **re-handle every message**: deserialize the inbound pack into an
+object and re-serialize it onto the outbound connection. That is costly on every axis - two full passes over the data, a
+heap object proportional to the message size, and a hard **schema dependency** on a pack the relay doesn't even own, so
+the relay must be rebuilt whenever that pack changes. For a 1 GB tunnel, an open-ended live feed, or a video stream
+through a proxy it is a non-starter - the relay would have to buffer and understand data it only ever needed to *pass
+along*.
+
+**`VirtuallyConnects` takes the middle tier out of that burden entirely.** You declare the two endpoints as if they were
+wired together; their bytes physically travel across one or more **relay hosts** that forward them **without decoding,
+buffering, or even knowing their structure**. The relay moves a payload of *any* size between two connections at constant
+memory cost - the most extreme application of AdHoc's [streaming](#streams) model - and stays completely decoupled from
+the protocol riding through it.
+
+> [!NOTE]
+> This section builds on streaming machinery defined later in this document: chunked `[len][data]…[0]` framing and interruptibility
+> ([Streams](#streams)), compression/encryption stages ([Transform chains](#transform-chains---stages-roles-and-flows)), and the `[S(N)]` resource
+> cap ([Size cap](#size-cap---sn)). Skim those first if the terms are unfamiliar.
+
+### Declaring a tunnel - `VirtuallyConnects<L, R, PATH>`
+
+A virtual connection is declared like an ordinary connection, but with `VirtuallyConnects` in place of `Connects`:
+
+```csharp
+public interface VirtuallyConnects<L, R, PATH> : Connects<L, R>
+    where L : struct, Host
+    where R : struct, Host
+{
+    int  MaxTunnels          => 256;           // concurrent tunnels multiplexed over the path
+    uint MaxStream_KiloBytes => uint.MaxValue;  // size cap per tunneled stream (KiB)
+}
+```
+
+* **`L`, `R`** - the two logical endpoints (the hosts that behave as if directly connected).
+* **`PATH`** - the relay host the bytes physically traverse: a single host for one hop, or a C# tuple `(H1, H2, …)` for
+  a multi-hop chain.
+
+The example from AdHoc's own protocol description:
+
+```csharp
+interface ServerToMonitoring             : Connects<Server, Monitoring>            { … }  // physical leg
+interface MonitoringToMonitoringObserver : Connects<Monitoring, MonitoringObserver>{ … }  // physical leg
+
+interface Server__MonitoringObserver     : VirtuallyConnects<Server, MonitoringObserver, Monitoring> { }
+```
+
+```
+             ServerToMonitoring                     MonitoringToMonitoringObserver
+ Server ───────[ Connects ]───────▶   Monitoring   ───────[ Connects ]───────▶   MonitoringObserver
+    └──────────── Server__MonitoringObserver : VirtuallyConnects<Server, MonitoringObserver, Monitoring> ────────────┘
+```
+
+`Server` and `MonitoringObserver` now share a connection, even though every byte actually rides the two physical
+`Connects<>` legs and is relayed by `Monitoring` in the middle.
+
+### Transform chains over a tunnel - compress and encrypt
+
+A tunnel **is** a chunked stream, so it carries the same [transform chains](#transform-chains---stages-roles-and-flows)
+as any other stream: a virtual connection can be **compressed**, **encrypted**, or both. Decorate the
+`VirtuallyConnects` interface with the very same stages (`[Zstd]`, `[ChaCha20]`, or any custom stage) and the whole
+tunnel rides through that chain - the chunked tunnel is the implicit root, the stages wrap the bytes that travel it.
+
+```csharp
+[ChaCha20, Zstd(6)] interface Server__MonitoringObserver : VirtuallyConnects<Server, MonitoringObserver, Monitoring> { }
+```
+
+The attributes apply to the tunnel transport itself, so this works on an **empty-body (`{ }`) tunnel-only** connection
+just as it does on a **structured** one - in both cases the stages wrap the bytes the endpoints exchange.
+
+All the streaming rules apply unchanged - **left = wire, right = app/leaf**, so `[ChaCha20, Zstd]` is
+`L → Zstd → ChaCha20 → wire` = **compress-then-encrypt** (ciphertext doesn't compress); at most **one compressor and one
+cipher** per chain; key and nonce are [runtime-injected](#parameters--design-time-vs-runtime-injected) at the endpoints.
+
+**The chain is end-to-end - the relay never sees inside it.** Stages run at `L`, the inverse stages run at `R`; every
+`PATH` host only ever forwards the already-compressed, already-encrypted chunks. The [`Relay`](#relay) decodes
+**none** of it - it can't, by design - so this turns schema-decoupling into genuine **end-to-end confidentiality**: an
+untrusted or merely curious middle tier relays the bytes at constant memory while remaining unable to read or tamper
+with the payload. Compression likewise happens once at the source and survives every hop, so the relay forwards the
+smaller, compressed form.
+
+### Tunnel-only vs. structured virtual connection
+
+What the generator emits depends on whether the `VirtuallyConnects` interface **has a body**:
+
+* **Empty body (`{ }`) - a tunnel only.** The generator emits just the transport: a relay on each `PATH` host and the
+  tunnel endpoint API on `L` and `R`. The endpoints exchange **raw opaque bytes** through the pipe; nothing - not the
+  relay, not the generated code - knows anything about the payload's structure. Use this when `L` and `R` agree on their
+  own framing (or carry a foreign protocol) and only need AdHoc to move the bytes. The `Server__MonitoringObserver { }`
+  above is exactly this.
+
+* **Non-empty body - a structured connection layered on the tunnel.** When the interface declares Actors, branches, and
+  packs (exactly as a normal `Connects` connection would), the generator emits the tunnel **and** the full
+  structured-protocol code for that connection on `L` and `R` - the packs, actors, and state machine - whose serialized
+  bytes are carried *through* the generated tunnel instead of over a direct physical link. The `PATH` relay still
+  forwards opaque bytes; it never parses the structured protocol riding inside.
+
+In both cases the tunnel is the **transport substrate**. A non-empty virtual connection is simply an ordinary end-to-end
+connection that *rides* that substrate: the two endpoints speak the full protocol, the relays transport it blindly.
+
+| Body      | Generated on `L`, `R`              | Generated on `PATH`    | Payload on the wire        |
+|:----------|:-----------------------------------|:-----------------------|:---------------------------|
+| `{ }`     | tunnel endpoint API (opaque bytes) | relay (`Tunnel.Relay`) | raw bytes                  |
+| non-empty | full connection (packs/actors/FSM) | relay (`Tunnel.Relay`) | structured packs, tunneled |
+
+### The path must be a real, unambiguous chain
+
+`PATH` names the intermediate host(s) **in any order**. The generator reconstructs the strict ordered route
+`L → … → R` by walking the graph of physical `Connects<>` connections, and enforces at compile time:
+
+* **The chain must exist** - every hop (`L→PATH₁`, …, `PATHₙ→R`) must be backed by a real physical `Connects<>`. A gap
+  is an error.
+* **At least one intermediate** - an empty `PATH` is rejected (that would just be a physical connection).
+* **Each host once** - `L`, `R`, and every `PATH` host must be distinct.
+* **`L ≠ R`** - the two endpoints must differ.
+* **Unambiguous** - if the listed hosts admit more than one physical route from `L` to `R`, the generator refuses and
+  asks you to disambiguate, so the relay path is always deterministic.
+
+Because order is irrelevant, `VirtuallyConnects<A, D, (C, B)>` and `VirtuallyConnects<A, D, (B, C)>` are identical as
+long as `A→B→C→D` is the only physical chain through those hosts.
+
+### The two knobs
+
+| Property              | Default         | Meaning                                                                                                                                                                                                                                  |
+|:----------------------|:----------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `MaxTunnels`          | `256`           | How many independent tunnels may be multiplexed over the path at once. Sets the on-wire width of the **`tunnel_id`** routing key: `1` ⇒ no `tunnel_id` (a single one-to-one tunnel); larger ⇒ a 1–4-byte little-endian key. Must be ≥ 1. |
+| `MaxStream_KiloBytes` | `uint.MaxValue` | Maximum size of one tunneled stream, in KiB - the relay rejects anything larger, the same resource guard as [`[S(N)]`](#size-cap---sn) on a stream field.                                                                                |
+
+Override either by re-declaring it in the interface body:
+
+```csharp
+interface DeviceLink : VirtuallyConnects<Device, Cloud, Broker>
+{
+    int  MaxTunnels          => 1;      // a single dedicated tunnel - no tunnel_id on the wire
+    uint MaxStream_KiloBytes => 4_096;  // cap each tunneled stream at 4 MiB
+}
+```
+
+### What the generator produces
+
+From one `VirtuallyConnects` declaration the generator wires all three roles:
+
+* **On each relay host in `PATH`** - a pooled **[`Relay`](#relay)** plus a routing
+  [custom code injection point](#injection-points). The relay receives the tunnel on its inbound physical leg
+  and re-emits it on the outbound leg without decoding it; your code in the injection point maps each `tunnel_id` to the
+  destination connection. A multi-hop `PATH` gets one `Relay` per relay host, chained.
+* **On the endpoints `L` and `R`** - either the tunnel endpoint API (empty body) or the full structured connection
+  (non-empty body), addressed by `tunnel_id` when `MaxTunnels > 1`.
+* **In the Dashboard** - the virtual connection takes a persistent **`id`** from the same pool as transmittable packs
+  (always active when included), so it appears as a first-class, taggable entity at the top of the protocol file.
+
+### Middle-tier patterns
+
+A host sitting between a producer and its consumers plays one of two roles, and the two need opposite machinery. Decide which one you have before
+reaching for either:
+
+#### Pattern A — pump: the schema-blind Relay
+
+The middle tier only **moves** bytes between two connections - it never reads, transforms, or duplicates them. Use the generated
+[`Relay`](#relay): constant memory regardless of payload size, natural TCP backpressure, and zero dependency on the payload's schema. This is what
+`VirtuallyConnects` places on every `PATH` host automatically. Detailed in the next section.
+
+#### Pattern B — pump + in-memory mirror for fan-out
+
+The middle tier **owns the schema and must act on the content** - measure it, transcode it, filter it, or replicate one inbound stream to N live
+subscribers. It consumes the stream as an ordinary stream consumer and, in the same pass, keeps an in-memory mirror of the in-flight window so a
+transmit-side slicer can feed each subscriber independently - one shared copy, not N relays, and a slow subscriber never stalls the others. Worked in
+detail in [Smart middle](#smart-middle---when-not-to-use-relay) below.
+
+### Relay
+
+The **`Relay`** (`org.unirail.AdHoc.Connection.Tunnel.Relay`) is the runtime primitive the generator places on every relay host to make a virtual
+connection real -
+the mechanism behind the constant-memory, schema-blind relay described above. It takes a chunked tunnel arriving on the
+inbound leg and re-emits it on the outbound leg **without decoding, buffering, or even looking at the body**: bytes flow
+from the inbound socket buffer to the outbound socket buffer one fill at a time, and the relay holds only constant state
+regardless of tunnel size.
+
+**On the wire** a tunnel frame is:
+
+```
+[pack-id][tunnel_id?]   [len₁][data₁]  [len₂][data₂] … [0]
+```
+
+The inbound receiver, instead of handing the pack to a deserializer, hands it to a pooled `Relay`, which:
+
+1. reads the `pack-id` and the optional `tunnel_id`;
+2. asks the router (your injection-point code) which outbound connection this tunnel belongs to, and enqueues itself on
+   that connection's transmitter;
+3. relays the chunked body straight through - received into the socket buffer and re-emitted onto the outbound, chunk
+   after chunk until the `[0]` terminator, never assembled in full;
+4. re-writes the outbound `[pack-id][tunnel_id?]` prefix so the downstream sees a well-formed frame - optionally with a
+   *different* `tunnel_id` (the relay may re-key the stream to re-address it on the far side).
+
+**`tunnel_id` - multiplexing and demux.** When `MaxTunnels > 1`, the key lets **one** physical connection carry **many**
+logically independent tunnels, each routed to its own peer. The key is purely an application address - *not* a connection
+or registry Id; how keys map to connections is entirely up to the router. Common schemes: one key per connection, a block
+of keys per connection, or any custom lookup populated as peers connect.
+
+**Properties.**
+
+* **Constant memory** - one socket buffer per side; a 1 GB tunnel and a 64-byte tunnel cost the same resident memory.
+* **End-to-end backpressure** - if the outbound is slow the relay stops accepting inbound chunks; the kernel buffer fills
+  and TCP backpressure flows upstream to the original producer - no user-space queue, no unbounded growth.
+* **Interruptible / indefinite** - inheriting chunked framing, a relayed tunnel can be aborted mid-flight or run
+  indefinitely.
+* **Schema-decoupled** - the relay depends only on the framing, never on the pack's fields, so the pack's schema can
+  evolve without touching the middle tier.
+
+### Smart middle - when not to use Relay
+
+The `Relay` is the right tool only when the relay is **content-blind** - it routes opaque bytes and never needs to
+read, transform, or duplicate them. The moment the middle tier must **inspect, transform, or fan one stream out to many
+consumers**, the opaque relay is the wrong tool: by design it never materializes the bytes it carries. That is the
+**Smart middle** - [Pattern B](#pattern-b--pump--in-memory-mirror-for-fan-out) above, fully worked.
+
+A Smart middle does *not* forward; it **consumes** the stream as an ordinary stream consumer (a `Receiver.BytesDst` handler) and, in
+the same pass, keeps an in-memory **mirror** of the bytes so it can re-emit them to N live subscribers through a
+`Transmitter.BytesSrc` slicer - without re-reading any persistent store:
+
+1. **Zero-cost-when-idle capture** - each inbound chunk is appended to the mirror only while at least one subscriber is
+   attached; with none, capture is skipped and the middle behaves like a plain pump.
+2. **The mirror buffer** - a single shared buffer holds the bytes currently being fanned out; one copy feeds all N
+   consumers, not N independent relays.
+3. **The slicer** - a `Transmitter.BytesSrc` hands each subscriber successive slices of the mirror as its socket drains, so
+   a slow subscriber never stalls the others and the middle never buffers more than the in-flight window.
+
+Use the Smart middle when the relay owns the schema and must act on the content - measure, transcode, filter, or
+replicate one source to many sinks. Use the [`Relay`](#relay) when it must not: a pure routing hop that moves
+bytes between connections at constant cost, decoupled from the pack's schema. The Monitoring server's `getSessionFiles` /
+`VolatileInfoHandler` handlers are the canonical Smart-middle example.
+
+---
+
+# Attributes
+
+Attributes communicate metadata to the code generator for optimized implementation. They can be applied to **Hosts**, **Packs**, **Fields**,
+**Connections**, **Actors**, **States**.
+
+## Built-in
+
+Built-in attributes are **interpreted by the generator** - each one changes how a field is encoded on the wire or laid out in memory. They are a
+fixed,
+reserved set (the generator matches them by name); everything else you write is treated as [custom metadata](#custom). Most apply to **fields**:
+
+| Attribute                                                  | Purpose                                                                                                                                   | Documented in                                                  |
+|:-----------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------|
+| `[MinMax(min, max)]`                                       | Constrain a numeric field to a range so the generator picks the smallest storage (down to bit-packing)                                    | this section                                                   |
+| `[A(min, max)]` / `[V(min, max)]` / `[X(amplitude, zero)]` | Varint compression tuned to the value distribution (rare-large / rare-small / bidirectional ZigZag)                                       | [Varint Type](#varint-type)                                    |
+| `[D(...)]`                                                 | Dimensions and maximum lengths for arrays, strings, maps, and sets (`+` = element/collection length, `-` = constant dim, `~` = fixed dim) | [Collection Type](#collection-type)                            |
+| `[S(N)]`                                                   | Maximum size cap for a raw `Stream` / `File` conduit                                                                                      | [Streams](#size-cap---sn)                                      |
+| `[ValueFor(const)]`                                        | Copy a `static` field's computed value/type into a `const` at generation time                                                             | [Constants](#constants)                                        |
+| Stream stage / flow attributes                             | Declare a byte-transform chain (compression, cipher, custom stages) on a field                                                            | [Transform chains](#transform-chains---stages-roles-and-flows) |
+
+> [!NOTE]
+> Because these names are reserved, do **not** name a [custom attribute](#custom) `S`, `D`, `MinMax`, `A`, `V`, `X`, or `ValueFor` - the generator
+> would interpret it as the built-in instead of carrying it through as metadata.
+
+Built-in attributes targeting a collection's **generic parameters** use a C# attribute target: `[Key: ...]` applies to a Map/Set key,
+`[Val: ...]` to a Map value. For example, `[Key: D(+30)]` caps the key length while `[Val: D(100), X]` bounds and varint-compresses the value.
+
+A worked example. Consider a field with values in the range **400,000,000** to **400,000,193**. Storing these as `int` wastes space. Using a constant
+offset of 400,000,000, the entire range fits in one byte. The `MinMax` attribute handles this automatically:
+
+```csharp
+[MinMax(400_000_000, 400_000_193)] int ranged_field;
+```
+
+The code generator determines the most efficient storage type and generates getter/setter methods to handle the offset.
+
+For ranges under 127, the generator can further optimize by packing fields into bit storage:
+
+```csharp
+[MinMax(1, 8)] int car_doors; // Range 1–8 requires only 3 bits
+```
+
+## Custom
+
+Custom attributes are your own metadata: you **declare** them as ordinary C# attribute classes, **apply** them to protocol entities, and the generator
+transforms each applied attribute into a **hierarchy of constants** (or static fields) in the generated code, where your runtime can read them.
+
+- For **fields**, attributes are the primary method for specifying metadata.
+- For other entities (projects, hosts, packs, connections, actors, states, branches), metadata can use attributes **or** constants directly - the two
+  are equivalent (see [the constant-container form](#custom) below).
+
+### Declaring a custom attribute
+
+A custom attribute is a plain C# class deriving from `System.Attribute`. Follow the standard C# conventions - the generator relies on them:
+
+```csharp
+// Named 'XxxAttribute' → applied as [Xxx]. The suffix is dropped at the use site.
+public class ServerAttribute : Attribute {
+    public ServerAttribute(string Url, string Description) { }   // constructor params → POSITIONAL metadata
+}
+```
+
+The shape of the declaration controls how the attribute may be written and what constants it produces:
+
+| Declaration technique                             | Purpose                                               | Example declaration                                                                                                                                      | Applied as                                                               |
+|:--------------------------------------------------|:------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------|
+| **Constructor parameters**                        | Positional metadata, in order                         | `ContactAttribute(string Name, string Email, string Url)`                                                                                                | `[Contact("Grafana Labs", "hello@grafana.com", "https://grafana.com/")]` |
+| **Overloaded constructors**                       | Accept several value types for one slot               | `DefaultAttribute(double v); DefaultAttribute(long v); DefaultAttribute(string v); DefaultAttribute(bool v)`                                             | `[Default(0)]`, `[Default("View")]`, `[Default(false)]`                  |
+| **Public properties (with defaults)**             | Named / optional arguments                            | `class ValidateAttribute : Attribute { public string Regex {get;set;} = ""; public long MaxLength {get;set;} = -1; }`                                    | `[Validate(Regex = @"^[a-z]+$")]`                                        |
+| **No parameters (marker)**                        | A pure on/off flag                                    | `ReadOnlyAttribute() { }`                                                                                                                                | `[ReadOnly]`                                                             |
+| **`[AttributeUsage(..., AllowMultiple = true)]`** | Apply the same attribute more than once on one entity | `[AttributeUsage(AttributeTargets.All, AllowMultiple = true)] class TagAttribute : Attribute { public TagAttribute(string Name, string Description){} }` | two `[Tag(...)]` lines on one method                                     |
+
+> [!TIP]
+> `[AttributeUsage(AttributeTargets....)]` restricts where an attribute may be placed and, with `AllowMultiple = true`, lets it repeat on a single
+> entity (used for `Tag`, `GlobalSecurity`, `SecurityRequirement`, `TagDefinition` and similar list-valued metadata). Omit it to allow the attribute
+> anywhere, once.
+
+Attribute declarations live in the protocol description alongside everything else - typically collected at the end of the project `interface`.
+
+### Applying custom attributes
+
+A custom attribute can be attached to **any** protocol entity. Positional values map to constructor parameters; `Name = value` maps to a property.
+Custom attributes freely stack with each other and with [built-in attributes](#built-in) such as `[D(...)]`.
+
+```csharp
+// PROJECT (the protocol interface itself):
+[Title("Grafana HTTP API.")]
+[Version("0.0.1")]
+[Description("The Grafana backend exposes an HTTP API ...")]
+[Contact("Grafana Labs", "hello@grafana.com", "https://grafana.com/")]
+public interface openapi3 {
+
+    // PACK (class) — marker + repeated (AllowMultiple) attributes:
+    [ApiKeyAuth("Authorization", "Header")]
+    public class api_key { }
+
+    [GlobalSecurity("basic", "")]
+    [GlobalSecurity("Authorization", "")]   // applied twice — needs AllowMultiple = true
+    public class global { }
+
+    public class EmbeddedContactPoint {
+        [ReadOnly] string? provenance;      // FIELD — marker attribute
+
+        [D(+40)]                            // FIELD — built-in (dimension) stacked with...
+        [Validate(Regex = @"^[a-zA-Z0-9\-\_]+$")]   // ...a custom attribute using a NAMED argument
+        string? uid;
+    }
+}
+
+// HOST (struct : Host):
+[Server("/api", "")]
+struct Server0 : Host { }
+
+// ACTOR / RPC METHOD (a branch inside a connection):
+interface ClientServerConnection : Connects<Client, Server0> {
+    [Tag("enterprise", "These are only available in Grafana Enterprise")]
+    (L____________,
+        components.schemas.SearchResult,
+        StandardErrors) searchResult(NoArg _);
+}
+```
+
+The same rules reach **states** and **branches** as well - see [State Attributes](#state-attributes)
+and [Branches (Routing Attributes)](#branches-routing-attributes).
+
+### Equivalent constant-container form
+
+Because every applied attribute becomes a constant, you can bypass the attribute syntax entirely and declare the same metadata as a `const` inside a
+companion container. This is the manual equivalent of the `[Description(...)]` example above:
+
+```csharp
+[AttributeUsage(AttributeTargets.Struct)]
+public class DescriptionAttribute : Attribute {
+    public DescriptionAttribute(string description) { }
+}
+
+interface Communication : Connects<Agent, Server> {
+    [Description("The state either responds with the result if successful, or an error message on failure.")]
+    [____________r<@Communication>("info | result")]
+    struct State { }
+}
+```
+
+is equivalent to:
+
+```csharp
+struct State_Meta {
+    const string Description = "The state either responds with the result if successful, or an error message on failure.";
+}
+```
+
+### How the generator distinguishes built-in from custom
+
+Understanding the matching rule prevents surprises:
+
+1. **Name normalization.** An attribute is matched by its class name with the `Attribute` suffix appended if you omitted it - `[Validate]` and
+   `[ValidateAttribute]` are the same attribute, and `[X]` resolves to `XAttribute`.
+2. **Built-in names are reserved.** If the normalized name is one of the [built-in](#built-in) set (`S`, `D`, `MinMax`, `A`, `V`, `X`, `ValueFor`, the
+   stream-stage/flow attributes, the routing attributes, or the `KeepName`/`KeepDoc`/`SkipName`/`SkipDoc` filters), the generator **interprets** it -
+   it changes wire encoding, layout, or scoping.
+3. **Everything else is custom.** Any other attribute is **not interpreted for the wire format**. The generator carries it through and materializes it
+   as constants/static fields attached to the entity, so your runtime can read the metadata. This is why a custom attribute never affects how bytes
+   are
+   serialized - it is pure, passenger metadata.
+
+> [!TIP]
+> A custom attribute's argument values must be **compile-time constants** (like any C# attribute argument). To attach a *computed* value, route it
+> through a `static` proxy field with [`[ValueFor]`](#constants).
+
 # Fields
+
+## Implementation Management
+
+An entity's **implementation kind** - concrete or abstract - is not a global property of that entity. It is decided independently for each
+**(host, language, entity)** combination: every host generates its own code for a pack or field, and does so separately for each target language.
+
+* `+` **concrete** - a fully materialized object: fields are parsed and stored, then handed to your code with full random access.
+* `-` **abstract** - the generator emits an abstract base class; as the parser reads the data off the wire it invokes methods on your implementation,
+  and the whole object is never allocated.
+
+By default a pack or field takes its host's [implementation modifier](#modifier-summary-table) for the language being generated. Adding an explicit
+rule **pins exactly one (host, language, entity) combination**: on *this* host, in *this* language, only *this* pack or field is generated with the
+chosen kind. Nothing else moves - the same entity on another host, the same entity in another language, and every other entity keep their own
+defaults. A single pack can therefore be a concrete object on one host and an abstract stream consumer on another.
+
+**Where it is declared**
+
+Implementation is configured **only from a host's doc-comment** (a `struct … : Host`, or a `struct … : Modify<Host>`), using the scoping rules
+described in [The Configuration Scoping System](#the-configuration-scoping-system). You never tag the pack's or field's own comment - instead you open
+a language scope and *reference* the target by name or path:
+
+```csharp
+<see cref='InCS'/>-                 // open a confined C# scope: ABSTRACT implementation
+<see cref='Pack'/>                  // ...applied to a whole pack (prefix @ to include its nested packs)
+<see cref='Pack.field'/>            // ...or to a single field
+```
+
+A field reference is written exactly like a pack reference; the generator distinguishes them automatically from the C# symbol the `cref` resolves to.
+
+> [!NOTE]
+> A `<see cref='Pack.field'/>+` / `-` placed on a **pack** is a different feature - [selective field import / injection](#field-injection) - not
+> implementation configuration. Implementation configuration is read only from hosts.
+
+**Resolution Precedence**
+
+Within a single **(host, language)**, implementation resolves at three levels. For any pack or field, the **most specific** level that names it wins:
+
+| Level               | Declared by                                                            | Applies to                                        |
+|:--------------------|:-----------------------------------------------------------------------|:--------------------------------------------------|
+| **Host default**    | a language marker with **no** following targets                        | every pack/field in the host not overridden below |
+| **Pack / Pack Set** | a language marker + a **type** reference (`<see cref='Pack'/>`)        | the packs in that scope                           |
+| **Field**           | a language marker + a **field** reference (`<see cref='Pack.field'/>`) | that single field                                 |
+
+A language marker that **has** targets is *confined* - it applies only to its listed targets and does **not** change the running default. A marker
+with **no** targets *becomes* the new default for every entity that follows it.
+
+> [!NOTE]
+> A field rule is more specific than a pack rule: if a pack is configured concrete but one of its fields is explicitly abstract, only that field is
+> abstract - the rest of the pack stays concrete.
+
+Carve out a single field as abstract inside an otherwise-concrete pack:
+
+```csharp
+/**
+    <see cref='InCS'/>                  // C# default for this host: ++ (concrete, materialized objects)
+
+    <see cref='InCS'/>-                 // confined scope: ABSTRACT implementation...
+    <see cref='Frame.samples'/>         // ...applied to this one field only
+*/
+struct Router : Host {
+
+    public class Frame {
+        long            timestamp;      // concrete - stored, random-access
+        int             channel;        // concrete - stored, random-access
+        [D(+1_000_000)] int[] samples;  // ABSTRACT - delivered to your handler as it streams in,
+                                        //            never materialized into the Frame object
+    }
+}
+```
+
+For C#, `Frame` is generated as an ordinary object - `timestamp` and `channel` are stored fields with full random access - but `samples` is generated
+abstract, so a multi-million-element array never has to be held in memory at once.
+
+> [!NOTE]
+> For a **field** target, the operative modifier is the **first** character - the implementation strategy (`+` concrete / `-` abstract). The second
+> character (hash/equals) is a property of the whole pack object and has no field-level effect.
+
+> [!NOTE]
+> Valid configuration targets are **Packs, Pack Sets, Hosts, Projects, or Fields**. Referencing any other kind of entity after a language marker is
+> rejected at build time.
+
+For unbounded or interruptible payloads, prefer a dedicated [`Stream`](#streams) field; field-level abstract targeting is the general mechanism for
+making *any* field event-driven rather than stored.
 
 ## Numeric Types
 
@@ -2765,67 +3711,6 @@ value and type from the `static` field to the corresponding `const` at code gene
 const double ConstantField = 0; // Result: ConstantField = Math.Sin(23)
 ```
 
-## Attributes
-
-Attributes communicate metadata to the code generator for optimized implementation. They can be applied to **Hosts**, **Packs**, **Fields**,
-**Connections**, **Actors**, **States**.
-
-### Built-in Attributes
-
-Consider a field with values in the range **400,000,000** to **400,000,193**. Storing these as `int` wastes space. Using a constant offset of
-400,000,000, the entire range fits in one byte. The `MinMax` attribute handles this automatically:
-
-```csharp
-[MinMax(400_000_000, 400_000_193)] int ranged_field;
-```
-
-The code generator determines the most efficient storage type and generates getter/setter methods to handle the offset.
-
-For ranges under 127, the generator can further optimize by packing fields into bit storage:
-
-```csharp
-[MinMax(1, 8)] int car_doors; // Range 1–8 requires only 3 bits
-```
-
-### Custom Attributes
-
-Custom attributes are transformed by the generator into a hierarchy of constants.
-
-- For **fields**, attributes are the primary method for specifying metadata.
-- For other entities, metadata can use attributes or constants directly.
-
-Example using a `Description` attribute on a connection state:
-
-```csharp
-[AttributeUsage(AttributeTargets.Struct)]
-public class DescriptionAttribute : Attribute {
-    public DescriptionAttribute(string description) { }
-}
-
-interface Communication : Connects<Agent, Server> {
-    [Description("The state either responds with the result if successful or provides an error message with relevant information in case of failure.")]
-    struct State :
-        _<
-           (Server.Info,
-            Server.Result)
-        > { }
-}
-```
-
-Equivalent using a constant:
-
-```csharp
-interface Communication : Connects<Agent, Server> {
-    struct State :
-        _<
-            (Server.Info,
-            Server.Result)
-        > {
-        const string Description = "The state either responds with the result if successful or provides an error message with relevant information in case of failure.";
-    }
-}
-```
-
 ## Optional Fields
 
 Optional (nullable) fields are declared with a trailing `?` (e.g., `int?`, `byte?`, `string?`). They are allocated in memory but transmit only a
@@ -2864,7 +3749,7 @@ The AdHoc generator uses a 3-layer approach for field values:
 |:------|:----------------------------------------------------------------------------------------------------------------|
 | exT   | **External type.** The representation required for external consumers (matches language data type granularity). |
 | inT   | **Internal type.** The representation optimized for storage (matches language data type granularity).           |
-| ioT   | **IO wire type.** The network transmission format - transmitted as a byte stream with no language granularity.  |
+| ioT   | **IO wire type.** The network transmission format - transmitted as a byte stream with no language granularity.  
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/180a331d-3d55-4878-8dfe-794ceb9297f3)
 
@@ -3157,13 +4042,13 @@ class Result
 * **In-memory data:** Use `Binary` when data is already in RAM (a cryptographic hash, a generated thumbnail, an active memory buffer).
 * **External sources (disk/database):** Use `Stream` or `File` types instead - they support **Direct Transfer**, piping bytes from the external source
   directly to the socket buffer without loading into managed memory. This reduces memory pressure, GC overhead, and redundant memory copies.
-  Stream-based fields require an explicit size limit via `[S(N)]` - see [Size Limits](#size-limits-sn).
+  Stream-based fields require an explicit size limit via `[S(N)]` - see [Size cap](#size-cap---sn).
 
-| If the data is...    | Use...               | Benefit                                                                    |
-|:---------------------|:---------------------|:---------------------------------------------------------------------------|
-| **Already in RAM**   | `Binary`             | Simple access to raw bytes as a native array.                              |
-| **On disk / in DB**  | [`File`](#File)      | Optimized for known-size BLOBs; direct source-to-socket transfer.          |
-| **Continuous/large** | [`Stream`](#Streams) | Interruptible, chunked transfer; opaque forwarding without loading to RAM. |
+| If the data is...    | Use...                             | Benefit                                                                    |
+|:---------------------|:-----------------------------------|:---------------------------------------------------------------------------|
+| **Already in RAM**   | `Binary`                           | Simple access to raw bytes as a native array.                              |
+| **On disk / in DB**  | [`File`](#file-field-datatype)     | Optimized for known-size BLOBs; direct source-to-socket transfer.          |
+| **Continuous/large** | [`Stream`](#stream-field-datatype) | Interruptible, chunked transfer; opaque forwarding without loading to RAM. |
 
 ## TYPEDEF
 
@@ -3207,12 +4092,12 @@ using org.unirail.Meta;
 
 namespace com.my.company{
     /**
-		<see cref = 'Client.RoomChangeResponse'                     id = '2'/>
-		<see cref = 'Client.RoomChangeResponse.EnterRoomRequest'    id = '3'/>
-		<see cref = 'RoomInfo'                                      id = '1'/>
-		<see cref = 'Server.QuitRoomResponse'                       id = '0'/>
-	*/
-	public interface MyProject3{
+        <see cref = 'Client.RoomChangeResponse'                  id = '2' /> room | 🏠
+        <see cref = 'Client.RoomChangeResponse.EnterRoomRequest'  id = '3' /> room | enter | 🏠
+        <see cref = 'RoomInfo'                                    id = '1' /> room | info | 🏠
+        <see cref = 'Server.QuitRoomResponse'                     id = '0' /> room | quit | 🏠
+    */
+    public interface MyProject3{
         ///<see cref = 'InJAVA'/>
         struct Server : Host{
             public class QuitRoomResponse{
@@ -3269,125 +4154,330 @@ namespace com.my.company{
 
 ## Streams
 
-In high-performance architectures—message routers, binary object stores, drone telemetry proxies—a service often needs to transmit data without
-inspecting its contents. AdHoc handles these scenarios via **Contextual Scoping**: a field's behavior changes dynamically based on the communication
-path (the **Endpoint**) it travels.
+AdHoc's serialization is **pull-based**: the runtime never holds a buffer larger than the single reusable socket buffer (user-chosen, min 256 B,
+typically 1–8 KB), regardless of pack size. A stream-typed field - or a streamed pack - rides this directly: an arbitrarily large payload that **never
+materializes as one contiguous buffer**; resident cost is one socket buffer plus small parser state. This enables what most binary protocols can't:
 
-### Defining Endpoints
+* **Unknown size at send time** - emit chunks until `[0]`; never buffer the whole payload just to learn its length (length-prefixed formats must).
+* **Opaque relay** - a middle tier forwards a stream without decoding it; the chunked terminator is visible without parsing the body
+  (see [`Relay`](#relay)).
+* **Interruptible / indefinite** - abort mid-flight with a zero-length chunk; or run for hours with no natural "total length."
 
-An **Endpoint** is defined by identifying a specific "Source" (who is sending) and the "Pipe" (which connection). This is declared using a dedicated
-interface:
+### The streaming model at a glance
+
+Every streaming feature in AdHoc is one layer over the same pull-based core. From the application down to the socket:
+
+```
+your data
+ ├─ pack fields ················ concrete (+) object or abstract (-) event-driven parse,
+ │                               chosen per (host, language, pack, field)      → Implementation Management
+ ├─ Stream / File fields ······· raw byte conduits piped source-to-socket,
+ │                               capped by [S(N)]                              → Raw conduits
+ ├─ transform chains ··········· [Cipher, Compressor] attribute stages wrap
+ │                               the serialized bytes (the leaf)               → Transform chains
+ ├─ ToStream / FromStream ······ chunked framing switched on per Endpoint,
+ │                               so middle tiers see boundaries                → Contextual Scoping
+ └─ VirtuallyConnects / Relay ·· whole connections piped through relay hosts
+                                 that never decode them                        → Virtual Connections
+socket buffer (user-chosen, min 256 B) — the only buffer, in either direction
+```
+
+Which mechanism fits which payload:
+
+| The payload is...                                                    | Use...                                                              | Documented in                                                                 |
+|:---------------------------------------------------------------------|:--------------------------------------------------------------------|:------------------------------------------------------------------------------|
+| A bounded blob whose size is known cheaply (disk BLOB, thumbnail)    | [`File`](#file-field-datatype) field or named `File` pack           | [Raw conduits](#raw-conduits---stream-and-file)                               |
+| Unbounded, live, or interruptible raw bytes (encoder feed, capture)  | [`Stream`](#stream-field-datatype) field or named `Stream` pack     | [Raw conduits](#raw-conduits---stream-and-file)                               |
+| A typed pack too large to materialize on the receiving side          | abstract (`-`) implementation for that (host, language, pack/field) | [Implementation Management](#implementation-management-1)                     |
+| A typed pack a middle tier must store/replay/forward without parsing | `ToStream` / `FromStream` / `Stream<To,From,T>`                     | [Contextual Scoping](#contextual-scoping---tostream-fromstream-streamtofromt) |
+| Any of the above, compressed and/or encrypted                        | a transform chain (`[Zstd]`, `[ChaCha20]`, custom stages)           | [Transform chains](#transform-chains---stages-roles-and-flows)                |
+| An entire conversation crossing one or more relay hosts              | `VirtuallyConnects<L, R, PATH>` + the generated `Relay`             | [Virtual Connections](#virtual-connections)                                   |
+
+The layers compose freely: a `Stream` field can carry a chain; a `ToStream` root can carry a chain on its streamed path only; a tunnel is itself a
+chunked stream and carries chains end-to-end.
+
+---
+
+### Raw conduits - `Stream` and `File`
+
+Two field datatypes carry raw, untyped bytes - the source isn't a `Pack` (a file handle, socket, any byte producer), consumed as raw bytes via
+`BytesDst`.
+
+#### `Stream` field datatype
+
+A pure, untyped binary conduit, chunked (`[length][data]…[0]`) and **interruptible** - the sender can emit the terminating `[0]` at any time.
+
+#### `File` field datatype
+
+Known size: a single length prefix (`[totalLength][data]`) - densest for disk BLOBs/buffers. **Not** interruptible; the receiver waits for exactly the
+committed length.
+
+#### Why chunked framing, not a single length prefix
+
+| Type                                            | Wire format              | Knows total upfront? | Interruptible? |
+|:------------------------------------------------|:-------------------------|:---------------------|:---------------|
+| [`Stream`](#stream-field-datatype)              | `[len₁][data₁]…[0]`      | No                   | Yes            |
+| [`File`](#file-field-datatype)                  | `[totalLen][data]`       | Yes (required)       | No             |
+| `ToStream` / `FromStream` / `Stream<To,From,T>` | chunked `Stream` framing | No                   | No             |
+
+Chunked framing costs 2 bytes/chunk (≤65 535 B payload each); in return both ends produce/consume incrementally with no agreed total, and either side
+spots end-of-stream from the framing alone - the property the [`Relay`](#relay) depends on. `ToStream`/`FromStream` borrow the chunked framing for
+that boundary visibility, but their payload is one complete serialized pack - delivering a truncated pack would hand the receiver a torn object, so
+unlike a raw `Stream` they are not interruptible. `File`'s single prefix is denser when the total
+is known cheaply (disk BLOBs, buffers). For fixed-size content (hashes, signatures) use [`Binary`](#binary-type) collections - no length prefix at
+all.
+
+#### Size cap - `[S(N)]`
+
+`[S(N)]` applies to **fields of `Stream`/`File` type only** - the raw, unbounded conduits. It caps the bytes the receive side accepts, raising an
+`IOException` past `N` - resource isolation when middle tiers forward un-auditable bytes. It is required whenever a field's datatype is
+`Stream`/`File`, **independent of any transform stages layered on top**. A transform chain on a **pack-typed** field is bounded by that field's own
+type and carries no `[S(N)]`. `N` must be **greater than 8**.
 
 ```csharp
-// Syntax: IfSendingFrom<fromHost, viaConnection>
+[S(100_000)] File raw;                 // File field → [S] required
+[S(100_000), ChaCha20] Stream secret;  // Stream field + cipher → [S] required by the datatype
+```
+
+---
+
+### Named `Stream` / `File` packs
+
+A class may inherit `Stream` or `File` to become a **named** conduit - a reusable type that carries its framing metadata on the wire:
+
+```csharp
+[S(100_000), Zstd] class TelemetryFrame : Stream { } // chunked, interruptible — max 100 000 bytes
+[S(  4_096)]       class Thumbnail      : File   { } // single length-prefix    — max     4 096 bytes
+```
+
+**Rules for named Stream/File packs:**
+
+* `[S(N)]` is **mandatory** — same rationale as the field datatype form.
+* The pack body must have **no instance fields**. Constants and static fields are fine — they ride along as pack metadata, not as wire payload.
+* A class may inherit `Stream` **or** `File`, not both — they describe incompatible wire formats.
+* These packs **cannot be used as a field type** — use the `File`/`Stream` datatype directly instead. `File`-based packs **cannot carry transform
+  chains** (no length-extending compression over a fixed-length prefix).
+
+---
+
+### Streams at runtime - the generated API
+
+A schema-side `Stream`/`File` field never becomes a `byte[]` in your code. The generator emits **channel hooks**: your implementation hands the
+runtime a standard byte channel, and the runtime moves the bytes through the socket buffer itself - pull-based on transmit, push-based on receive.
+
+Given this schema:
+
+```csharp
+public class VideoUpload {
+    long session_id;
+    [S(1_000_000_000)] Stream frames;   // unbounded, interruptible conduit - capped at ~1 GB
+}
+```
+
+the generated Java interface asks your implementation for a channel per side (`Stream` fields use `ReadableByteChannel`/`WritableByteChannel`;
+`File` fields use `SeekableByteChannel` on both sides):
+
+```java
+public class VideoUploadImpl implements Consumer.VideoUpload {
+    long session_id;
+
+    // ---- Transmit side: the runtime PULLS. As the socket drains, the transmitter
+    // reads the next chunk from this channel into the socket buffer and frames it.
+    // The file is never loaded into memory.
+    @Override public ReadableByteChannel __frames(AdHoc.Connection.Transmitter scope) {
+        try { return FileChannel.open(Path.of("/videos/" + session_id + ".raw"), StandardOpenOption.READ); }
+        catch (IOException e) { throw new UncheckedIOException(e); }
+    }
+    // Whether there is stream data to send at all (an absent stream is legal).
+    @Override public boolean __frames_hasValue(AdHoc.Connection.Transmitter scope) {
+        return Files.exists(Path.of("/videos/" + session_id + ".raw"));
+    }
+
+    // ---- Receive side: the runtime PUSHES. Each chunk is written into this channel
+    // as it comes off the wire; the stream is complete when the [0] terminator lands.
+    @Override public WritableByteChannel __frames(AdHoc.Connection.Receiver scope) {
+        try { return FileChannel.open(Path.of("/incoming/" + session_id + ".raw"),
+                                      StandardOpenOption.WRITE, StandardOpenOption.CREATE); }
+        catch (IOException e) { throw new UncheckedIOException(e); }
+    }
+}
+```
+
+Sending is the same call as for any pack - the generated actor's sender streams the conduit through the socket buffer:
+
+```java
+Consumer.VideoUpload pack = new VideoUploadImpl();
+Actor0.Upload.send(pack, connection);          // sender is generated per actor/branch
+```
+
+[Named `Stream`/`File` packs](#named-stream--file-packs) skip the pack object entirely - the generator emits a **direct sender** that takes the
+channel itself:
+
+```java
+Actor0.Upload.send_TelemetryFrame(FileChannel.open(path, StandardOpenOption.READ), connection);
+```
+
+C# and TypeScript mirror the same shape with their platforms' channel/stream abstractions. In all three languages the contract is identical: you
+provide a byte source or sink, the runtime owns the chunking, framing, transform chains, and the socket buffer.
+
+---
+
+### Transform chains - stages, roles, and flows
+
+A stream can pass its bytes through an ordered **chain of transforms** - compression, encryption, or any byte-to-byte stage you define - before the
+wire, and the inverse on arrival. The chain is pure **attributes**, and **the target keeps its own type**: the chain wraps the serialized bytes (the
+*leaf*), it doesn't replace them. It declares, in the schema, the runtime stage chain (`Stream → Cipher → Compress → leaf`) - see
+[Custom stages](#custom-stages) for how a stage is implemented.
+
+**A stage is one link** - a reusable byte transform deriving from `StreamStageAttribute`. It can be applied to a **field** or to a whole **pack**:
+
+```csharp
+[ChaCha20]          MyPack payload;        // field: pack-typed — encrypt
+[Zstd(6)]           Stream raw;            // field: bare Stream — compress, level 6
+[ChaCha20, Zstd(6)] MyPack secure;         // field: compress, then encrypt
+
+[Zstd]     class Telemetry { … }           // ordinary pack: transparently compressed on every transmission
+[ChaCha20] class Frame : Stream { … }      // Stream pack: encrypted
+```
+
+`payload` stays a `MyPack`; its bytes are the leaf. The chunked-stream root is **implicit** - anything carrying a stage is framed as a chunked stream.
+
+#### Where a chain may sit
+
+| Target                                                         | Chain?                                                                                                                            |
+|:---------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------|
+| bare `Stream` field, or pack-typed field                       | ✅                                                                                                                                 |
+| ordinary pack (compress/encrypt on transmit), or `Stream` pack | ✅                                                                                                                                 |
+| `File` field or `File` pack                                    | ❌ - single length-prefix has no per-chunk framing for a stage to ride on, and a length-changing stage has no length field to grow |
+| primitive / value-pack / typedef field                         | ❌ - group the data in a pack and put the chain there                                                                              |
+
+#### Roles
+
+Concrete algorithms derive from a role base so the generator can group them:
+
+```
+StreamStageAttribute
+├─ StreamCompressionStageAttribute → ZstdAttribute      [Zstd]
+└─ StreamCipherStageAttribute      → ChaCha20Attribute  [ChaCha20]
+```
+
+The role enables recognition (compressed/encrypted) and **at most one** compressor + one cipher per chain. (Only a `File` rejects a chain - **any**
+stage, compressor *or* cipher - on either a field or a pack; every other target carries one.) New algorithms (`Lz4`, `AesCtr`) slot in unchanged.
+
+#### Direction — left = wire, right = app/leaf
+
+On transmit the right-most stage runs first; on receive the left-most. So `[ChaCha20, Zstd]` is
+`pack → Zstd → ChaCha20 → wire` = **compress-then-encrypt** (the correct order - ciphertext doesn't compress). Put the cipher left of the compressor.
+
+#### Flows — reuse
+
+Declare a chain once as a `StreamFlowAttribute`, apply by one attribute; the field keeps its type:
+
+```csharp
+[ChaCha20, Zstd(6)]
+public class CipherAndFastCompress : StreamFlowAttribute { }
+
+[CipherAndFastCompress] MyPack payload;   // still a MyPack
+```
+
+A flow lists stages only (root implicit), never other flows.
+
+#### Parameters — design-time vs runtime-injected
+
+A stage's constructor(s) *declare* the params it needs. Use **AdHoc types** . It's the **value, not the type**, that sorts a param:
+
+| Param kind       | How you declare it                                                      | Where its value comes from                           |
+|:-----------------|:------------------------------------------------------------------------|:-----------------------------------------------------|
+| Design-time      | a ctor default (`int level = 20`) or a value when applied (`[Zstd(6)]`) | baked into the description - shared by every use     |
+| Runtime-injected | declared but **never given a value** (e.g. `Binary[,] key`)             | you supply it at runtime through the generated stage |
+
+Any declared param you don't give a value becomes a runtime hook - **whatever its type** (you may use a plain non-nullable type and just leave it
+unassigned; you needn't make it nullable, the generator does that for you). Buffer-shaped runtime params (`Binary[,]` keys/nonces) can't be
+attribute arguments, so put them in their own constructor overload - the generator reads every constructor's params. Each declared param is emitted
+on **both** sides; the impl decides usage (zstd `level` is encoder-only - the decoder ignores it).
+
+#### Built-in stages
+
+Shipped fully implemented; you don't write the codec (a cipher still needs its key/nonce injected at runtime):
+
+| Stage                      | Role        | Notes                                                                                                                                         |
+|:---------------------------|:------------|:----------------------------------------------------------------------------------------------------------------------------------------------|
+| `[Zstd]` / `[Zstd(level)]` | compression | Zstandard; `level` 1–20 (default 20), encoder-only; not over `File`.                                                                          |
+| `[ChaCha20]`               | cipher      | Stream cipher (keystream XOR): byte-incremental, resumable, no padding, encrypt == decrypt; key+nonce runtime-injected; native to C#/Java/TS. |
+
+A *stream* cipher fits a chunked stage precisely because it's keystream-XOR - any chunk size, no block alignment, resumable, same op both ways. A
+block mode (CBC/GCM) would fight it.
+
+#### Custom stages
+
+To add your own byte-stream transform, declare a new attribute deriving from a role base
+(`StreamCompressionStageAttribute` / `StreamCipherStageAttribute`) or from `StreamStageAttribute` directly, give its constructor the parameters the
+stage needs (in [AdHoc types](#binary-type)), and apply it like a built-in. The generator emits **one** file per stage type, named after the
+attribute (`MyStage.cs` / `.java` / `.ts`) - a pass-through, with [injection points](#injection-points) where you drop the encode/decode
+transform (hand-rolled or a library call). The file is shared by every chain that uses the stage, and regeneration preserves your code.
+
+```csharp
+public class Lz4Attribute : StreamCompressionStageAttribute    // custom compressor - one design-time param
+{
+    public Lz4Attribute(int level = 1) { }
+}
+
+public class AesCtrAttribute : StreamCipherStageAttribute      // custom cipher - runtime key/iv
+{
+    public AesCtrAttribute() { }                               // the form you apply:  [AesCtr]
+    public AesCtrAttribute(Binary[,] key, Binary[,] iv) { }    // declares the runtime-injected params
+}
+
+[Lz4(3)]         MyPack p;   // design-time: level = 3
+[AesCtr]         MyPack q;   // key + iv supplied at runtime
+[AesCtr, Lz4(3)] MyPack r;   // a chain: compress, then encrypt
+```
+
+---
+
+### Contextual Scoping - `ToStream`, `FromStream`, `Stream<To,From,T>`
+
+**Why this exists - packs have no length prefix.** An AdHoc pack is a pack-id plus its fields back-to-back, with **no overall length header** - only a
+parser walking every field knows where it ends. That density is why AdHoc beats length-prefixed formats on the wire, but it means a middle tier
+**can't relay, store, or skip a pack without parsing it**. `ToStream` / `FromStream` / `Stream<To,From,T>` *opt a pack into* chunked `[len][data]…[0]`
+framing so anyone in the middle can recognize boundaries (count chunks to `[0]`), extract/persist/replay the bytes, rehydrate (`FromStream`), or
+forward them to a downstream consumer ([`Relay`](#relay)) - all without decoding.
+
+The same field can need framing on one path and not another. **Contextual Scoping** makes a field's behavior depend on the **Endpoint** it travels.
+
+#### Defining Endpoints
+
+An Endpoint is a *source* (who sends) over a *pipe* (which connection); group them into **Endpoint Sets**:
+
+```csharp
+// IfSendingFrom<fromHost, viaConnection>
 public interface FromProducer : IfSendingFrom<Producer, ProducerToRouterConnection> { }
-public interface FromRouter   : IfSendingFrom<Router, ProducerToRouterConnection> { }
+public interface ExternalTraffic : _<(FromProducer, FromRouter)> { }   // a set
 ```
 
-By grouping these interfaces, you can create **Endpoint Sets** to apply behavior to multiple paths simultaneously:
+#### Channel Asymmetry
 
-```csharp
-public interface ExternalTraffic : _<(FromProducer, FromRouter)> { }
-```
+`ToStream`/`FromStream` break sender/receiver symmetry on the named Endpoint:
 
----
+* **`ToStream<E, T>`** - originating at `E`, the **sender** serializes `T` as a pack; the **receiver** gets **raw bytes** (opaque sink).
+* **`FromStream<E, T>`** - originating at `E`, the **sender** emits **raw bytes** (e.g. a file handle); the **receiver** rehydrates `T`.
 
-### Channel Asymmetry
+The proxy literally can't depend on the pack's schema - on its side the field is just bytes. **`Stream<To, From, Pack>`** combines both: `ToStream`
+on the `To` path, `FromStream` on the `From` path, a normal nested pack elsewhere.
 
-Stream modifiers (`ToStream` and `FromStream`) break the standard symmetry between sender and receiver based on the defined Endpoint:
+Assume **Endpoint E** is `IfSendingFrom<HostA, ConnectionAB>`:
 
-* **`ToStream<Endpoint, T>`**: When the data originates at the specified `Endpoint`, the **Sender** serializes `T` as a structured pack. The *
-  *Receiver** (the other side of that specific connection) treats it as **raw bytes**—an opaque sink.
-* **`FromStream<Endpoint, T>`**: When the data originates at the specified `Endpoint`, the **Sender** treats the field as **raw bytes**—an opaque
-  source (e.g., streaming directly from a file handle). The **Receiver** rehydrates those bytes back into a structured `T`.
+| Field Declaration          | Sender (at E)             | On-the-Wire     | Receiver (from E)         | Other Routes |
+|:---------------------------|:--------------------------|:----------------|:--------------------------|:-------------|
+| `MyPack p;`                | `MyPack` object           | Standard AdHoc  | `MyPack` object           | Same         |
+| `ToStream<E, MyPack> p;`   | `MyPack` object           | Raw Bytes       | Raw Bytes (`ExtBytesDst`) | Normal Pack  |
+| `FromStream<E, MyPack> p;` | Raw Bytes (`ExtBytesSrc`) | Standard AdHoc  | `MyPack` object           | Normal Pack  |
+| `Stream<E, E2, MyPack> p;` | Depends on path           | Depends on path | Depends on path           | Normal Pack  |
 
-This asymmetry keeps middle-tier infrastructure (proxies, routers, stores) lean and decoupled from the internal evolution of the packs they transport.
-
----
-
-### Usage Patterns
-
-#### 1. The Binary Object Store
-
-In this scenario, a **Client** uploads a profile to a **StorageNode**. The StorageNode should not need the `UserProfile` metadata just to save the
-bytes to disk.
-
-```csharp
-// 1. Define the participants
-public struct Client : Host { ... }
-public struct StorageNode : Host { ... }
-public interface ClientToStore : Connects<Client, StorageNode> { ... }
-
-// 2. Define the Endpoint
-public interface FromClient : IfSendingFrom<Client, ClientToStore> { }
-
-// 3. Apply to Packs
-class StoreRequest {
-    public long object_id;
-
-    // Client (at FromClient) sends structured Pack 
-    // StorageNode receives raw bytes (opaque sink)
-    [S(1024 * 1024)]
-    public ToStream<FromClient, UserProfile> data;
-}
-```
-
-#### 2. Robotics & Drones: Interleaving and Interrupts
-
-The `Stream<To, From, Pack>` (**Universal Stream**) combines both behaviors. Its behavior is path-dependent:
-
-* On the **`To`** endpoint path: Acts like `ToStream`.
-* On the **`From`** endpoint path: Acts like `FromStream`.
-* On all other paths: Both sides treat it as a standard nested `Pack`.
-
-```csharp
-public interface FromDrone : IfSendingFrom<Drone, DroneToCloudConnection> { }
-public interface FromCloud : IfSendingFrom<Cloud, DroneToCloudConnection> { }
-
-class TelemetryFrame {
-    // From Drone: Serializes Pack -> Cloud receives bytes (for storage)
-    // From Cloud: Sends bytes (from storage) -> Drone UI rehydrates Pack
-    // On other connections (e.g. Drone to Controller): Standard nested Pack
-    [S(65536)] 
-    public Stream<FromDrone, FromCloud, VideoMetadata> metadata;
-}
-```
-
-* **Interleaving**: Because the stream is framed, the receiver can distinguish between a raw video chunk and a structured `StatusUpdate` pack on the
-  same channel.
-* **Interruptibility**: `Stream` is the only **interruptible** flow. A sender can terminate a low-priority stream immediately by sending a zero-length
-  terminal chunk, freeing bandwidth for an urgent `Command` pack.
+These are **conditional chunked roots** - [transform stages](#transform-chains---stages-roles-and-flows) may stack on them, applying only on the
+streamed path (the plain-pack fallback carries no chain).
 
 ---
-
-### Comparison of Contextual Field Behaviors
-
-Assume **Endpoint E** is defined as `IfSendingFrom<HostA, ConnectionAB>`.
-
-| Field Declaration          | Sender (at E)             | On-the-Wire Format | Receiver (from E)         | Behavior on Other Routes |
-|:---------------------------|:--------------------------|:-------------------|:--------------------------|:-------------------------|
-| `MyPack p;`                | `MyPack` object           | Standard AdHoc     | `MyPack` object           | Same                     |
-| `ToStream<E, MyPack> p;`   | `MyPack` object           | Raw Bytes          | Raw Bytes (`ExtBytesDst`) | Normal Pack              |
-| `FromStream<E, MyPack> p;` | Raw Bytes (`ExtBytesSrc`) | Standard AdHoc     | `MyPack` object           | Normal Pack              |
-| `Stream<E, E2, MyPack> p;` | Depends on path           | Depends on path    | Depends on path           | Normal Pack              |
-
----
-
-### Limits `[S(N)]`
-
-All stream-based fields (`ToStream`, `FromStream`, `Stream`, and `File`) require an explicit maximum total size in bytes via the **`[S(N)]`**
-attribute.
-
-### Stream
-
-While `Stream<To, From, Pack>` is topology-aware, the bare `Stream` type is a pure, untyped binary conduit. The source is not assumed to be a `Pack`
-—it may be a file handle or a network socket. The receiver consumes it as raw bytes via the `BytesDst` interface. It uses chunking (
-`[length][data]...[0]`) for unknown or continuous feeds and is **interruptible**.
-
-### File
-
-`File` is optimized for data with a known size. It uses a single length prefix (`[total_length][data]`), making it the most efficient option for
-disk-based BLOBs or memory buffers. Unlike `Stream`, `File` is **not** interruptible.
 
 ## DateTime
 
@@ -3512,13 +4602,13 @@ AdHoc reserves an extra **1 minute** of capacity beyond the requested `interval`
 
 ### 4. Elapsed Time (`Duration`)
 
-Use `org.unirail.Meta.Duration` for fields that measure **how long something took** — a non-negative elapsed duration from zero up to a known maximum.
+Use `org.unirail.Meta.Duration` for fields that measure **how long something took** - a non-negative elapsed duration from zero up to a known maximum.
 Suited for request latency, task runtimes, timeout intervals, and heartbeat periods.
 
-* **No calendar anchor** — unlike `DateTimeDef`, it carries no fixed origin point in history.
-* **Non-cyclic** — unlike `TimeSpanDef`, it is linear and never rolls over, so no boundary-crossing protection is needed.
+* **No calendar anchor** - unlike `DateTimeDef`, it carries no fixed origin point in history.
+* **Non-cyclic** - unlike `TimeSpanDef`, it is linear and never rolls over, so no boundary-crossing protection is needed.
 * **Mechanism:** `Value = ElapsedTime / Precision`, encoded as a step count in `[0, max]`.
-* **Sizing:** Byte-level — AdHoc allocates the smallest whole-byte container (1 to 7 bytes) required for your requested `max` step count. **Note:**
+* **Sizing:** Byte-level - AdHoc allocates the smallest whole-byte container (1 to 7 bytes) required for your requested `max` step count. **Note:**
   AdHoc automatically scales the actual operational `max` up to completely fill the allocated bytes.
 
 ```csharp
@@ -3560,10 +4650,10 @@ class ApiCall
 #### Spare Bits: `max` Expansion
 
 After byte allocation, unused bit capacity is turned into a **larger representable range**: AdHoc silently increases `max` so that every bit in the
-allocated bytes is used. Precision is never altered — the step size you declared stays fixed, and you simply get headroom beyond what you explicitly
+allocated bytes is used. Precision is never altered - the step size you declared stays fixed, and you simply get headroom beyond what you explicitly
 requested.
 
-> **Example — task runtime, up to 3 600 steps of 1 s (1 hour):**
+> **Example - task runtime, up to 3 600 steps of 1 s (1 hour):**
 > * 3 600 steps requires ⌈log₂ 3 601⌉ = 12 bits → **2 bytes** (65 536 capacity).
 > * Spare capacity: 65 536 − 3 601 = **61 935 steps**.
 > * Effective `max` promoted to **65 535 steps** → ~18.2 hours at 1 s precision.
@@ -3579,6 +4669,8 @@ requested.
 | **Safety**        | Clamps to range                      | 1-minute protection gap  | None needed          |
 | **Spare space**   | Extends `max` or refines `precision` | Refines `precision`      | Extends `max`        |
 | **Latency error** | Immune                               | Protected by gap         | Immune               |
+
+---
 
 ## Meta
 

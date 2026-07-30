@@ -4194,7 +4194,7 @@ Which mechanism fits which payload:
 | An entire conversation crossing one or more relay hosts              | `VirtuallyConnects<L, R, PATH>` + the generated `Relay`             | [Virtual Connections](#virtual-connections)                                   |
 
 The layers compose freely: a `Stream` field can carry a chain; a `ToStream` root can carry a chain on its streamed path only; a tunnel is itself a
-chunked stream and carries chains end-to-end.
+chunked stream and carries chains end-to-end. 
 
 ---
 

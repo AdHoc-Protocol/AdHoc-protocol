@@ -63,14 +63,14 @@ AdHoc is well-suited for systems where data volume, speed, and efficiency matter
   kernel syscalls; the Monitoring server uses 1024), and the producer holds only its own small state machine. Parsing is the inverse - bytes are
   consumed slot-by-slot directly off the wire.
   
-  This is the opposite of how most binary protocols work. Protocol Buffers, FlatBuffers, Thrift, MessagePack and friends serialize the whole pack
-  into one contiguous byte array before any of it goes on the wire (`byte[] data = pack.toByteArray(); socket.write(data);`) and parse the inverse
-  way - read the full message into a single buffer before any field is accessible. For a 64-byte status update this is fine. For a 1 GB telemetry
-  blob, an arbitrarily-long live encoder feed, or a video stream relayed through a proxy, it's a non-starter - the sender would need a gigabyte of
-  RAM just to *prepare* the message before the first byte hits the socket.
+  This is the opposite of how most binary protocols work. Protocol Buffers, FlatBuffers, Thrift, MessagePack and friends serialize the whole pack into
+  one contiguous byte array before any of it goes on the wire (`byte[] data = pack.toByteArray(); socket.write(data);`) and parse the inverse way -
+  read the full message into a single buffer before any field is accessible. For a 64-byte status update this is fine. For a 1 GB telemetry blob, an
+  arbitrarily-long live encoder feed, or a video stream relayed through a proxy, it's a non-starter - the sender would need a gigabyte of RAM just to
+  *prepare* the message before the first byte hits the socket.
   
-  AdHoc has no such moment. A pack of any size - a `Stream` field of unbounded size - costs the same constant socket-buffer size of resident
-  memory on each side, independent of the pack's logical length.
+  AdHoc has no such moment. A pack of any size - a `Stream` field of unbounded size - costs the same constant socket-buffer size of resident memory on
+  each side, independent of the pack's logical length.
 - **Lower GC pressure:** By avoiding large single-object allocations and reusing small buffers, AdHoc reduces garbage collector workload, leading to
   lower latency, fewer pauses, and more predictable throughput.
 - **Efficient serialization/deserialization:** The streaming model transforms data on-the-fly, reducing end-to-end latency.
@@ -126,23 +126,7 @@ To get started:
 
 ---
 
-1. Install [7-Zip](https://www.7-zip.org/download.html) for PPMd compression of source files. Download [**version 24.07 or higher
-   **](https://youtu.be/i5L9xEk_adw) for your platform:
-	
-	- **[Windows](https://www.7-zip.org/a/7zr.exe)**  
-	  Add `C:\Program Files\7-Zip` to the system `PATH` and verify `7z` works in the console.
-	
-	- **[Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz)**
-	  ```shell
-	  apk add p7zip
-	  ```
-	
-	- **[macOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)**
-	  ```
-	  brew install p7zip
-	  ```
-
-2. Download the [AdHoc protocol metadata attributes Meta.cs file](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/master/src/Meta.cs), or add a
+1. Download the [AdHoc protocol metadata attributes Meta.cs file](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/master/src/Meta.cs), or add a
    dependency on `AdHocAgent.dll` to your protocol project.
 
 ![image](https://github.com/user-attachments/assets/76298dca-1f8c-4b88-855b-080ead6ad0d7)
@@ -202,7 +186,7 @@ The Observer lets you:
 
 ![image](https://github.com/user-attachments/assets/565a76c2-58f3-4570-9ca8-c6bad41f4f43)
 
-> [!NOTE]    
+> [!NOTE]
 > To enable navigation from the Observer to your source code, specify the path to your local C# IDE in the `AdHocAgent.toml` configuration file.
 
 ### Saving Your Workspace
@@ -229,7 +213,7 @@ Converts a file or directory of [Protocol Buffers](https://developers.google.com
 ![image](https://user-images.githubusercontent.com/29354319/232012276-03d497a7-b80c-4315-9547-ad8dd120f077.png)
  </details>
 
-> [!NOTE]  
+> [!NOTE]
 > Additional arguments can be paths to directories containing supplemental imported `.proto` files, such as
 > [`well_known`](https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf) files.
 > Multiple directories are supported - for example, when imports are spread across several roots:
@@ -258,14 +242,12 @@ system. AdHocAgent will only repeat the deployment process for source files alre
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/6109d22b-d4f9-43dc-8e9b-976d38d63b32)
  </details>
 
-> [!NOTE]  
+> [!NOTE]
 > In addition to command-line arguments, AdHocAgent requires a configuration file:
 
 - **`AdHocAgent.toml`:** Contains settings including:
 	- The URL of the code-generating server.
 	- The path to the local C# IDE binary, enabling the utility to open the IDE at a specific file and line.
-	- The path to the [7-Zip](https://www.7-zip.org/download.html) binary.
-		- [Windows](https://www.7-zip.org/a/7zr.exe) | [Linux](https://www.7-zip.org/a/7z2201-linux-x86.tar.xz) | [macOS](https://www.7-zip.org/a/7z2107-mac.tar.xz)
 	- Paths to source code formatter binaries:
 		- [clang-format](https://releases.llvm.org/download.html)
 		- [prettier](https://prettier.io/docs/en/install.html) - install globally: `npm install -g prettier`
@@ -294,11 +276,11 @@ AdHocAgent 100b9fd2-e593-485b-a2fe-9b9c82bc1e3f
 
 The utility saves the `volatile UUID` in `AdHocAgent.toml`.
 
-> [!NOTE]  
+> [!NOTE]
 > The UUID may be automatically renewed during new code generation requests and cannot be reused. Keep your `AdHocAgent.toml` file - it stores the
 > updated UUID. If your UUID is rejected, repeat the sign-up process to get a new one.
 
-> [!NOTE]  
+> [!NOTE]
 > When run without arguments, AdHocAgent displays help and generates a `protocol description file` template.
 
 ## Continuous Deployment (CD) System
@@ -368,7 +350,7 @@ Copies the source item with the exact name and location specified.
 
 ```markdown
 - 📁[Observer](/path/to/source/InTS/Observer)  ✅ All files go to 'src', images go to 'assets'.
-  [\.(jpg|png|gif)$](/project/assets/images/)
+  [\. (jpg|png|gif)$](/project/assets/images/)
   [](/project/src/)
 	
 	- 🌀[demo.ts](/path/to/source/InTS/Observer/demo.ts)  // Inherits rule → /project/src/demo.ts
@@ -641,7 +623,7 @@ To upload a file and get generated source code: `AdHocAgent.exe /dir/minimal_des
 
 # Protocol Description File Format
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > **The `protocol description file` follows a specific naming convention:**
 >
 > - Names must not start or end with an underscore `_`.
@@ -885,7 +867,7 @@ in the `<PACKS>` generic parameter of a branch, or included via a Pack Set.
 
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/51163c18-3b49-4f4f-adea-c3450c0fe01c)
 
-> [!NOTE]  
+> [!NOTE]
 > A project can function as a [set of packs](#project-host-or-pack-scopes).
 
 ### Extending Other Projects
@@ -898,7 +880,7 @@ interface MyProject : OtherProjects, MoreProjects
 }
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > The order of extended interfaces determines priority for name or pack ID conflicts - earlier ones take precedence.
 
 For example, the [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) description defines public,
@@ -1038,7 +1020,7 @@ To import only specific connections, enums, or constant sets:
 	}
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > Note the **plus** character after the attribute. You cannot import `State` this way.
 
 To exclude specific entities:
@@ -1052,7 +1034,7 @@ interface MyProject : OtherProjects, MoreProjects
 }
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > The **minus** character after the attribute excludes the entity.
 
 #### By Generic Interfaces (`_<TYPES>` and `X<TYPES>`)
@@ -1091,7 +1073,7 @@ public interface AdHocProtocol :
 
 3. **`_<(TYPE_A, TYPE_B, ...)>`:** Use C# tuple syntax for multiple types.
 
-> [!NOTE]  
+> [!NOTE]
 > To import a **host**, reference it as an endpoint within a **connection**. To import a **pack**, reference it within a branch of a state.
 
 [Learn how to modify imported packs](#modifying-imported-packs).  
@@ -1511,10 +1493,10 @@ struct AdminStream { }
 
 ### Empty Packs
 
-A **transmittable** (referenced via a branch) C# class-based pack with no instance fields - only [constants](#constants) or nested pack
-declarations. Implemented as singletons, it is the most efficient way to signal simple events or states over a connection.
+A **transmittable** (referenced via a branch) C# class-based pack with no instance fields - only [constants](#constants) or nested pack declarations.
+Implemented as singletons, it is the most efficient way to signal simple events or states over a connection.
 
-> [!NOTE]  
+> [!NOTE]
 > If an empty pack's sole purpose is to define hierarchy structure and should not be transmitted, switch to a C#
 > struct-based [Constants Container](#constants-container), which is non-transmittable.
 
@@ -1673,12 +1655,12 @@ You can always override the default placement with `_<T>` at project or host lev
 
 #### Cross-Pack Constant References
 
-When a pack in a host's scope (transmitted, received, or implemented) defines a constant whose **initializer expression references
-constants from *another* constants / enum pack**, that other pack is automatically added to the host's const/enum scope - so the
-generated code can resolve the identifier at compile time.
+When a pack in a host's scope (transmitted, received, or implemented) defines a constant whose **initializer expression references constants from
+*another* constants / enum pack**, that other pack is automatically added to the host's const/enum scope - so the generated code can resolve the
+identifier at compile time.
 
-**Example.** A `Sessions.Event` pack declares composite event IDs by OR-ing flags and actions that live in two sibling constants
-packs - `Event.Mask` and `Event.Action`:
+**Example.** A `Sessions.Event` pack declares composite event IDs by OR-ing flags and actions that live in two sibling constants packs - `Event.Mask`
+and `Event.Action`:
 
 ```csharp
 public class Event {
@@ -1693,9 +1675,9 @@ public class Event {
 }
 ```
 
-Every host that sends, receives, or implements `Event` must be able to resolve `Mask.REMOTE`, `Action.CONNECT`, etc.
-The generator therefore walks each constant's initializer, follows every identifier that resolves to a constant field in
-a *different* constants / enum pack, and pulls that owning pack into the host's scope alongside `Event`.
+Every host that sends, receives, or implements `Event` must be able to resolve `Mask.REMOTE`, `Action.CONNECT`, etc. The generator therefore walks
+each constant's initializer, follows every identifier that resolves to a constant field in a *different* constants / enum pack, and pulls that owning
+pack into the host's scope alongside `Event`.
 
 Which hosts get `Event.Mask` and `Event.Action` pulled in:
 
@@ -1708,8 +1690,8 @@ Which hosts get `Event.Mask` and `Event.Action` pulled in:
 > **Exception - pure constants only.** The cross-reference rule adds a referenced pack *only if the host does not already transmit
 > or receive that pack*. Packs already flowing through the normal pipeline are not duplicated into the constants/enums list.
 
-The rule is reference-driven, not structural. It works regardless of where the referenced pack is declared (sibling, nested,
-elsewhere in the tree), and it handles arbitrary expressions - bitwise, arithmetic, nested, chained member access.
+The rule is reference-driven, not structural. It works regardless of where the referenced pack is declared (sibling, nested, elsewhere in the tree),
+and it handles arbitrary expressions - bitwise, arithmetic, nested, chained member access.
 
 ### Modifying Enums and Constants
 
@@ -1724,17 +1706,16 @@ project's scope.
 
 Instance **fields** represent the data transmitted. A pack may also contain [constants](#constants) or nested pack declarations.
 
-> [!NOTE]  
+> [!NOTE]
 > A pack can act as a [set of packs](#project-host-or-pack-scopes) - keep this in mind when organizing the pack hierarchy.
 
 ### Implementation Management
 
 A pack's **implementation kind** is decided per **(host, language, pack)** - see [Implementation Management](#implementation-management-1) in the
 Fields chapter for the full model, declaration rules, and resolution precedence. In short: `+` generates a concrete, fully materialized object; `-`
-generates an abstract base
-class whose fields are delivered to your implementation as they stream off the wire, with the whole object never allocated. By default a pack follows
-its host's [implementation modifier](#modifier-summary-table) for the language being generated; an explicit rule pins exactly one
-**(host, language, pack)** combination.
+generates an abstract base class whose fields are delivered to your implementation as they stream off the wire, with the whole object never allocated.
+By default a pack follows its host's [implementation modifier](#modifier-summary-table) for the language being generated; an explicit rule pins
+exactly one **(host, language, pack)** combination.
 
 Make one pack abstract on a host while its siblings keep the host default:
 
@@ -1948,7 +1929,7 @@ class Point3d {
 }
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > If a target packet already has a field with the same name as an injected field, the injector's definition (type, attributes, documentation) takes
 > precedence.
 
@@ -1983,8 +1964,8 @@ The protocol parser enforces highly rigid rules for header definitions to ensure
   Headers are transmitted and parsed **after** the pack identifier but **before** the main payload. They are immediately accessible to network event
   handlers before the full payload is deserialized.
 - **Standalone Packets Only**
-  Headers are attached **only** to explicitly transmittable packets (root packets picked up by branches).
-  *If a packet is embedded as a field inside another packet (a Sub-packet), its header is completely stripped and ignored.*
+  Headers are attached **only** to explicitly transmittable packets (root packets picked up by branches). *If a packet is embedded as a field inside
+  another packet (a Sub-packet), its header is completely stripped and ignored.*
 - **Strict Data Type Limitations**
   Because headers must be parsed blindly at the transport layer, they are heavily restricted:
 	- Must use **single, primitive, non-nullable** types (`bool`, `int`, `long`, `double`, `float`, `short`, `byte`, `ulong`, etc.).
@@ -2203,15 +2184,24 @@ class Pack : Modify<TargetPack> {
 }
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > A modifier pack can function as a normal pack.
+
+> [!IMPORTANT]
+> A modifier merges **fields**, not attributes. A [transform chain](#transform-chains---stages-roles-and-flows) or a
+> [trim](#trimming-a-chain---what-a-store-keeps) written on the modifier applies to the **modifier pack itself** - which is transmittable like any
+other -
+> and never reaches the target; the Agent warns, since that is rarely what was meant. To compress or cut a pack you do not own, put the chain on the
+field
+> that carries it, on the target pack if you own it, or on the [connection](#example-compress-and-encrypt-an-imported-connection) - see
+> [Across imported projects](#across-imported-projects).
 
 ---
 
 # Connections
 
-A **Connection** is the static definition of a remoting link - the typed pipe through which all protocol logic flows between two hosts. Every
-message, every state transition, every RPC call is declared inside a Connection.
+A **Connection** is the static definition of a remoting link - the typed pipe through which all protocol logic flows between two hosts. Every message,
+every state transition, every RPC call is declared inside a Connection.
 
 Connections are declared as C# interfaces that extend `org.unirail.Meta.Connects< HostLeft, HostRight >`:
 
@@ -2226,12 +2216,19 @@ namespace com.company {
 ```
 
 > [!IMPORTANT]
+> **One connection per pair of hosts.** Any two hosts may be joined by **at most one** connection - physical `Connects<>` or virtual
+> [`VirtuallyConnects<>`](#virtual-connections) alike, in either host order (`Connects<A, B>` and `Connects<B, A>` join the same pair). A second
+> connection between the same pair is a compile-time error. This is never a limitation: one connection carries packs of **both** directions, any
+> number of [Actors](#actors) multiplex independent conversations over it, and a virtual connection already multiplexes up to
+> [`MaxTunnels`](#the-two-knobs) concurrent tunnels over its path.
+
+> [!IMPORTANT]
 > **[Data is represented on the wire in little-endian format.](https://news.ycombinator.com/item?id=25611514)**
 
 ---
 
-The body of a Connection interface is where you define its **protocol flow**: the logical sequence of messages, the ordering of packets, and the
-valid response patterns. You do this by declaring [`Actors`](#actors), [`States`](#states), and [`Branches`](#branches-routing-attributes).
+The body of a Connection interface is where you define its **protocol flow**: the logical sequence of messages, the ordering of packets, and the valid
+response patterns. You do this by declaring [`Actors`](#actors), [`States`](#states), and [`Branches`](#branches-routing-attributes).
 
 Together, these constructs define a **Finite State Machine (FSM)** for each participating actor. The FSM tracks which `State` the communication is
 currently in, which in turn determines which messages are valid to send or receive at that moment.
@@ -2240,8 +2237,8 @@ currently in, which in turn determines which messages are valid to send or recei
 
 ## Importing and Composing Connections
 
-Connections can be based on other connections. Use standard C# interface inheritance, and use `SwapHosts<Connection>` to reverse the host roles
-of imported content:
+Connections can be based on other connections. Use standard C# interface inheritance, and use `SwapHosts<Connection>` to reverse the host roles of
+imported content:
 
 ```csharp
 interface CommunicationConnection : Connects<Server, Client>,
@@ -2257,18 +2254,16 @@ An **Actor** is the unit of concurrent, stateful behavior inside a Connection. E
 conversation between two hosts.
 
 1. **Exactly One Linked Chain:** An Actor may contain only **one** sequence of states connected by transitional branches (`L____________` or
-   `____________R`).
-   This represents the Actor's "Main Thread" or synchronized FSM.
+   `____________R`). This represents the Actor's "Main Thread" or synchronized FSM.
 2. **Unlimited Isolated States:** An Actor may contain **any number** of isolated states. These states use **non-transitional** branches (
-   `l____________`,   `____________r`, or `_____lr_____`) that **do not change the Actor's state**. Isolated states use the Actor scope as
-   a **logical grouping unit**.
-   Related fire-and-forget notifications or status updates that don't drive a workflow are grouped into the same Actor to keep the API organized.
+   `l____________`,   `____________r`, or `_____lr_____`) that **do not change the Actor's state**. Isolated states use the Actor scope as a **logical
+   grouping unit**. Related fire-and-forget notifications or status updates that don't drive a workflow are grouped into the same Actor to keep the
+   API organized.
 
 ### The Default Actor (Actor0)
 
 Every connection interface contains one implicit, connection-wide actor known as **Actor0**. This is the "Primary Pipe." You do not need to declare
-it; it
-is always there to handle connection logic, discovery, or fire-and-forget notifications.
+it; it is always there to handle connection logic, discovery, or fire-and-forget notifications.
 
 The connection body itself acts as the declaration scope for Actor0. How Actor0 is populated depends on how you use the interface body:
 
@@ -2458,8 +2453,8 @@ interface ClientServerConnection : Connects<Client, Server> {
 }
 ```
 
-in this shorthand form, implicitly `int MaxActiveInstances => UNLIMITED;`.
-use [Full-Featured form](#full-featured-actor) to declare MaxActiveInstances explicitly.
+in this shorthand form, implicitly `int MaxActiveInstances => UNLIMITED;`. use [Full-Featured form](#full-featured-actor) to declare
+MaxActiveInstances explicitly.
 
 ```csharp
 interface FetchFile: Actor{
@@ -2564,8 +2559,7 @@ For complex workflows requiring **multiple states**, declare a full Actor explic
 | **Unlimited Swarm**    | `int MaxActiveInstances => UNLIMITED;` | Dynamic per-instance address            | No limit checks - ideal for short-lived RPC actors            |
 | **Multicast (PubSub)** | `int MaxActiveInstances => +22;`       | Dynamic instances + fixed group address | Sending to the group address fans out to all active instances |
 
-RPC-like actors do not support multicasting due to their short-lived nature.
-You have to set the `MaxActiveInstances` explicitly.
+RPC-like actors do not support multicasting due to their short-lived nature. You have to set the `MaxActiveInstances` explicitly.
 
 **Example:**
 
@@ -2689,8 +2683,7 @@ The actor's **initial state** is the **topmost declared state with at least one 
 station the actor *can be in* and *can leave*. Name it clearly (e.g., `Start` or `Handshake`).
 
 A state declared with **only non-transitional branches** (`l____________`, `____________r`, `_____lr_____`) is **not a station** the actor occupies -
-it
-is a *global overlay* that is always active alongside whichever linked state is current (see the **"Always Active" rule** below). For that reason,
+it is a *global overlay* that is always active alongside whichever linked state is current (see the **"Always Active" rule** below). For that reason,
 **a stateless state cannot serve as the initial state**: the actor never enters or leaves it. Place stateless overlays anywhere in the Actor - their
 position has no effect on the entry point.
 
@@ -2708,9 +2701,8 @@ The code generator collects all states, resolves links via branch targets, and t
 compilation error is raised if the generator detects duplicate state names or multiple independent state chains.
 
 Branch targets are not restricted to the local Actor or Connection. You can reference a state defined in an entirely different Actor and Connection.
-In such cases, the parser performs a graph traversal and **copies the referenced state**-including all subsequent links and branches-directly into
-the current Actor's flow. This mechanism allows you to build modular, reusable FSM blocks (e.g., standard error-handling or teardown sequences) that
-can
+In such cases, the parser performs a graph traversal and **copies the referenced state**-including all subsequent links and branches-directly into the
+current Actor's flow. This mechanism allows you to build modular, reusable FSM blocks (e.g., standard error-handling or teardown sequences) that can
 be seamlessly grafted across multiple Actors.
 
 ---
@@ -2732,8 +2724,8 @@ Limit how long an actor may wait in a state using built-in timeout attributes (v
 - `[ReceiveTimeout(seconds)]` - maximum time to wait for an incoming message
 - `[TransmitTimeout(seconds)]` - maximum time to send an outgoing message
 
-You may also add **any custom attributes** to states or actors. The code generator preserves them and makes them available as constants or
-static fields in the generated code. Use this to attach routing tags, UI labels, or any application-specific metadata directly to your protocol FSM.
+You may also add **any custom attributes** to states or actors. The code generator preserves them and makes them available as constants or static
+fields in the generated code. Use this to attach routing tags, UI labels, or any application-specific metadata directly to your protocol FSM.
 
 ---
 
@@ -2962,10 +2954,9 @@ struct Evaluating { }
 ### Cross-Actor State Grafting
 
 When defining a transitional branch, the target `STATE` does not have to be local to the current Actor or Connection. You can reference a state
-defined
-in a completely different Actor. When this happens, the parser **performs a graph traversal and copies the referenced state** - along with all its
-subsequently linked states and branches - directly into the current Actor's flow. This lets you create modular, reusable FSM blocks (e.g., standard
-error-handling or teardown sequences) that can be grafted across multiple actors.
+defined in a completely different Actor. When this happens, the parser **performs a graph traversal and copies the referenced state** - along with all
+its subsequently linked states and branches - directly into the current Actor's flow. This lets you create modular, reusable FSM blocks (e.g.,
+standard error-handling or teardown sequences) that can be grafted across multiple actors.
 
 > [!WARNING]
 > **State Name Collisions during Grafting:** Every state within a single Actor must have a unique name. If a grafted state collides with an existing
@@ -3069,8 +3060,8 @@ interface DataSync : Actor {
 
 **Example 5: Entire-Project Pack Set - One-Line Full-Duplex Channel**
 
-Reference an entire project scope as a pack set with `@Project`. Combined with `_____lr_____`, this creates a fully-duplex connection state where
-both sides can freely exchange **every packet in the project** - all in a single line.
+Reference an entire project scope as a pack set with `@Project`. Combined with `_____lr_____`, this creates a fully-duplex connection state where both
+sides can freely exchange **every packet in the project** - all in a single line.
 
 ```csharp
 interface GameProject {
@@ -3107,23 +3098,16 @@ The following diagram illustrates the FSM from
 ```mermaid
 stateDiagram-v2
     [*] --> Start
-
-    Start --> VersionMatching : Agent.Version
-
-    VersionMatching --> Login : Server.Invitation
-    VersionMatching --> Close : Server.Info
-
-    Login --> LoginResponse : Agent.Login
-
-    LoginResponse --> TodoJobRequest : Server.Invitation\nServer.InvitationUpdate
-    LoginResponse --> Close : Server.Info
-
-    TodoJobRequest --> Project : Agent.Project
-    TodoJobRequest --> Proto : Agent.Proto
-
-    Project --> Close : Server.Info\nServer.Result
-    Proto --> Close : Server.Info\nServer.Result
-
+    Start --> VersionMatching: Agent.Version
+    VersionMatching --> Login: Server.Invitation
+    VersionMatching --> Close: Server.Info
+    Login --> LoginResponse: Agent.Login
+    LoginResponse --> TodoJobRequest: Server.Invitation\nServer.InvitationUpdate
+    LoginResponse --> Close: Server.Info
+    TodoJobRequest --> Project: Agent.Project
+    TodoJobRequest --> Proto: Agent.Proto
+    Project --> Close: Server.Info\nServer.Result
+    Proto --> Close: Server.Info\nServer.Result
     Close --> [*]
 ```
 
@@ -3140,8 +3124,8 @@ You can customize an imported Connection and all its components without touching
 
 - Replicate the target's structure with your own naming, and extend `org.unirail.Meta.Modify<TargetEntity>`.
 - To **delete** entities entirely, reference them with `/// <see cref="Delete.Connection"/>-`.
-- Within branches: use `X<Entity>` to delete a packet from the matched set, reference new tags to add packets, and explicitly reference the
-  target State to modify its transitions.
+- Within branches: use `X<Entity>` to delete a packet from the matched set, reference new tags to add packets, and explicitly reference the target
+  State to modify its transitions.
 
 > [!NOTE]
 > Modified branches are identified by their transition target State.
@@ -3177,24 +3161,33 @@ interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
 }
 ```
 
+### Example: Compress and Encrypt an Imported Connection
+
+A [transform chain](#transform-chains---stages-roles-and-flows) is an attribute, so a modifier can add one to a connection whose definition you don't
+own. The target keeps everything else it declares - only its transport gains the stages:
+
+```csharp
+[Zstd(6), ChaCha20] interface SecureCommunication : Modify<AdHocProtocol.Communication> { }
+```
+
+Every byte that connection carries is now compressed then encrypted. See [Chains on a connection](#chains-on-a-connection) for how far the chain
+reaches on a physical link versus a tunnel.
+
 ## Virtual Connections
 
-Two hosts often have to talk but share no direct link - a browser-side **Observer** and a backend **Server** reachable
-only through a **Monitoring** relay; a device behind NAT reachable only via a rendezvous broker; a sensor whose bytes
-must pass through an aggregation tier.
+Two hosts often have to talk but share no direct link - a browser-side **Observer** and a backend **Server** reachable only through a **Monitoring**
+relay; a device behind NAT reachable only via a rendezvous broker; a sensor whose bytes must pass through an aggregation tier.
 
-The naive way to bridge them is to make the middle tier **re-handle every message**: deserialize the inbound pack into an
-object and re-serialize it onto the outbound connection. That is costly on every axis - two full passes over the data, a
-heap object proportional to the message size, and a hard **schema dependency** on a pack the relay doesn't even own, so
-the relay must be rebuilt whenever that pack changes. For a 1 GB tunnel, an open-ended live feed, or a video stream
-through a proxy it is a non-starter - the relay would have to buffer and understand data it only ever needed to *pass
+The naive way to bridge them is to make the middle tier **re-handle every message**: deserialize the inbound pack into an object and re-serialize it
+onto the outbound connection. That is costly on every axis - two full passes over the data, a heap object proportional to the message size, and a hard
+**schema dependency** on a pack the relay doesn't even own, so the relay must be rebuilt whenever that pack changes. For a 1 GB tunnel, an open-ended
+live feed, or a video stream through a proxy it is a non-starter - the relay would have to buffer and understand data it only ever needed to *pass
 along*.
 
-**`VirtuallyConnects` takes the middle tier out of that burden entirely.** You declare the two endpoints as if they were
-wired together; their bytes physically travel across one or more **relay hosts** that forward them **without decoding,
-buffering, or even knowing their structure**. The relay moves a payload of *any* size between two connections at constant
-memory cost - the most extreme application of AdHoc's [streaming](#streams) model - and stays completely decoupled from
-the protocol riding through it.
+**`VirtuallyConnects` takes the middle tier out of that burden entirely.** You declare the two endpoints as if they were wired together; their bytes
+physically travel across one or more **relay hosts** that forward them **without decoding, buffering, or even knowing their structure**. The relay
+moves a payload of *any* size between two connections at constant memory cost - the most extreme application of AdHoc's [streaming](#streams) model -
+and stays completely decoupled from the protocol riding through it.
 
 > [!NOTE]
 > This section builds on streaming machinery defined later in this document: chunked `[len][data]…[0]` framing and interruptibility
@@ -3216,70 +3209,83 @@ public interface VirtuallyConnects<L, R, PATH> : Connects<L, R>
 ```
 
 * **`L`, `R`** - the two logical endpoints (the hosts that behave as if directly connected).
-* **`PATH`** - the relay host the bytes physically traverse: a single host for one hop, or a C# tuple `(H1, H2, …)` for
-  a multi-hop chain.
+* **`PATH`** - the relay host the bytes physically traverse: a single host for one hop, or a C# tuple `(H1, H2, …)` for a multi-hop chain.
 
-The example from AdHoc's own protocol description:
+The example from AdHoc's own protocol description (`AdHocProtocolWithBackend.cs`):
 
 ```csharp
 interface ServerToMonitoring             : Connects<Server, Monitoring>            { … }  // physical leg
 interface MonitoringToMonitoringObserver : Connects<Monitoring, MonitoringObserver>{ … }  // physical leg
 
-interface Server__MonitoringObserver     : VirtuallyConnects<Server, MonitoringObserver, Monitoring> { }
+interface Server__MonitoringObserver : VirtuallyConnects<MonitoringObserver, Server, Monitoring>{
+    interface Cloudflare{                                   // firewall RPCs, end-to-end through the relay
+        (L____________, Firewall.RuleId, Firewall.OpError) Block(Firewall.BlockRequest request);
+        // … Allow, Challenge, Unblock, Disallow, ListRules, GetLog, GetStatus
+    }
+
+    interface Management{
+        (L____________, Monitoring.Management.Upload) getSessionFiles(Monitoring.Management.Download req);
+    }
+}
 ```
 
 ```
-             ServerToMonitoring                     MonitoringToMonitoringObserver
- Server ───────[ Connects ]───────▶   Monitoring   ───────[ Connects ]───────▶   MonitoringObserver
-    └──────────── Server__MonitoringObserver : VirtuallyConnects<Server, MonitoringObserver, Monitoring> ────────────┘
+        MonitoringToMonitoringObserver                    ServerToMonitoring
+ MonitoringObserver ───[ Connects ]───▶   Monitoring   ───[ Connects ]───▶   Server
+    └──────── Server__MonitoringObserver : VirtuallyConnects<MonitoringObserver, Server, Monitoring> ────────┘
 ```
 
-`Server` and `MonitoringObserver` now share a connection, even though every byte actually rides the two physical
-`Connects<>` legs and is relayed by `Monitoring` in the middle.
+`MonitoringObserver` and `Server` now share a connection, even though every byte actually rides the two physical
+`Connects<>` legs and is relayed by `Monitoring` in the middle. This is a **structured** virtual connection - its body declares RPC actors whose packs
+travel through the tunnel; an **empty body** (`{ }`) would instead give the endpoints a raw byte pipe
+(see [Tunnel-only vs. structured](#tunnel-only-vs-structured-virtual-connection)).
 
 ### Transform chains over a tunnel - compress and encrypt
 
-A tunnel **is** a chunked stream, so it carries the same [transform chains](#transform-chains---stages-roles-and-flows)
-as any other stream: a virtual connection can be **compressed**, **encrypted**, or both. Decorate the
-`VirtuallyConnects` interface with the very same stages (`[Zstd]`, `[ChaCha20]`, or any custom stage) and the whole
-tunnel rides through that chain - the chunked tunnel is the implicit root, the stages wrap the bytes that travel it.
+[Any connection can carry a transform chain](#chains-on-a-connection) - **compressed**, **encrypted**, or both. On a tunnel that capability reaches
+its full form. A tunnel **is** a chunked stream, so it carries the chain like any other stream: decorate the `VirtuallyConnects` interface with the
+very same stages (`[Zstd]`, `[ChaCha20]`, or any custom stage) and the whole tunnel rides through that chain - the chunked tunnel is the implicit
+root, the stages wrap the bytes that travel it.
 
 ```csharp
-[ChaCha20, Zstd(6)] interface Server__MonitoringObserver : VirtuallyConnects<Server, MonitoringObserver, Monitoring> { }
+[Zstd(6), ChaCha20] interface Server__MonitoringObserver : VirtuallyConnects<MonitoringObserver, Server, Monitoring> { … }
 ```
 
-The attributes apply to the tunnel transport itself, so this works on an **empty-body (`{ }`) tunnel-only** connection
-just as it does on a **structured** one - in both cases the stages wrap the bytes the endpoints exchange.
+The attributes apply to the tunnel transport itself, so this works on an **empty-body (`{ }`) tunnel-only** connection just as it does on a
+**structured** one - in both cases the stages wrap the bytes the endpoints exchange.
 
-All the streaming rules apply unchanged - **left = wire, right = app/leaf**, so `[ChaCha20, Zstd]` is
-`L → Zstd → ChaCha20 → wire` = **compress-then-encrypt** (ciphertext doesn't compress); at most **one compressor and one
-cipher** per chain; key and nonce are [runtime-injected](#parameters--design-time-vs-runtime-injected) at the endpoints.
+All the streaming rules apply unchanged - the list is written in **dataflow order, left = app/leaf, right = wire**, so `[Zstd, ChaCha20]` is
+`L → Zstd → ChaCha20 → wire` = **compress-then-encrypt** (ciphertext doesn't compress); at most **one compressor and one cipher** per chain; key and
+nonce are [runtime-injected](#parameters--design-time-vs-runtime-injected) at the endpoints.
 
 **The chain is end-to-end - the relay never sees inside it.** Stages run at `L`, the inverse stages run at `R`; every
-`PATH` host only ever forwards the already-compressed, already-encrypted chunks. The [`Relay`](#relay) decodes
-**none** of it - it can't, by design - so this turns schema-decoupling into genuine **end-to-end confidentiality**: an
-untrusted or merely curious middle tier relays the bytes at constant memory while remaining unable to read or tamper
-with the payload. Compression likewise happens once at the source and survives every hop, so the relay forwards the
-smaller, compressed form.
+`PATH` host only ever forwards the already-compressed, already-encrypted chunks. The [`Relay`](#relay) decodes **none** of it - it can't, by design -
+so this turns schema-decoupling into genuine **end-to-end confidentiality**: an untrusted or merely curious middle tier relays the bytes at constant
+memory while remaining unable to read or tamper with the payload. Compression likewise happens once at the source and survives every hop, so the relay
+forwards the smaller, compressed form.
+
+> This reach is what separates a tunnel chain from a chain on the underlying physical legs. Chaining `ServerToMonitoring` and
+> `MonitoringToMonitoringObserver` individually also encrypts every byte on the wire - but `Monitoring` holds both keys and sees the plaintext in
+> between. Chaining `Server__MonitoringObserver` keeps the payload sealed straight through it. Per-hop chains protect the *links*; a tunnel chain
+> protects the *conversation*. They stack: a tunnel may be encrypted end-to-end while each physical leg is separately compressed for its own medium.
 
 ### Tunnel-only vs. structured virtual connection
 
 What the generator emits depends on whether the `VirtuallyConnects` interface **has a body**:
 
-* **Empty body (`{ }`) - a tunnel only.** The generator emits just the transport: a relay on each `PATH` host and the
-  tunnel endpoint API on `L` and `R`. The endpoints exchange **raw opaque bytes** through the pipe; nothing - not the
-  relay, not the generated code - knows anything about the payload's structure. Use this when `L` and `R` agree on their
-  own framing (or carry a foreign protocol) and only need AdHoc to move the bytes. The `Server__MonitoringObserver { }`
-  above is exactly this.
+* **Empty body (`{ }`) - a tunnel only.** The generator emits just the transport: a relay on each `PATH` host and the tunnel endpoint API on `L` and
+  `R`. The endpoints exchange **raw opaque bytes** through the pipe; nothing - not the relay, not the generated code - knows anything about the
+  payload's structure. Use this when `L` and `R` agree on their own framing (or carry a foreign protocol) and only need AdHoc to move the bytes:
+  `interface DeviceTunnel : VirtuallyConnects<Device, Cloud, Broker> { }`.
 
-* **Non-empty body - a structured connection layered on the tunnel.** When the interface declares Actors, branches, and
-  packs (exactly as a normal `Connects` connection would), the generator emits the tunnel **and** the full
-  structured-protocol code for that connection on `L` and `R` - the packs, actors, and state machine - whose serialized
-  bytes are carried *through* the generated tunnel instead of over a direct physical link. The `PATH` relay still
-  forwards opaque bytes; it never parses the structured protocol riding inside.
+* **Non-empty body - a structured connection layered on the tunnel.** When the interface declares Actors, branches, and packs (exactly as a normal
+  `Connects` connection would), the generator emits the tunnel **and** the full structured-protocol code for that connection on `L` and `R` - the
+  packs, actors, and state machine - whose serialized bytes are carried *through* the generated tunnel instead of over a direct physical link. The
+  `PATH` relay still forwards opaque bytes; it never parses the structured protocol riding inside. The `Server__MonitoringObserver` declaration
+  above - Cloudflare and Management RPC actors riding through the `Monitoring` relay - is exactly this.
 
-In both cases the tunnel is the **transport substrate**. A non-empty virtual connection is simply an ordinary end-to-end
-connection that *rides* that substrate: the two endpoints speak the full protocol, the relays transport it blindly.
+In both cases the tunnel is the **transport substrate**. A non-empty virtual connection is simply an ordinary end-to-end connection that *rides* that
+substrate: the two endpoints speak the full protocol, the relays transport it blindly.
 
 | Body      | Generated on `L`, `R`              | Generated on `PATH`    | Payload on the wire        |
 |:----------|:-----------------------------------|:-----------------------|:---------------------------|
@@ -3288,19 +3294,21 @@ connection that *rides* that substrate: the two endpoints speak the full protoco
 
 ### The path must be a real, unambiguous chain
 
-`PATH` names the intermediate host(s) **in any order**. The generator reconstructs the strict ordered route
+`PATH` names the intermediate host (s) **in any order**. The generator reconstructs the strict ordered route
 `L → … → R` by walking the graph of physical `Connects<>` connections, and enforces at compile time:
 
-* **The chain must exist** - every hop (`L→PATH₁`, …, `PATHₙ→R`) must be backed by a real physical `Connects<>`. A gap
-  is an error.
+* **The chain must exist** - every hop (`L→PATH₁`, …, `PATHₙ→R`) must be backed by a real physical `Connects<>`. A gap is an error.
 * **At least one intermediate** - an empty `PATH` is rejected (that would just be a physical connection).
 * **Each host once** - `L`, `R`, and every `PATH` host must be distinct.
 * **`L ≠ R`** - the two endpoints must differ.
-* **Unambiguous** - if the listed hosts admit more than one physical route from `L` to `R`, the generator refuses and
-  asks you to disambiguate, so the relay path is always deterministic.
+* **One connection per host pair** - the `L`/`R` pair must not already be joined by **any** other connection, physical or virtual, in either host
+  order. Parallel conversations between the same endpoints multiplex over the one tunnel - raise [`MaxTunnels`](#the-two-knobs) instead of declaring a
+  second one.
+* **Unambiguous** - if the listed hosts admit more than one physical route from `L` to `R`, the generator refuses and asks you to disambiguate, so the
+  relay path is always deterministic.
 
-Because order is irrelevant, `VirtuallyConnects<A, D, (C, B)>` and `VirtuallyConnects<A, D, (B, C)>` are identical as
-long as `A→B→C→D` is the only physical chain through those hosts.
+Because order is irrelevant, `VirtuallyConnects<A, D, (C, B)>` and `VirtuallyConnects<A, D, (B, C)>` are identical as long as `A→B→C→D` is the only
+physical chain through those hosts.
 
 ### The two knobs
 
@@ -3319,18 +3327,22 @@ interface DeviceLink : VirtuallyConnects<Device, Cloud, Broker>
 }
 ```
 
+> [!NOTE]
+> `MaxTunnels` is the **only** way to get parallel tunnels between the same endpoints. Declaring a second `VirtuallyConnects` between one pair of
+> hosts is rejected - [any two hosts may be joined by at most one connection](#connections), physical or virtual.
+
 ### What the generator produces
 
 From one `VirtuallyConnects` declaration the generator wires all three roles:
 
 * **On each relay host in `PATH`** - a pooled **[`Relay`](#relay)** plus a routing
-  [custom code injection point](#injection-points). The relay receives the tunnel on its inbound physical leg
-  and re-emits it on the outbound leg without decoding it; your code in the injection point maps each `tunnel_id` to the
-  destination connection. A multi-hop `PATH` gets one `Relay` per relay host, chained.
-* **On the endpoints `L` and `R`** - either the tunnel endpoint API (empty body) or the full structured connection
-  (non-empty body), addressed by `tunnel_id` when `MaxTunnels > 1`.
-* **In the Dashboard** - the virtual connection takes a persistent **`id`** from the same pool as transmittable packs
-  (always active when included), so it appears as a first-class, taggable entity at the top of the protocol file.
+  [custom code injection point](#injection-points). The relay receives the tunnel on its inbound physical leg and re-emits it on the outbound leg
+  without decoding it; your code in the injection point maps each `tunnel_id` to the destination connection. A multi-hop `PATH` gets one `Relay` per
+  relay host, chained.
+* **On the endpoints `L` and `R`** - either the tunnel endpoint API (empty body) or the full structured connection (non-empty body), addressed by
+  `tunnel_id` when `MaxTunnels > 1`.
+* **In the Dashboard** - the virtual connection takes a persistent **`id`** from the same pool as transmittable packs (always active when included),
+  so it appears as a first-class, taggable entity at the top of the protocol file.
 
 ### Middle-tier patterns
 
@@ -3353,11 +3365,9 @@ detail in [Smart middle](#smart-middle---when-not-to-use-relay) below.
 ### Relay
 
 The **`Relay`** (`org.unirail.AdHoc.Connection.Tunnel.Relay`) is the runtime primitive the generator places on every relay host to make a virtual
-connection real -
-the mechanism behind the constant-memory, schema-blind relay described above. It takes a chunked tunnel arriving on the
-inbound leg and re-emits it on the outbound leg **without decoding, buffering, or even looking at the body**: bytes flow
-from the inbound socket buffer to the outbound socket buffer one fill at a time, and the relay holds only constant state
-regardless of tunnel size.
+connection real - the mechanism behind the constant-memory, schema-blind relay described above. It takes a chunked tunnel arriving on the inbound leg
+and re-emits it on the outbound leg **without decoding, buffering, or even looking at the body**: bytes flow from the inbound socket buffer to the
+outbound socket buffer one fill at a time, and the relay holds only constant state regardless of tunnel size.
 
 **On the wire** a tunnel frame is:
 
@@ -3368,49 +3378,47 @@ regardless of tunnel size.
 The inbound receiver, instead of handing the pack to a deserializer, hands it to a pooled `Relay`, which:
 
 1. reads the `pack-id` and the optional `tunnel_id`;
-2. asks the router (your injection-point code) which outbound connection this tunnel belongs to, and enqueues itself on
-   that connection's transmitter;
-3. relays the chunked body straight through - received into the socket buffer and re-emitted onto the outbound, chunk
-   after chunk until the `[0]` terminator, never assembled in full;
-4. re-writes the outbound `[pack-id][tunnel_id?]` prefix so the downstream sees a well-formed frame - optionally with a
-   *different* `tunnel_id` (the relay may re-key the stream to re-address it on the far side).
+2. asks the router (your injection-point code) which outbound connection this tunnel belongs to, and enqueues itself on that connection's transmitter;
+3. relays the chunked body straight through - received into the socket buffer and re-emitted onto the outbound, chunk after chunk until the `[0]`
+   terminator, never assembled in full;
+4. re-writes the outbound `[pack-id][tunnel_id?]` prefix so the downstream sees a well-formed frame - optionally with a *different* `tunnel_id` (the
+   relay may re-key the stream to re-address it on the far side).
 
 **`tunnel_id` - multiplexing and demux.** When `MaxTunnels > 1`, the key lets **one** physical connection carry **many**
-logically independent tunnels, each routed to its own peer. The key is purely an application address - *not* a connection
-or registry Id; how keys map to connections is entirely up to the router. Common schemes: one key per connection, a block
-of keys per connection, or any custom lookup populated as peers connect.
+logically independent tunnels, each routed to its own peer. The key is purely an application address - *not* a connection or registry Id; how keys map
+to connections is entirely up to the router. Common schemes: one key per connection, a block of keys per connection, or any custom lookup populated as
+peers connect.
 
 **Properties.**
 
 * **Constant memory** - one socket buffer per side; a 1 GB tunnel and a 64-byte tunnel cost the same resident memory.
-* **End-to-end backpressure** - if the outbound is slow the relay stops accepting inbound chunks; the kernel buffer fills
-  and TCP backpressure flows upstream to the original producer - no user-space queue, no unbounded growth.
-* **Interruptible / indefinite** - inheriting chunked framing, a relayed tunnel can be aborted mid-flight or run
-  indefinitely.
-* **Schema-decoupled** - the relay depends only on the framing, never on the pack's fields, so the pack's schema can
-  evolve without touching the middle tier.
+* **End-to-end backpressure** - if the outbound is slow the relay stops accepting inbound chunks; the kernel buffer fills and TCP backpressure flows
+  upstream to the original producer - no user-space queue, no unbounded growth.
+* **Interruptible / indefinite** - inheriting chunked framing, a relayed tunnel can be aborted mid-flight or run indefinitely.
+* **Schema-decoupled** - the relay depends only on the framing, never on the pack's fields, so the pack's schema can evolve without touching the
+  middle tier.
 
 ### Smart middle - when not to use Relay
 
-The `Relay` is the right tool only when the relay is **content-blind** - it routes opaque bytes and never needs to
-read, transform, or duplicate them. The moment the middle tier must **inspect, transform, or fan one stream out to many
-consumers**, the opaque relay is the wrong tool: by design it never materializes the bytes it carries. That is the
-**Smart middle** - [Pattern B](#pattern-b--pump--in-memory-mirror-for-fan-out) above, fully worked.
+The `Relay` is the right tool only when the relay is **content-blind** - it routes opaque bytes and never needs to read, transform, or duplicate them.
+The moment the middle tier must **inspect, transform, or fan one stream out to many consumers**, the opaque relay is the wrong tool: by design it
+never materializes the bytes it carries. That is the **Smart middle** - [Pattern B](#pattern-b--pump--in-memory-mirror-for-fan-out) above, fully
+worked.
 
-A Smart middle does *not* forward; it **consumes** the stream as an ordinary stream consumer (a `Receiver.BytesDst` handler) and, in
-the same pass, keeps an in-memory **mirror** of the bytes so it can re-emit them to N live subscribers through a
+A Smart middle does *not* forward; it **consumes** the stream as an ordinary stream consumer (a `Receiver.BytesDst` handler) and, in the same pass,
+keeps an in-memory **mirror** of the bytes so it can re-emit them to N live subscribers through a
 `Transmitter.BytesSrc` slicer - without re-reading any persistent store:
 
-1. **Zero-cost-when-idle capture** - each inbound chunk is appended to the mirror only while at least one subscriber is
-   attached; with none, capture is skipped and the middle behaves like a plain pump.
-2. **The mirror buffer** - a single shared buffer holds the bytes currently being fanned out; one copy feeds all N
-   consumers, not N independent relays.
-3. **The slicer** - a `Transmitter.BytesSrc` hands each subscriber successive slices of the mirror as its socket drains, so
-   a slow subscriber never stalls the others and the middle never buffers more than the in-flight window.
+1. **Zero-cost-when-idle capture** - each inbound chunk is appended to the mirror only while at least one subscriber is attached; with none, capture
+   is skipped and the middle behaves like a plain pump.
+2. **The mirror buffer** - a single shared buffer holds the bytes currently being fanned out; one copy feeds all N consumers, not N independent
+   relays.
+3. **The slicer** - a `Transmitter.BytesSrc` hands each subscriber successive slices of the mirror as its socket drains, so a slow subscriber never
+   stalls the others and the middle never buffers more than the in-flight window.
 
-Use the Smart middle when the relay owns the schema and must act on the content - measure, transcode, filter, or
-replicate one source to many sinks. Use the [`Relay`](#relay) when it must not: a pure routing hop that moves
-bytes between connections at constant cost, decoupled from the pack's schema. The Monitoring server's `getSessionFiles` /
+Use the Smart middle when the relay owns the schema and must act on the content - measure, transcode, filter, or replicate one source to many sinks.
+Use the [`Relay`](#relay) when it must not: a pure routing hop that moves bytes between connections at constant cost, decoupled from the pack's
+schema. The Monitoring server's `getSessionFiles` /
 `VolatileInfoHandler` handlers are the canonical Smart-middle example.
 
 ---
@@ -3423,17 +3431,17 @@ Attributes communicate metadata to the code generator for optimized implementati
 ## Built-in
 
 Built-in attributes are **interpreted by the generator** - each one changes how a field is encoded on the wire or laid out in memory. They are a
-fixed,
-reserved set (the generator matches them by name); everything else you write is treated as [custom metadata](#custom). Most apply to **fields**:
+fixed, reserved set (the generator matches them by name); everything else you write is treated as [custom metadata](#custom). Most apply to
+**fields**:
 
 | Attribute                                                  | Purpose                                                                                                                                   | Documented in                                                  |
 |:-----------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------|
 | `[MinMax(min, max)]`                                       | Constrain a numeric field to a range so the generator picks the smallest storage (down to bit-packing)                                    | this section                                                   |
-| `[A(min, max)]` / `[V(min, max)]` / `[X(amplitude, zero)]` | Varint compression tuned to the value distribution (rare-large / rare-small / bidirectional ZigZag)                                       | [Varint Type](#varint-type)                                    |
+| `[A(min, max)]` / `[V(max, min)]` / `[X(amplitude, zero)]` | Varint compression tuned to the value distribution - the **first** argument is always the point of concentration (low / high / centre)    | [Varint Type](#varint-type)                                    |
 | `[D(...)]`                                                 | Dimensions and maximum lengths for arrays, strings, maps, and sets (`+` = element/collection length, `-` = constant dim, `~` = fixed dim) | [Collection Type](#collection-type)                            |
 | `[S(N)]`                                                   | Maximum size cap for a raw `Stream` / `File` conduit                                                                                      | [Streams](#size-cap---sn)                                      |
 | `[ValueFor(const)]`                                        | Copy a `static` field's computed value/type into a `const` at generation time                                                             | [Constants](#constants)                                        |
-| Stream stage / flow attributes                             | Declare a byte-transform chain (compression, cipher, custom stages) on a field                                                            | [Transform chains](#transform-chains---stages-roles-and-flows) |
+| Stream stage / flow attributes                             | Declare a byte-transform chain (compression, cipher, custom stages) on a field, a pack, or a connection                                   | [Transform chains](#transform-chains---stages-roles-and-flows) |
 
 > [!NOTE]
 > Because these names are reserved, do **not** name a [custom attribute](#custom) `S`, `D`, `MinMax`, `A`, `V`, `X`, or `ValueFor` - the generator
@@ -3577,8 +3585,7 @@ Understanding the matching rule prevents surprises:
    it changes wire encoding, layout, or scoping.
 3. **Everything else is custom.** Any other attribute is **not interpreted for the wire format**. The generator carries it through and materializes it
    as constants/static fields attached to the entity, so your runtime can read the metadata. This is why a custom attribute never affects how bytes
-   are
-   serialized - it is pure, passenger metadata.
+   are serialized - it is pure, passenger metadata.
 
 > [!TIP]
 > A custom attribute's argument values must be **compile-time constants** (like any C# attribute argument). To attach a *computed* value, route it
@@ -3588,8 +3595,8 @@ Understanding the matching rule prevents surprises:
 
 ## Implementation Management
 
-An entity's **implementation kind** - concrete or abstract - is not a global property of that entity. It is decided independently for each
-**(host, language, entity)** combination: every host generates its own code for a pack or field, and does so separately for each target language.
+An entity's **implementation kind** - concrete or abstract - is not a global property of that entity. It is decided independently for each **(host,
+language, entity)** combination: every host generates its own code for a pack or field, and does so separately for each target language.
 
 * `+` **concrete** - a fully materialized object: fields are parsed and stored, then handed to your code with full random access.
 * `-` **abstract** - the generator emits an abstract base class; as the parser reads the data off the wire it invokes methods on your implementation,
@@ -3688,8 +3695,8 @@ AdHoc supports all C# numeric primitives except `decimal`:
 
 ### longJS
 
-TypeScript's `number` type can only safely represent integers in the range **−2⁵³ + 1 to 2⁵³ − 1** (
-see [SAFE_INTEGER](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/SAFE_INTEGER)). Values outside this range
+TypeScript's `number` type can only safely represent integers in the range **−2⁵³ + 1 to 2⁵³ − 1**
+(see [SAFE_INTEGER](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/SAFE_INTEGER)). Values outside this range
 require [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt), which is less efficient.
 
 If your field's values fall within the safe integer range, prefer `longJS` or `ulongJS` over `long` or `ulong` when communicating with TypeScript
@@ -3751,12 +3758,12 @@ The AdHoc generator uses a 3-layer approach for field values:
 | inT   | **Internal type.** The representation optimized for storage (matches language data type granularity).           |
 | ioT   | **IO wire type.** The network transmission format - transmitted as a byte stream with no language granularity.  
 
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/180a331d-3d55-4878-8dfe-794ceb9297f3)
+![A field whose values span 40 000 000 000 to 40 000 000 093: the external type must be a long, while the internal and IO types need a single byte](docs/img/value-layers-transform.svg)
 
 For a field with values from 1,000,000 to 1,080,000, shifting at the `exT ↔ inT` layer yields no memory savings in C# or Java due to fixed type
 quantization. However, subtracting 1,000,000 before transmission (`ioT`) reduces the data to 3 bytes - restored on receipt by adding 1,000,000 back.
 
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/0b8f90cc-aafc-4923-8c90-1fed53775bb3)
+![The same field across the three layers: int at exT, still int at inT because the language quantizes the type, and 3 bytes at ioT](docs/img/value-layers-quantization.svg)
 
 Data transformation at `exT ↔ inT` is often redundant; the meaningful optimization happens at `inT ↔ ioT`.
 
@@ -3765,26 +3772,242 @@ transitions can be costly and impractical.
 
 ## Varint Type
 
-For numeric fields with randomly distributed values spanning the full type range, compression is typically inefficient. However, when values cluster
-within a narrower range, [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding becomes highly effective - it skips
-leading zero bytes and restores them on the receiving end.
+[Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) transmits a number in 7-bit groups, dropping the leading all-zero
+groups and restoring them on arrival. That single property is the whole story: **the cost follows the magnitude of the number actually sent, not the
+width of the declared type.** A `long` carrying `3` costs one byte; the same `long` carrying `3_000_000_000` costs five.
 
-Three patterns are worth recognizing:
+So compression is not a property of the type - it is a property of the **distribution**. Spread values uniformly across the full type range and
+nothing can be saved; varint only adds overhead. Let them cluster, and the job of the attribute is to say *where* the cluster sits, so the generator
+can subtract that point and put a small number on the wire instead of a large one.
 
-|                                                     Pattern                                                     | Description                                                                                    |
-|:---------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------|
-| ![image](https://user-images.githubusercontent.com/29354319/155324344-311c6e30-fda5-4d38-b2c7-b946aca3bcf8.png) | For rare fluctuations toward larger values relative to a probable `min`, use `[A(min, max)]`.  |
-| ![image](https://user-images.githubusercontent.com/29354319/155324459-585969ac-d7ef-4bdc-b314-cc537301aa1d.png) | For fluctuations in both directions relative to a probable `zero`, use `[X(amplitude, zero)]`. |
-| ![image](https://user-images.githubusercontent.com/29354319/155325170-e4ebe07d-cc45-4ffa-9b24-21d10c3a3f18.png) | For rare fluctuations toward smaller values relative to a probable `max`, use `[V(min, max)]`. |
+This section is longer than one attribute family usually deserves, and deliberately so. Elsewhere varint is a switch: it applies to a type or it does
+not, and the outcome is invisible - the encoding quietly costs 25 % more than the fixed-width field it replaced, on every packet, and nothing reports
+it. Here it is something you declare and the generator checks. What that buys, and what the alternatives can and cannot express, is spelled out in
+[Why AdHoc makes you declare this](#why-adhoc-makes-you-declare-this) at the end of the section.
+
+Subtracting that point is all three attributes do:
+
+| Attribute | Values cluster near…                        | Sent on the wire       |
+|:----------|:--------------------------------------------|:-----------------------|
+| `[A]`     | the **minimum**, rare excursions upward     | `value - min`          |
+| `[V]`     | the **maximum**, rare excursions downward   | `max - value`          |
+| `[X]`     | a **centre**, excursions in both directions | `ZigZag(value - zero)` |
+
+In all three the declared range is a **hard limit, not a soft hint**: a value outside it cannot be transmitted. The attribute adds one thing on top of
+the range - *where inside it the mass sits*, and therefore which end the generator subtracts.
+
+`[A]` and `[V]` name that point of concentration first and the far bound second. **`[X]` is the other way round** - `[X(amplitude, zero)]` names the
+bound first, because its centre defaults to `0` and is the argument most often left out. The far bound is what the generator derives from the declared
+type when you omit it - the second argument for `[A]`/`[V]`, the first for `[X]`; see [Derived bounds](#derived-bounds).
+
+**How to read the three pictures below.** Each is a stream of transmitted values: **time runs left to right, the value axis is vertical, and the
+darker the cloud, the more often that value occurs.** The labelled line (`min`, `max`, `zero`) is the point of concentration you declare, and what
+actually goes on the wire is the **vertical distance from that line**. So the dense band costs one byte and only the sparse fringe costs more - which
+is why the line has to sit where the cloud is.
+
+### `[A(minMostProbableValue = 0, max = 0)]` - cluster at the low end
+
+![A stream of values crowding the min line at the bottom of the plot and thinning out upward toward max](docs/img/varint-a.svg)
+
+The cloud hugs the `min` line at the bottom and thins out upward toward `max`: values sit near `minMostProbableValue` and rarely climb. The wire
+carries `value - minMostProbableValue`, measured up from that line.
 
 ```csharp
-[A]          uint?  field1;  // Optional; compressible values from 0 to uint.MaxValue.
-[MinMax(-1128, 873)] byte field2; // Required; fixed range without compression.
-[X]          short? field3;  // Optional; compressed using the ZigZag algorithm.
-[A(1000)]    short  field4;  // Required; compressed values from -1,000 to 65,535.
-[V]          short? field5;  // Optional; compressed values from -65,535 to 0.
-[MinMax(-11, 75)] short field6;  // Required; uniform distribution within range.
+[A]                uint? bytes_received; // 0 … uint.MaxValue - second argument omitted, so the bound is the whole type span
+[A(1_000, 9_000)]  short chunk_len;      // 1 000 … 9 000 - both bounds named; 1 000 is the floor, not a hint
 ```
+
+### `[V(maxMostProbableValue = 0, min = 0)]` - cluster at the high end
+
+![A stream of values crowding the max line at the top of the plot and thinning out downward toward min](docs/img/varint-v.svg)
+
+The picture is `[A]` turned upside down: the cloud hugs the `max` line at the top and thins out downward toward `min`. The wire carries
+`maxMostProbableValue - value`, measured down from that line.
+
+```csharp
+[V]                short? charge_deficit; // -32 768 … 0 - second argument omitted, so the bound is the whole type span
+[V(30_000, 0)]     int    lease_seconds;  // 0 … 30 000 - normally close to the full lease, rarely much lower
+```
+
+### `[X(amplitude = 0, zero = 0)]` - cluster around a centre
+
+![A stream of values centred on the zero line, thinning out symmetrically in both directions, with the amplitude marked from zero to the edge](docs/img/varint-x.svg)
+
+Here the cloud is centred on the `zero` line and thins out in **both** directions. The `ampl` arrow measures one side of it, from `zero` to the edge
+of the plot - and that edge is a wall: `amplitude` is the **maximum** deviation, not the typical one. The field's range is exactly `zero ± amplitude`,
+and a value outside it cannot be transmitted at all. Sizing the amplitude to the *typical* swing is the most common way to misuse `[X]`.
+
+Straddling the line means a plain subtraction would make half the values negative - and a negative number has no leading zero groups to drop. ZigZag
+interleaves the two directions (`0, -1, 1, -2, 2, …`) so that a small deviation of **either** sign stays a small number.
+
+Note the argument order: **amplitude first, centre second** - `[X(50, 20_000)]` is a ±50 window around 20 000, not a ±20 000 window around 50.
+
+```csharp
+[X]          short? temperature_delta; // ZigZag around 0 across the whole short range
+[X(1_000)]   int    cursor_shift;      // -1 000 … 1 000 - small shifts either way cost one byte
+```
+
+### Derived bounds
+
+Leaving the far bound out is the common case - the second argument for `[A]`/`[V]`, the first for `[X]`. What the generator fills in depends on the
+declared type, and it is derived **relative to the point of concentration**, which is why the resulting range ends up shifted away from the declared
+type's own range:
+
+| Declared type    | `[A]` derives `max` as  | `[V]` derives `min` as   | `[X]` derives the range as |
+|:-----------------|:------------------------|:-------------------------|:---------------------------|
+| `short`          | `short.MaxValue + min`  | `short.MinValue + max`   | `zero ± short.MaxValue`    |
+| `ushort`, `char` | `ushort.MaxValue + min` | `-ushort.MaxValue + max` | `zero ± ushort.MaxValue`   |
+| `int`            | `int.MaxValue + min`    | `int.MinValue + max`     | `zero ± int.MaxValue`      |
+| `uint`           | `uint.MaxValue + min`   | `-uint.MaxValue + max`   | `zero ± uint.MaxValue`     |
+| `long`           | `long.MaxValue + min`   | `long.MinValue + max`    | `zero ± long.MaxValue`     |
+| `ulong`          | `ulong.MaxValue + min`  | `long.MinValue + max`    | `zero ± long.MaxValue`     |
+
+> [!IMPORTANT]
+> The declared type states the **width** available, not the final range. `[A(1000)] short q;` yields the range **1,000 … 33,767** - the shift consumed
+> the negative half. If you need values below the point of concentration, either name them (`[A(-500, 1000)]`) or pick the attribute whose direction
+> matches your data. For the same reason the *external* type is recomputed from the resulting range and can move in **either** direction:
+`[X] uint u;`
+> spans `±uint.MaxValue`, which no longer fits in `uint`, so the generated API exposes a signed 64-bit field, while `[X(1_000)] int i;` needs only
+> `-1 000 … 1 000` and the generated field narrows to 16-bit.
+>
+> A bare `[X]` on a **signed** type is the one exception: no bound is derived at all, the declared type is kept as is and simply ZigZag-encoded. On an
+> unsigned type it still widens, exactly as `[X] uint` above.
+
+### When varint loses
+
+Varint is not free. It spends one bit in every eight on the continuation flag, so a number that needs the full width of its type comes out **longer**
+than the plain fixed-width field. Everything hinges on one ladder - the distance from the base you declared:
+
+```text
+bytes  distance from the base
+  1    0 … 127
+  2    128 … 16 383
+  3    16 384 … 2 097 151
+  4    2 097 152 … 268 435 455
+  5    268 435 456 … 34 359 738 367
+```
+
+Against a fixed 4-byte field, varint wins only while the distance stays under 2 097 152, breaks even up to 268 435 455, and loses beyond that. The
+common ways to land in the losing half - every row assumes the base was left at zero, that is, varint applied without telling it where the values sit:
+
+| Field                                                      | fixed | varint | Result             |
+|:-----------------------------------------------------------|:------|:-------|:-------------------|
+| Uniformly distributed `uint32` - hash, checksum, UUID half | 4     | 5      | **+25 %**          |
+| Uniformly distributed `uint64`                             | 8     | 9-10   | **+25 %**          |
+| Unix time in seconds (~1.7 billion) in a 32-bit field      | 4     | 5      | **+25 %**, always  |
+| Latitude scaled by 1e7 (~557 500 000)                      | 4     | 5      | **+25 %**, always  |
+| A monotonic id past 268 435 455                            | 4     | 5      | **+25 %**, forever |
+| A small negative value, no base and no ZigZag              | 4     | **10** | **+150 %**         |
+
+The first five rows are reachable here too - write `[A] uint request_id;` on a counter that has passed 268 435 455 and every packet pays a fifth byte
+forever. The last row is not: subtracting a base always yields a non-negative number, so an AdHoc varint field cannot spell out a sign, and `[X]`
+covers the two-sided case explicitly. It is listed because a schema language whose only choice is `int32` versus `sint32` hands you exactly that
+mistake.
+
+The instructive part is *why* these lose. It is **not** the fat tail: when the typical value really is small, varint tolerates outliers surprisingly
+well - at one byte for the common case and five for an outlier it falls behind a fixed 32-bit field only once outliers exceed **three quarters** of
+the traffic. What kills the encoding is the systematic case, where the base is in the wrong place and therefore **no** value is ever small. A cluster
+sitting around 400 000 000 with a spread of 200 needs eight bits of information, yet a base of zero makes varint faithfully spell out the absolute
+magnitude in five bytes - worse than fixed, on every packet, forever. That is the same field the [`[MinMax]` example](#built-in) opens with, and it is
+the single most common way varint is misapplied.
+
+![A narrow band of values riding high above the zero line: measured from zero every value costs five bytes, measured from a base drawn just under the band each costs one](docs/img/varint-base-trap.svg)
+
+The picture is the whole failure in one frame: the band is thin - the *information* in this field is eight bits - but the distance varint actually
+encodes is measured from the bottom of the plot. Move the base under the band and the same data costs one byte.
+
+So four conditions have to hold, and all four have to be **declared** rather than guessed:
+
+1. **The base sits where the mass is.** Without it, "the values are clustered" buys nothing - see the table above.
+2. **The direction matches the tail** - up (`[A]`), down (`[V]`), or both (`[X]`). Put `[A]` on values that hug the top and every one of them sits a
+   full span away from the base, so every one pays the maximum width - the exact opposite of the intent.
+3. **The typical distance after subtraction fits in one to three bytes.** Four bytes is a wash; five is a loss.
+4. **The span exceeds one byte** - otherwise bit-packing wins outright, and varint pays a continuation bit per byte for nothing. The generator
+   enforces this one; see below.
+
+This is knowledge about the *physics of the field* - a temperature delta is small, a monotonic counter is huge, a remaining-lease counter sits just
+under its ceiling - and the schema is the only place it can live. A codec cannot measure traffic that has not been sent yet, which is why column
+stores can pick these transforms automatically at write time and a wire protocol cannot. Declaring it is not bureaucracy; it is the only moment the
+information exists.
+
+### The one-byte rule
+
+Varint earns its keep by dropping leading zero groups, so there has to be something to drop. What matters is the **span** of the transmitted number -
+`max - min` for `[A]`/`[V]`, `2 × amplitude` for `[X]` - not the declared type. This is the `inT` layer of [Value Layers](#value-layers), the
+representation the wire is derived from.
+
+If that span fits in a single byte, varint has nothing to skip and the generator **rejects** the field:
+
+```csharp
+[A(1_000, 1_100)]  int offset;         // hard range 1 000 … 1 100, span 100 - rejected
+[X(50, 20_000)]    int sensor_reading; // hard range 19 950 … 20 050, span 100 - rejected
+```
+
+Two different mistakes hide behind such a declaration, and they need opposite fixes.
+
+**The range really is that narrow.** Then it was never a varint job - offset it and bit-pack it, which costs less and says what it means:
+
+```csharp
+[MinMax(1_000, 1_100)] int offset; // 7 bits on the wire
+```
+
+**Or the *typical* deviation was written where the maximum belongs.** `[X(50, 20_000)]` promises the reading never leaves 19 950 … 20 050, so 20 100
+becomes untransmittable - and switching to `[MinMax]` would only nail that wall down harder. If the value can swing further, declare the real bound
+and keep the centre: typical readings still cost one byte and the rare swing costs two.
+
+```csharp
+[X(2_000, 20_000)] int sensor_reading; // 18 000 … 22 000, centred on 20 000
+```
+
+For the same reason the attributes apply only to integers **wider than one byte** - `short`, `ushort`, `char`, `int`, `uint`, `long`, `ulong`. A
+`byte`, `sbyte` or `bool` field already spans a single byte or less; `float`, `double`, `string`, `Binary`, `DateTime` and `Stream`/`File` are not
+integers at all. All of these are rejected outright.
+
+### Restrictions
+
+* **Mutually exclusive with `[MinMax]` on the same field.** `[MinMax]` declares a uniform distribution with no compression; `[A]`/`[V]`/`[X]` declare
+  a skewed one and carry their own bounds as arguments. Use one or the other.
+* **Not on header fields.** Headers must have a fixed wire size - see [Pack Headers](#pack-headers).
+* **A collection applies the attribute to its elements**, and `[Key: …]` / `[Val: …]` target a `Map`/`Set` key or a `Map` value:
+  `[Val: X] Map<uint, int> deltas;` ZigZags the values.
+* **On a `TYPEDEF`, declare the attribute inside the typedef**, not on the field that uses it - the alias carries the distribution to every user.
+
+```csharp
+[A]                  uint?  bytes_received;  // skewed low,  compressed
+[V]                  short? charge_deficit;  // skewed high, compressed
+[X]                  short? temperature;     // two-sided,   compressed
+[MinMax(-11, 75)]    short  celsius;         // uniform in range, not compressed
+[MinMax(-1128, 873)] byte   altitude_offset; // the range outgrows the declared byte - the external type widens to int16
+```
+
+### Why AdHoc makes you declare this
+
+Varint itself is not the differentiator - almost every binary format has it. What differs is how much you are allowed to say about the number, and
+whether anyone checks what you said:
+
+| Format                                            | What it lets you say about a number                                                                     | What it cannot say                                                                        |
+|:--------------------------------------------------|:--------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------|
+| Protocol Buffers, Thrift compact, Avro            | varint on or off (`fixed32` opts out); ZigZag by picking a different type (`sint32`)                    | where the values actually sit - the base is always zero                                   |
+| ASN.1 PER / UPER                                  | a constrained `INTEGER (lb..ub)`, encoded as `value - lb` in the minimum width                          | that `lb` is merely the *probable* value; no notion of a centre with two-sided excursions |
+| Cap'n Proto                                       | a per-field default the value is XORed against, after which packing squeezes out the zero bytes         | a range, a direction, or anything about the spread                                        |
+| FlatBuffers                                       | a default that is omitted from the vtable when the value equals it                                      | anything about magnitude                                                                  |
+| Parquet `DELTA_BINARY_PACKED`, ORC `PATCHED_BASE` | a base, bit-packed residuals and a patch list for outliers - all chosen by inspecting the data on write | nothing in the schema; it needs the data in hand, which a wire protocol never has         |
+| MessagePack, CBOR                                 | a size class derived from each value as it is encoded                                                   | anything at all - there is no schema to say it in                                         |
+
+Two capabilities are missing from every row. The first is **direction**. Only ZigZag survives anywhere, and it covers the two-sided case alone, so the
+far more common one-sided shapes - a counter that hugs its floor, a budget that hugs its ceiling - have nowhere to be expressed. The second is
+**verification**: none of these will reject a compression annotation that cannot pay off. Put `sint32` on a field that only ever holds 0…100 and
+Protocol Buffers accepts it, encodes it, and never mentions that it achieved nothing.
+
+That silence is the motivation for this section. The cases in [When varint loses](#when-varint-loses) are not exotic corners - Unix timestamps, scaled
+coordinates, monotonic ids, hashes and checksums are ordinary fields, and a base of zero pessimises every one of them. Where the format offers two
+knobs the mistake is also unreachable: you cannot express the fix, so you never learn there was a problem. Making the distribution declarable is what
+creates the possibility of declaring it wrongly - which is why the generator validates the declaration, and why the pages above spend so long on what
+the arguments actually mean.
+
+The fallback matters as much as the feature. When the span turns out too narrow for varint to earn anything, AdHoc does not shrug and encode it
+anyway - it names the mistake and sends you to [`[MinMax]`](#built-in), which packs the field into bits, underneath the per-field floor a
+tag-plus-varint format cannot go below.
 
 ## Collection Type
 
@@ -3831,7 +4054,7 @@ Use `[D(N)]` to set specific field limits:
 using org.unirail.Meta;
 
 class Pack {
-    string[] array_of_255_string_with_max_256_chars;
+    string[] array_of_255_string_with_max_255_chars;
     [D(47)] Point[,] array_fixed_max_47_points;
     [D(47)] Point[,,] list_max_47_points;
 }
@@ -3840,6 +4063,10 @@ class Pack {
 ### String
 
 A `string` is an immutable array of characters, limited to 255 characters by default. Use `[D(+N)]` to impose a specific limit:
+
+> [!NOTE]
+> To hand large text to a middle tier or store as an opaque **UTF-8** artifact on specific routes - `File`-framed, streamed straight from its
+> source - put a `[ToStream<E>]` / `[FromStream<E>]` trim on the field. See [String payloads](#string-payloads---utf-8-at-the-boundary).
 
 ```csharp
 class Packet {
@@ -3862,7 +4089,7 @@ class Packet {
 }
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > **AdHoc uses `Varint` encoding for string transmission instead of UTF-8.**
 > native string → [encode] → varint bytes on wire → [decode] → native string
 > <details>
@@ -3909,6 +4136,7 @@ class Packet {
 > SAD table
 > | Protocol | String length | String content |
 > |------------------|---------------|----------------|
+> | AdHoc | varint | varint |
 > | Protocol Buffers | varint | UTF-8 |
 > | MessagePack | varint | UTF-8 |
 > | Cap'n Proto | varint | UTF-8 |
@@ -4019,7 +4247,7 @@ ulong? myFieldIfUlong;
 Response? myFieldIfResponse;
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > An empty (null) field allocates **just a single bit** in the transmitting packet bytes.
 
 ## Binary Type
@@ -4073,6 +4301,27 @@ class Packet {
 }
 ```
 
+> [!IMPORTANT]
+> **A TYPEDEF carries the type and its resolved constraints - not a stream chain.** `[D]`, `[S]`, `[MinMax]`, `[A]`/`[V]`/`[X]` and the dimensions all
+> travel to the using field, because the alias is resolved into it. A [transform chain](#transform-chains---stages-roles-and-flows) or a
+> [trim](#trimming-a-chain---what-a-store-keeps) written on the `TYPEDEF` field is **silently dropped** - the using field ends up a plain, unchained,
+> uncut field of the aliased type:
+>
+> ```csharp
+> class CutPayload  { [ToStream<FromProducer>] Payload TYPEDEF; }   // the trim goes nowhere
+> class ZstdPayload { [Zstd]                   Payload TYPEDEF; }   // the chain goes nowhere
+>
+> class Envelope {
+>     CutPayload  a;   // a plain nested Payload - not cut, not chained
+>     ZstdPayload b;   // a plain nested Payload - not compressed
+> }
+> ```
+>
+> Write the chain and the trim **on the field that uses the alias**, or - when the point is to reuse them - hoist them into a
+> [flow](#a-flow-may-carry-a-trim---and-then-it-is-no-longer-neutral), which does travel. To carry both a framing and a chain under one name, use a
+> [named `Stream` pack](#named-stream--file-packs) instead of a `TYPEDEF`: a field typed with one
+> [inherits](#composing-the-packs-chain-with-the-fields) its chain and its trim, position included.
+
 ## Pack/Enum Type
 
 Both `enums` and `packs` can serve as field data types. Packs can be nested and may contain self-referential fields, enabling complex interconnected
@@ -4080,7 +4329,7 @@ data structures.
 
 > [!NOTE]  Nesting Depth (`_nested_max`)  
 > AdHoc calculates the maximum nesting depth of every `Pack` at compile time. The runtime enforces the `_nested_max` limit even when rehydrating from
-> a `FromStream`, preventing resource exhaustion attacks and enabling pre-calculated memory requirements.
+> a `[FromStream<E>]` trim, preventing resource exhaustion attacks and enabling pre-calculated memory requirements.
 
 Empty packs (no fields) or enums with fewer than two fields used as data types are represented as `boolean`.
 
@@ -4155,13 +4404,17 @@ namespace com.my.company{
 ## Streams
 
 AdHoc's serialization is **pull-based**: the runtime never holds a buffer larger than the single reusable socket buffer (user-chosen, min 256 B,
-typically 1–8 KB), regardless of pack size. A stream-typed field - or a streamed pack - rides this directly: an arbitrarily large payload that **never
-materializes as one contiguous buffer**; resident cost is one socket buffer plus small parser state. This enables what most binary protocols can't:
+typically 1–8 KB), regardless of pack size. Bytes are produced and consumed slot-by-slot as the socket drains and fills - a pack is never rendered
+into a contiguous array before sending, and never assembled into one before parsing. Resident memory is one socket buffer plus small parser state,
+**independent of the payload's logical size**: a 64-byte status update and a 1 GB archive cost the same RAM.
 
-* **Unknown size at send time** - emit chunks until `[0]`; never buffer the whole payload just to learn its length (length-prefixed formats must).
-* **Opaque relay** - a middle tier forwards a stream without decoding it; the chunked terminator is visible without parsing the body
-  (see [`Relay`](#relay)).
-* **Interruptible / indefinite** - abort mid-flight with a zero-length chunk; or run for hours with no natural "total length."
+Three capabilities follow that whole-message formats cannot offer:
+
+* **Unknown size at send time** - start transmitting before the total is known; emit chunks until `[0]`. Length-prefixed formats must buffer (or
+  pre-measure) the whole payload just to write its first byte.
+* **Opaque relay** - a middle tier forwards, stores, or replays a stream without decoding it; end-of-stream is visible from the framing alone (the
+  property the [`Relay`](#relay) is built on).
+* **Interruptible / indefinite** - abort mid-flight with a zero-length chunk, or run for hours with no natural "total length".
 
 ### The streaming model at a glance
 
@@ -4173,35 +4426,43 @@ your data
  │                               chosen per (host, language, pack, field)      → Implementation Management
  ├─ Stream / File fields ······· raw byte conduits piped source-to-socket,
  │                               capped by [S(N)]                              → Raw conduits
- ├─ transform chains ··········· [Cipher, Compressor] attribute stages wrap
- │                               the serialized bytes (the leaf)               → Transform chains
- ├─ ToStream / FromStream ······ chunked framing switched on per Endpoint,
- │                               so middle tiers see boundaries                → Contextual Scoping
- └─ VirtuallyConnects / Relay ·· whole connections piped through relay hosts
-                                 that never decode them                        → Virtual Connections
+ ├─ transform chains ··········· [Compressor, Cipher] attribute stages wrap
+ │                               the serialized bytes (the leaf) — of a field,
+ │                               a pack, or a whole connection                 → Transform chains
+ ├─ trims ······················ [ToStream<E>] / [FromStream<E>] cut that chain
+ │                               at a chosen depth for one Endpoint: chunked
+ │                               framing there, and that side holds raw bytes  → Trimming a chain
+ └─ Connects / VirtuallyConnects  transport level: a chain on a physical link
+                                  wraps everything that one hop carries; a tunnel
+                                  + Relay pipe whole connections through relay
+                                  hosts that never decode them   → Chains on a connection,
+                                                                   Virtual Connections
 socket buffer (user-chosen, min 256 B) — the only buffer, in either direction
 ```
 
-Which mechanism fits which payload:
+Pick the mechanism from the payload:
 
-| The payload is...                                                    | Use...                                                              | Documented in                                                                 |
-|:---------------------------------------------------------------------|:--------------------------------------------------------------------|:------------------------------------------------------------------------------|
-| A bounded blob whose size is known cheaply (disk BLOB, thumbnail)    | [`File`](#file-field-datatype) field or named `File` pack           | [Raw conduits](#raw-conduits---stream-and-file)                               |
-| Unbounded, live, or interruptible raw bytes (encoder feed, capture)  | [`Stream`](#stream-field-datatype) field or named `Stream` pack     | [Raw conduits](#raw-conduits---stream-and-file)                               |
-| A typed pack too large to materialize on the receiving side          | abstract (`-`) implementation for that (host, language, pack/field) | [Implementation Management](#implementation-management-1)                     |
-| A typed pack a middle tier must store/replay/forward without parsing | `ToStream` / `FromStream` / `Stream<To,From,T>`                     | [Contextual Scoping](#contextual-scoping---tostream-fromstream-streamtofromt) |
-| Any of the above, compressed and/or encrypted                        | a transform chain (`[Zstd]`, `[ChaCha20]`, custom stages)           | [Transform chains](#transform-chains---stages-roles-and-flows)                |
-| An entire conversation crossing one or more relay hosts              | `VirtuallyConnects<L, R, PATH>` + the generated `Relay`             | [Virtual Connections](#virtual-connections)                                   |
+| The payload is...                                                    | Use...                                                              | Documented in                                                  |
+|:---------------------------------------------------------------------|:--------------------------------------------------------------------|:---------------------------------------------------------------|
+| A bounded blob whose size is known cheaply (disk BLOB, thumbnail)    | [`File`](#file-field-datatype) field or named `File` pack           | [Raw conduits](#raw-conduits---stream-and-file)                |
+| Unbounded, live, or interruptible raw bytes (encoder feed, capture)  | [`Stream`](#stream-field-datatype) field or named `Stream` pack     | [Raw conduits](#raw-conduits---stream-and-file)                |
+| A typed pack too large to materialize on the receiving side          | abstract (`-`) implementation for that (host, language, pack/field) | [Implementation Management](#implementation-management-1)      |
+| A typed pack a middle tier must store/replay/forward without parsing | `[ToStream<E>]` / `[FromStream<E>]` / `[Stream<To,From>]` trim      | [Trimming a chain](#trimming-a-chain---what-a-store-keeps)     |
+| Large text a middle tier stores or serves as-is (log, document)      | the same trim on a `string` field - UTF-8 on the wire               | [String payloads](#string-payloads---utf-8-at-the-boundary)    |
+| Any of the above, compressed and/or encrypted                        | a transform chain (`[Zstd]`, `[ChaCha20]`, custom stages)           | [Transform chains](#transform-chains---stages-roles-and-flows) |
+| *Everything* one connection carries, compressed and/or encrypted     | the same chain, declared on the connection itself                   | [Chains on a connection](#chains-on-a-connection)              |
+| An entire conversation crossing one or more relay hosts              | `VirtuallyConnects<L, R, PATH>` + the generated `Relay`             | [Virtual Connections](#virtual-connections)                    |
 
-The layers compose freely: a `Stream` field can carry a chain; a `ToStream` root can carry a chain on its streamed path only; a tunnel is itself a
-chunked stream and carries chains end-to-end. 
+The layers compose freely: a `Stream` field can carry a chain; a chain can be cut per Endpoint by a trim; a physical connection can carry one over the
+whole link; a tunnel is itself a chunked stream and carries chains end-to-end.
 
 ---
 
 ### Raw conduits - `Stream` and `File`
 
-Two field datatypes carry raw, untyped bytes - the source isn't a `Pack` (a file handle, socket, any byte producer), consumed as raw bytes via
-`BytesDst`.
+Use a raw conduit when the source of the bytes isn't a pack at all - a file handle, a database BLOB, an encoder, another socket. Conduit bytes support
+**Direct Transfer**: they are piped from the external source straight into the socket buffer without ever being loaded into managed memory, and
+delivered to the receiver as raw bytes via `BytesDst`.
 
 #### `Stream` field datatype
 
@@ -4209,116 +4470,320 @@ A pure, untyped binary conduit, chunked (`[length][data]…[0]`) and **interrupt
 
 #### `File` field datatype
 
-Known size: a single length prefix (`[totalLength][data]`) - densest for disk BLOBs/buffers. **Not** interruptible; the receiver waits for exactly the
-committed length.
+Known size: a single **varint-encoded** length prefix (`[totalLength][data]`) - densest for disk BLOBs/buffers. The prefix width follows the actual
+transmitted total, not the `[S(N)]` cap. **Not** interruptible; the receiver waits for exactly the committed length.
 
 #### Why chunked framing, not a single length prefix
 
-| Type                                            | Wire format              | Knows total upfront? | Interruptible? |
-|:------------------------------------------------|:-------------------------|:---------------------|:---------------|
-| [`Stream`](#stream-field-datatype)              | `[len₁][data₁]…[0]`      | No                   | Yes            |
-| [`File`](#file-field-datatype)                  | `[totalLen][data]`       | Yes (required)       | No             |
-| `ToStream` / `FromStream` / `Stream<To,From,T>` | chunked `Stream` framing | No                   | No             |
+| Type                               | Wire format                | Knows total upfront? | Interruptible? |
+|:-----------------------------------|:---------------------------|:---------------------|:---------------|
+| [`Stream`](#stream-field-datatype) | `[len₁][data₁]…[0]`        | No                   | Yes            |
+| [`File`](#file-field-datatype)     | `[totalLen][data]`         | Yes (required)       | No             |
+| a trimmed pack payload             | chunked `Stream` framing   | No                   | No             |
+| a trimmed `string` payload         | `[totalLen][UTF-8]` (File) | Yes                  | No             |
 
 Chunked framing costs 2 bytes/chunk (≤65 535 B payload each); in return both ends produce/consume incrementally with no agreed total, and either side
-spots end-of-stream from the framing alone - the property the [`Relay`](#relay) depends on. `ToStream`/`FromStream` borrow the chunked framing for
-that boundary visibility, but their payload is one complete serialized pack - delivering a truncated pack would hand the receiver a torn object, so
-unlike a raw `Stream` they are not interruptible. `File`'s single prefix is denser when the total
-is known cheaply (disk BLOBs, buffers). For fixed-size content (hashes, signatures) use [`Binary`](#binary-type) collections - no length prefix at
-all.
+spots end-of-stream from the framing alone - the property the [`Relay`](#relay) depends on. A [trim](#trimming-a-chain---what-a-store-keeps) borrows
+the chunked framing for that boundary visibility, but what crosses it is one complete serialized value - delivering a truncated one would hand the
+other side a torn object, so unlike a raw `Stream` a trimmed payload is not interruptible. `File`'s single varint prefix is denser when the total is
+known cheaply (disk BLOBs, buffers). For fixed-size content (hashes, signatures) use [`Binary`](#binary-type) collections - no length prefix at all.
 
 #### Size cap - `[S(N)]`
 
-`[S(N)]` applies to **fields of `Stream`/`File` type only** - the raw, unbounded conduits. It caps the bytes the receive side accepts, raising an
-`IOException` past `N` - resource isolation when middle tiers forward un-auditable bytes. It is required whenever a field's datatype is
-`Stream`/`File`, **independent of any transform stages layered on top**. A transform chain on a **pack-typed** field is bounded by that field's own
-type and carries no `[S(N)]`. `N` must be **greater than 8**.
+Every raw conduit **must** declare how much the receive side will accept: `[S(N)]` caps the incoming bytes, raising an
+`IOException` past `N` - resource isolation for endpoints and middle tiers handling un-auditable bytes. The rules:
+
+* Required on every field of bare `Stream`/`File` type, and on every [named conduit pack](#named-stream--file-packs).
+* Never on a field whose datatype **is** a named conduit pack - that pack already declares the cap, and one cap is one source of truth.
+  See [Nested conduits](#nested-conduits---a-named-pack-as-a-field-type).
+* `N` must be **greater than 8** - a payload that fits in 8 bytes is no larger than a single 64-bit primitive and belongs in a primitive or a [
+  `Binary`](#binary-type) collection, not a conduit.
+* Never on a field carrying a [trim](#trimming-a-chain---what-a-store-keeps) - a trim wraps a bounded payload (a pack, or a string capped by
+  `[D(+N)]`), which is its own limit.
+* Independent of any transform stages layered on top.
 
 ```csharp
 [S(100_000)] File raw;                 // File field → [S] required
-[S(100_000), ChaCha20] Stream secret;  // Stream field + cipher → [S] required by the datatype
+[S(100_000), ChaCha20] Stream secret;  // Stream field + cipher → [S] still required by the datatype
 ```
-
----
 
 ### Named `Stream` / `File` packs
 
-A class may inherit `Stream` or `File` to become a **named** conduit - a reusable type that carries its framing metadata on the wire:
+A class may inherit `Stream` or `File` to become a **named conduit** - a reusable framing type that carries its cap and metadata with it:
 
 ```csharp
 [S(100_000), Zstd] class TelemetryFrame : Stream { } // chunked, interruptible — max 100 000 bytes
-[S(  4_096)]       class Thumbnail      : File   { } // single length-prefix    — max     4 096 bytes
+[S(  4_096)]       class Thumbnail      : File   { } // single length-prefix   — max   4 096 bytes
 ```
 
-**Rules for named Stream/File packs:**
+* `[S(N)]` is **mandatory** - same rationale as the field datatype form.
+* The body must have **no instance fields**. Constants and static fields are fine - they ride along as pack metadata (`TelemetryFrame.ContentType`),
+  never as wire payload.
+* Inherit `Stream` **or** `File`, not both - they describe incompatible wire formats.
+* Named conduit packs **can be used as a field type** - see [Nested conduits](#nested-conduits---a-named-pack-as-a-field-type) below.
+* `File`-based packs **cannot carry transform chains** - see [Where a chain may sit](#where-a-chain-may-sit).
 
-* `[S(N)]` is **mandatory** — same rationale as the field datatype form.
-* The pack body must have **no instance fields**. Constants and static fields are fine — they ride along as pack metadata, not as wire payload.
-* A class may inherit `Stream` **or** `File`, not both — they describe incompatible wire formats.
-* These packs **cannot be used as a field type** — use the `File`/`Stream` datatype directly instead. `File`-based packs **cannot carry transform
-  chains** (no length-extending compression over a fixed-length prefix).
+#### Nested conduits - a named pack as a field type
+
+A field typed with a named conduit pack is parsed **exactly like the bare form**. These two declarations are the same field:
+
+```csharp
+[S(1_110_000)] class Report : File { }
+
+class Shipment {
+    Report report;   // ── parsed as ──▶  [S(1_110_000)] File report;
+}
+```
+
+The parser rewrites such a field into a raw conduit before any other pass sees it, so the pack contributes nothing but its framing kind and its cap:
+
+| On the field                        | Result                                                                                                                                                                      |
+|:------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `exT` / `inT`                       | `t_stream` or `t_file` - **not** the pack index. The field is not a sub-pack reference.                                                                                     |
+| `max_value`                         | the pack's `[S(N)]` cap, in bytes                                                                                                                                           |
+| wire bytes                          | framing + body only - no pack id, and headers bound to the pack are **stripped**: headers ride on standalone packets, not sub-packs                                         |
+| transform chain / trim              | inherited from the pack and **composed** with whatever the field declares - see below. `Stream` packs only: a `File` pack may carry neither, so it has nothing to pass down |
+| `[S(N)]` on the field               | **rejected** - the cap belongs to the pack                                                                                                                                  |
+| element of an array / `Map` / `Set` | **rejected** - a conduit is a whole-field wire format with its own framing, exactly as a bare `Stream`/`File` cannot be collected                                           |
+| `Report? report;`                   | the `?` is ignored - framing has nothing to null, matching bare `File?` / `Stream?`                                                                                         |
+
+Because nothing references it as a sub-pack any more, such a pack is **not** marked "referred". A named conduit used *only* as a field datatype -
+never listed on a channel as a transmittable packet - therefore drops out of the project entirely, exactly like the bare datatype it stands for. List
+it on a channel whenever you also want to send it standalone (with its headers and pack id).
+
+##### Composing the pack's chain with the field's
+
+A named `Stream` pack may carry a [chain](#transform-chains---stages-roles-and-flows) - and a [trim](#trimming-a-chain---what-a-store-keeps) - of its
+own, and a field typed with it may declare more. Both apply, as **one** chain: the field's entries sit closer to the **leaf**, the pack's closer to
+the **wire**. That is the nesting the two declarations describe - the pack says how its type reaches the wire, the field adds a transform inside that.
+
+```csharp
+[S(1_600_000), Zstd] class TelemetryFrame : Stream { }
+
+[Base64] TelemetryFrame frame;   // leaf → Base64 → Zstd → wire
+```
+
+Every chain rule is then checked on the composed result, so a conflict can involve a stage that appears nowhere in the field's own declaration. The
+diagnostic names where the other one came from:
+
+```csharp
+[ChaCha20] TelemetryFrame frame;
+// ERROR: the cipher 'ChaCha20' stands to the left of the compressor 'Zstd'
+//        (inherited from the conduit pack `TelemetryFrame`)
+```
+
+Inherited entries are always to the right, so an order the composition cannot produce has to be written in one place: move the stage onto the pack, or
+off it.
+
+**A trim on the pack comes down with the chain.** A `Stream` pack may put a [trim](#trimming-a-chain---what-a-store-keeps) among its own stages, and
+it descends to the field keeping **the position the pack gave it** - the depth the pack chose is the depth the field is cut at. On a conduit that
+position is the entire point: both ends hold raw bytes either way, so what the cut decides is *how much of the chain the receiving side still has to
+run*.
+
+| Pack declaration                                    | `Frame frame;`                 | `[Base64] Frame frame;`                 | The cut host…                                                                     |
+|:----------------------------------------------------|:-------------------------------|:----------------------------------------|:----------------------------------------------------------------------------------|
+| `[S(N), ToStream<E>, Zstd] class Frame : Stream {}` | `leaf → \|cut\| → Zstd → wire` | `leaf → Base64 → \|cut\| → Zstd → wire` | runs `Zstd⁻¹`, then stops - keeping the bytes as the field's own stages left them |
+| `[S(N), Zstd, ToStream<E>] class Frame : Stream {}` | `leaf → Zstd → \|cut\| → wire` | `leaf → Base64 → Zstd → \|cut\| → wire` | runs **nothing** - keeping exactly the wire bytes, still compressed               |
+
+Two consequences worth reading off that table:
+
+* **A cut at the pack's leaf is a no-op on a plain conduit.** Row 1 with no field stages leaves the host holding the same raw bytes it would have got
+  without any trim at all - it ran the whole inverse chain either way. A trim earns its place on a conduit only where it leaves transforms *un-run*,
+  as row 2 does.
+* **A stage declared on the field can never run beyond an inherited cut.** The field's entries go to the left of the *whole* inherited block, so they
+  always land on the skipped side: the cut host keeps bytes that still carry them. If a stage must run past the cut, it belongs on the pack, to the
+  right of the marker.
+
+Being cut also makes the field directional on the legs the trim names - registered on those connections exactly as if the marker had been written on
+the field itself.
+
+**A `File` pack passes nothing down**, because it may carry nothing: a stage and a trim are both rejected on it, and for the same reason. `File` is a
+single length-prefixed conduit - one committed total, no per-chunk framing. A stage has nothing to ride on and a length-changing one has no length
+field to grow; a cut has no chunk boundary at which to hand bytes over, and would be pointless anyway since a `File` payload is already raw bytes on
+both ends. Declaring either on a `File` pack stops the build where it is written:
+
+```csharp
+[S(1_110_000), ToStream<FromProducer>] class Report : File { }
+// ERROR: A transform chain on File pack 'Report' is not allowed — a File is a single length-prefixed
+//        conduit with no room for a byte-transform stage, nor a boundary at which a trim could hand
+//        bytes over. Inherit `Stream` (chunked), or apply the chain to an ordinary or Stream pack.
+```
+
+So a field typed with a named `File` pack is always the plain conduit the pack declares; only the field's own attributes could add anything, and on a
+`File`-typed field those are rejected too (see [Where a chain may sit](#where-a-chain-may-sit)). To cut or transform a conduit, inherit `Stream`.
+
+#### Worked example - delivering an archive of any size
+
+One `File` conduit per file, one compressed wrapper pack for the whole archive:
+
+```csharp
+public class ArchiveFile {
+    [D(+4096)] string path;                    // '/'-separated path inside the archive
+    [S(80 * 1024 * 1024)] File content;        // raw bytes — piped disk → socket, 80 MiB cap
+
+    [Zstd]                                     // the whole archive is transparently compressed
+    public class Archive {
+        [D(0xFFFF)] ArchiveFile[,] files;      // up to 65 535 files
+    }
+}
+
+public class BackupReply {
+    string request_id;
+    ArchiveFile.Archive archive;               // the entire backup — any size, constant RAM
+}
+```
+
+A `BackupReply` carrying thousands of files streams through one socket buffer: each file's bytes ride a `File` conduit straight from disk, the
+`[Zstd]` chain compresses the archive on the fly, and no archive-sized buffer ever exists on either side - in the sender, the receiver, or anything in
+between. AdHoc's own meta-protocol delivers every generated source file exactly this way (`FileEntry.List` in `AdhocProtocol.cs`).
 
 ---
 
-### Streams at runtime - the generated API
+### Streaming typed packs
 
-A schema-side `Stream`/`File` field never becomes a `byte[]` in your code. The generator emits **channel hooks**: your implementation hands the
-runtime a standard byte channel, and the runtime moves the bytes through the socket buffer itself - pull-based on transmit, push-based on receive.
+A raw conduit moves bytes it knows nothing about. When the payload **is a typed pack**, two independent mechanisms make it stream - one for the
+*receiver that cannot afford the object*, one for the *middle tier that cannot afford the schema*.
 
-Given this schema:
+#### Too large to materialize - the abstract (`-`) implementation
+
+The receiving side of any pack - or any single field - can be generated **event-driven**: the parser calls your handler for each value as it streams
+off the wire, and the full object is never heap-allocated. This is
+[Implementation Management](#implementation-management-1), decided per (host, language, pack, field):
 
 ```csharp
-public class VideoUpload {
-    long session_id;
-    [S(1_000_000_000)] Stream frames;   // unbounded, interruptible conduit - capped at ~1 GB
-}
-```
-
-the generated Java interface asks your implementation for a channel per side (`Stream` fields use `ReadableByteChannel`/`WritableByteChannel`;
-`File` fields use `SeekableByteChannel` on both sides):
-
-```java
-public class VideoUploadImpl implements Consumer.VideoUpload {
-    long session_id;
-
-    // ---- Transmit side: the runtime PULLS. As the socket drains, the transmitter
-    // reads the next chunk from this channel into the socket buffer and frames it.
-    // The file is never loaded into memory.
-    @Override public ReadableByteChannel __frames(AdHoc.Connection.Transmitter scope) {
-        try { return FileChannel.open(Path.of("/videos/" + session_id + ".raw"), StandardOpenOption.READ); }
-        catch (IOException e) { throw new UncheckedIOException(e); }
-    }
-    // Whether there is stream data to send at all (an absent stream is legal).
-    @Override public boolean __frames_hasValue(AdHoc.Connection.Transmitter scope) {
-        return Files.exists(Path.of("/videos/" + session_id + ".raw"));
-    }
-
-    // ---- Receive side: the runtime PUSHES. Each chunk is written into this channel
-    // as it comes off the wire; the stream is complete when the [0] terminator lands.
-    @Override public WritableByteChannel __frames(AdHoc.Connection.Receiver scope) {
-        try { return FileChannel.open(Path.of("/incoming/" + session_id + ".raw"),
-                                      StandardOpenOption.WRITE, StandardOpenOption.CREATE); }
-        catch (IOException e) { throw new UncheckedIOException(e); }
+/**
+    <see cref='InCS'/>                        // C# default for this host: concrete objects
+    <see cref='InCS'/>-                       // confined scope: ABSTRACT...
+    <see cref='SensorBatch.readings'/>        // ...this one field only
+*/
+struct SensorHub : Host {
+    public class SensorBatch {
+        long capturedAt;                      // stored, random access
+        [D(+1_000_000)] int[] readings;       // handed to your handler value-by-value — never materialized
     }
 }
 ```
 
-Sending is the same call as for any pack - the generated actor's sender streams the conduit through the socket buffer:
+AdHoc uses this on itself: the code-generation `Server` receives every user's `Project` meta-pack - arrays of up to 65 535 packs and fields - under an
+`InJAVA--` rule, parsing arbitrarily large projects without ever building one in memory.
 
-```java
-Consumer.VideoUpload pack = new VideoUploadImpl();
-Actor0.Upload.send(pack, connection);          // sender is generated per actor/branch
+#### Endpoint-scoped cuts
+
+**Why this exists - packs have no length prefix.** An AdHoc pack is a pack-id plus its fields back-to-back, with **no overall length header** - only a
+parser walking every field knows where it ends. That density is why AdHoc beats length-prefixed formats on the wire, but it means a middle tier
+**can't relay, store, or skip a pack without parsing it**. A **trim** - `[ToStream<E>]` / `[FromStream<E>]` / `[Stream<To,From>]` - *opts a pack into*
+chunked `[len][data]…[0]` framing and hands it over as raw bytes, but only on the legs where a middle tier needs that. Everywhere else the field stays
+an ordinary nested pack.
+
+A trim is an **attribute on a field or a pack**; the declaration keeps its own type:
+
+```csharp
+[ToStream<FromCamera>] public Snapshot snapshot;   // still a Snapshot everywhere else
 ```
 
-[Named `Stream`/`File` packs](#named-stream--file-packs) skip the pack object entirely - the generator emits a **direct sender** that takes the
-channel itself:
+Written among [transform stages](#transform-chains---stages-roles-and-flows) it also picks *how deep* the cut goes - see
+[Trimming a chain](#trimming-a-chain---what-a-store-keeps). With no stage next to it, the cut is at the leaf: the plain serialized payload crosses as
+opaque bytes. That is the form shown throughout this section.
 
-```java
-Actor0.Upload.send_TelemetryFrame(FileChannel.open(path, StandardOpenOption.READ), connection);
+##### Defining Endpoints
+
+An Endpoint is a *source* (who sends) over a *pipe* (which connection); group them into **Endpoint Sets**:
+
+```csharp
+// IfSendingFrom<fromHost, viaConnection>
+public interface FromCamera   : IfSendingFrom<Camera, CameraToRecorder> { }
+public interface FromRecorder : IfSendingFrom<Recorder, RecorderToViewer> { }
+public interface AnySource    : _<(FromCamera, FromRecorder)> { }   // an Endpoint Set
 ```
 
-C# and TypeScript mirror the same shape with their platforms' channel/stream abstractions. In all three languages the contract is identical: you
-provide a byte source or sink, the runtime owns the chunking, framing, transform chains, and the socket buffer.
+##### Channel Asymmetry
+
+A trim breaks sender/receiver symmetry on the named Endpoint:
+
+* **`[ToStream<E>] T p;`** - sending from `E`, the **sender** serializes `T` as a typed pack; the **receiver** gets **raw bytes** (opaque sink,
+  `ExtBytesDst`).
+* **`[FromStream<E>] T p;`** - sending from `E`, the **sender** emits **raw bytes** (`ExtBytesSrc` - e.g. straight from storage); the **receiver**
+  rehydrates a typed `T`.
+* **`[Stream<To, From>] T p;`** combines both at one depth: `ToStream` on the `To` leg, `FromStream` on the `From` leg, a normal nested pack
+  everywhere else.
+
+Assume **Endpoint E** is `IfSendingFrom<HostA, ConnectionAB>`:
+
+| Field Declaration           | Sender (at E)             | On-the-Wire    | Receiver (from E)         | Other Routes |
+|:----------------------------|:--------------------------|:---------------|:--------------------------|:-------------|
+| `MyPack p;`                 | `MyPack` object           | Standard AdHoc | `MyPack` object           | Same         |
+| `[ToStream<E>] MyPack p;`   | `MyPack` object           | Raw Bytes      | Raw Bytes (`ExtBytesDst`) | Normal Pack  |
+| `[FromStream<E>] MyPack p;` | Raw Bytes (`ExtBytesSrc`) | Standard AdHoc | `MyPack` object           | Normal Pack  |
+| `[Stream<E, E2>] MyPack p;` | Depends on leg            | Depends on leg | Depends on leg            | Normal Pack  |
+
+An Endpoint names **one leg**, never a whole channel: the opposite leg of the very same connection is not covered and keeps the ordinary,
+fully-unwrapped form. Because what crosses the cut is one complete serialized pack, a trimmed payload is **not interruptible** - a truncated one would
+hand the other side a torn object.
+
+A trim is orthogonal to a chain: [transform stages](#transform-chains---stages-roles-and-flows) may stack on the same declaration, and they run on
+**every** leg - the cut only decides where one named leg stops unwrapping. See [Trimming a chain](#trimming-a-chain---what-a-store-keeps).
+
+##### String payloads - UTF-8 at the boundary
+
+The payload type may also be a **`string`**. The same endpoint-conditional asymmetry applies, with two twists dictated by the nature of text:
+
+* **Framing:** a string is already fully in memory, so its UTF-8 byte length is known upfront - the streamed route uses the dense **`File` framing**
+  (`[totalLen][UTF-8 bytes]`, varint prefix), not chunked framing. The opaque receiver learns the total before the first payload byte and can reject
+  oversize immediately; like any `File`-framed payload, the transfer is not interruptible.
+* **Encoding follows who will hold the bytes.** Inside packs, AdHoc strings use varint-encoded chars - both ends are AdHoc code. The moment the text
+  is exposed as an opaque artifact to a store, relay, or foreign consumer - the directional case - the bytes are **UTF-8**, the universal at-rest
+  contract: a store can persist the payload directly as a `.txt` file.
+
+| Field Declaration           | Sender (at E)             | On-the-Wire (at E)         | Receiver (from E)        | Other Routes  |
+|:----------------------------|:--------------------------|:---------------------------|:-------------------------|:--------------|
+| `[ToStream<E>] string s;`   | `string`                  | `[totalLen][UTF-8]` (File) | Raw Bytes, total upfront | Normal string |
+| `[FromStream<E>] string s;` | Raw UTF-8 (`ExtBytesSrc`) | `[totalLen][UTF-8]` (File) | decoded `string`         | Normal string |
+| `[Stream<E, E2>] string s;` | Depends on leg            | Depends on leg             | Depends on leg           | Normal string |
+
+* The string's ordinary length cap governs **every** route - default 255 chars, `[D(+N)]` per field,
+  [`_DefaultMaxLengthOf.Strings`](#collection-type) globally. No `[S(N)]`.
+* A `FromStream` receiver validates the bytes: **invalid UTF-8 raises an exception** - the same guard class as an
+  `[S(N)]` violation.
+* A `null` string is simply **not transmitted**.
+* Chains stack here too: `[ToStream<E>, Zstd] string s;` compresses the UTF-8 leaf under the implicit **chunked** root on the cut leg - a chain's
+  output length is unknowable upfront, so the chunked root supersedes the `File` framing there. Every other leg runs the same Zstd chain with a
+  `string` on both ends.
+
+```csharp
+public class RecordSubtitles {   // Camera → Recorder: the store archives UTF-8 text it never decodes
+    [D(+100_000), ToStream<IfSendingFrom<Camera, CameraToRecorder>>] public string subtitles;
+}
+
+public class ReplayLog {         // Recorder → Viewer: streamed straight from disk, received as a string
+    [D(+5_000_000), FromStream<IfSendingFrom<Recorder, RecorderToViewer>>] public string log;
+}
+```
+
+#### Worked example - store-and-replay through a schema-blind recorder
+
+Three hosts: a `Camera` produces typed `Snapshot` packs, a `Recorder` stores them, a `Viewer` displays them. The
+`Recorder` never needs the `Snapshot` schema:
+
+```csharp
+// Camera → Recorder: typed at the source, opaque bytes at the store
+public class RecordSnapshot {
+    [ToStream<IfSendingFrom<Camera, CameraToRecorder>>] public Snapshot snapshot;
+}
+
+// Recorder → Viewer: replayed verbatim from storage, typed again at the consumer
+public class ReplaySnapshot {
+    DateTime recordedAt;
+    [FromStream<IfSendingFrom<Recorder, RecorderToViewer>>] public Snapshot snapshot;
+}
+```
+
+The `Camera` serializes a typed `Snapshot` once. The `Recorder` - the store between them - receives raw framed bytes it can persist **without
+parsing** and later replay **without re-serializing**; the `Viewer` rehydrates the typed object. The store never depends on the payload schema:
+`Snapshot` can gain fields without the `Recorder` being touched or rebuilt. AdHoc's monitoring backend pipes seven telemetry families (CPU, Memory,
+Process, Network, FileStore, DiskIO, SystemInfo) through exactly this pair (`Bytes` / `BytesTime` in `AdHocProtocolWithBackend.cs`).
+
+Here the store keeps the *plain* serialized pack. To have it keep the payload still compressed - or still encrypted, with no key at all - the same cut
+moves deeper into the transform chain: see [Trimming a chain](#trimming-a-chain---what-a-store-keeps).
 
 ---
 
@@ -4326,30 +4791,46 @@ provide a byte source or sink, the runtime owns the chunking, framing, transform
 
 A stream can pass its bytes through an ordered **chain of transforms** - compression, encryption, or any byte-to-byte stage you define - before the
 wire, and the inverse on arrival. The chain is pure **attributes**, and **the target keeps its own type**: the chain wraps the serialized bytes (the
-*leaf*), it doesn't replace them. It declares, in the schema, the runtime stage chain (`Stream → Cipher → Compress → leaf`) - see
-[Custom stages](#custom-stages) for how a stage is implemented.
+*leaf*), it doesn't replace them. Anything carrying a stage is implicitly framed as a chunked stream.
 
-**A stage is one link** - a reusable byte transform deriving from `StreamStageAttribute`. It can be applied to a **field** or to a whole **pack**:
+**You write the chain in dataflow order** - left is the app/leaf end, right is the wire. `[Zstd, ChaCha20]` reads
+`pack → Zstd → ChaCha20 → wire`: on transmit the left-most stage takes the serialized bytes and the right-most hands its output to the wire; on
+receive the list is walked backwards. So that chain is **compress-then-encrypt** - the correct order, since ciphertext doesn't compress. Put the
+cipher to the **right** of the compressor.
+
+**A stage is one link** - a reusable byte transform deriving from `StreamStageAttribute`. It can be applied to a **field**, a whole **pack**, or a
+whole **connection**:
 
 ```csharp
 [ChaCha20]          MyPack payload;        // field: pack-typed — encrypt
 [Zstd(6)]           Stream raw;            // field: bare Stream — compress, level 6
-[ChaCha20, Zstd(6)] MyPack secure;         // field: compress, then encrypt
+[Zstd]              string transcript;     // field: string — the varint-char leaf, compressed
+[Zstd(6), ChaCha20] MyPack secure;         // field: compress, then encrypt
 
 [Zstd]     class Telemetry { … }           // ordinary pack: transparently compressed on every transmission
 [ChaCha20] class Frame : Stream { … }      // Stream pack: encrypted
+
+[ToStream<FromCamera>, ChaCha20] Snapshot feed;  // encrypted on every leg; FromCamera's receiver stops at the cut
+
+[Zstd(6), ChaCha20] interface DeviceLink : Connects<Device, Gateway> { … }             // connection: the whole link
+[ChaCha20] interface Tunnel : VirtuallyConnects<Device, Cloud, Broker> { }             // tunnel: end-to-end through the relay
 ```
 
-`payload` stays a `MyPack`; its bytes are the leaf. The chunked-stream root is **implicit** - anything carrying a stage is framed as a chunked stream.
+`payload` stays a `MyPack`; its bytes are the leaf. AdHoc's own protocol compresses its `.proto` uploads this way -
+`[Zstd] [S(512_000)] Stream proto;` - and its generated-code archive via a pack-level `[Zstd]`, exactly like the
+[archive example above](#worked-example---delivering-an-archive-of-any-size).
 
 #### Where a chain may sit
 
-| Target                                                         | Chain?                                                                                                                            |
-|:---------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------|
-| bare `Stream` field, or pack-typed field                       | ✅                                                                                                                                 |
-| ordinary pack (compress/encrypt on transmit), or `Stream` pack | ✅                                                                                                                                 |
-| `File` field or `File` pack                                    | ❌ - single length-prefix has no per-chunk framing for a stage to ride on, and a length-changing stage has no length field to grow |
-| primitive / value-pack / typedef field                         | ❌ - group the data in a pack and put the chain there                                                                              |
+| Target                                                                                                                              | Chain?                                                                                                                                                                                                                                                                                                        |
+|:------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| bare `Stream` field, or field typed with an ordinary pack                                                                           | ✅ - a field typed with a named `Stream` pack counts as a bare `Stream` field, and its own chain is *composed* with the pack's ([Nested conduits](#composing-the-packs-chain-with-the-fields))                                                                                                                |
+| single `string` field - plain (varint-char leaf) or trimmed (UTF-8 leaf on the [cut leg](#string-payloads---utf-8-at-the-boundary)) | ✅ - the string itself only: a string inside a collection (`string[]`), a `Map` key/value, or a `Set` element is NOT eligible                                                                                                                                                                                 |
+| ordinary pack (compress/encrypt on transmit), or `Stream` pack                                                                      | ✅                                                                                                                                                                                                                                                                                                            |
+| any connection - physical `Connects<>` or virtual `VirtuallyConnects<>`                                                             | ✅ - see [Chains on a connection](#chains-on-a-connection)                                                                                                                                                                                                                                                    |
+| a `Modify<Connection>` modifier                                                                                                     | ✅ - adds the chain to the connection it modifies, without editing the original                                                                                                                                                                                                                               |
+| `File` field or `File` pack - including a field typed with a named `File` pack                                                      | ❌ - **a trim just as much as a stage**: a single length-prefix has no per-chunk framing for a stage to ride on, a length-changing stage has no length field to grow, and a cut has no boundary to hand bytes over at ([nothing is inherited from a `File` pack](#composing-the-packs-chain-with-the-fields)) |
+| primitive / value-pack / typedef field                                                                                              | ❌ - group the data in a pack and put the chain there                                                                                                                                                                                                                                                         |
 
 #### Roles
 
@@ -4361,30 +4842,17 @@ StreamStageAttribute
 └─ StreamCipherStageAttribute      → ChaCha20Attribute  [ChaCha20]
 ```
 
-The role enables recognition (compressed/encrypted) and **at most one** compressor + one cipher per chain. (Only a `File` rejects a chain - **any**
-stage, compressor *or* cipher - on either a field or a pack; every other target carries one.) New algorithms (`Lz4`, `AesCtr`) slot in unchanged.
-
-#### Direction — left = wire, right = app/leaf
-
-On transmit the right-most stage runs first; on receive the left-most. So `[ChaCha20, Zstd]` is
-`pack → Zstd → ChaCha20 → wire` = **compress-then-encrypt** (the correct order - ciphertext doesn't compress). Put the cipher left of the compressor.
-
-#### Flows — reuse
-
-Declare a chain once as a `StreamFlowAttribute`, apply by one attribute; the field keeps its type:
-
-```csharp
-[ChaCha20, Zstd(6)]
-public class CipherAndFastCompress : StreamFlowAttribute { }
-
-[CipherAndFastCompress] MyPack payload;   // still a MyPack
-```
-
-A flow lists stages only (root implicit), never other flows.
+The role enables recognition (compressed/encrypted) and **at most one** compressor + one cipher per chain. It also fixes their **order**: the
+compressor must stand to the **left** of the cipher, so the chain compresses and only then encrypts. Writing them the other way round is
+**rejected** - encrypting first leaves the compressor nothing to shrink. Role-less stages (`[Base64]`) may sit anywhere. Among chain-capable targets
+only a `File`
+rejects a chain outright - **any** stage, compressor *or* cipher, on either a field or a pack (primitive/value-pack/typedef fields are separately
+ineligible - see
+[Where a chain may sit](#where-a-chain-may-sit)). New algorithms (`Lz4`, `AesCtr`) slot in unchanged.
 
 #### Parameters — design-time vs runtime-injected
 
-A stage's constructor(s) *declare* the params it needs. Use **AdHoc types** . It's the **value, not the type**, that sorts a param:
+A stage's constructor (s) *declare* the params it needs. Use **AdHoc types**. It's the **value, not the type**, that sorts a param:
 
 | Param kind       | How you declare it                                                      | Where its value comes from                           |
 |:-----------------|:------------------------------------------------------------------------|:-----------------------------------------------------|
@@ -4392,9 +4860,54 @@ A stage's constructor(s) *declare* the params it needs. Use **AdHoc types** . It
 | Runtime-injected | declared but **never given a value** (e.g. `Binary[,] key`)             | you supply it at runtime through the generated stage |
 
 Any declared param you don't give a value becomes a runtime hook - **whatever its type** (you may use a plain non-nullable type and just leave it
-unassigned; you needn't make it nullable, the generator does that for you). Buffer-shaped runtime params (`Binary[,]` keys/nonces) can't be
-attribute arguments, so put them in their own constructor overload - the generator reads every constructor's params. Each declared param is emitted
-on **both** sides; the impl decides usage (zstd `level` is encoder-only - the decoder ignores it).
+unassigned; you needn't make it nullable, the generator does that for you). Buffer-shaped runtime params (`Binary[,]` keys/nonces) can't be attribute
+arguments, so put them in their own constructor overload - the generator reads every constructor's params. Each declared param is emitted on **both**
+sides; the impl decides usage (zstd `level` is encoder-only - the decoder ignores it).
+
+#### Flows — reuse
+
+Declare a chain once as a `StreamFlowAttribute`, apply by one attribute; the field keeps its type:
+
+```csharp
+[Zstd(6), ChaCha20]
+public class FastCompressAndCipher : StreamFlowAttribute { }
+
+[FastCompressAndCipher] MyPack payload;   // still a MyPack
+```
+
+A flow never lists other flows (the chunked root stays implicit). Identical inline chains are deduplicated automatically - every use shares one
+generated container - and the generator logs a non-blocking advice to extract a named flow, which also gives the chain a readable name in the
+Observer.
+
+##### A flow may carry a trim - and then it is no longer neutral
+
+Besides stages, a flow's list may contain a [trim](#trimming-a-chain---what-a-store-keeps). It **expands in place**, keeping the position the flow
+gave it, so applying the flow is exactly like writing its entries out by hand:
+
+```csharp
+[Zstd(6), ToStream<FromProducer>, ChaCha20]
+public class StoreCompressed : StreamFlowAttribute { }
+
+[StoreCompressed] Payload payload;
+//  →  leaf → Zstd(6) → |cut ToStream(Producer@ProducerToBroker)| → ChaCha20 → wire
+```
+
+The catch is what that does to reuse. A flow of stages is a neutral, purely local transform - apply it anywhere. The moment it contains a trim it also
+carries a **routing decision**: every application is cut on the endpoints the flow names, and every field or pack that uses it becomes
+[directional](#endpoint-scoped-cuts) on those legs. That is right only when the flow *is* the pipeline of one specific store-and-replay path; used as
+a general-purpose chain it silently pins unrelated payloads to those endpoints. **Prefer writing trims at the point of application** and keeping flows
+to stages.
+
+The chain rules are checked after expansion, on the flattened result, so a flow's trim collides with one written next to it:
+
+```csharp
+[StoreCompressed, ToStream<FromProducer>] Payload payload;
+// ERROR: The stream chain on '…payload' cuts the receiving side twice. At most one ToStream trim per
+//        chain — one payload cannot be handed over at two depths at once.
+```
+
+The same expansion happens wherever the flow is applied - including on a named `Stream` pack, whose entries a field typed with it then
+[inherits](#composing-the-packs-chain-with-the-fields) whole, trim and position included.
 
 #### Built-in stages
 
@@ -4410,11 +4923,12 @@ block mode (CBC/GCM) would fight it.
 
 #### Custom stages
 
-To add your own byte-stream transform, declare a new attribute deriving from a role base
-(`StreamCompressionStageAttribute` / `StreamCipherStageAttribute`) or from `StreamStageAttribute` directly, give its constructor the parameters the
-stage needs (in [AdHoc types](#binary-type)), and apply it like a built-in. The generator emits **one** file per stage type, named after the
-attribute (`MyStage.cs` / `.java` / `.ts`) - a pass-through, with [injection points](#injection-points) where you drop the encode/decode
-transform (hand-rolled or a library call). The file is shared by every chain that uses the stage, and regeneration preserves your code.
+To add your own byte-stream transform, declare a new attribute deriving from a role base (`StreamCompressionStageAttribute` /
+`StreamCipherStageAttribute`) or from `StreamStageAttribute` directly, give its constructor the parameters the stage needs
+(in [AdHoc types](#binary-type)), and apply it like a built-in. The generator emits **one** file per stage type, named after the attribute
+(`MyStage.cs` / `.java` / `.ts`) - a pass-through, with
+[injection points](#injection-points) where you drop the encode/decode transform (hand-rolled or a library call). The file is shared by every chain
+that uses the stage, and regeneration preserves your code.
 
 ```csharp
 public class Lz4Attribute : StreamCompressionStageAttribute    // custom compressor - one design-time param
@@ -4430,52 +4944,214 @@ public class AesCtrAttribute : StreamCipherStageAttribute      // custom cipher 
 
 [Lz4(3)]         MyPack p;   // design-time: level = 3
 [AesCtr]         MyPack q;   // key + iv supplied at runtime
-[AesCtr, Lz4(3)] MyPack r;   // a chain: compress, then encrypt
+[Lz4(3), AesCtr] MyPack r;   // a chain: compress, then encrypt
 ```
+
+#### Chains on a connection
+
+A chain on a connection is **transport-level**: instead of wrapping one field or one pack, it wraps **everything that connection carries** - every
+pack, every stream, in both directions. The declaration is the same attribute list, moved onto the connection interface. What differs is **how far the
+chain reaches**, and that follows directly from where the connection's two endpoints are:
+
+| Declared on                             | Chain scope                       | Runs at                                                                                   |
+|:----------------------------------------|:----------------------------------|:------------------------------------------------------------------------------------------|
+| physical `Connects<L, R>`               | **hop** - that one link           | `L` and `R` (the two directly-linked hosts). Each hop of a multi-hop route needs its own. |
+| virtual `VirtuallyConnects<L, R, PATH>` | **end-to-end** - the whole tunnel | `L` and `R` only; every `PATH` relay forwards the transformed bytes blindly.              |
+
+```csharp
+[Zstd(6), ChaCha20] interface DeviceToGateway : Connects<Device, Gateway> { … }
+```
+
+Every byte `Device` and `Gateway` exchange over this link is compressed then encrypted, and decrypted then decompressed on arrival - the packs,
+actors, and state machine above it are untouched and unaware. Because the endpoints of a physical connection *are* the two linked hosts, the chain
+**terminates at each hop**: bytes are plaintext again inside
+`Gateway`. That is the right tool for securing an individual link (a device's radio leg, a LAN segment) and the wrong one for keeping a middle tier
+out of the payload - for that, declare the chain on a
+[virtual connection](#transform-chains-over-a-tunnel---compress-and-encrypt), whose endpoints are the two hosts that actually matter.
+
+A chain applies to the connection's transport, not to its contents, so a **structured** connection carrying actors and packs takes one exactly as a
+body-less [tunnel-only](#tunnel-only-vs-structured-virtual-connection)
+`VirtuallyConnects { }` does. All the ordinary chain rules hold unchanged: left = app/leaf, right = wire; at most one compressor and one cipher; keys
+and nonces [runtime-injected](#parameters--design-time-vs-runtime-injected) at the endpoints.
+
+#### Chaining an existing connection - `Modify<>`
+
+A connection you don't own - imported from another project, or simply one you'd rather not edit - takes a chain through the
+ordinary [connection-modification](#modifying-imported-connections) mechanism. Declare a modifier and put the stages on it:
+
+```csharp
+[Zstd(6), ChaCha20] interface SecureTheLink : Modify<ImportedConnection> { }
+```
+
+The target connection now carries that chain. This is how you compress or encrypt a link whose definition lives outside your project, and it composes
+with every other modification a `Modify<>` connection can make.
 
 ---
 
-### Contextual Scoping - `ToStream`, `FromStream`, `Stream<To,From,T>`
+### Trimming a chain - what a store keeps
 
-**Why this exists - packs have no length prefix.** An AdHoc pack is a pack-id plus its fields back-to-back, with **no overall length header** - only a
-parser walking every field knows where it ends. That density is why AdHoc beats length-prefixed formats on the wire, but it means a middle tier
-**can't relay, store, or skip a pack without parsing it**. `ToStream` / `FromStream` / `Stream<To,From,T>` *opt a pack into* chunked `[len][data]…[0]`
-framing so anyone in the middle can recognize boundaries (count chunks to `[0]`), extract/persist/replay the bytes, rehydrate (`FromStream`), or
-forward them to a downstream consumer ([`Relay`](#relay)) - all without decoding.
+A chain is symmetric: whatever the sender wraps, the receiver unwraps in full, so both ends hold the same object. That is wrong for a host whose job
+is to **keep** the payload rather than read it. A broker, cache, or archive would have to decrypt, decompress and re-encode every message - paying for
+work whose result it throws away, and holding keys it has no business holding.
 
-The same field can need framing on one path and not another. **Contextual Scoping** makes a field's behavior depend on the **Endpoint** it travels.
-
-#### Defining Endpoints
-
-An Endpoint is a *source* (who sends) over a *pipe* (which connection); group them into **Endpoint Sets**:
+A **trim** cuts the chain at a chosen depth for one [Endpoint](#defining-endpoints). Write it as a marker *among* the stages:
 
 ```csharp
-// IfSendingFrom<fromHost, viaConnection>
-public interface FromProducer : IfSendingFrom<Producer, ProducerToRouterConnection> { }
-public interface ExternalTraffic : _<(FromProducer, FromRouter)> { }   // a set
+[Zstd, ToStream<FromProducer>, ChaCha20] class Event { … }
 ```
 
-#### Channel Asymmetry
+Everything to the **right** of the marker still runs; everything to its **left** - the remaining stages *and* the pack's own serialization - is
+skipped on that leg, and the payload crosses as opaque bytes. The three markers:
 
-`ToStream`/`FromStream` break sender/receiver symmetry on the named Endpoint:
+* **`[ToStream<E>]`** - sending from `E`, the **receiver** stops here and takes bytes.
+* **`[FromStream<E>]`** - sending from `E`, the **sender** injects bytes here and only the right-hand stages run.
+* **`[Stream<To, From>]`** - both, at the same depth.
 
-* **`ToStream<E, T>`** - originating at `E`, the **sender** serializes `T` as a pack; the **receiver** gets **raw bytes** (opaque sink).
-* **`FromStream<E, T>`** - originating at `E`, the **sender** emits **raw bytes** (e.g. a file handle); the **receiver** rehydrates `T`.
+The stage list may be **empty**: `[ToStream<E>] Payload p;` is a cut at position 0 of nothing - the plain serialized payload crosses as opaque bytes.
+That is the everyday form, covered in [Endpoint-scoped cuts](#endpoint-scoped-cuts).
 
-The proxy literally can't depend on the pack's schema - on its side the field is just bytes. **`Stream<To, From, Pack>`** combines both: `ToStream`
-on the `To` path, `FromStream` on the `From` path, a normal nested pack elsewhere.
+The wire is untouched either way: a trim is a per-endpoint code-generation decision, not a wire-format one. What it changes is which side materializes
+an object - and therefore what that side has to own. The chain is **not** conditional on the cut: it runs in full on every leg the marker does not
+name, with a typed value on both ends there.
 
-Assume **Endpoint E** is `IfSendingFrom<HostA, ConnectionAB>`:
+#### The depth is a dial
 
-| Field Declaration          | Sender (at E)             | On-the-Wire     | Receiver (from E)         | Other Routes |
-|:---------------------------|:--------------------------|:----------------|:--------------------------|:-------------|
-| `MyPack p;`                | `MyPack` object           | Standard AdHoc  | `MyPack` object           | Same         |
-| `ToStream<E, MyPack> p;`   | `MyPack` object           | Raw Bytes       | Raw Bytes (`ExtBytesDst`) | Normal Pack  |
-| `FromStream<E, MyPack> p;` | Raw Bytes (`ExtBytesSrc`) | Standard AdHoc  | `MyPack` object           | Normal Pack  |
-| `Stream<E, E2, MyPack> p;` | Depends on path           | Depends on path | Depends on path           | Normal Pack  |
+Where you put the marker decides **how much of the pipeline the store must implement**. With `[Zstd, ChaCha20]` on the pack:
 
-These are **conditional chunked roots** - [transform stages](#transform-chains---stages-roles-and-flows) may stack on them, applying only on the
-streamed path (the plain-pack fallback carries no chain).
+| Declaration                         | What the store keeps       | What it runs            | What it must hold    |
+|:------------------------------------|:---------------------------|:------------------------|:---------------------|
+| `[Stream<To,From>, Zstd, ChaCha20]` | the plain serialized pack  | the whole inverse chain | the key, every stage |
+| `[Zstd, Stream<To,From>, ChaCha20]` | the **compressed** blob    | `ChaCha20⁻¹` only       | the key              |
+| `[Zstd, ChaCha20, Stream<To,From>]` | exactly the **wire bytes** | **nothing**             | nothing              |
+
+No row needs the payload's **schema**; the rows differ only in how much of the chain the store has to run. Row 1 is the plain
+[Endpoint-scoped cut](#endpoint-scoped-cuts) - a marker at position 0 - written next to a chain. The lower two rows are what a real store wants:
+
+* **Row 2 is what a log broker actually does.** The producer compresses once; the broker stores and serves the compressed batch and never recompresses
+	- including on fan-out, where N consumers cost one compression, not N. Disk stays small without the broker owning a compressor or a schema.
+* **Row 3 is blind custody.** The operator stores ciphertext it holds no key for; producer and consumer share the key and the store is a byte
+  warehouse. Retention, replication and audit without access. Note that neither a per-hop chain nor
+  a [tunnel](#transform-chains-over-a-tunnel---compress-and-encrypt)
+  can express this: a hop chain terminates *at* the store in plaintext, and a tunnel passes *through* it without leaving anything behind.
+
+#### Worked example - a schema-blind log broker
+
+Three hosts: a `Producer` publishes events, a `Broker` stores them, a `Consumer` replays them. The broker is an endpoint on both legs, never a relay:
+
+```csharp
+public interface FromProducer : IfSendingFrom<Producer, ProducerToBroker> { }
+public interface FromBroker   : IfSendingFrom<Broker,   BrokerToConsumer> { }
+
+// stored compressed: the broker decrypts the link, keeps the Zstd blob, and never sees an Event
+[Zstd, Stream<FromProducer, FromBroker>, ChaCha20]
+public class Event {
+    long             at;
+    string           topic;
+    [D(+65_000)] Binary[,] body;
+}
+```
+
+* `Producer → Broker` - the producer serializes and compresses; the broker decrypts and appends the compressed bytes to its log.
+* `Broker → Consumer` - the broker hands the same bytes back, they are encrypted for that link, and the consumer decompresses into a typed `Event`.
+* Any other leg - the full chain, a typed `Event` on both ends.
+
+Because both cuts sit at **the same depth**, what the broker receives is byte-identical to what it replays: `store(bytes)` / `replay(bytes)`, no
+decode, no re-encode, no transcoding on the hot path. Move the marker right of `ChaCha20` and the broker stops needing the key as well; move it to the
+front and you are back to the [Recorder/Viewer example](#worked-example---store-and-replay-through-a-schema-blind-recorder), storing plain serialized
+packs.
+
+The same three rows describe an object store (put the compressed blob straight in), an edge cache, a WORM audit archive, and cross-datacenter
+mirroring - each is custody of a payload whose type the host does not have, differing only in how much of the pipeline it is willing to run.
+
+#### Across imported projects
+
+A trim is part of the declaration it is written on, so [importing a project](#extending-other-projects) brings it along with the pack or field that
+carries it - nothing has to be re-declared. What import changes is whether the **Endpoint** it names still exists.
+
+An Endpoint is `IfSendingFrom<host, connection>`, and both halves resolve against the **composed** project - the root description plus everything it
+extends. That is what makes the backend-extension pattern work: a trim may name an **imported host** over a **connection the extension itself
+declares**.
+
+```csharp
+public interface AdHocProtocolWithBackend : AdHocProtocol {
+    struct Monitoring : Host { }                                       // a new host
+    interface ServerToMonitoring : Connects<Server, Monitoring> { }    // Server is imported
+
+    class Bytes {
+        [ToStream<IfSendingFrom<Server, ServerToMonitoring>>] public CPU bytes;
+    }
+}
+```
+
+`AdHocProtocolWithBackend.cs` pipes seven telemetry families (CPU, Memory, Process, Network, FileStore, DiskIO, SystemInfo) through exactly this
+shape.
+
+A cut that can never fire is an **error**, not a silent no-op - so an endpoint the composition does not contain stops the build:
+
+```
+WARN   The ToStream trim on '…Bytes.bytes' names IfSendingFrom<MonitoringObserver, ServerToMonitoring>,
+       but MonitoringObserver is not a participant of ServerToMonitoring; that endpoint is skipped.
+ERROR  The ToStream trim on …Bytes.bytes resolves to no usable endpoint, so the cut could never happen.
+       Name an endpoint whose host actually participates in its connection.
+```
+
+An imported pack whose trim names a connection the importing project leaves out therefore has to be dropped from the composition, not merely ignored.
+
+**A modifier cannot add a cut to a pack you do not own.** A modifier merges **fields** into its target and dispatches no attributes, so a chain or
+trim written on a `Modify<TargetPack>` resolves onto the **modifier itself** and the target keeps nothing. That is allowed - a modifier may also be an
+ordinary transmittable pack, and then the chain is legitimately its own - but because the likelier intent misses silently, the Agent warns:
+
+```
+WARN  The stream chain on the `Modify<>` pack '…TrimByModify' applies to the MODIFIER itself, not to
+      Payload — a modifier merges fields, never attributes. If it was meant for the modified pack, move it
+      onto the field that carries that pack, onto the pack itself if you own it, or onto the connection; if
+      this modifier is also an ordinary transmittable pack and the chain is its own, nothing is wrong.
+```
+
+A `Modify<Connection>` may carry a [chain](#example-compress-and-encrypt-an-imported-connection) - but never a trim, for the same reason no connection
+chain may: there, an endpoint holding raw bytes is simply what a [relay](#relay) already is.
+
+#### Rules
+
+* A trim is **not a transform**: no role, no parameters, nothing generated for it. It does not count towards the one-compressor / one-cipher limit and
+  is exempt from the [compressor-before-cipher](#roles) rule - it may sit anywhere between two stages, or at either end.
+* Allowed on a **field** or a **pack**; not on a connection - a chain there wraps everything that link carries, where "the endpoint holds bytes" is
+  simply what a [relay](#relay) already is.
+* Never on a **`File`** - neither a `File` field nor a `File` pack, exactly as a stage may not sit there: one committed total length leaves no chunk
+  boundary to hand bytes over at, and a `File` payload is already raw bytes on both ends. A `File` pack therefore has nothing to pass down to a field
+  typed with it - see [Composing the pack's chain with the field's](#composing-the-packs-chain-with-the-fields).
+* A [flow](#a-flow-may-carry-a-trim---and-then-it-is-no-longer-neutral) may contain one; it expands in place, position kept, and every application of
+  that flow is cut on the endpoints it names. Convenient for one pipeline, wrong for a general-purpose chain - prefer writing trims where they apply.
+* A **[`TYPEDEF`](#typedef) carries neither a trim nor a chain** - both are silently dropped, unlike the caps it does propagate. Reuse a cut through a
+  flow or a named `Stream` pack, never through an alias.
+* It travels with an [imported](#across-imported-projects) declaration, but its Endpoint must still resolve in the composed project - and a
+  `Modify<>` cannot add one to a pack or a connection you imported: on a pack modifier it lands on the modifier (warned), on a connection it is
+  refused.
+* At most one per direction. `[Stream<To, From>]` is the store-and-replay pair at one depth; giving the two directions *different* depths would force
+  the store to transcode between the forms, re-adding exactly what the deeper cut removed.
+* The payload is one complete serialized value, so a trimmed transfer is **not interruptible** - a truncated one is a torn object for whoever decodes
+  it later.
+* **Trimmed bytes are pinned to the configuration on their left** - the stages, their order, and their design-time parameters. Change a level, add a
+  stage, or reorder, and everything stored earlier silently stops decoding, because nothing on the wire announces the difference. Treat the
+  left-of-cut chain as a persisted format.
+
+---
+
+### Streaming rules at a glance
+
+| Rule                | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+|:--------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `[S(N)]`            | Required on bare `Stream`/`File` fields and on named conduit packs; `N > 8`; never on a field already typed by a named conduit pack, nor on a trimmed field (its payload bounds itself); independent of chains.                                                                                                                                                                                                                                             |
+| Chunked framing     | 2 bytes per chunk, ≤ 65 535 B payload per chunk; a zero-length chunk (`[0]`) terminates the stream.                                                                                                                                                                                                                                                                                                                                                         |
+| `File` framing      | A single varint total-length prefix - width follows the actual total, not the `[S(N)]` cap; `[S(N)]` is only the receive-side acceptance limit.                                                                                                                                                                                                                                                                                                             |
+| Interruptibility    | `Stream`: yes. `File`: no. A trimmed payload: no - a truncated one is a torn object.                                                                                                                                                                                                                                                                                                                                                                        |
+| Named conduit packs | No instance fields (constants/statics ride as metadata); inherit `Stream` **xor** `File`; usable as field types - such a field is parsed exactly as the bare `[S(N)] Stream`/`File` form (no pack id, bound headers stripped, no `[S(N)]` of its own, not collectable). The pack's chain and trim are inherited and [composed](#composing-the-packs-chain-with-the-fields) with the field's own, the inherited entries sitting nearer the wire.             |
+| Chains              | Field-level only on pack-typed, bare `Stream`, or single `string` fields (never a string inside a collection, `Map`, or `Set`); at most one compressor + one cipher; `File` never carries a chain; identical chains share one container.                                                                                                                                                                                                                    |
+| Trimmed strings     | A trim on a single `string`: **UTF-8** in `File` framing on the cut leg; ordinary varint string elsewhere. Char cap (`[D(+N)]`) governs; no `[S(N)]`; invalid UTF-8 → exception; null not transmitted.                                                                                                                                                                                                                                                      |
+| Direction           | Dataflow order - left = app/leaf, right = wire: `[Zstd, ChaCha20]` is `pack → Zstd → ChaCha20 → wire` = compress-then-encrypt. A cipher written left of a compressor is rejected.                                                                                                                                                                                                                                                                           |
+| Runtime params      | Any stage constructor param left unvalued is runtime-injected at the endpoints (keys, nonces).                                                                                                                                                                                                                                                                                                                                                              |
+| Trims               | `[ToStream<E>]` / `[FromStream<E>]` / `[Stream<To,From>]` cut the chain at their position for one Endpoint: right of the marker still runs, left is skipped, bytes cross opaque. The stage list may be empty (a cut at the leaf). The chain itself still runs on every other leg. Field or pack only, never a `File` and never a connection; one per direction; role-less; wire unchanged - see [Trimming a chain](#trimming-a-chain---what-a-store-keeps). |
+| Connection scale    | A chain on a physical `Connects<>` wraps everything that hop carries; a tunnel (`VirtuallyConnects<L, R, PATH>`) is a chunked stream end-to-end through relays - see [Virtual Connections](#virtual-connections).                                                                                                                                                                                                                                           |
 
 ---
 

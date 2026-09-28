@@ -1,100 +1,92 @@
-# A more concise and descriptive name for the workflow
 name: Build and Release
 
 on:
   push:
     branches: [ "main" ]
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+' # More specific tag pattern for semantic versioning (e.g., v1.2.3)
+      - 'v[0-9]+.[0-9]+.[0-9]+'   # semantic version tags, e.g. v1.2.3
   pull_request:
     branches: [ "main" ]
 
-# Concurrency control to cancel redundant builds on the same branch/PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Set default permissions to be read-only for security
 permissions:
   contents: read
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  DOTNET_VERSION: '10.0.x'
+  PROJECT: 'AdHocAgent.csproj'
+  NAME: 'AdHocAgent'
+
 jobs:
   build:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Publish ${{ matrix.rid }}н
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-
-    # Centralize environment variables for the job
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      DOTNET_VERSION: '8.0.x'
-      PROJECT_NAME: 'AdHocAgent' # Use a variable for the project name
-
+        # Framework-dependent apphosts cross-publish fine, so every target is built on one
+        # cheap runner instead of a 3-OS matrix. (AdHocAgent hosts Roslyn → no trim/AOT; its
+        # users are .NET devs who already have the runtime, so framework-dependent is right.)
+        rid: [ linux-x64, linux-arm64, win-x64, win-arm64, osx-x64, osx-arm64 ]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          # Fetch all history for release notes generation later
-          fetch-depth: 0
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Build
-        run: dotnet build --configuration Release
-
+      # Per-RID native launcher (AdHocAgent / AdHocAgent.exe) + portable DLLs.
       - name: Publish
-        run: dotnet publish --configuration Release --output ${{ github.workspace }}/publish
+        run: >
+          dotnet publish ${{ env.PROJECT }}
+          -c Release
+          -r ${{ matrix.rid }}
+          --self-contained false
+          -p:UseAppHost=true
+          -o publish
 
-      - name: Archive artifacts (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: tar -a -c -f ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip -C ${{ github.workspace }}/publish .
+      - name: Package
+        run: cd publish && zip -r "../${{ env.NAME }}-${{ matrix.rid }}.zip" .
         shell: bash
 
-      - name: Archive artifacts (Windows)
-        if: runner.os == 'Windows'
-        run: Compress-Archive -Path ${{ github.workspace }}\publish\* -DestinationPath ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip
-        shell: powershell
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ runner.os }}
-          path: ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip
+          name: ${{ env.NAME }}-${{ matrix.rid }}
+          path: ${{ env.NAME }}-${{ matrix.rid }}.zip
           retention-days: 7
 
-  create-github-release:
-    name: Create GitHub Release
+  release:
+    name: Release
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
-
-    # Grant write permissions only to this job for creating the release
     permissions:
-      contents: write
-
+      contents: write   # only this job may create the release
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          fetch-depth: 0
+          path: artifacts
 
-      - name: Download all build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          # Downloads all artifacts from the run into the 'artifacts' directory
-          path: artifacts/
-
-      - name: Create Release and Upload Assets
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Collect zips + checksums
         run: |
-          # Use a glob pattern to find and upload all the downloaded zip files
-          gh release create ${{ github.ref_name }} \
-            --generate-notes \
-            --title "${{ github.ref_name }}" \
-            artifacts/AdHocAgent-*/*.zip
+          mkdir -p dist
+          find artifacts -name '*.zip' -exec cp {} dist/ \;
+          ( cd dist && sha256sum *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt )
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/*.zip
+            dist/SHA256SUMS.txt

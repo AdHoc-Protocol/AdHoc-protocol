@@ -108,10 +108,13 @@ The **AdHoc** generator provides:
 - Circular reference handling and multiple inheritance. Reused entities can be modified for new projects.
 - Compression via [Base 128 Varint](https://developers.google.com/protocol-buffers/docs/encoding) encoding.
 - Fully functional generated code ready for network infrastructure.
+- [Sessions that outlive a lost or broken connection](#sessions), and [guaranteed delivery](#guaranteed-delivery) of the packs you choose.
+- [**Versioning without a version field**](#several-kinds-of-peer-and-several-generations-of-one): a generation of a peer is a host of its own,
+  with its own Connection - and all generations are served from one port.
 - **Built-in streaming parser:** Processes all incoming data in a single reusable socket buffer (user-chosen size, minimum 256 bytes). Buffer
   allocation for the entire object is never required.
-- **Inventory-First Dashboard:** A centralized, top-of-file inventory of all packets
-  with [reactive ID management](#c-id-management-system-managed--reactive), user-driven semantic tagging, and tag-based routing.
+- **[Numbers tables](#numbers-tables):** the identities of all entities in two tables at the top of the file - no numbers scattered in the code,
+  no cascade renumbering; the packs table doubles as an inventory with reactive wire ids, user-driven semantic tagging, and tag-based routing.
 
 The **AdHoc Code Generator** is a [**SaaS**](https://en.wikipedia.org/wiki/Software_as_a_service) platform providing cloud-based code generation.
 
@@ -160,6 +163,9 @@ Upload the `protocol description file` to generate source code.
 ![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/7d5181a3-3642-4027-9c3d-aed3ad4b1f5d)
 
  </details>
+
+The remaining arguments are paths to more source (`.cs`) and project (`.csproj`) files and, last, an output folder. An open source
+project adds the URL of its published `adhoc` folder and its topical tags after them - see [Open source](#open-source).
 
 ## `.cs?`
 
@@ -283,6 +289,35 @@ The utility saves the `volatile UUID` in `AdHocAgent.toml`.
 > [!NOTE]
 > When run without arguments, AdHocAgent displays help and generates a `protocol description file` template.
 
+## Open source
+
+Code generation is free. If you want your project listed in the **catalog of projects using the AdHoc protocol**, meet the conditions
+below: a public GitHub repository with **at least 500 stars**, an `adhoc` folder with the published protocol description, and the
+project's tags.
+
+Publish the protocol description in a folder named **`adhoc`** of the repository - a copy of **every** file you upload, under the same
+file names - and pass the folder's URL after the file arguments, followed by the project's topical tags (English words, one per argument):
+
+```shell
+AdHocAgent MyProtocol.cs https://github.com/owner/repo/tree/main/path/to/adhoc networking telemetry iot
+```
+
+`https://github.com/owner/adhoc` is accepted when the repository itself is the `adhoc` folder. A URL without `/tree/<branch>/` points into
+the repository's default branch.
+
+Before anything is uploaded, AdHocAgent checks that:
+
+- the repository is public and has at least 500 stars;
+- the folder holds a copy of every uploaded file, byte for byte (line endings and a UTF-8 BOM do not count - git rewrites them);
+- at least one tag is given and every tag is a word of letters, digits, `-` and `_`.
+
+Any mismatch means the project does not qualify for the catalog: the task is refused with a message saying what to fix, and nothing is
+sent. The server repeats the same check on its side, so the published copy must stay identical to what is generated. The checks go
+through the GitHub API, whose anonymous limit is 60 requests an hour per address; set the `GITHUB_TOKEN` environment variable to lift it.
+
+The URL and the tags travel to the server in the `Project.github` and `Project.tags` fields of the [`AdhocProtocol.cs`](AdhocProtocol.cs)
+description; a run without the URL leaves both empty.
+
 ## Continuous Deployment (CD) System
 
 The embedded CD system automates deploying generated source code into your target projects. It uses a **Deployment Instructions File** (a Markdown
@@ -312,12 +347,40 @@ The file contains a Markdown list representing the source directory structure:
 		- ＃[Channel.cs](/path/to/source/InCS/Agent/gen/Channel.cs)
 ```
 
+Not everything received gets a line. Runtime library files (`lib`, `__`) and Markdown files (`.md` — licenses, notes) are
+never listed: there is nothing to route or merge on them. They are copied byte for byte to the destination of the folder
+they arrived in, and post-deployment formatters never touch a `.md` file.
+
 #### Configuring Deployment Targets
 
 Specify where files go by appending Markdown links to the end of a line: `[<regex_filter>](<destination_path>)`.
 
 * The `regex_filter` is optional. If omitted (`[](/path)`), the rule applies to all files in scope.
 * The `destination_path` is the target location on your filesystem.
+
+> [!CAUTION]
+> **A destination directory is exclusive generator territory.** When you deploy, anything already inside it
+> that this generation did **not** produce is treated as an orphan — **backed up and then deleted** (a
+> `restore` script is written, but the directory is emptied of everything foreign to the current output).
+> So a destination must be a **dedicated folder that holds only generated code** — never a project root, a
+> `src` folder, or any directory that also contains your hand-written files, or those files are wiped.
+>
+> The safe, conventional layout is a dedicated `protocol/` folder holding `gen` and `lib`, sitting *beside*
+> your project — not swallowing it:
+>
+> ```
+>   MyProject/
+>   ├─ MyProject.csproj    ← hand-written, at the root  (SAFE — outside the territory)
+>   ├─ src/…               ← your code                  (SAFE)
+>   └─ protocol/           ← generator territory: ONLY generated content lives here
+>      ├─ gen/             ← regenerated every deploy; stale files here are correctly pruned
+>      └─ lib/             ← the runtime library
+> ```
+>
+> Route the host folder to `…/MyProject/protocol/` (dedicated), **not** to `…/MyProject/` or `…/MyProject/src/`.
+> Then add `protocol/gen` (and `protocol/lib`) as source directories in your build. Real projects follow
+> this: `AdHocAgent/protocol/{gen,lib}`, `Observer/src/protocol/{gen,lib}` — the hand-written `.csproj` /
+> `package.json` stays at the root, safely outside the generator's territory.
 
 ##### Target Path Behavior
 
@@ -326,8 +389,8 @@ Behavior is determined by whether the destination path ends with `/` or `\`.
 **1. Copy contents into a folder (path ends with `/` or `\`):**
 Copies the *contents* of the source folder into the destination. The source folder itself is not created.
 
-- **Folder:** `- 📁[Agent](...) [](/path/to/project/src/)`
-	* Files inside `Agent` are copied directly into `/path/to/project/src/`.
+- **Folder:** `- 📁[Agent](...) [](/path/to/project/protocol/gen/)`
+	* Files inside `Agent` are copied directly into the dedicated `/path/to/project/protocol/gen/`.
 - **File:** `- 🌀[demo.ts](...) [](/path/to/project/components/)`
 	* The file is copied into the destination folder.
 
@@ -674,67 +737,89 @@ logical interconnections.
 
 ---
 
-## Packs Inventory
+## Numbers Tables
 
-The documentation block at the top of the protocol file is the primary **User Interface** for the protocol - the user's **workspace** for organizing,
-categorizing, and routing packets.
+Every entity that must keep its identity from one run to the next - the project itself, its hosts, connections, actors, states and packs - has a
+**number**. AdHocAgent assigns it on the first run and keeps it in two documentation comments right before the project's interface - the
+**numbers tables**. The code below them carries no numbers: renaming, moving or reordering declarations changes nothing on the wire, and nothing
+in the generated code that is keyed by the numbers - the [custom code regions](#injection-points), the Observer's diagram layout.
 
-### The Core Vision: Top-Down Control
+The tables belong to AdHocAgent: it writes them, keeps them sorted and aligned, and rewrites them when something changes. The one part that is yours
+is the text after a pack's numbers - its **tags**.
 
-The goal is to give the user a single central place to see all available packets, categorize them semantically, and "spread" them across connections
-and states using those categories (tags), direct pack references, or both.
+### The packs table
 
-### A. Automatic Discovery & Alphabetization
-
-On every run, the system scans the project for all potentially transmittable classes/structs (excluding enums, headers, and meta-types). It
-automatically maintains an alphabetical list (by full path) of these types at the top of the file.
-
-**Initial state (first run) - no IDs yet, just a clean menu of available "ingredients":**
+The first comment lists every pack of the project, alphabetically by its path - the user's **workspace** for organizing, categorizing, and routing
+packets.
 
 ```csharp
-/**
-    <see cref = 'Agent.Login' />
-    <see cref = 'Server.Invitation' />
-    <see cref = 'Server.Result' />
-*/
+    /** packs
+        <see cref='BackendServer.ReplyInts'/>ă                      7 backend | 📊
+        <see cref='Point3'/>Ā                                       1 common | geo | 📍
+        <see cref='Root'/>ÿ                                         0 common | base
+    */
 ```
 
-### B. Semantic User Tagging
+Each line holds, after `/>`:
 
-Users "label" packets by adding text or emojis **after the `/>`** on each line. These tags are the user's workspace - the system **never deletes or
-modifies** them.
+1. **The pack's number** - base256 characters right after `/>` (`ă`): its identity. It never changes while the pack exists.
+2. **The wire id** - a decimal number, in a column of its own (`7`): what precedes the pack on the wire. Only packs that are directly transmittable
+   have one - matched by a branch's KeepDoc/SkipDoc/KeepName/SkipName filters, listed as types in its `<PACKS>` generic parameter, or included
+   via a Pack Set. A pack no branch sends any more **loses its wire id but keeps its line** and its tags; used again, it gets a wire id again.
+   The two are separate because they serve different ends: the number is an identity, the wire id is kept compact - the width of the id on the
+   wire depends on the largest one.
+3. **Tags** - any text or emojis you add after the numbers. The system **never deletes or modifies** them. Branches select packs by them, the
+   same way as by `///` comments.
+
+### The project table
+
+The second comment holds everything else, a section per kind:
 
 ```csharp
-/**
-    <see cref = 'Agent.Login' /> server | 🔑
-    <see cref = 'Server.Invitation' /> server to client | 🖥️👉📈
-    <see cref = 'Server.Result' /> metrics | 📈
-*/
+    /** project
+        <see cref='MyProject'/>ǍŦƈŗč
+
+        hosts
+        <see cref='FrontendServer'/>ÿ
+        <see cref='BackendServer'/>Ā
+
+        connections
+        <see cref='TrialConnection'/>ÿ
+        <see cref='MainConnection'/>Ā
+    */
 ```
 
-### C. ID Management (System-Managed & Reactive)
+* **The project's line** - the project's own number: the moment it was first numbered, which tells it from every other project, those it extends
+  included. A project that [extends others](#extending-other-projects) adds a number per extended project after it. Never copy it into another
+  project: AdHocAgent refuses two projects with one number ("one is a copy of the other").
+* **`hosts`, `connections`, `actors`, `states`** - one number per entity, each kind numbered on its own; an RPC method called both ways has two, one per
+  actor of its call. A [virtual connection](#virtual-connections) also has a wire id, from the same pool as the packs'.
 
-The `id = 'N'` attribute is **reactive**:
+A host's number is also its `uid` on the wire - the byte a peer sends when it dials a [multiplexer](#multiplexing). So hosts are numbered across
+the whole project, **the hosts of the extended projects included**: they keep their numbers, and the project's own hosts continue after them.
 
-- **Assigned:** If a packet is detected as "directly transmittable" in any connection branch, the system assigns and maintains its unique ID.
-- **Removed:** If a packet is no longer used by any branch, the system **removes the ID** but **keeps the line** and the user's tags.
-- **Result:** Users see a clean list where "active" packets have IDs and "inactive" packets do not.
+### How the tables stay right
 
-```csharp
-/**
-    <see cref = 'Agent.Login'      id = '5' /> server | 🔑
-    <see cref = 'Server.Invitation' id = '3' /> server to client | 🖥️👉📈
-    <see cref = 'Server.Result' /> metrics | 📈  ← ID removed because the branch using 📈 was deleted
-*/
-```
+* **A new entity** gets the next free number of its kind. Existing numbers never move to make room for it.
+* **A rename** in the IDE renames the table's `cref` as well - the number goes with the entity. A table line whose entity is gone (renamed by
+  hand, say) stops the run with a message: restore the name or delete the line.
+* **An extended project grows.** When the owner of a library adds hosts that take numbers your project's hosts already had, AdHocAgent
+  renumbers **your** hosts, warns about it, and writes the old number after the new one - `<see cref='Tester'/>ą ~ÿ`. Your code in the custom
+  code regions and the Observer's layout move from the old number to the new one on the next deployment.
+* **A line deleted** - the entity gets a new number, as if it were new. The project's own line cannot be deleted while other lines remain: that
+  would make the project a new one.
 
-### D. The User Workflow
+> [!WARNING]
+> The only numbers left in the code are the short block comments after a branch, such as `[l____________<Login>/*Ā*/]`: they identify the branch.
+> **Never edit or duplicate them.**
 
-1. **Discovery:** User writes packet types; system lists them in the Dashboard (no IDs).
-2. **Tagging:** User categorizes packets in the Dashboard using emojis/tags after `/>`.
-3. **Spreading:** User declares branches on empty state structs - packs can be included directly via the `PACKS` generic (e.g.,
-   `[l____________<(PackA, PackB)>]`), filtered via KeepDoc/SkipDoc/KeepName/SkipName (e.g., `[l____________("📈")]`), or both combined.
-4. **Finalization:** System assigns IDs to all active packets in the Dashboard and generates the protocol "Glue" code.
+### The workflow
+
+1. **Discovery:** write the packs; the system lists them in the packs table (no wire ids yet).
+2. **Tagging:** categorize them with tags after the numbers.
+3. **Spreading:** declare branches on the states - include packs directly via the `PACKS` generic (e.g.,
+   `[l____________<(PackA, PackB)>]`), select them with KeepDoc/SkipDoc/KeepName/SkipName (e.g., `[l____________("📈")]`), or both.
+4. **Finalization:** the system gives every transmittable pack a wire id and generates the protocol code.
 
 ---
 
@@ -746,20 +831,36 @@ using org.unirail.Meta;
 
 namespace com.my.company2
 {
-    /**
-        <see cref = 'BackendServer.ReplyInts'                   id = '7' /> backend | 📊
-        <see cref = 'BackendServer.ReplySet'                    id = '8' /> backend | 📊
-        <see cref = 'FrontendServer.PackB'                      id = '6' /> frontend | 📦
-        <see cref = 'FrontendServer.QueryDatabase'              id = '5' /> frontend | query | 🔍
-        <see cref = 'FullFeaturedClient.FullFeaturedClientPack' id = '4' /> client | full | 📝
-        <see cref = 'FullFeaturedClient.Login'                  id = '3' /> client | auth | 🔑
-        <see cref = 'Point3'                                    id = '0' /> common | geo | 📍
-        <see cref = 'Root'                                      id = '1' /> common | base
-        <see cref = 'TrialClient.TrialClientPack'               id = '2' /> client | trial | 📝
+    /** packs
+        <see cref='BackendServer.ReplyInts'/>ă                      7 backend | 📊
+        <see cref='BackendServer.ReplySet'/>Ą                       8 backend | 📊
+        <see cref='FrontendServer.PackB'/>Ă                         6 frontend | 📦
+        <see cref='FrontendServer.QueryDatabase'/>ā                 5 frontend | query | 🔍
+        <see cref='FullFeaturedClient.FullFeaturedClientPack'/>Ć    4 client | full | 📝
+        <see cref='FullFeaturedClient.Login'/>ą                     3 client | auth | 🔑
+        <see cref='Point3'/>Ā                                       1 common | geo | 📍
+        <see cref='Root'/>ÿ                                         0 common | base
+        <see cref='TrialClient.TrialClientPack'/>ć                  2 client | trial | 📝
+    */
+    /** project
+        <see cref='MyProject'/>ǍŦƈŗč
+
+        hosts
+        <see cref='FrontendServer'/>ÿ
+        <see cref='BackendServer'/>Ā
+        <see cref='FullFeaturedClient'/>ā
+        <see cref='TrialClient'/>Ă
+        <see cref='FreeClient'/>ă
+
+        connections
+        <see cref='TrialConnection'/>ÿ
+        <see cref='MainConnection'/>Ā
+        <see cref='TheConnection'/>ā
+        <see cref='BackendConnection'/>Ă
     */
     public interface MyProject{
 
-        public class Root/*Ā*/{ // Non-transmittable base entity
+        public class Root{ // Non-transmittable base entity
             long id;
             long hash;
             long order;
@@ -769,7 +870,7 @@ namespace com.my.company2
             [D(+1_000)] string? TYPEDEF;
         }
 
-        class Point3/*ÿ*/{
+        class Point3{
             private float          x;
             private float          y;
             private float          z;
@@ -777,73 +878,73 @@ namespace com.my.company2
         }
 
         ///<see cref = 'InJAVA'/>
-        struct FrontendServer/*ā*/ : Host{
-            public class QueryDatabase/*Ą*/ : Root{
+        struct FrontendServer : Host{
+            public class QueryDatabase : Root{
                 private string? question;
             }
 
-            public  class PackB/*ą*/{ }
+            public  class PackB{ }
         }
 
         ///<see cref = 'InCS'/>
-        struct BackendServer/*ÿ*/ : Host{
-            public class ReplyInts/*Ć*/ : Root{
+        struct BackendServer : Host{
+            public class ReplyInts : Root{
                 [D(300)] int[] reply;
             }
 
-            public class ReplySet/*ć*/ : Root{
+            public class ReplySet : Root{
                 [D(+300)] Set<int> reply;
             }
         }
 
         ///<see cref = 'InTS'/>
-        struct FullFeaturedClient/*Ă*/ : Host{
-            public class Login/*Ă*/ : Root{
+        struct FullFeaturedClient : Host{
+            public class Login : Root{
                 private string? login;
                 private string? password;
             }
 
-            public class FullFeaturedClientPack/*ă*/{
+            public class FullFeaturedClientPack{
                 max_1_000_chars_string query;
             }
         }
 
         ///<see cref = 'InCS'/>
-        struct TrialClient/*ă*/ : Host{
-            public class TrialClientPack/*ā*/{
+        struct TrialClient : Host{
+            public class TrialClientPack{
                 max_1_000_chars_string query;
             }
         }
 
         ///<see cref = 'InTS'/>
-        struct FreeClient/*Ā*/ : Host{ }
+        struct FreeClient : Host{ }
 
-        interface TrialConnection/*ÿ*/ : Connects<FrontendServer, TrialClient>{
+        interface TrialConnection : Connects<FrontendServer, TrialClient>{
 
-            [l____________<@TrialConnection>("📍 | base | trial")]
-            [____________r<@TrialConnection>("📍 | trial")]
-            struct Start/*ÿ*/ { }
+            [l____________("📍|base|trial")/*Ā*/]
+            [____________r("📍|trial")/*ÿ*/]
+            struct Start { }
         }
 
-        interface MainConnection/*Ā*/ : Connects<FrontendServer, FullFeaturedClient>{
+        interface MainConnection : Connects<FrontendServer, FullFeaturedClient>{
 
-            [l____________<@MainConnection>("📍 | base | trial | 🔑 | full")]
-            [____________r<@MainConnection>("📍 | trial | full")]
-            struct Start/*Ā*/ { }
+            [l____________("📍|base|trial|🔑|full")/*Ā*/]
+            [____________r("📍|trial|full")/*ÿ*/]
+            struct Start { }
         }
 
-        interface TheConnection/*ā*/ : Connects<FrontendServer, FreeClient>{
+        interface TheConnection : Connects<FrontendServer, FreeClient>{
 
-            [l____________<@TheConnection>("📍 | base")]
-            [____________r<@TheConnection>("📍")]
-            struct Start/*ā*/ { }
+            [l____________("📍|base")/*Ā*/]
+            [____________r("📍")/*ÿ*/]
+            struct Start { }
         }
 
-        interface BackendConnection/*Ă*/ : Connects<FrontendServer, BackendServer>{
+        interface BackendConnection : Connects<FrontendServer, BackendServer>{
 
-            [l____________<@BackendConnection>("🔍 | 📍 | 📦")]
-            [____________r<@BackendConnection>("📊")]
-            struct Start/*Ă*/ { }
+            [l____________("🔍|📍|📦")/*Ā*/]
+            [____________r("📊")/*ÿ*/]
+            struct Start { }
         }
     }
 }
@@ -861,12 +962,6 @@ Selecting a specific connection shows the packets involved and their destination
 ![image](https://github.com/user-attachments/assets/895b9268-1a06-467f-8337-7d4b14d7f87f)
 </details>
 
-After processing with AdHocAgent, the tool assigns packet ID numbers in the Dashboard for identification and tracking. IDs are assigned to packets
-that are determined to be directly transmittable - whether they are matched by KeepDoc/SkipDoc/KeepName/SkipName filters, listed explicitly as types
-in the `<PACKS>` generic parameter of a branch, or included via a Pack Set.
-
-![image](https://github.com/AdHoc-Protocol/AdHoc-protocol/assets/29354319/51163c18-3b49-4f4f-adea-c3450c0fe01c)
-
 > [!NOTE]
 > A project can function as a [set of packs](#project-host-or-pack-scopes).
 
@@ -881,7 +976,9 @@ interface MyProject : OtherProjects, MoreProjects
 ```
 
 > [!NOTE]
-> The order of extended interfaces determines priority for name or pack ID conflicts - earlier ones take precedence.
+> The order of extended interfaces determines priority for name conflicts - earlier ones take precedence. The extended projects' numbers
+> come first: their hosts keep their `uid`s and the project's own hosts continue after them, and an imported pack keeps the wire id its own
+> project gave it (see [How the tables stay right](#how-the-tables-stay-right)).
 
 For example, the [`AdHocProtocol.cs`](https://github.com/AdHoc-Protocol/AdHoc-protocol/blob/main/AdHocProtocol.cs) description defines public,
 external connections. Backend infrastructure on the **Server** side often requires an internal protocol for tasks like:
@@ -1090,26 +1187,60 @@ marker interface.
 The AdHoc compiler generates host code only for the programming languages you explicitly specify, using XML documentation comments (`/// <see.../>`)
 that define the target language and the desired implementation style.
 
+One such comment line is usually the whole configuration of a host - `/// <see cref='InJAVA'/>--` says both "generate Java" and "every pack
+abstract". See [The Configuration Scoping System](#the-configuration-scoping-system) for the cases that need more than one.
+
 ### Implementation Modifiers
 
 When specifying a target language, append a two-character modifier (e.g., `++`, `+-`) to control the generated code's behavior.
 
-#### First Position: Parsing Strategy (`+` or `-`)
+#### First Position: Implementation (`+` or `-`)
 
-* `+` - **Full Object Deserialization (Concrete Implementation)**
-	* The streaming parser reads the entire message and constructs a complete, in-memory object. All data is deserialized before your code accesses
-	  it.
+* `+` - **Concrete: the generated pack holds the data**
+	* Receiving, the streaming parser reads the entire message and constructs a complete, in-memory object. All data is deserialized before your
+	  code accesses it. Sending, your code fills such an object and hands it over.
 	* Best for most application and business logic - simple, stateful objects that can be passed to methods or stored.
 
-* `-` - **Streaming Event-Based Parsing (Abstract Interface)**
-	* Activates an event-driven parsing model. The generator creates an abstract base class you must implement. As the parser reads data from the
-	  stream, it immediately calls methods on your implementation for each field encountered. **The full object is never allocated on the heap.**
-	* Best for high-throughput, low-latency scenarios - network routers, data loggers, or services that must process messages larger than available
-	  RAM.
+* `-` - **Abstract: your code holds the data**
+	* The generator creates an abstract base class you must implement. It works in **both directions**:
+		* **Receiving**, as the parser reads data from the stream, it immediately calls methods on your implementation for each field encountered.
+		* **Sending**, the serializer asks your implementation for each field as it writes it.
+
+	  **The full object is never allocated on the heap**, and there is no generated copy of the message on either side: the data goes from the
+	  socket buffer into your structures, and from your structures into the socket buffer.
+	* Best when the data already lives in structures of your own - see
+	  [Choosing `+` or `-`](#choosing--or---generated-objects-or-your-own). Also for high-throughput, low-latency scenarios - network routers,
+	  data loggers, or services that must process messages larger than available RAM.
 
 > [!NOTE]
 > The modifier set here is only the **host default**. It can be overridden per pack and even per field - the full
 > (host, language, entity) resolution model lives in [Implementation Management](#implementation-management-1).
+
+#### Choosing `+` or `-`: generated objects, or your own
+
+The question to ask is **where the data lives in the host**, not how large a message is.
+
+* **The generated packs are the host's data** - a new application, whose model *is* the protocol. Use `+`: the packs are ordinary objects, built,
+  stored and passed around like any other.
+* **The host already has its own model** - an existing system that gets a new network layer: a database node with its own query and result
+  structures, a message broker with its own request objects and log, a client library with its own records. Use `-` on the **whole host**:
+
+  ```csharp
+  /// <see cref='InJAVA'/>--
+  struct Broker : Host { }
+  ```
+
+  That one line is the whole configuration: every pack becomes an interface over the system's own objects. Each received message is handed field by
+  field straight into those objects, and each sent message is read field by field straight out of them. Nothing is converted twice, and there is no
+  second model to keep in sync. Choosing `+` here would make every message exist twice - once as the generated object and once as the system's own -
+  and cost a copy per message in each direction. Listing the packs one by one would say the same thing at more length, and go stale as the protocol
+  grows a pack.
+* **Mixed** - an application whose model is mostly the protocol, but with a few packs too large to hold at once, or a few packs it maps onto
+  structures it already has. Keep `+` as the host default and make just those packs, or just those fields, abstract. See
+  [Implementation Management](#implementation-management-1) and [Too large to materialize](#too-large-to-materialize---the-abstract---implementation).
+
+The choice is made per host: the same pack can be abstract on the host that binds it to an existing system, and concrete on a new client that has no
+model of its own.
 
 #### Second Position: Hash Support (`+` or `-`)
 
@@ -1119,12 +1250,12 @@ When specifying a target language, append a two-character modifier (e.g., `++`, 
 
 #### Modifier Summary Table
 
-| Modifier | Example                | **Parsing Strategy**          | **Hash Support** |
+| Modifier | Example                | **Implementation**             | **Hash Support** |
 |:--------:|:-----------------------|:------------------------------|:-----------------|
-|   `++`   | `<see cref='InCS'/>++` | Full Object Deserialization   | Enabled          |
-|   `+-`   | `<see cref='InCS'/>+-` | Full Object Deserialization   | Disabled         |
-|   `-+`   | `<see cref='InCS'/>-+` | Streaming Event-Based Parsing | Enabled          |
-|   `--`   | `<see cref='InCS'/>--` | Streaming Event-Based Parsing | Disabled         |
+|   `++`   | `<see cref='InCS'/>++` | Concrete: the pack holds data  | Enabled          |
+|   `+-`   | `<see cref='InCS'/>+-` | Concrete: the pack holds data  | Disabled         |
+|   `-+`   | `<see cref='InCS'/>-+` | Abstract: your code holds data | Enabled          |
+|   `--`   | `<see cref='InCS'/>--` | Abstract: your code holds data | Disabled         |
 
 > **Default: `++`** - If a language tag has no modifier (e.g., `<see cref='InCS'/>`), it defaults to `++`.
 
@@ -1132,11 +1263,46 @@ When specifying a target language, append a two-character modifier (e.g., `++`, 
 
 ### The Configuration Scoping System
 
-* **No configuration, no code.** If a host has no `<see.../>` tag for a given language, no code is generated in that language.
-* **Top-down and persistent.** The generator reads `<see.../>` tags top to bottom. When it encounters a language marker, that rule becomes the *
-  *active rule** for that language and applies to all following entities - until another rule for the same language appears.
-* **Grouped application.** When specific packs or [Pack Sets](#pack-set) are listed immediately after a language marker, that rule is **confined** to
-  that group only. The previously active rule resumes afterward.
+**For most hosts the configuration is one line.**
+
+```csharp
+/// <see cref='InJAVA'/>--       // generate Java for this host; every pack abstract, no Equals / GetHashCode
+struct Node : Host { }
+```
+
+A language marker does both jobs at once: it turns that language on for the host, and it sets the modifier every pack of the host gets. A host that
+wants one rule for everything needs nothing more - no lists, no per-pack lines, no repetition.
+
+A second line is needed only when **some packs differ from the rest**. Then the configuration reads as a list of exceptions followed by the rule:
+
+```csharp
+/// <see cref='InJAVA'/>--       // the exceptions: these three are abstract
+/// <see cref='RowsResult'/>
+/// <see cref='Row'/>
+/// <see cref='Cell'/>
+/// <see cref='InJAVA'/>+-       // the rule for every other pack of this host
+struct Driver : Host { }
+```
+
+#### The rules
+
+* **No marker, no code.** A host with no `<see cref='In…'/>` marker for a language gets no code in that language.
+
+* **A marker sets the current setting.** The generator reads the lines top to bottom keeping a current setting, one modifier per language, `++` for
+  every language before the first marker. A marker overwrites its own language's part of it and leaves the other languages as they were.
+
+* **The modifier is what stands right after the marker** - one or two of `+` and `-`. Anything else on that line, a trailing `//` comment most
+  often, is not part of it, and a marker written without a modifier means `++`. A single character sets the implementation and leaves hash support
+  at `+`: `<see cref='InCS'/>-` is `-+`.
+
+* **What follows a marker is its group.** The references between a marker and the next marker - packs, [Pack Sets](#pack-set), fields - each get the
+  current setting as it stands at that marker. A group is an exception list and nothing more: it changes no other pack.
+
+* **A marker with no group sets the host's default** - the setting for every pack not named in any group. If several markers have no group, **the
+  last of them wins**; if none has, the default is `++`.
+
+The default is one line among the others, and the rule is which no-group marker comes last, not where it sits. Written alone it is the whole
+configuration; written after the exceptions it reads as their fallback, which is why the examples put it there.
 
 #### Recursive Scoping with the `@` Prefix
 
@@ -1298,7 +1464,8 @@ against either the full pack type name or the documentation comment.
 ##### By Name Filtering (`[KeepName]` & `[SkipName]`)
 
 Filters packets based on their full type names (namespace + name). The regex is matched against the entire qualified path (e.g.,
-`com.my.company.Monitoring.VolatileInfo.DiskIO.BytesTime.Subscribe`). This is excellent for protocol versioning or strict namespace targeting.
+`com.my.company.Monitoring.VolatileInfo.DiskIO.BytesTime.Subscribe`). This is excellent for protocol versioning or strict namespace targeting - see
+[Several kinds of peer, and several generations of one](#several-kinds-of-peer-and-several-generations-of-one) for the shape a generation usually takes.
 
 > [!IMPORTANT]
 > Because the match runs against the **full type name**, a bare name like `"MyPack"` will also match `MyPackExtended`, `NotMyPack`, or
@@ -1328,7 +1495,7 @@ interface SubsUnsubs<SCOPE>{}
 ##### By Documentation Filtering (`[KeepDoc]` & `[SkipDoc]`)
 
 Filters packets based on their documentation text. The generator scans a unified pool per pack that includes both `///` comments on the class
-definition and the text after `/>` on the pack's line in the Dashboard - there is no distinction between the two. This enables powerful visual tagging
+definition and the tags after the numbers on the pack's line in the [packs table](#the-packs-table) - there is no distinction between the two. This enables powerful visual tagging
 using emojis or short keywords in either location.
 
 ```csharp
@@ -2161,6 +2328,20 @@ No value types exist, so the generator uses TS declaration merging:
 - `type Pack = number` - the pack *is* a number.
 - `namespace Pack { ... }` - holds per-field `get` / `set` / `hasValue` / `to_null` helpers that do the bit math.
 - Whole-pack nullability uses an out-of-range sentinel encoded as a literal type, so TS narrows it automatically.
+- A one-field pack with a range - `[MinMax(400_000_000, 400_000_193)] int` - is kept in collections and sent as its **code**, `value - MIN`:
+  one byte here. `Pack.Nullable.get( code )` gives the value, `Pack.Nullable.set( value )` the code.
+- A range at the end of `long` makes the value a `bigint` - it does not fit the 53 bits of a `number` - while its code stays a `number`.
+
+> [!NOTE]
+> In an **abstract** pack (`-`) the accessors your code implements give and take a field of such a pack as its **code** - a `number`, exactly
+> what travels on the wire. Nothing is shifted and no `bigint` is made per item; where the value itself is needed, `Pack.Nullable.get` and
+> `Pack.Nullable.set` convert. In C# and Java the accessors give and take the pack: there it is a value type, and the shift costs nothing.
+
+**TypeScript - the generated project is type-checked**
+The project comes with a `tsconfig.json` that goes past `strict`: `noImplicitOverride`, `noImplicitReturns`, `exactOptionalPropertyTypes`,
+`noPropertyAccessFromIndexSignature`, `noUncheckedSideEffectImports`, `isolatedModules`, and unreachable code and unused labels are errors.
+`npm start` checks the types first (`tsc --noEmit -p .`) and runs the code only when they hold: `tsx` alone runs TypeScript without looking at
+its types. The generated code and the runtime library use `undefined` for "no value", never `null` - so a `null` passed to them does not compile.
 
 | Target     | Representation                                       | Zero alloc | IDE ergonomics via  |
 |:-----------|:-----------------------------------------------------|:----------:|:--------------------|
@@ -2188,13 +2369,81 @@ class Pack : Modify<TargetPack> {
 > A modifier pack can function as a normal pack.
 
 > [!IMPORTANT]
-> A modifier merges **fields**, not attributes. A [transform chain](#transform-chains---stages-roles-and-flows) or a
-> [trim](#trimming-a-chain---what-a-store-keeps) written on the modifier applies to the **modifier pack itself** - which is transmittable like any
-other -
-> and never reaches the target; the Agent warns, since that is rarely what was meant. To compress or cut a pack you do not own, put the chain on the
-field
-> that carries it, on the target pack if you own it, or on the [connection](#example-compress-and-encrypt-an-imported-connection) - see
-> [Across imported projects](#across-imported-projects).
+> **Fields merge, attributes replace.** See [Replacing the attributes of an imported declaration](#replacing-the-attributes-of-an-imported-declaration).
+> Fields accumulate across every layer that modifies the target. Attributes go the other way: a modifier declaring **any**
+> attribute replaces the target's **whole** attribute set with its own, and a modifier declaring none leaves the target's
+> attributes untouched. That is what lets you re-chain or re-cut a pack you do not own.
+
+### Replacing the attributes of an imported declaration
+
+A [transform chain](#transform-chains---stages-roles-and-flows) and a [trim](#trimming-a-chain---what-a-store-keeps) are written on the declaration
+they belong to. Import makes that a problem: the base project's author fixed them before your project existed, and cannot have named a connection you
+are about to add. A `Modify<>` modifier is how a later layer re-states them.
+
+```csharp
+// base project: the archive reaches the wire compressed, and the leg that stores it takes the compressed blob
+[Zstd, ToStream<IfSendingFrom<Agent, Communication>>]
+public class List { [D(0xFFFF)] FileEntry[,] files; }
+
+// extension: the same blob is forwarded to a third host, over a connection the base never knew about
+[Zstd, Stream<IfSendingFrom<Agent, Communication>, IfSendingFrom<Server, Server__MonitoringObserver>>]
+class ModifyList : Modify<FileEntry.List> { }
+```
+
+The store now injects the bytes it kept, un-parsed and un-recompressed, and the far end runs `Zstd⁻¹` and rehydrates the typed pack. Both cuts sit at
+one depth because one `Stream<To, From>` marker puts them there, which is the rule a store-and-replay pair has to satisfy anyway.
+
+**The whole set is replaced, never merged.** An attribute list is ordered and position-bearing - a chain means what it means only as a whole - so the
+layer that re-declares it states all of it, `[Zstd]` and the caps included. Restating it is also what makes the replacement readable: the effective
+declaration is one place, not the base plus every extension.
+
+| The modifier declares                      | The target's attributes become    |
+|:-------------------------------------------|:----------------------------------|
+| nothing                                    | unchanged                         |
+| one or more attributes                     | exactly the modifier's            |
+| [`[ClearAttributes]`](#clearattributes)    | empty                             |
+
+The attributes **move**: a modifier that is also an ordinary transmittable pack carries none of its own afterwards.
+
+**Branch attributes take no part.** `L____________`, `l____________`, `____________R`, `____________r` and `_____lr_____` spell a state's
+transitions, which is its body and not its tuning. They merge like fields, and a replacement never drops them - so a state modifier keeps editing
+branches through `_<>` and `X<>` exactly as before, while its `[Timeout]` or `[TransmitTimeout]` replaces the target's.
+
+**The topmost layer wins.** With several projects modifying one target, the one whose project imports the others, directly or transitively, decides.
+Two modifiers in projects that do not import one another would leave the outcome to composition order, and are refused:
+
+```
+ERROR  Both 'A.ReChain' (project A) and 'B.ReChain' (project B) replace the attributes of Payload,
+       and neither project imports the other, so which one wins would be decided by composition order.
+       Keep one of them, or move the replacement into a project that imports both.
+```
+
+The Agent logs every replacement with the set it removed and the set it installed, so a base that quietly changes a compression level shows up as a
+diff rather than as a blob that stops decoding:
+
+```
+INF  The attributes of "org.unirail.AdHocProtocol.FileEntry.List" are replaced by the modifier
+     "org.unirail.AdHocProtocolWithBackend.ModifyList" (line 1769):
+     ["Zstd, ToStream<IfSendingFrom<Agent, Communication>>"]
+  -> ["Zstd, Stream<IfSendingFrom<Agent, Communication>,IfSendingFrom<Server, Server__MonitoringObserver>>"]
+```
+
+> [!WARNING]
+> Replacement restates a format that something already stored. Everything [pinned](#trimming-a-chain---what-a-store-keeps) to the left of a cut - the
+> stages, their order, their design-time parameters - must still match what wrote those bytes. Nothing on the wire announces a mismatch; the reader
+> simply fails. Treat a replaced chain as a published format and keep the layers in step.
+
+#### `[ClearAttributes]`
+
+A modifier declaring no attributes means "leave the target's attributes alone", because that is what a modifier which only merges fields has to mean.
+Stripping them therefore needs something to write:
+
+```csharp
+[ClearAttributes] class PlainList : Modify<FileEntry.List> { }   // no chain, no trim, no caps
+```
+
+The marker carries no meaning of its own and never reaches the target; it exists to make the attribute list non-empty while the set it denotes is
+empty. Writing it beside another attribute is refused - the two halves would say opposite things about one set.
 
 ---
 
@@ -2222,6 +2471,33 @@ namespace com.company {
 > number of [Actors](#actors) multiplex independent conversations over it, and a virtual connection already multiplexes up to
 > [`MaxTunnels`](#the-two-knobs) concurrent tunnels over its path.
 
+### Connecting a host to itself
+
+A host is a **type** of node, not a single process. When separate instances of the same host type have to talk to each other - brokers replicating
+from brokers, cluster nodes gossiping, peers in a mesh - declare a Connection from the host to itself:
+
+```csharp
+interface InterBroker : Connects<Broker, Broker> { … }
+```
+
+One host is generated, and it holds **both ends** of the Connection. Every pack the Connection carries is both sent and received by that host,
+every state machine runs both its left and its right branches, and every RPC is both called and answered. Each socket still has a caller - the
+instance that dialed, the **left** side - and an acceptor - the instance that accepted, the **right** side: a pack declared as sent by the left side
+is sent by the caller and received by the acceptor, and the other way round, so the state machines, the RPC roles and the header directions keep their
+meaning.
+
+The only thing the generated code learns at run time is which half of the actor-instance id space is its own: the instance that dialed takes the
+left half, the instance that accepted takes the right half, so instances created at the two ends of one socket at the same moment never get the same
+id. This is decided once, when the socket connects; nothing is added to the per-pack path.
+
+A `Connects<X, X>` counts as the one Connection of the pair `(X, X)`. Do **not** invent a second host type (`BrokerPeer`) just to play the calling
+side: the two host types would be two generated modules for what is one process, and their generated classes share names and cannot be loaded
+side by side.
+
+> [!NOTE]
+> Only a physical `Connects<>` can join a host to itself. A [virtual connection](#virtual-connections) from a host to itself would route a tunnel
+> back into the host it left - a routing loop - and is rejected.
+
 > [!IMPORTANT]
 > **[Data is represented on the wire in little-endian format.](https://news.ycombinator.com/item?id=25611514)**
 
@@ -2232,6 +2508,9 @@ response patterns. You do this by declaring [`Actors`](#actors), [`States`](#sta
 
 Together, these constructs define a **Finite State Machine (FSM)** for each participating actor. The FSM tracks which `State` the communication is
 currently in, which in turn determines which messages are valid to send or receive at that moment.
+
+A Connection says nothing about the sockets underneath it. Whether it gets a port of its own or shares one with the other Connections of its host is
+decided at deployment - see [Multiplexing](#multiplexing).
 
 ---
 
@@ -2374,7 +2653,7 @@ interface ClientServerConnection : Connects<Client, Server>{
 ```
 
 > [!NOTE]
-> Alternatively, if these packs are documented (e.g., with `log_events` in their `///` comments or Dashboard line), you can use the KeepDoc form:
+> Alternatively, if these packs are documented (e.g., with `log_events` in their `///` comments or packs table tags), you can use the KeepDoc form:
 > `[l____________("log_events")]`
 
 **No-Argument Overloads**
@@ -2386,7 +2665,7 @@ create a reusable empty sentinel class **once** per project:
 class NoArg { }
 ```
 
-Tag it in the Dashboard alongside the other packets for that state.
+Tag it in the packs table alongside the other packets for that state.
 
 **Example: Grouping related fire-and-forget functions**
 
@@ -2450,6 +2729,18 @@ OR_NotFound FetchFile(FileId id);
 ```csharp
 interface ClientServerConnection : Connects<Client, Server> {
     (L____________, FileData, OR_NotFound) FetchFile((FileName, FileId) query);
+}
+```
+
+**The argument and the reply are [Pack Sets](#pack-set).** The parameter type, and every element of the return tuple after the direction marker,
+take what a branch's `PACKS` takes: a pack, a named Pack Set, a `Project`/`Host`/`Pack` scope with or without `@`, an in-place `_<…>`, `X<…>`
+exclusions, a filter template, or a tuple of those. The elements of the return tuple form one set, so an `X<…>` in one of them removes from the
+others. Packs and Pack Sets may be declared anywhere in the project - before or after the Connection.
+
+```csharp
+interface TelemetryLink : Connects<Observer, Server> {
+    (L____________, Monitoring.VolatileInfo.CPU.BytesTime.List) getCPU(CPURequest req);           // CPURequest : _<(ForPeriod, ForRange)>
+    (L____________, _<@Replies>, X<Replies.Legacy>)             ask(RecentOnly<@Requests> req);  // a scope minus one pack; a filter template
 }
 ```
 
@@ -2666,6 +2957,8 @@ The runtime engine automatically enforces the following rules:
 - **Allocation Limits:** Exceeding `MaxActiveInstances` **closes the network connection**. Standard swarms configured with `UNLIMITED` and all RPC
   Shorthand Actors bypass these checks completely.
 - **Timeouts:** If a `[ReceiveTimeout]` or `[TransmitTimeout]` is reached, the **network connection is closed** by default to prevent hangs.
+- **Lost or broken connection:** With `[Resumable(minutes)]` on the current state or on the Connection the session is **parked** and waits for its
+  peer to come back; otherwise it ends with the connection. See [Sessions](#sessions).
 - **`End` State:** Transitions to `org.unirail.Meta.End` **delete the actor pair**, freeing instances while keeping the physical connection open for
   other actors.
 - **`Close` State:** Transitions to `org.unirail.Meta.Close` trigger a **graceful connection shutdown** - the transmission queue is fully drained
@@ -2678,6 +2971,11 @@ The runtime engine automatically enforces the following rules:
 ## States
 
 States represent the distinct processing phases in an Actor's lifecycle. They define which messages are valid and which logic should execute.
+
+> [!NOTE]
+> A state can outlive a lost connection: `[Resumable(minutes)]` on a state (or on the Connection) parks the session and defers the state's close, so a
+> reconnecting peer resumes **in that state**, not at the start. This rides on the ordinary login handshake - see [Sessions](#sessions); do not
+> hand-roll FSM restoration.
 
 The actor's **initial state** is the **topmost declared state with at least one transitional branch** (`L____________` or `____________R`) - the first
 station the actor *can be in* and *can leave*. Name it clearly (e.g., `Start` or `Handshake`).
@@ -2696,6 +2994,17 @@ States are declared as C# **empty `struct`s** inside the Actor interface, with b
 > [!NOTE]
 > The state machine is purely event-driven (packet transmission and timeouts). AdHoc generates all state-transition code from your dataflow
 > description. You only need to integrate the generated code and add your custom business logic.
+
+> [!IMPORTANT]
+> **Each direction is a single-threaded event loop - think of a JavaScript engine, one per direction.** A connection has two loops: the **receive**
+> side (inbound packets, receive timeouts - your `OnReceiving`/`OnReceived` run here) and the **transmit** side (outbound packets, transmit timeouts -
+> your `OnSerializing`/`OnSerialized` run here). Within one direction events are handled one at a time, run to completion - an event is dispatched to the actors and their current states, and only when that returns is the next event of that
+> direction taken. Actors do **not** run in parallel: several actors on one connection are just several FSMs the same direction's thread advances in
+> turn, so handlers on the same side never race and need no locks for state they own. The two directions, however, are separate threads and may run at
+> once - state shared between a receive handler and a transmit handler is the one place you still coordinate. The FSM itself is safe across the two: the
+> current state is published so a transition on one side is seen whole on the other, and a value read from the connection at an instant - such as the
+> parked-session wait when it is lost - reflects a consistent snapshot of the actors' states. Do not block inside a handler: a slow handler stalls that
+> whole direction, exactly as a slow callback stalls a JS event loop - hand long work to another thread and post the result back as the next event.
 
 The code generator collects all states, resolves links via branch targets, and traverses the state graph starting from the initial state. A
 compilation error is raised if the generator detects duplicate state names or multiple independent state chains.
@@ -2724,6 +3033,10 @@ Limit how long an actor may wait in a state using built-in timeout attributes (v
 - `[ReceiveTimeout(seconds)]` - maximum time to wait for an incoming message
 - `[TransmitTimeout(seconds)]` - maximum time to send an outgoing message
 
+Let a session outlive a lost or broken connection while an actor is in a state:
+
+- `[Resumable(minutes)]` - how long the session waits, parked, for its peer to reconnect and continue it - see [Sessions](#sessions).
+
 You may also add **any custom attributes** to states or actors. The code generator preserves them and makes them available as constants or static
 fields in the generated code. Use this to attach routing tags, UI labels, or any application-specific metadata directly to your protocol FSM.
 
@@ -2750,7 +3063,7 @@ Where `(...)` stands for the optional constructor parameters: `(KeepDoc, SkipDoc
 
 The constructor takes four optional named parameters: `string KeepDoc = ""`, `string SkipDoc = ""`, `string KeepName = ""`, and
 `string SkipName = ""`. The `Doc` filters are regex patterns applied to each pack's documentation text (a unified pool of `///` class comments and
-Dashboard line text). The `Name` filters are regex patterns applied to each pack's full type name (namespace + name). `Keep` retains only matching
+the pack's tags in the packs table). The `Name` filters are regex patterns applied to each pack's full type name (namespace + name). `Keep` retains only matching
 packs; `Skip` removes matching packs. All use `|` as OR separator.
 
 Since all parameters are optional with defaults, you can use C# named parameter syntax to set only the ones you need, or pass empty strings
@@ -2865,10 +3178,10 @@ For simple interactions, method-signature-style interfaces synthesize a 2-state 
 > [L____________<DoneState, FinalStatusPayload>]          // ID 2: Transition
 > struct ProcessingState { }
 >
-> // Option B: KeepDoc filtering (using documentation text from comments or Dashboard line)
-> // In Dashboard:
-> // <see cref = 'StatusPayload' />      status
-> // <see cref = 'FinalStatusPayload' /> final_status
+> // Option B: KeepDoc filtering (using documentation text from comments or packs table tags)
+> // In the packs table:
+> // <see cref='FinalStatusPayload'/>Ā    1 final_status
+> // <see cref='StatusPayload'/>ÿ         0 status
 > [l____________("status")]                    // ID 1: Stay in state
 > [L____________<DoneState>("final_status")]   // ID 2: Transition
 > struct ProcessingState { }
@@ -3112,7 +3425,230 @@ stateDiagram-v2
 ```
 
 > [!WARNING]
-> Short block comments such as `/*įĂ*/` contain auto-generated unique identifiers. **Never edit or duplicate them.**
+> Short block comments after a branch, such as `/*Ā*/`, are its auto-generated identity. **Never edit or duplicate them.** All other numbers
+> live in the [numbers tables](#numbers-tables).
+
+---
+
+## Sessions
+
+A **session** is a live instance of a Connection: its actors, the state each of them is in, and whatever your code has attached to it. The
+network connection underneath is only its transport. By default the two live and die together: when the connection is lost, the session is gone,
+and the peer that reconnects starts a new one. AdHoc can decouple them.
+
+### A session outlives its connection
+
+`[Resumable(minutes)]` on a Connection, or on a State, tells how long a session survives the loss of its connection:
+
+```csharp
+[Resumable(30)]                                   // every state of this Connection: half an hour
+interface Communication : Connects<Client, Server> {
+    interface Session : Actor {
+        [Resumable(0)]                            // nothing to keep before the login
+        [____________R<Working, Login>]
+        struct Start { }
+
+        [Resumable(60 * 24)]                      // a day for a working session
+        [_____lr_____<@Communication>]
+        struct Working { }
+    }
+}
+```
+
+- On a **Connection** the value applies to all of its states; on a **State** it applies while an actor is there. When both are present the
+  **larger** applies. `0`, the default, ends the session with the connection.
+- It is an attribute, so a [`Modify<>`](#modifying-imported-connections) can add it to a Connection or a State you do not own.
+
+> [!CAUTION]
+> **A parked session is not free.** For the whole wait it holds its connection slot, its actors and everything your code attached to them, the
+> buffers and the contexts of its transform stages (a compression context is megabytes), and - with guaranteed delivery - its journal. A server
+> that parks thousands of sessions for an hour pays for thousands of sessions it is not serving. Set the minutes to what a reconnecting peer
+> really needs, keep `[Resumable(0)]` on states where there is nothing worth keeping, and expect the peer to be late: the resources come back
+> only when the time runs out or the peer returns.
+
+> [!IMPORTANT]
+> **The cheapest parked session is the one you did not park.** Before reaching for long waits, add to your protocol description the entities that
+> let the session state itself travel: a pack that holds what a session is - the user, the progress, the pending work - is serialized by the very
+> same generated code to a file or a database row, and deserialized from it when the peer returns, whether in a minute or in a month. AdHoc
+> serialization is not tied to a socket: a pack written to a file or a database column is the same bytes as a pack on the wire. A session that
+> can be stored this way needs no minutes at all, or only the few it takes a peer to recover from a dropped Wi-Fi; a parked session is for what
+> cannot be rebuilt - a half-delivered guaranteed stream, a live transaction - and for nothing else.
+
+What happens when the connection is **lost or broken** - a socket error, a timeout, the peer's side closing it:
+
+1. If the session has no minutes to wait, or the peer has never identified itself, it ends: the usual close event reaches the actors.
+2. Otherwise the session is **parked** for that long. Its actors, their states and your application state stay as they were. A pack that was
+   half-way onto the wire is sent again from its first byte; a pack that was half-way in is discarded and arrives whole after the reconnect.
+3. A peer that reconnects in time and **names its session** (`reclaim(session_id)`) continues it exactly where it stopped - the same actor in the same
+   state. A peer that comes too late finds the session gone - the actors got their close event when the time ran out - and starts a new one.
+
+A **graceful** close by your own code, and an **Abort**, always end the session: they express intent, a lost connection does not.
+
+**Identity is a normal FSM handshake, not a special mode.** A fresh socket is anonymous, so every connection - a first-time login and a reconnect
+alike - starts its FSM at the beginning and runs your ordinary login flow (`Start -> ... -> identified`). Identity is yours to define: the peer sends
+whatever your protocol uses to recognize it - a token, a user id, a device id. Once your handler has recognized the peer, it calls one of two methods
+on the connection:
+
+- `long identify(int id)` - set this connection's identity, claim no parked session. It returns an opaque **session id**; persist it and hand it
+  back next time. The session id is all a peer needs to remember - it encodes the slot and the identity, and your code never takes it apart.
+- `long reclaim(long session_id)` - the peer presents the session id a previous `identify`/`reclaim` returned. When a session parked under that id still
+  exists, it **moves onto this connection** and the connection's own fresh session is discarded; the call returns a fresh session id to store for next
+  time. When nothing matches (too late, or never parked), `reclaim` behaves as `identify`.
+
+**Resumption is therefore not a separate protocol, and you must not build one.** `reclaim` is the single **join point** where the fresh login FSM
+hands the socket over to the parked work FSM. A peer that was mid-`Uploading` when its connection broke reconnects, proves who it is through the very
+same login states as a first-time client, and `reclaim` swaps its parked session in - it continues at `Uploading`, not at `Start`. The parked session
+already holds every actor, state and field; there is nothing to restore by hand. Do not add your own "where was I" packets or replay logic on top -
+the identification handshake plus `reclaim` is the whole mechanism.
+
+> [!IMPORTANT]
+> **Identity on a separate connection keeps the FSM for free; on a reused one it does not.** `reclaim` swaps a parked session in on the server side
+> because the fresh login arrives on a **separate** connection - a new socket, a new slot: the login FSM that restarts from the beginning and the
+> parked work FSM that `reclaim` hands back are never the same object, so restarting the login never touches the work state. A peer that keeps **one
+> long-lived connection** across reconnects (a typical client, and usually the **receiver** of a guaranteed stream) has no such split - the same
+> connection carries both the login handshake and the work FSM, so a reconnect re-runs the login flow from the start **on that connection and thereby
+> resets its actor state to the initial one**. The library still restores what it owns - the parked session and the journal position, so the guaranteed
+> stream replays from exactly where it stopped - but a state the FSM reached through a **non-guaranteed** trigger (a plain pack that is not in the
+> journal) is not replayed, and the login restart will not return the FSM to it on its own.
+>
+> The continuation handshake - the `Resume`/`Ack`/`Lost`/`Ask` service packs - is **internal**: high-level code never sees those packs and must never
+> craft its own. The continuation reaches your code **only as callbacks**. The runtime raises **`resume`** on **both** ends once the peer is identified,
+> but it means different things by role: to a **journalling (sender)** side it is the go-ahead to start sending its guaranteed packs; to a **receiving**
+> side it is the cue to name its consumed position to the peer and continue. The rest of this note is the **receiving** side, where readiness to accept
+> the resumed stream depends on FSM state - there, gate the restore on these callbacks, not on your own reconnect bookkeeping:
+>
+> - On the unplanned loss, **snapshot the current FSM state**, then let the connection fall back to its initial state for the login handshake.
+> - Restore that snapshot **only** when `resume(connection)` fires with a **non-null** connection - the single signal that this connection now continues
+>   the identified session. If `resume` is **not** called at all - the connection was never identified, or the link is not `Resumable` - there is
+>   nothing to continue and the receiver **must run from a clean slate**.
+> - Confirming identity is not, by itself, proof the data survived: a sender that **crashed and lost its journal** identifies exactly like a first-time
+>   one. When it cannot deliver from your position, the runtime raises the same callback with a **null** connection - `resume(null)` - and your consumed
+>   position jumps **past the bytes that are gone**, so the receiver never waits forever for packs that no longer exist. On `resume(null)`, **discard the
+>   snapshot and resync**: the continuation you prepared for did not happen. (The `Lost`/`Resume` service packs stay internal - the whole thing reaches
+>   you only as `resume(connection)` vs `resume(null)`.)
+>
+> This is application state you snapshot and reinstate under the runtime's callbacks, not a resume protocol of your own on the wire - the identification
+> handshake and `reclaim` are the whole mechanism.
+
+> [!IMPORTANT]
+> A `Stream` or `File` that was under way when the connection broke is sent again **from the start**. The library does not look inside a pack;
+> keep such sources re-readable, or be ready to supply them again.
+
+### Guaranteed delivery
+
+Continuation keeps the session; it does not, by itself, promise that every pack sent before the loss arrives. `Resumable<HOST, PACKS>` does. Declared
+**inside** a Connection body, it names the packs that `HOST` - one of the two hosts of that Connection - sends there with a guarantee: they arrive
+**once, in order**, across a lost connection.
+
+```csharp
+[Resumable(30)]
+interface ServerToMonitoring : Connects<Server, Monitoring> {
+    …
+    /// Everything the Server sends here except the telemetry snapshots: those describe the current state and are resent in full anyway.
+    interface Guaranteed : Resumable<Server, (ToMonitoring<@Monitoring>, X<@Monitoring.VolatileInfo>)> {
+        int resumable_megabytes => 100;           // how much the sender keeps for a replay
+    }
+}
+```
+
+The sender journals what it sends, up to `resumable_megabytes`; at the cap the guaranteed packs wait until the receiver catches up. After a
+reconnect the receiver names the position it has consumed, and the sender continues from there. Your code sees the packs arrive once, in order,
+and nothing else: the handshake, the positions and the journal live in the generated code and the runtime library.
+
+> [!IMPORTANT]
+> **The guarantee holds only as long as the sender's session and its journal do.** The replay comes from that journal, which is parked with the
+> session and gone if the sender process dies. When a reconnecting receiver names a position the sender can no longer reach - typically because the
+> sender **crashed and came back with an empty journal** - the sender tells it so, and the receiver's consumed position jumps forward **past the bytes
+> that no longer exist** instead of waiting for them. Confirming the peer's identity is not, by itself, a promise the journal survived: the receiver
+> sees the jump as a gap and must resync - see the receiving-side note under [Sessions](#sessions).
+
+The guarantee has a price on every send, not only after a loss: each guaranteed pack carries a small position header and is copied into the
+journal, and the journal - up to `resumable_megabytes` **per sending host per Connection** - stays allocated for as long as the session lives,
+parked or not. Guarantee the packs that must not be lost, not everything.
+
+> [!WARNING]
+> **Guaranteed delivery needs the wait time set explicitly:** a Connection that declares a `Resumable<HOST, PACKS>` must carry
+> `[Resumable(minutes)]`, at least one minute - a journal is only useful if the session it belongs to survives the loss. The agent stops
+> without it.
+
+- `PACKS` is a Pack Set, or a tuple of packs, Pack Sets, scopes and exclusions, as in [Pack Headers](#pack-headers).
+- One declaration per host per Connection; a Connection may carry one for each direction.
+- Only the packs `HOST` really transmits on that Connection count; a listed pack it does not transmit there is dropped with a warning.
+- Packs outside `PACKS` travel as before: they continue with the session, but a pack lost with the connection is lost.
+- A session that outlives its minutes starts over; the actors got their close event when the time ran out.
+
+### UDP
+
+`[UDP(minutes)]` on a Connection says it is carried over UDP. A datagram can be lost, duplicated or reordered on its own, while the connection
+stays up, so over UDP a pack that is not journalled may simply never arrive. That is why a `[UDP]` Connection guarantees **every** pack, both
+ways: the agent declares a `Resumable<HOST, PACKS>` for each of its two hosts, covering every pack that host sends on the Connection. What
+[guaranteed delivery](#guaranteed-delivery) does after a lost connection, UDP does after every lost datagram: the receiver sees the gap by the
+position header, asks for the rest, and the sender replays it from its journal. Once, in order - and across a lost connection as well.
+
+```csharp
+[UDP(30)]                                         // over UDP; a session outlives its socket by 30 minutes
+interface GameLink : Connects<Client, Server> {
+    …                                             // no Resumable<HOST, PACKS> here: every pack is guaranteed already
+}
+```
+
+- `minutes` is the Connection's `[Resumable(minutes)]`: how long a session outlives its socket, at least one minute. `[UDP]` without it takes the
+  `[Resumable(minutes)]` of the Connection; one of the two is required, and when both are given they must agree.
+- Every pack either host sends on the Connection carries the position header and is copied into the sender's journal, `resumable_megabytes` = 100
+  per sending host. The four service packs of the handshake - `Resume_`, `Ack_`, `Lost_`, `Ask_` - are the only ones left out.
+- The headers are named after the Connection and the host, `Connection_Host_`, with the fields `pos_Connection_Host` and `time_Connection_Host`.
+- A `Resumable<HOST, PACKS>` declared inside a `[UDP]` Connection is an error: there is nothing left for it to add.
+- `[UDP]` goes on a Connection only, not on an Actor or a State: the transport is chosen for the whole Connection.
+- A [transform chain](#transform-chains---stages-roles-and-flows) on a `[UDP]` Connection (`[Zstd]`, `[ChaCha20]`, …) is applied to
+  **each pack** sent on it, not to the stream: a lost datagram must not break the compressor or the cipher for everything
+  after it. The same holds for any Connection with a `Resumable<HOST, PACKS>`, over TCP as well - see
+  [Chains on a connection](#chains-on-a-connection).
+- `[UDP]` needs a runtime with a UDP transport: C# and Java. A Connection with a host generated in TypeScript cannot be `[UDP]`, and a
+  `[UDP]` Connection cannot be listed in a `Multiplex<…>`: a multiplexed port is a TCP port.
+
+#### Leaving packs unguarded - `[UDP<EXCLUDE_PACKS_SET>]`
+
+Some packs are not worth the guarantee: a telemetry sample, a position update, a snapshot that the next one replaces anyway. Name them in the
+generic argument, and they travel on the Connection as before - both ways, whichever host sends them - but **unguarded**: no position header, no
+copy in the journal, no replay.
+
+```csharp
+interface Volatile : _<(Telemetry, PlayerPosition)> { }
+
+[UDP<Volatile>(30)]                               // everything is guaranteed but Telemetry and PlayerPosition
+interface GameLink : Connects<Client, Server> {
+    …
+}
+```
+
+- `EXCLUDE_PACKS_SET` is a Pack Set, or a tuple of packs, Pack Sets, scopes and exclusions, as in [Pack Headers](#pack-headers) - the same form as
+  the `PACKS` of a `Resumable<HOST, PACKS>`.
+- An unguarded pack lost with its datagram is lost for good, and nobody notices: without a position the receiver sees no gap. The guarded packs of
+  the same datagram come back by the replay; the unguarded ones do not. After a lost connection they are not replayed either.
+- A host whose packs on the Connection are all excluded keeps no journal.
+- A listed pack that no host sends on the Connection changes nothing; the agent warns about it, as it is most likely a slip in the set.
+- `minutes` works as in `[UDP(minutes)]`: `[UDP<EXCLUDE_PACKS_SET>]` alone takes the Connection's `[Resumable(minutes)]`.
+
+> [!NOTE]
+> The guarantee is the one of [guaranteed delivery](#guaranteed-delivery), with its price on every pack: a position header and a copy in the
+> journal. On TCP you choose the packs that must not be lost; on UDP you choose the ones that may be.
+
+### Session rules at a glance
+
+| Rule                          | Detail                                                                                                                                     |
+|:------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------|
+| Lost or broken connection     | Socket error, timeout, or the peer's side closing it. The session is parked if the state or the Connection has minutes and the peer is identified; otherwise it ends. |
+| Graceful close, `Abort`       | Always end the session.                                                                                                                    |
+| `[Resumable(minutes)]`        | On a Connection: all of its states. On a State: while an actor is there. The larger applies. `0` = the session ends with the connection. Addable through `Modify<>`. |
+| Identity                      | A normal login FSM on every fresh socket; your handler then calls `identify(id)` (returns a session id) or `reclaim(session_id)` (swaps in the parked session). No separate resume protocol. |
+| Half-sent pack                | Sent again from its first byte on continuation; a `Stream`/`File` source has to be re-readable.                                          |
+| Half-received pack            | Discarded; arrives whole after the reconnect.                                                                                              |
+| `Resumable<HOST, PACKS>`      | Guaranteed once-in-order delivery of `PACKS` sent by `HOST` on that Connection; journal capped by `resumable_megabytes`; the Connection **must** carry `[Resumable(minutes)]`. |
+| `[UDP(minutes)]`              | On a Connection: carried over UDP; every pack of both hosts is guaranteed, as by a `Resumable<HOST, PACKS>` per host; `minutes` as in `[Resumable(minutes)]`. |
+| `[UDP<EXCLUDE_PACKS_SET>(minutes)]` | As `[UDP(minutes)]`, but the packs of the set travel unguarded: no position header, no journal, no replay.                          |
+| Expiry                        | The actors receive the ordinary close event; the peer that comes later starts a new session.                                               |
+| Cost                          | A parked session holds its slot, actors, application state, stage contexts and journal until the peer returns or the time runs out; a guaranteed pack costs a header and a journal copy on every send. |
+| Alternative                   | Describe the session state as packs and store them with the generated serialization (file, database); rebuild the session from them on return, and park only what cannot be rebuilt. |
 
 ---
 
@@ -3163,8 +3699,8 @@ interface UpdateCommunication : Modify<AdHocProtocol.Communication> {
 
 ### Example: Compress and Encrypt an Imported Connection
 
-A [transform chain](#transform-chains---stages-roles-and-flows) is an attribute, so a modifier can add one to a connection whose definition you don't
-own. The target keeps everything else it declares - only its transport gains the stages:
+A [transform chain](#transform-chains---stages-roles-and-flows) is an attribute, so a modifier can put one on a connection whose definition you don't
+own. The target keeps its hosts, its actors and its states - only its transport gains the stages:
 
 ```csharp
 [Zstd(6), ChaCha20] interface SecureCommunication : Modify<AdHocProtocol.Communication> { }
@@ -3172,6 +3708,22 @@ own. The target keeps everything else it declares - only its transport gains the
 
 Every byte that connection carries is now compressed then encrypted. See [Chains on a connection](#chains-on-a-connection) for how far the chain
 reaches on a physical link versus a tunnel.
+
+The same goes for the wait time of a [session](#sessions) - an imported Connection, or one of its States, can be given `[Resumable(minutes)]`:
+
+```csharp
+[Resumable(30)] interface KeptCommunication : Modify<AdHocProtocol.Communication> { }
+```
+
+> [!IMPORTANT]
+> A modifier's attributes **replace** the target's, they do not accumulate onto them - see
+> [Replacing the attributes of an imported declaration](#replacing-the-attributes-of-an-imported-declaration). Both examples above are written against
+> a target that declares none, so nothing is lost; against one that does, whatever you want kept has to be written out again. To encrypt a connection
+> **and** keep it resumable, put both on one modifier:
+>
+> ```csharp
+> [Zstd(6), ChaCha20, Resumable(30)] interface SecureKeptCommunication : Modify<AdHocProtocol.Communication> { }
+> ```
 
 ## Virtual Connections
 
@@ -3341,8 +3893,8 @@ From one `VirtuallyConnects` declaration the generator wires all three roles:
   relay host, chained.
 * **On the endpoints `L` and `R`** - either the tunnel endpoint API (empty body) or the full structured connection (non-empty body), addressed by
   `tunnel_id` when `MaxTunnels > 1`.
-* **In the Dashboard** - the virtual connection takes a persistent **`id`** from the same pool as transmittable packs (always active when included),
-  so it appears as a first-class, taggable entity at the top of the protocol file.
+* **In the numbers tables** - the virtual connection's line in the `connections` section carries, after its number, a persistent wire
+  **`id`** in decimal, from the same pool as transmittable packs (always active when included).
 
 ### Middle-tier patterns
 
@@ -3421,6 +3973,232 @@ Use the [`Relay`](#relay) when it must not: a pure routing hop that moves bytes 
 schema. The Monitoring server's `getSessionFiles` /
 `VolatileInfoHandler` handlers are the canonical Smart-middle example.
 
+## Multiplexing
+
+**A multiplexer is one server on one port playing several servers - up to 256.** Which one it plays for a given socket depends on who is calling:
+the caller names itself when it connects, and from then on the server answers it as the server of that caller's Connection - its packs, its actors, its
+states - while the next socket on the same port may get a different one.
+
+It is a matter of the **listening** side only. The caller stays an ordinary client of its own Connection; all it adds is the byte.
+
+Without a multiplexer, a host that terminates several Connections needs a port for each: a listening socket accepts raw bytes, and it must already
+know which generated Connection will speak on them. `Multiplex<CONNECTIONS>` lets the Connections that share one host share **one port**.
+
+```csharp
+struct Vehicle       : Host{ }   // firmware 3.x
+struct VehicleLegacy : Host{ }   // firmware 2.x, still in the field
+struct Dashboard     : Host{ }   // operator console
+struct Service       : Host{ }   // diagnostic tool
+struct Fleet         : Host{ }   // the backend
+
+interface Telemetry       : Connects<Vehicle,       Fleet>{ … }
+interface TelemetryLegacy : Connects<VehicleLegacy, Fleet>{ … }
+interface Console         : Connects<Dashboard,     Fleet>{ … }
+interface Diagnostics     : Connects<Service,       Fleet>{ … }
+
+interface FleetPort : Multiplex<(Telemetry, TelemetryLegacy, Console, Diagnostics)>{ }
+```
+
+![Four peer hosts - two firmware generations of a vehicle, an operator console and a diagnostic tool - dial one host, Fleet, through a single port; behind it one TCP/WebSocket server instance and the multiplexer FleetPort, which reads the first byte of each socket - the dialing host's uid - and hands the socket to the matching pooled Connection](docs/img/multiplex-one-port.svg)
+
+Every socket that arrives on the port opens with **one byte: the `uid` of the host that dials**. `Fleet` is the one host all four Connections share,
+and on each of them the other end is a different host, so the byte names exactly one Connection. A [Connection of a host to itself](#connecting-a-host-to-itself)
+fits the same rule: its dialing host is the shared host, so its byte is the shared host's own `uid` - a Kafka broker port serves `ClientBroker` (the
+byte of `Client`) and `InterBroker : Connects<Broker, Broker>` (the byte of `Broker`) side by side. The multiplexer - generated for `Fleet` from the
+`FleetPort` declaration - reads that byte and hands the socket to a `Telemetry`, `TelemetryLegacy`, `Console` or `Diagnostics` Connection. From then
+on the socket is an ordinary link of that Connection: its packs, its actors, its states, exactly as declared. The byte is paid once per socket, never
+per pack.
+
+A multiplexer changes how Connections are **deployed**, not what they are. Nothing about a listed Connection is different on the wire after the first
+byte, and nothing in its declaration refers to the multiplexer.
+
+### Declared once, chosen at deployment
+
+A multiplexer declares what *may* share a port; it forces nothing. The generated code of every listed Connection works on a port of its own and on a
+multiplexed one alike, and each side makes its choice when it is set up:
+
+* **The listening host** hands the multiplexer to its server - or does not, and serves the Connection on a port of its own, exactly as before.
+* **The dialing host** is told whether the port it dials is multiplexed; if it is, its connection sends the byte first.
+
+![One host, Fleet, deployed three ways: a port and a server instance per Connection; one multiplexed port for all of them, where the first byte picks the Connection; and a mix - the public Connections share a multiplexed port while Diagnostics keeps a port of its own](docs/img/multiplex-shapes.svg)
+
+|                           |                                                                                                                                          |
+|:--------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
+| **A port per Connection** | a listener, a port, a firewall rule and a certificate for every Connection. Right when a Connection has to be reached, secured or restarted on its own |
+| **One multiplexed port**  | one listener, one address to publish, one certificate to renew, one hole to punch through the NAT                                         |
+| **Mixed**                 | the public Connections share a port; `Diagnostics` stays on a port of its own that only the service LAN can reach                        |
+
+A host may declare several multiplexers - one per port - and a Connection belongs to at most one of them. The two sides must agree: a caller that
+sends the byte to a direct port, or dials a multiplexed port without it, is as wrong as a caller dialing the wrong port.
+
+### Several kinds of peer, and several generations of one
+
+The shape repays the most where the peers differ, and the reason is rarely "to save a port".
+
+The fleet backend talks to the cars, to the operators watching them, and to the technician who plugs a laptop into one of them - three kinds of peer,
+three conversations, nothing in common but the address they dial. And the cars cannot be reflashed all at once: a firmware generation stays in the
+field for years, so the backend has to keep speaking the old dialect while the new one rolls out.
+
+A second firmware generation is not a version field inside a pack - it is a **second host**, and with it a **second Connection**. `VehicleLegacy` and
+`Vehicle` are different hosts with different `uid`s, so both dial the same port, and each lands on its own Connection:
+
+* **The old dialect is frozen, the new one is free.** `TelemetryLegacy` keeps the packs and the flow the deployed firmware was built against.
+  `Telemetry` changes without a thought for what is still driving around.
+* **No version branching in handlers.** Each generation has its own generated code and its own state machine. A handler never asks which firmware it
+  is talking to; the answer was settled by the first byte, before the first pack arrived.
+* **Retirement is a deletion.** When the last old vehicle is reflashed, `VehicleLegacy` and `TelemetryLegacy` are removed and the tuple of `FleetPort`
+  gets shorter - and nothing else moves.
+
+#### Why not a version field
+
+Schema evolution is the headline feature of tag-based formats, and they answer it inside a single schema: every field carries a number, new fields
+arrive optional, a peer skips what it does not recognise. What holds it together is a set of rules you must keep for as long as that schema lives -
+never reuse a tag, never change a field's type, never turn an optional field into a required one. The compatibility is real, and it is maintained by
+discipline.
+
+AdHoc answers the same question from the other end. A generation is not a state that one schema passes through; it is a host of its own.
+`TelemetryLegacy` does not stay compatible with the firmware in the field because somebody was careful with it - it stays compatible because nothing
+edits it. And `Telemetry` is free for exactly the same reason: it owes the old firmware nothing, so it can drop a pack, rename a state, change a
+field's type, and none of that reaches a vehicle still driving around on last year's build.
+
+The trade is worth naming plainly. Carrying generations as separate hosts means keeping their generated code alive side by side, and it fits a
+population you know - devices you shipped, peers you can enumerate, a retirement date you control. One evolving schema fits the opposite case: an open
+ecosystem where you will never meet most of the peers, and a declaration per generation would be unbounded. AdHoc is built for the first.
+
+#### Server generations
+
+The backend can take the same path. `FleetV2` is a new host - a copy of `Fleet` with its additions and corrections - and the new peers,
+`VehicleV2` and `DashboardV2`, are new hosts that talk to it. `FleetV2` gets a multiplexer of its own, because a multiplexer has one shared host:
+
+```csharp
+interface FleetPort   : Multiplex<(Telemetry,   Console)>{ }     // Fleet   - generation 1, frozen
+interface FleetV2Port : Multiplex<(TelemetryV2, ConsoleV2)>{ }   // FleetV2 - generation 2
+```
+
+Both generations still run in one process behind one port: the server takes the two multiplexers composed into one function.
+
+```java
+IntFunction< AdHoc.Connection.Internal > both = uid -> {
+    AdHoc.Connection.Internal in = Fleet.FleetPort.DEFAULT.apply( uid );
+    return in != null ? in : FleetV2.FleetV2Port.DEFAULT.apply( uid );
+};
+```
+
+![Two server generations, Fleet and FleetV2, run in one process behind one port: first-generation peers Vehicle and Dashboard and second-generation peers VehicleV2 and DashboardV2 all dial it, and a composed function asks FleetPort first and FleetV2Port second, so each socket lands on the Connection of its own generation](docs/img/multiplex-generations.svg)
+
+The composition never has to guess. A `uid` is unique within a project, the hosts of the projects it extends included, so a byte belongs to
+exactly one host and therefore to exactly one multiplexer. And the `uid`s are written into the description file itself (the `hosts` section of
+the [numbers tables](#the-project-table)): adding hosts never renumbers the existing ones, so a device in the field keeps sending the byte it was
+built with. When generation 1 is retired, `Fleet.FleetPort` is dropped from the
+composition. The `uid` is one byte, which bounds a project at 256 hosts.
+
+### The life of a socket
+
+![The life of one socket on a multiplexed port: the caller connects and sends one byte, the multiplexer takes a Connection from its pool and seats it on the socket, packs flow both ways with nothing added per pack, and on close the Connection goes back to the pool](docs/img/multiplex-socket.svg)
+
+1. The caller connects - TCP, or TCP and the WebSocket upgrade.
+2. Its connection sends one byte, `Telemetry.id()`, which is `Vehicle.uid`. It does so on **every** new socket, reconnects included, and before
+   anything else it sends.
+3. The multiplexer calls `FleetPort.apply(Vehicle.uid)`, which takes a `Telemetry` Connection from its pool and seats it on the socket; the Connection
+   then hears the connect and `OnOpen()` exactly as it would on a port of its own. An unknown byte closes the socket and reports the failure to the
+   server's `onFailure`.
+4. Packs flow both ways. Nothing is added to them.
+5. When the socket is gone, the Connection is released - `External(null)` - and returns to its pool for the next caller.
+
+A direct port skips steps 2 and 3: the byte is never sent, and the Connection is the one the port was built with.
+
+### What the generator produces
+
+| Where                                   | What                                                                                                                                                                                                  |
+|:----------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Every listed Connection, **both sides** | `id()` - the `uid` of the host on the far side from the shared one (`Telemetry.id()` is `Vehicle.uid`). The same number on both sides of the Connection: the caller sends it, the multiplexer reads it |
+| The shared host, per listed Connection  | `Connection.pool` - Connections waiting for a caller. `External(null)` returns one to it                                                                                                               |
+| The shared host, per listed Connection  | the `Connection Release` region, run as the Connection goes back to its pool                                                                                                                          |
+| The shared host                         | a class named after the declaration - `Fleet.FleetPort` - with a factory field per Connection (`new_Telemetry`, `new_Console`, …), `apply(uid)`, and a ready instance, `DEFAULT`                     |
+
+A pooled Connection serves one caller after another. What the generated code keeps is reset on every close, as it always was; **state you keep in
+your own fields must be cleared in the `Connection Release` region**, or the next caller inherits it.
+
+`FleetPort` is a plain function from a byte to a Connection, and the server only calls it. Assign your own factory to any `new_…` field, compose
+several multiplexers as above, or write the function from scratch.
+
+### Wiring it up
+
+The listening host, Java - one multiplexed port for all four Connections, and a direct one next to it:
+
+```java
+var engine = new Network.TCP.Engine( "Fleet", Runtime.getRuntime().availableProcessors(), 1024 );
+
+var pub = new Network.TCP.Server( "Fleet",
+                                  Network.TCP.WebSocket::new,            // the bare transport ...
+                                  Fleet.FleetPort.DEFAULT,               // ... and the first byte picks the Connection
+                                  Network.TCP.onFailurePrintConsole,
+                                  engine,
+                                  new InetSocketAddress( 443 ) );
+
+var lan = new Network.TCP.Server( "Fleet diagnostics",                   // a direct port: one Connection, no byte
+                                  host -> {
+                                      var ext = new Network.TCP.WebSocket( host );
+                                      new Diagnostics.Connection().External( ext );
+                                      return ext;
+                                  },
+                                  new InetSocketAddress( 8443 ) );
+```
+
+The same in C#:
+
+```csharp
+var pub = new Network.TCP.Server( "Fleet",
+                                  host => new Network.TCP.WebSocket( host ),
+                                  Fleet.FleetPort.DEFAULT.apply,
+                                  Network.TCP.onFailurePrintConsole,
+                                  1024, 0, null,
+                                  new IPEndPoint( IPAddress.Any, 443 ) );
+```
+
+The dialing host passes `mux` - Java, C#, TypeScript:
+
+```java
+var vehicle = new Network.TCP.WebSocket.Client< Telemetry.Connection >( "vehicle", ext -> new Telemetry.Connection(),
+                                                                        Network.TCP.onFailurePrintConsole,
+                                                                        new Network.TCP.Engine( "vehicle", 1, 1024 ),
+                                                                        true );   // mux
+```
+
+```csharp
+var vehicle = new Network.TCP.WebSocket.Client< Telemetry.Connection >( "vehicle", ext => new Telemetry.Connection(),
+                                                                        Network.TCP.onFailurePrintConsole, 1024, mux: true );
+```
+
+```typescript
+const dashboard = new Network.WebSocketClient( "dashboard", ext => new Console.Connection(),
+                                               Network.Host.onFailurePrintConsole, 1024, true );   // mux
+```
+
+The raw-TCP clients (`Network.TCP.Client`) take the same `mux` argument. A generated Connection has a constructor without parameters; the server or
+the client seats it on its socket.
+
+| Side                       | Java | C#  | TypeScript                                                   |
+|:---------------------------|:----:|:---:|:-------------------------------------------------------------|
+| Listening, multiplexed     |  ✓   |  ✓  | -                                                            |
+| Dialing a multiplexed port |  ✓   |  ✓  | ✓ - the byte leads the first WebSocket frame                 |
+
+### What the parser checks
+
+|                                  |                                                                                                            |
+|:---------------------------------|:-----------------------------------------------------------------------------------------------------------|
+| **At least two Connections**     | a single Connection has nothing to share a port with                                                       |
+| **Exactly one shared host**      | every listed Connection has it on one side - left or right does not matter - and it is the host that owns the port |
+| **Connections only**             | the tuple names `Connects<…>` Connections - not hosts, packs, or `VirtuallyConnects<…>`                    |
+| **Each Connection once**         | no Connection is listed twice, and none belongs to two multiplexers                                        |
+| **No twins**                     | two multiplexers over the same set of Connections are rejected                                             |
+| **Placed like a Connection**     | declared in the project scope; its name shares the Connections' namespace; it may list Connections imported from other projects |
+
+### Not for tunnels
+
+A [`VirtuallyConnects`](#virtual-connections) link rides a tunnel through relay hosts: it never arrives on a port of its own, so there is nothing for
+a multiplexer to sort out.
+
 ---
 
 # Attributes
@@ -3437,15 +4215,18 @@ fixed, reserved set (the generator matches them by name); everything else you wr
 | Attribute                                                  | Purpose                                                                                                                                   | Documented in                                                  |
 |:-----------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------|
 | `[MinMax(min, max)]`                                       | Constrain a numeric field to a range so the generator picks the smallest storage (down to bit-packing)                                    | this section                                                   |
-| `[A(min, max)]` / `[V(max, min)]` / `[X(amplitude, zero)]` | Varint compression tuned to the value distribution - the **first** argument is always the point of concentration (low / high / centre)    | [Varint Type](#varint-type)                                    |
+| `[A(min, max)]` / `[V(max, min)]` / `[X(amplitude, zero)]` | Varint compression tuned to the value distribution - `[A]`/`[V]` name the point of concentration first, `[X]` names the amplitude first   | [Varint Type](#varint-type)                                    |
 | `[D(...)]`                                                 | Dimensions and maximum lengths for arrays, strings, maps, and sets (`+` = element/collection length, `-` = constant dim, `~` = fixed dim) | [Collection Type](#collection-type)                            |
 | `[S(N)]`                                                   | Maximum size cap for a raw `Stream` / `File` conduit                                                                                      | [Streams](#size-cap---sn)                                      |
 | `[ValueFor(const)]`                                        | Copy a `static` field's computed value/type into a `const` at generation time                                                             | [Constants](#constants)                                        |
 | Stream stage / flow attributes                             | Declare a byte-transform chain (compression, cipher, custom stages) on a field, a pack, or a connection                                   | [Transform chains](#transform-chains---stages-roles-and-flows) |
+| `[Resumable(minutes)]`                                     | On a Connection or a State: how long a session survives a lost or broken connection, parked, waiting for its peer                          | [Sessions](#sessions)                                          |
+| `[UDP(minutes)]`, `[UDP<EXCLUDE_PACKS_SET>(minutes)]`      | On a Connection: carried over UDP, every pack guaranteed both ways but the excluded ones; `minutes` as in `[Resumable(minutes)]`          | [UDP](#udp)                                                    |
+| `[ClearAttributes]`                                        | On a `Modify<>` modifier: replace the target's attribute set with an empty one                                                            | [Replacing attributes](#clearattributes)                       |
 
 > [!NOTE]
-> Because these names are reserved, do **not** name a [custom attribute](#custom) `S`, `D`, `MinMax`, `A`, `V`, `X`, or `ValueFor` - the generator
-> would interpret it as the built-in instead of carrying it through as metadata.
+> Because these names are reserved, do **not** name a [custom attribute](#custom) `S`, `D`, `MinMax`, `A`, `V`, `X`, `ValueFor`, `Resumable`, or `UDP` - the
+> generator would interpret it as the built-in instead of carrying it through as metadata.
 
 Built-in attributes targeting a collection's **generic parameters** use a C# attribute target: `[Key: ...]` applies to a Map/Set key,
 `[Val: ...]` to a Map value. For example, `[Key: D(+30)]` caps the key length while `[Val: D(100), X]` bounds and varint-compresses the value.
@@ -3464,6 +4245,12 @@ For ranges under 127, the generator can further optimize by packing fields into 
 ```csharp
 [MinMax(1, 8)] int car_doors; // Range 1–8 requires only 3 bits
 ```
+
+The range does not have to start at zero, or even be positive. What is stored is always `value - min`, so only the **span** decides the width:
+`[MinMax(-5, 5)]` and `[MinMax(1_000, 1_010)]` are both 11 values and both pack into 4 bits. A nullable field needs one more code for "no value" -
+`[MinMax(1_000, 1_009)] int?` is 10 values plus the null, 11 codes, still 4 bits. None of this arithmetic reaches your code: the generated accessors
+take and return the declared values (`-5 … 5`, `1 000 … 1 010`), and the range itself is published next to the field as constants - see
+[`MIN`, `MAX` and `ZERO` in the generated code](#min-max-and-zero-in-the-generated-code).
 
 ## Custom
 
@@ -3600,7 +4387,8 @@ language, entity)** combination: every host generates its own code for a pack or
 
 * `+` **concrete** - a fully materialized object: fields are parsed and stored, then handed to your code with full random access.
 * `-` **abstract** - the generator emits an abstract base class; as the parser reads the data off the wire it invokes methods on your implementation,
-  and the whole object is never allocated.
+  and as the serializer writes it asks your implementation for each field. The whole object is never allocated: the data goes between the socket
+  buffer and your own structures. See [Choosing `+` or `-`](#choosing--or---generated-objects-or-your-own).
 
 By default a pack or field takes its host's [implementation modifier](#modifier-summary-table) for the language being generated. Adding an explicit
 rule **pins exactly one (host, language, entity) combination**: on *this* host, in *this* language, only *this* pack or field is generated with the
@@ -3756,7 +4544,7 @@ The AdHoc generator uses a 3-layer approach for field values:
 |:------|:----------------------------------------------------------------------------------------------------------------|
 | exT   | **External type.** The representation required for external consumers (matches language data type granularity). |
 | inT   | **Internal type.** The representation optimized for storage (matches language data type granularity).           |
-| ioT   | **IO wire type.** The network transmission format - transmitted as a byte stream with no language granularity.  
+| ioT   | **IO wire type.** The network transmission format - transmitted as a byte stream with no language granularity.  |
 
 ![A field whose values span 40 000 000 000 to 40 000 000 093: the external type must be a long, while the internal and IO types need a single byte](docs/img/value-layers-transform.svg)
 
@@ -3766,6 +4554,20 @@ quantization. However, subtracting 1,000,000 before transmission (`ioT`) reduces
 ![The same field across the three layers: int at exT, still int at inT because the language quantizes the type, and 3 bytes at ioT](docs/img/value-layers-quantization.svg)
 
 Data transformation at `exT ↔ inT` is often redundant; the meaningful optimization happens at `inT ↔ ioT`.
+
+Where `exT ↔ inT` does pay off is wherever the width of an item is set by the **collection** rather than by a language type. The storage is chosen
+by the **span** of the declared range, not by how large the values are: a field ranging from 1,000,000 to 1,000,004 has five possible values, so it
+needs 3 bits, and a collection of such values is kept bit-packed - 3 bits per item instead of 4 bytes, each item stored as `value - 1,000,000`, the
+generated accessors adding the offset back. The same holds below zero: `[MinMax(-5, 5)] int[]` is 11 values, 4 bits per item, stored as `value + 5`.
+A wider span lands in a typed array of the narrowest element that holds it - `[MinMax(400_000_000, 400_000_193)] int[]` is one byte per item.
+
+In TypeScript this is also the *only* place the shift is applied. A single field, a `Map`/`Set` entry and an item of a plain `Array` are a `number`
+whatever they hold, so shifting them would save nothing; values are shifted only in typed arrays (`Uint8Array` … `Uint32Array`), in the collections
+built on top of them, and in bit-packed storage.
+
+Whatever happens underneath, **the generated API speaks `exT` only**. Getters, setters and the per-field constants
+([`MIN`, `MAX`, `ZERO`](#min-max-and-zero-in-the-generated-code)) all use the values you declared; `inT` and `ioT` are never something your code has
+to compute with.
 
 Note that when a field's data type is an enclosed array (such as keys in a `Map` or `Set`), repacking data into different array types during
 transitions can be costly and impractical.
@@ -3798,7 +4600,8 @@ the range - *where inside it the mass sits*, and therefore which end the generat
 
 `[A]` and `[V]` name that point of concentration first and the far bound second. **`[X]` is the other way round** - `[X(amplitude, zero)]` names the
 bound first, because its centre defaults to `0` and is the argument most often left out. The far bound is what the generator derives from the declared
-type when you omit it - the second argument for `[A]`/`[V]`, the first for `[X]`; see [Derived bounds](#derived-bounds).
+type when you omit it - the second argument for `[A]`/`[V]`, the first for `[X]`; see [Derived bounds](#derived-bounds), which also shows how to omit
+an argument that is not the last one.
 
 **How to read the three pictures below.** Each is a stream of transmitted values: **time runs left to right, the value axis is vertical, and the
 darker the cloud, the more often that value occurs.** The labelled line (`min`, `max`, `zero`) is the point of concentration you declare, and what
@@ -3843,7 +4646,7 @@ interleaves the two directions (`0, -1, 1, -2, 2, …`) so that a small deviatio
 Note the argument order: **amplitude first, centre second** - `[X(50, 20_000)]` is a ±50 window around 20 000, not a ±20 000 window around 50.
 
 ```csharp
-[X]          short? temperature_delta; // ZigZag around 0 across the whole short range
+[X]          short? temperature_delta; // -32 767 … 32 767 around 0 - the amplitude is derived from the type
 [X(1_000)]   int    cursor_shift;      // -1 000 … 1 000 - small shifts either way cost one byte
 ```
 
@@ -3866,12 +4669,52 @@ type's own range:
 > The declared type states the **width** available, not the final range. `[A(1000)] short q;` yields the range **1,000 … 33,767** - the shift consumed
 > the negative half. If you need values below the point of concentration, either name them (`[A(-500, 1000)]`) or pick the attribute whose direction
 > matches your data. For the same reason the *external* type is recomputed from the resulting range and can move in **either** direction:
-`[X] uint u;`
+> `[X] uint u;`
 > spans `±uint.MaxValue`, which no longer fits in `uint`, so the generated API exposes a signed 64-bit field, while `[X(1_000)] int i;` needs only
 > `-1 000 … 1 000` and the generated field narrows to 16-bit.
 >
-> A bare `[X]` on a **signed** type is the one exception: no bound is derived at all, the declared type is kept as is and simply ZigZag-encoded. On an
-> unsigned type it still widens, exactly as `[X] uint` above.
+> A bare `[X]` on a **signed** type is the one case where the external type stays put: `±short.MaxValue` around `0` is `-32 767 … 32 767`, which
+> still fits a `short`, so nothing widens. The **range is the table's all the same** - it is symmetric, so `short.MinValue` itself is *not* part of
+> it, even though the type could hold it. On a nullable field that spare code is where the "no value" marker lives. On an unsigned type a bare `[X]`
+> does widen, exactly as `[X] uint` above.
+
+To leave out an argument that is **not the last one**, name the one you keep - these are ordinary C# named arguments, spelled as in the headings
+above (`minMostProbableValue` / `max`, `maxMostProbableValue` / `min`, `amplitude` / `zero`):
+
+```csharp
+[A(max: 5_000)]   int   queue_depth; //       0 …  5 000 - the point of concentration stays at its default, 0
+[V(min: -5_000)]  int   headroom;    //  -5 000 …      0
+[X(zero: 1_000)]  short level;       // -31 767 … 33 767 - only the centre is named, so the amplitude is derived: 1 000 ± short.MaxValue
+```
+
+The last line shows both halves of the rule at once. The amplitude is taken from the **declared** type - `short.MaxValue`, not the maximum of
+whatever the field ends up as - and then `33 767` no longer fits a `short`, so the generated field is an `int`.
+
+### `MIN`, `MAX` and `ZERO` in the generated code
+
+The range you declared - or the one the generator derived for you - does not stay behind in the schema. The generated code carries it as constants,
+in the helper type named after the field (`<field>__`; a `Map` has one set for the key and one for the value):
+
+| Constant     | Meaning                                                                                                                             |
+|:-------------|:------------------------------------------------------------------------------------------------------------------------------------|
+| `MIN`, `MAX` | The inclusive range of the field - the declared one, or the derived one from the table above.                                       |
+| `ZERO`       | Varint fields only: the point of concentration, the value that travels as `0` - `min` for `[A]`, `max` for `[V]`, `zero` for `[X]`. |
+
+```csharp
+[A(1_000)]      short chunk_len; // MIN = 1 000   MAX = 33 767   ZERO =  1 000
+[V(30_000, 0)]  int   lease;     // MIN =     0   MAX = 30 000   ZERO = 30 000
+[X(1_000, 50)]  int   drift;     // MIN =  -950   MAX =  1 050   ZERO =     50
+[MinMax(-5, 5)] int   trim;      // MIN =    -5   MAX =      5
+```
+
+All of them are **external (`exT`) values** - the numbers your code hands to a setter and receives from a getter. The shifted, ZigZag-ed or
+bit-packed forms of the [Value Layers](#value-layers) never show through: a bare `[V] uint` reports `MIN = -4 294 967 295` and `MAX = 0`, not the
+`0 … 4 294 967 295` that is actually stored. Use them to validate input before it reaches a setter - a value outside `MIN … MAX` cannot be
+transmitted - or to size a slider, without copying the schema's numbers by hand into every host.
+
+Which fields carry `MIN` / `MAX` depends on the language. In C# and Java a field whose range is exactly that of its type carries none - the type
+already is the bound. TypeScript has only `number` and `bigint`, and neither says anything about a range, so there **every** numeric field carries
+them, a plain `byte` included.
 
 ### When varint loses
 
@@ -4026,6 +4869,8 @@ enum _DefaultMaxLengthOf {
 
 Types omitted retain the default limit.
 
+The same enum holds `Uncompressed`: how long a pack may be, in bytes, to [go uncompressed](#short-packs-go-uncompressed). 1024 when omitted.
+
 **The `[D]` Attribute: `N` vs `+N`**
 
 The `[D]` attribute controls length limits and appears in two forms:
@@ -4045,8 +4890,8 @@ Flat arrays are declared with square brackets `[]`. Three behaviors are supporte
 | Declaration | Description                                                                                 |
 |:------------|:--------------------------------------------------------------------------------------------|
 | `[]`        | **Immutable:** Array length is constant and unchangeable.                                   |
-| `[,]`       | **Fixed-at-Init:** Length is set during initialization and remains fixed (like a `string`). |
-| `[,,]`      | **Dynamic:** Length varies up to a maximum (like a `List<T>`).                              |
+| `[,]`       | **Fixed-at-Init:** Length is set when the field is created and remains fixed. One length per field - see below. |
+| `[,,]`      | **Dynamic:** Every value has a length of its own, up to a maximum (like a `List<T>`).                           |
 
 Use `[D(N)]` to set specific field limits:
 
@@ -4060,13 +4905,36 @@ class Pack {
 }
 ```
 
+#### `[,]` or `[,,]`: whose length is it?
+
+A `[,]` length belongs to the **field**, not to each value in it. It is sent once, and every value the field holds has exactly that length.
+A `[,,]` length belongs to **each value** and travels with it.
+
+On a pack field the two look alike - the field holds one array, and it has one length either way. They part company once the array sits
+inside a collection: as a `Map` key or value, as a `Set` key, or as the element of another array.
+
+| Declaration                    | Lengths                                                                                     |
+|:-------------------------------|:--------------------------------------------------------------------------------------------|
+| `Map<string, string[,,]> tags` | every key has a list of its own length                                                      |
+| `Map<string, string[,]>  tags` | every list in the map has **the same** length, chosen when the map is created                |
+| `string[,,] [] rows`           | every row has its own length                                                                |
+| `string[,]  [] rows`           | every row has the same length                                                               |
+
+> [!WARNING]
+> Pick `[,]` inside a collection only when the values really are the same length - a matrix row, a hash of a fixed size. A value of
+> another length does not fail: it is cut or padded to the field length on send. A multimap, a list of tags, anything whose values
+> differ in length is `[,,]`.
+
 ### String
 
 A `string` is an immutable array of characters, limited to 255 characters by default. Use `[D(+N)]` to impose a specific limit:
 
 > [!NOTE]
-> To hand large text to a middle tier or store as an opaque **UTF-8** artifact on specific routes - `File`-framed, streamed straight from its
-> source - put a `[ToStream<E>]` / `[FromStream<E>]` trim on the field. See [String payloads](#string-payloads---utf-8-at-the-boundary).
+> **String on one side, raw UTF-8 bytes on the other.** When the sender holds a `string` but the receiver must take it as opaque **UTF-8** bytes -
+> to store it, relay it, or **write it straight to a file** (for example a code generator that emits a source string the far side persists verbatim as
+> a UTF-8 source file) - put a `[ToStream<E>]` / `[FromStream<E>]` trim on the field. The text still leaves the sender as an ordinary `string`; on the
+> named leg it crosses `File`-framed, streamed from its source with no whole-payload buffer, and the receiver gets the raw UTF-8 bytes (never a
+> re-hydrated `string`). See [String payloads](#string-payloads---utf-8-at-the-boundary).
 
 ```csharp
 class Packet {
@@ -4157,6 +5025,9 @@ using org.unirail.Meta;
 [D(+20)] Set<uint>          max_20_uints_set;
 [D(+20)] Map<Point, uint>   map_of_max_20_items;
 ```
+
+An array as a `Key` or `Val` is usually `[,,]` - one length per item. `[,]` gives every key (every value) of the map the same length; see
+[whose length is it](#-or--whose-length-is-it).
 
 To apply attributes specifically to `Key` or `Val` generics:
 
@@ -4253,30 +5124,65 @@ Response? myFieldIfResponse;
 ## Binary Type
 
 Use the `Binary` type from `org.unirail.Meta` to declare a raw binary array. It maps to `byte` (signed) in **Java**, `byte` (unsigned) in **C#**, and
-`ArrayBuffer` in **TypeScript**.
+`Uint8Array` in **TypeScript** (`Uint8List` for a variable-length `Binary[,,]`).
 
 ```csharp
 using org.unirail.Meta;
 
 class Result
 {
-    [D(650_000)] Binary[,,] result; // Binary list, max 650,000 bytes
-    [D(100)]     Binary[]   hash;   // Binary array, constant length 100 bytes
+    [D(32)] Binary[] sha256; // constant length 32 bytes: the value IS the array, no length prefix
+    [D(4)]  Binary[] tag;    // constant length 4 bytes
 }
 ```
 
-**Usage guidance:**
+A `Binary` array is for bytes whose **length is part of the format**: a hash, a signature, a fixed-size tag. Anything
+whose length is a property of the value - a BLOB, a serialized object, a token, a cell of a database row - is a
+[`File`](#file-field-datatype) or a [`Stream`](#stream-field-datatype) conduit, wherever those bytes happen to live.
 
-* **In-memory data:** Use `Binary` when data is already in RAM (a cryptographic hash, a generated thumbnail, an active memory buffer).
-* **External sources (disk/database):** Use `Stream` or `File` types instead - they support **Direct Transfer**, piping bytes from the external source
-  directly to the socket buffer without loading into managed memory. This reduces memory pressure, GC overhead, and redundant memory copies.
-  Stream-based fields require an explicit size limit via `[S(N)]` - see [Size cap](#size-cap---sn).
+#### `Binary`, `File` or `Stream`: choose by the shape of the bytes, not by where they live
 
-| If the data is...    | Use...                             | Benefit                                                                    |
-|:---------------------|:-----------------------------------|:---------------------------------------------------------------------------|
-| **Already in RAM**   | `Binary`                           | Simple access to raw bytes as a native array.                              |
-| **On disk / in DB**  | [`File`](#file-field-datatype)     | Optimized for known-size BLOBs; direct source-to-socket transfer.          |
-| **Continuous/large** | [`Stream`](#stream-field-datatype) | Interruptible, chunked transfer; opaque forwarding without loading to RAM. |
+A `ByteBuffer` in RAM, a row in a database and a file on disk are all sources a channel can read from; what decides the
+type is the shape of the bytes and the code path they take.
+
+| The bytes are...                                                                              | Declare                                     | Why                                                                                                                                       |
+|:----------------------------------------------------------------------------------------------|:--------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 to 8 bytes with a meaning (a port, a counter, a small id, an IPv4 address with its port)     | a primitive, or a [Value Pack](#value-pack) | one primitive, no array, no loop, no object                                                                                               |
+| exactly 16 bytes (a UUID, an MD5 digest, an IPv6 address)                                     | a pack of two `ulong` halves                | 16 bytes on the wire, two `long` reads on each side                                                                                       |
+| a fixed length that is part of the format (a 32-byte hash, a 4-byte tag)                      | `[D(N)] Binary[]`                           | no length prefix, the value is the array                                                                                                  |
+| a variable length **known when the field is sent** (a cell, a serialized value, a token, a BLOB) | `[S(N)] File`                               | one varint length, then the bytes move in blocks between the socket buffer and a channel: no array and no copy in the generated code      |
+| a length unknown until the end, or a transfer that may be cut short (an encoder feed, a capture) | `[S(N)] Stream`                             | chunked, interruptible                                                                                                                    |
+| bytes that must be a `Map` key, a `Set` element or an element of an array                     | `Binary[]` or `Binary[,,]`                  | a conduit is a whole-field framing and cannot be collected; keep such keys small                                                          |
+
+**What the two code paths cost.** A `Binary` array is a **value**: the whole of it is held at once, and the receiving
+side allocates an array for it. The bytes themselves are not moved one by one - a concrete pack copies each portion
+the socket buffer holds in one block, and an [abstract](#implementation-management-1) pack is handed that portion as a
+window of the buffer (below). A conduit is a **channel**: the runtime calls `channel.read(socketBuffer)` on the way out
+and `sink.write(socketBuffer)` on the way in, and the bytes move straight between the socket buffer and whatever the
+implementation owns - a `ByteBuffer`, a file, a database page - without the value ever being held whole. A long
+`Binary[,,]` is therefore almost always a `File` in disguise.
+
+**A `Binary` field of an abstract pack.** There is no array to fill, so the pack is not asked for its bytes one at a
+time: it gets a window of the socket buffer itself - the bytes of the field this portion holds (receiving) or has room
+for (sending), starting at element `item` - and takes or fills it the way that suits it: into an array, into another
+`ByteBuffer`, straight into a file. The method is called once per portion; afterwards the codec moves past the window
+whatever the pack did with it.
+
+| Language   | Receiving                                                    | Sending                                                      |
+|:-----------|:-------------------------------------------------------------|:-------------------------------------------------------------|
+| Java       | `void _data( ctx, slot, int item, ByteBuffer src )`          | `void _data( ctx, slot, int item, ByteBuffer dst )`          |
+| C#         | `void _data( ctx, slot, int item, ReadOnlySpan<byte> src )`  | `void _data( ctx, slot, int item, Span<byte> dst )`          |
+| TypeScript | `_dataˎ( ctx, slot, item, src: Uint8Array )`                 | `_data̍( ctx, slot, item, dst: Uint8Array )`                  |
+
+The same holds for any array of one-byte elements that travel as they are stored (`sbyte`, `byte`, a one-byte enum), as
+a plain field of the pack. Such arrays as `Map` / `Set` keys or values, and multidimensional ones, keep their
+per-element methods.
+
+Two consequences of a conduit field to know before choosing it: the pack becomes an **abstract class on every host**,
+whatever its [implementation modifier](#implementation-modifiers) - the implementation supplies the channel, and the
+generated `demo` shows the method to override - and the field cannot sit inside a collection. Both are the price of
+never holding the bytes in an array; a fixed-size `Binary[]` pays neither. Conduit fields require an explicit size
+limit via `[S(N)]` - see [Size cap](#size-cap---sn).
 
 ## TYPEDEF
 
@@ -4331,7 +5237,11 @@ data structures.
 > AdHoc calculates the maximum nesting depth of every `Pack` at compile time. The runtime enforces the `_nested_max` limit even when rehydrating from
 > a `[FromStream<E>]` trim, preventing resource exhaustion attacks and enabling pre-calculated memory requirements.
 
-Empty packs (no fields) or enums with fewer than two fields used as data types are represented as `boolean`.
+An [empty pack](#empty-packs) (no instance fields) used as a data type carries nothing beyond its own presence, so the field is represented as a
+`boolean`.
+
+An enum with fewer than two constants is **rejected**, not flattened: a type with a single possible value tells the receiver nothing, so the
+generator stops and asks you to delete it or add constants.
 
 <details>
  <summary><span style = "font-size:30px">👉</span><b><u>Click to see</u></b></summary>
@@ -4340,12 +5250,6 @@ Empty packs (no fields) or enums with fewer than two fields used as data types a
 using org.unirail.Meta;
 
 namespace com.my.company{
-    /**
-        <see cref = 'Client.RoomChangeResponse'                  id = '2' /> room | 🏠
-        <see cref = 'Client.RoomChangeResponse.EnterRoomRequest'  id = '3' /> room | enter | 🏠
-        <see cref = 'RoomInfo'                                    id = '1' /> room | info | 🏠
-        <see cref = 'Server.QuitRoomResponse'                     id = '0' /> room | quit | 🏠
-    */
     public interface MyProject3{
         ///<see cref = 'InJAVA'/>
         struct Server : Host{
@@ -4444,7 +5348,8 @@ Pick the mechanism from the payload:
 
 | The payload is...                                                    | Use...                                                              | Documented in                                                  |
 |:---------------------------------------------------------------------|:--------------------------------------------------------------------|:---------------------------------------------------------------|
-| A bounded blob whose size is known cheaply (disk BLOB, thumbnail)    | [`File`](#file-field-datatype) field or named `File` pack           | [Raw conduits](#raw-conduits---stream-and-file)                |
+| Bytes whose length is known when they are sent - a database cell, a serialized value, a token, a disk BLOB - wherever they live | [`File`](#file-field-datatype) field or named `File` pack           | [Raw conduits](#raw-conduits---stream-and-file)                |
+| Exactly 16 bytes (UUID, MD5, IPv6), or 1 to 8 bytes with a meaning    | a pack of two `ulong` halves; a primitive or a [Value Pack](#value-pack) | [Binary Type](#binary-file-or-stream-choose-by-the-shape-of-the-bytes-not-by-where-they-live) |
 | Unbounded, live, or interruptible raw bytes (encoder feed, capture)  | [`Stream`](#stream-field-datatype) field or named `Stream` pack     | [Raw conduits](#raw-conduits---stream-and-file)                |
 | A typed pack too large to materialize on the receiving side          | abstract (`-`) implementation for that (host, language, pack/field) | [Implementation Management](#implementation-management-1)      |
 | A typed pack a middle tier must store/replay/forward without parsing | `[ToStream<E>]` / `[FromStream<E>]` / `[Stream<To,From>]` trim      | [Trimming a chain](#trimming-a-chain---what-a-store-keeps)     |
@@ -4556,6 +5461,11 @@ it on a channel whenever you also want to send it standalone (with its headers a
 A named `Stream` pack may carry a [chain](#transform-chains---stages-roles-and-flows) - and a [trim](#trimming-a-chain---what-a-store-keeps) - of its
 own, and a field typed with it may declare more. Both apply, as **one** chain: the field's entries sit closer to the **leaf**, the pack's closer to
 the **wire**. That is the nesting the two declarations describe - the pack says how its type reaches the wire, the field adds a transform inside that.
+
+> [!NOTE]
+> This section is about **conduit** packs, where the field *is* the pack's framing and the two declarations therefore merge into one chain. An
+> ordinary pack keeps its chain its own: it runs where that pack's bytes are read, and is not folded into the field's. What an ordinary pack does hand
+> to a field typed with it is its **trim's legs** - see [Endpoint-scoped cuts](#endpoint-scoped-cuts).
 
 ```csharp
 [S(1_600_000), Zstd] class TelemetryFrame : Stream { }
@@ -4679,7 +5589,18 @@ A trim is an **attribute on a field or a pack**; the declaration keeps its own t
 
 ```csharp
 [ToStream<FromCamera>] public Snapshot snapshot;   // still a Snapshot everywhere else
+
+[ToStream<FromCamera>] public class Snapshot { … } // every field typed with it, and Snapshot sent on its own
 ```
+
+**On a pack, the cut travels with the type.** It applies wherever that pack goes: sent standalone, and as the type of
+any field, in this project or in one that imports it. Which is the only way to cut a payload that is never sent on its
+own - the one place to write the trim is then the pack itself, since there is no single field to put it on.
+
+**A leg, not a type, decides.** The trim names one leg; each field carrying that pack is cut on that leg and stays an
+ordinary nested pack on every other, including legs where the same host sends the same payload inside a different pack.
+So a pack cut for `IfSendingFrom<Server, ToObserver>` keeps its typed form in a reply the Server sends over a different
+connection.
 
 Written among [transform stages](#transform-chains---stages-roles-and-flows) it also picks *how deep* the cut goes - see
 [Trimming a chain](#trimming-a-chain---what-a-store-keeps). With no stage next to it, the cut is at the leaf: the plain serialized payload crosses as
@@ -4732,7 +5653,8 @@ The payload type may also be a **`string`**. The same endpoint-conditional asymm
   oversize immediately; like any `File`-framed payload, the transfer is not interruptible.
 * **Encoding follows who will hold the bytes.** Inside packs, AdHoc strings use varint-encoded chars - both ends are AdHoc code. The moment the text
   is exposed as an opaque artifact to a store, relay, or foreign consumer - the directional case - the bytes are **UTF-8**, the universal at-rest
-  contract: a store can persist the payload directly as a `.txt` file.
+  contract: a store can persist the payload directly as a `.txt` file, or a code generator's emitted source can land verbatim as a UTF-8 source file
+  on the receiver (exactly a `writeSRC`-style write, straight from the stream).
 
 | Field Declaration           | Sender (at E)             | On-the-Wire (at E)         | Receiver (from E)        | Other Routes  |
 |:----------------------------|:--------------------------|:---------------------------|:-------------------------|:--------------|
@@ -4779,8 +5701,10 @@ public class ReplaySnapshot {
 
 The `Camera` serializes a typed `Snapshot` once. The `Recorder` - the store between them - receives raw framed bytes it can persist **without
 parsing** and later replay **without re-serializing**; the `Viewer` rehydrates the typed object. The store never depends on the payload schema:
-`Snapshot` can gain fields without the `Recorder` being touched or rebuilt. AdHoc's monitoring backend pipes seven telemetry families (CPU, Memory,
-Process, Network, FileStore, DiskIO, SystemInfo) through exactly this pair (`Bytes` / `BytesTime` in `AdHocProtocolWithBackend.cs`).
+`Snapshot` can gain fields without the `Recorder` being touched or rebuilt. AdHoc's monitoring backend replays four telemetry families (CPU,
+Process, Network, DiskIO) the second way: the Server keeps each snapshot as serialized bytes and hands them to the Observer through
+`[FromStream<…>]` on `BytesTime.bytes` in `AdHocProtocolWithBackend.cs`. `Memory` and `FileStore` are Value packs and travel in place - a trim on
+them is an error (see [Where a chain may sit](#where-a-chain-may-sit)).
 
 Here the store keeps the *plain* serialized pack. To have it keep the payload still compressed - or still encrypted, with no key at all - the same cut
 moves deeper into the transform chain: see [Trimming a chain](#trimming-a-chain---what-a-store-keeps).
@@ -4828,9 +5752,9 @@ whole **connection**:
 | single `string` field - plain (varint-char leaf) or trimmed (UTF-8 leaf on the [cut leg](#string-payloads---utf-8-at-the-boundary)) | ✅ - the string itself only: a string inside a collection (`string[]`), a `Map` key/value, or a `Set` element is NOT eligible                                                                                                                                                                                 |
 | ordinary pack (compress/encrypt on transmit), or `Stream` pack                                                                      | ✅                                                                                                                                                                                                                                                                                                            |
 | any connection - physical `Connects<>` or virtual `VirtuallyConnects<>`                                                             | ✅ - see [Chains on a connection](#chains-on-a-connection)                                                                                                                                                                                                                                                    |
-| a `Modify<Connection>` modifier                                                                                                     | ✅ - adds the chain to the connection it modifies, without editing the original                                                                                                                                                                                                                               |
+| a `Modify<Connection>` modifier                                                                                                     | ✅ - **replaces** the chain of the connection it modifies, without editing the original ([how](#replacing-the-attributes-of-an-imported-declaration))                                                                                                                                                          |
 | `File` field or `File` pack - including a field typed with a named `File` pack                                                      | ❌ - **a trim just as much as a stage**: a single length-prefix has no per-chunk framing for a stage to ride on, a length-changing stage has no length field to grow, and a cut has no boundary to hand bytes over at ([nothing is inherited from a `File` pack](#composing-the-packs-chain-with-the-fields)) |
-| primitive / value-pack / typedef field                                                                                              | ❌ - group the data in a pack and put the chain there                                                                                                                                                                                                                                                         |
+| primitive / enum / value-pack / typedef field                                                                                       | ❌ - **a trim just as much as a stage**: the value is written in place, so there is no framing for a stage and no boundary for a cut - group the data in a pack and put the chain there                                                                                                                      |
 
 #### Roles
 
@@ -4856,7 +5780,7 @@ A stage's constructor (s) *declare* the params it needs. Use **AdHoc types**. It
 
 | Param kind       | How you declare it                                                      | Where its value comes from                           |
 |:-----------------|:------------------------------------------------------------------------|:-----------------------------------------------------|
-| Design-time      | a ctor default (`int level = 20`) or a value when applied (`[Zstd(6)]`) | baked into the description - shared by every use     |
+| Design-time      | a ctor default (`int level = 3`) or a value when applied (`[Zstd(6)]`)  | baked into the description - shared by every use     |
 | Runtime-injected | declared but **never given a value** (e.g. `Binary[,] key`)             | you supply it at runtime through the generated stage |
 
 Any declared param you don't give a value becomes a runtime hook - **whatever its type** (you may use a plain non-nullable type and just leave it
@@ -4915,11 +5839,71 @@ Shipped fully implemented; you don't write the codec (a cipher still needs its k
 
 | Stage                      | Role        | Notes                                                                                                                                         |
 |:---------------------------|:------------|:----------------------------------------------------------------------------------------------------------------------------------------------|
-| `[Zstd]` / `[Zstd(level)]` | compression | Zstandard; `level` 1–20 (default 20), encoder-only; not over `File`.                                                                          |
-| `[ChaCha20]`               | cipher      | Stream cipher (keystream XOR): byte-incremental, resumable, no padding, encrypt == decrypt; key+nonce runtime-injected; native to C#/Java/TS. |
+| `[Zstd]` / `[Zstd(level)]` | compression | Zstandard; `level` 1–22, default 3 (zstd's own); 1–6 are wire levels, 13 and up archival; encoder-only; not over `File`.                    |
+| `[ChaCha20]`               | cipher      | Stream cipher (keystream XOR): byte-incremental, resumable, no padding, encrypt == decrypt; [keys](#keys-of-a-cipher) of the session or runtime-injected; native to C#/Java/TS. |
+
+Put a compressor where the bytes are **known to be redundant** - text, metadata, repeated identifiers, a log - and not on a pack whose payload is
+opaque application data: a blob, a key, a UUID, a counter, a document the application already compressed. The cost of a chain is paid on every
+message that crosses it - a codec context, a frame header, a flush, two native calls on each side - while the saving is the data's to give, and
+opaque bytes give nothing. A protocol whose payload is opaque is better served by a chain on the **Connection**, which the deployment adds when it
+knows the data and which costs one frame per connection instead of one per message.
+
+Pick the Zstd level for a wire, not for an archive. Levels 1–3 run at hundreds of MB/s and already take a page of rows to a fifth of its
+bytes; 6–9 buy a few percent of ratio for several times the CPU; 13 and above are for files at rest - level 20 compresses at about 10 MB/s, and a
+256 KiB reply behind it cost the sending thread 25 ms in the CQL-over-AdHoc benchmark, twenty times the native transport. `[Zstd]` without a level
+means 3.
 
 A *stream* cipher fits a chunked stage precisely because it's keystream-XOR - any chunk size, no block alignment, resumable, same op both ways. A
 block mode (CBC/GCM) would fight it.
+
+#### Short packs go uncompressed
+
+A compressor spends microseconds on a frame however short, and a short pack hardly shrinks. So the agent takes
+the compression stage **off the chain of a pack that cannot be long**, and says so in a warning that names the pack and its bound. The other stages
+of the chain stay: `[Zstd, ChaCha20]` on such a pack is `[ChaCha20]`. Both sides get the same chain - a pack has one.
+
+The bound is the longest the serialized pack can be: every field at its declared width, a string at three bytes a character, a collection at its
+declared or [default](#collection-type) maximal length, a nested pack at its own bound. A pack with no bound - a `Stream`, a field that is a conduit
+or has a chain of its own, a pack that contains itself - keeps its compression. So does a chain with a [trim](#trimming-a-chain---what-a-store-keeps):
+what its cut hands over is named by the stages around it.
+
+A pack of 1024 bytes or less goes uncompressed. `_DefaultMaxLengthOf.Uncompressed` sets another length; `0` compresses every pack:
+
+```csharp
+enum _DefaultMaxLengthOf {
+    Uncompressed = 4096,                          // packs that cannot be longer go uncompressed
+}
+```
+
+The rule is about packs. A chain on a field, and the chain a Connection runs over its stream, are left as written.
+
+#### Keys of a cipher
+
+Where the key of `[ChaCha20]` comes from depends on what the chain wraps.
+
+| The chain is on                                        | Key and nonce                                                                                                              |
+|:-------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------|
+| a pack or a field - a Connection that guarantees packs | the keys of the **session**; the stage writes the number of its key and a nonce of its own, in clear, in front of the pack |
+| the stream of a Connection                             | [runtime-injected](#parameters--design-time-vs-runtime-injected), once per stream                                          |
+
+A session gets a key from the **handshake of its transport**, so a Connection whose packs are encrypted wants an encrypted transport. A listening
+host has a static X25519 key pair and encrypts every connection it accepts - a Noise NK handshake, then ChaCha20-Poly1305 on every record or
+datagram; a client pins the public key of the server when it connects. The generated samples of such a Connection do exactly that, with a pair made
+for them: replace it with your own, and keep the secret out of the code.
+
+| Runtime    | The server                                  | The client                                       | A key pair                            |
+|:-----------|:--------------------------------------------|:-------------------------------------------------|:--------------------------------------|
+| C#         | `server.key = secret;` before it listens    | the last argument of `ConnectAsync`              | `X25519.KeyPair(secret, public)`      |
+| Java       | `server.key = secret;` before it listens    | the last argument of `connect`                   | `X25519.keyPair(secret, public)`      |
+| TypeScript | -                                           | the last argument of `connect`                   | `Crypto.X25519.keyPair(secret, pub)`  |
+
+Every connection of a session adds its key to the session, and a pack names the key it was encrypted with. That is why a pack replayed from the
+journal after a reconnect is still read: with the key of the connection it was written on. A pack whose key the receiver does not have - the
+receiver lost the session - is dropped whole, as a [Resumable](#guaranteed-delivery) counts it lost anyway.
+
+Without an encrypted transport a session has no key, and the cipher of a pack refuses to work. Give the session one yourself, the same on both
+sides, with a number that is not 0: `AdHoc.Connection.Keyring.Seat(connection, new AdHoc.Connection.Keyring.Key(id, key32, nonce12))` in C#,
+`Keyring.seat(…)` in Java and TypeScript.
 
 #### Custom stages
 
@@ -4973,6 +5957,23 @@ A chain applies to the connection's transport, not to its contents, so a **struc
 body-less [tunnel-only](#tunnel-only-vs-structured-virtual-connection)
 `VirtuallyConnects { }` does. All the ordinary chain rules hold unchanged: left = app/leaf, right = wire; at most one compressor and one cipher; keys
 and nonces [runtime-injected](#parameters--design-time-vs-runtime-injected) at the endpoints.
+
+**A connection that guarantees packs applies its chain to each pack.** On a [`[UDP]`](#udp) Connection, and on any Connection with a
+[`Resumable<HOST, PACKS>`](#guaranteed-delivery), the chain does not run over the stream. A stage keeps its state from pack to pack, and that state
+does not survive a lost datagram, a replay from the journal - which holds the pack as it went out, compressed and encrypted - or a reconnect. There
+the agent gives the chain to every pack the Connection carries, exactly as if it were written on the pack: to the packs left unguarded as well, to
+the four service packs never.
+
+```csharp
+[UDP(30), Zstd(3), ChaCha20]                      // every pack of GameLink: compressed, then encrypted, on its own
+interface GameLink : Connects<Client, Server> { … }
+```
+
+- A pack with a chain of its own keeps it. The agent warns when that chain lacks a stage of the Connection's.
+- The chain becomes the pack's, and the pack carries it wherever it travels. A pack that also travels on a Connection which does not apply a chain
+  per pack is an error: write the chain on the pack itself, or give each Connection packs of its own.
+- A `File` pack takes no chain, so such a Connection cannot carry one. Make it a `Stream` pack.
+- [Compression is taken off the packs that are surely short](#short-packs-go-uncompressed), as it is off any pack.
 
 #### Chaining an existing connection - `Modify<>`
 
@@ -5083,8 +6084,8 @@ public interface AdHocProtocolWithBackend : AdHocProtocol {
 }
 ```
 
-`AdHocProtocolWithBackend.cs` pipes seven telemetry families (CPU, Memory, Process, Network, FileStore, DiskIO, SystemInfo) through exactly this
-shape.
+`AdHocProtocolWithBackend.cs` relies on the same resolution for its telemetry: the trims on `BytesTime.bytes` name the imported `Server` over
+`Server__MonitoringObserver`, a connection the extension itself declares.
 
 A cut that can never fire is an **error**, not a silent no-op - so an endpoint the composition does not contain stops the build:
 
@@ -5097,19 +6098,14 @@ ERROR  The ToStream trim on …Bytes.bytes resolves to no usable endpoint, so th
 
 An imported pack whose trim names a connection the importing project leaves out therefore has to be dropped from the composition, not merely ignored.
 
-**A modifier cannot add a cut to a pack you do not own.** A modifier merges **fields** into its target and dispatches no attributes, so a chain or
-trim written on a `Modify<TargetPack>` resolves onto the **modifier itself** and the target keeps nothing. That is allowed - a modifier may also be an
-ordinary transmittable pack, and then the chain is legitimately its own - but because the likelier intent misses silently, the Agent warns:
+**A modifier re-declares the cut of a pack you do not own.** A `Modify<TargetPack>` carrying attributes replaces the target's whole attribute set with
+its own, chain and trims together, so the extension states the depth and the legs in one place. This is the intended way to extend an imported pack
+with a leg the base could not have named, and it is spelled out in
+[Replacing the attributes of an imported declaration](#replacing-the-attributes-of-an-imported-declaration) - including which layer wins when several
+of them modify one target.
 
-```
-WARN  The stream chain on the `Modify<>` pack '…TrimByModify' applies to the MODIFIER itself, not to
-      Payload — a modifier merges fields, never attributes. If it was meant for the modified pack, move it
-      onto the field that carries that pack, onto the pack itself if you own it, or onto the connection; if
-      this modifier is also an ordinary transmittable pack and the chain is its own, nothing is wrong.
-```
-
-A `Modify<Connection>` may carry a [chain](#example-compress-and-encrypt-an-imported-connection) - but never a trim, for the same reason no connection
-chain may: there, an endpoint holding raw bytes is simply what a [relay](#relay) already is.
+A `Modify<Connection>` replaces a connection's [chain](#example-compress-and-encrypt-an-imported-connection) the same way - but still may not carry a
+trim, for the same reason no connection chain may: there, an endpoint holding raw bytes is simply what a [relay](#relay) already is.
 
 #### Rules
 
@@ -5117,6 +6113,9 @@ chain may: there, an endpoint holding raw bytes is simply what a [relay](#relay)
   is exempt from the [compressor-before-cipher](#roles) rule - it may sit anywhere between two stages, or at either end.
 * Allowed on a **field** or a **pack**; not on a connection - a chain there wraps everything that link carries, where "the endpoint holds bytes" is
   simply what a [relay](#relay) already is.
+* **On a pack it reaches every field typed with that pack**, and the pack itself when it is sent standalone. The leg still decides one field at a
+  time: a field is cut only on a leg the trim names, and stays an ordinary nested pack everywhere else - see
+  [Endpoint-scoped cuts](#endpoint-scoped-cuts). Write it there when the payload is never sent on its own and no single field can carry the cut.
 * Never on a **`File`** - neither a `File` field nor a `File` pack, exactly as a stage may not sit there: one committed total length leaves no chunk
   boundary to hand bytes over at, and a `File` payload is already raw bytes on both ends. A `File` pack therefore has nothing to pass down to a field
   typed with it - see [Composing the pack's chain with the field's](#composing-the-packs-chain-with-the-fields).
@@ -5124,9 +6123,9 @@ chain may: there, an endpoint holding raw bytes is simply what a [relay](#relay)
   that flow is cut on the endpoints it names. Convenient for one pipeline, wrong for a general-purpose chain - prefer writing trims where they apply.
 * A **[`TYPEDEF`](#typedef) carries neither a trim nor a chain** - both are silently dropped, unlike the caps it does propagate. Reuse a cut through a
   flow or a named `Stream` pack, never through an alias.
-* It travels with an [imported](#across-imported-projects) declaration, but its Endpoint must still resolve in the composed project - and a
-  `Modify<>` cannot add one to a pack or a connection you imported: on a pack modifier it lands on the modifier (warned), on a connection it is
-  refused.
+* It travels with an [imported](#across-imported-projects) declaration, and its Endpoint must still resolve in the composed project. A `Modify<>` on a
+  pack you imported **re-declares** the cut, by replacing that pack's whole attribute set
+  ([how](#replacing-the-attributes-of-an-imported-declaration)); on a connection a trim is refused, modifier or not.
 * At most one per direction. `[Stream<To, From>]` is the store-and-replay pair at one depth; giving the two directions *different* depths would force
   the store to transcode between the forms, re-adding exactly what the deeper cut removed.
 * The payload is one complete serialized value, so a trimmed transfer is **not interruptible** - a truncated one is a torn object for whoever decodes
@@ -5152,6 +6151,7 @@ chain may: there, an endpoint holding raw bytes is simply what a [relay](#relay)
 | Runtime params      | Any stage constructor param left unvalued is runtime-injected at the endpoints (keys, nonces).                                                                                                                                                                                                                                                                                                                                                              |
 | Trims               | `[ToStream<E>]` / `[FromStream<E>]` / `[Stream<To,From>]` cut the chain at their position for one Endpoint: right of the marker still runs, left is skipped, bytes cross opaque. The stage list may be empty (a cut at the leaf). The chain itself still runs on every other leg. Field or pack only, never a `File` and never a connection; one per direction; role-less; wire unchanged - see [Trimming a chain](#trimming-a-chain---what-a-store-keeps). |
 | Connection scale    | A chain on a physical `Connects<>` wraps everything that hop carries; a tunnel (`VirtuallyConnects<L, R, PATH>`) is a chunked stream end-to-end through relays - see [Virtual Connections](#virtual-connections).                                                                                                                                                                                                                                           |
+| Lost or broken connection | A conduit under way when the connection breaks is sent again from its first byte once the [session](#sessions) continues; keep the source re-readable. The receiving side discards the partial conduit.                                                                                                                                                                                                                                              |
 
 ---
 
@@ -5159,6 +6159,12 @@ chain may: there, an endpoint holding raw bytes is simply what a [relay](#relay)
 
 AdHoc provides three strategies for handling time, from standard convenience to highly optimized compression. All time values are normalized to *
 *milliseconds** for transmission.
+
+> [!IMPORTANT]
+> The three definition types below - `DateTimeDef`, `TimeSpanDef` and `Duration` - are declared as a **`class`**, never a `struct`. A `struct` has
+> exactly three roles in a protocol description: a [host](#hosts), a host modifier (`Modify<Host>`), and
+> an [empty state](#states). A `struct` that implements anything else is rejected with
+> `Unknown struct <name> entity type`.
 
 ### 1. Standard `DateTime`
 
@@ -5192,7 +6198,7 @@ public interface DateTimeDef
 ```
 
 ```csharp
-struct RegistrationDate : DateTimeDef
+class RegistrationDate : DateTimeDef
 {
     public DateTime min => new DateTime(2020, 1, 1);
     public TimeSpan precision => TimeSpan.FromMinutes(1);
@@ -5234,6 +6240,21 @@ namespace org.unirail.Meta
         TimeSpan interval  { get; } // History window. Default: TimeSpan.FromDays(1)
         TimeSpan precision { get; } // Step size. Default: TimeSpan.FromSeconds(1)
     }
+}
+```
+
+**Example:**
+
+```csharp
+class SecondsADay : TimeSpanDef
+{
+    public TimeSpan interval  => TimeSpan.FromDays(1);    // the cycle rolls over once a day
+    public TimeSpan precision => TimeSpan.FromSeconds(1); // spare capacity refines this, never the interval
+}
+
+class Sample
+{
+    SecondsADay sinceMidnight;
 }
 ```
 
@@ -5307,7 +6328,7 @@ public interface Duration
 **Example:**
 
 ```csharp
-struct RequestLatency : Duration
+class RequestLatency : Duration
 {
     public long     max       => 30_000;                    // Requires 2 bytes (UInt16). 
                                                             // AdHoc expands the actual max to 65,535.

@@ -34,30 +34,63 @@ using System;
 using org.unirail.Meta;
 
 namespace org.unirail{
+	/** packs
+		<see cref='Agent.Login'/>Ď                                    5
+		<see cref='Agent.Project'/>Ć                                  8
+		<see cref='Agent.Project.Connection'/>ċ
+		<see cref='Agent.Project.Connection.Actor'/>Ě
+		<see cref='Agent.Project.Connection.Actor.State'/>Č
+		<see cref='Agent.Project.Connection.Actor.State.Branch'/>č
+		<see cref='Agent.Project.Host'/>ć
+		<see cref='Agent.Project.Host.Langs'/>Ę
+		<see cref='Agent.Project.Host.Pack'/>Ĉ
+		<see cref='Agent.Project.Host.Pack.Constant'/>Ċ
+		<see cref='Agent.Project.Host.Pack.Field'/>ĉ
+		<see cref='Agent.Project.Host.Pack.Field.DataType'/>ę
+		<see cref='Agent.Project.Multiplex'/>Ğ
+		<see cref='Agent.Proto'/>Đ                                    9
+		<see cref='Agent.Version'/>ď                                  2
+		<see cref='Constants'/>Ā
+		<see cref='Entity'/>ÿ
+		<see cref='FileEntry'/>ě
+		<see cref='FileEntry.List'/>Ĝ
+		<see cref='Item'/>ā
+		<see cref='Item.Type'/>ė
+		<see cref='LayoutFile.Info'/>Ĕ                                1
+		<see cref='LayoutFile.Info.View'/>Ė
+		<see cref='LayoutFile.Info.XY'/>ĕ
+		<see cref='LayoutFile.UID'/>ē                                 0
+		<see cref='Observer.Show_Code'/>Ē                             11
+		<see cref='Observer.Up_to_date'/>đ                            12
+		<see cref='Server.Info'/>Ą                                    4
+		<see cref='Server.Invitation'/>Ă                              3
+		<see cref='Server.InvitationUpdate'/>ă                        6
+		<see cref='Server.Result'/>ą                                  10
+		<see cref='SrcZip'/>ĝ
+	*/
+	/** project
+		<see cref='AdHocProtocol'/>Ĭāƥſą
+
+	    hosts
+		<see cref='Server'/>ÿ
+		<see cref='Agent'/>Ā
+		<see cref='Observer'/>ā
+		<see cref='LayoutFile'/>Ă
+
+	    connections
+		<see cref='Communication'/>ÿ
+		<see cref='SaveLayout'/>Ā
+		<see cref='ObserverCommunication'/>ā
+	*/
     /// <summary>
-    /// This file defines the **meta-protocol** for the AdHoc system itself. It orchestrates the communication
-    /// between the `AdHocAgent` (the developer's tool), the code-generation `Server`, and the `Observer`
+    /// This file defines the meta-protocol for the AdHoc system. It orchestrates the communication
+    /// between the AdHocAgent (the developer's tool), the code-generation Server, and the Observer
     /// (the browser-based visualizer).
     ///
-    /// It specifies the data structures (`packs`) like `Agent.Project`, the communication endpoints (`hosts`)
-    /// such as `Server` and `Agent`, and the stateful communication flows (`channels`) that connect them,
-    /// complete with stages and branching logic.
+    /// It specifies data structures (packs), communication endpoints (hosts), and the
+    /// stateful connections that link them, defining protocol states and branching logic.
     /// </summary>
-    /**
-        <see cref = 'Agent.Login'            id = '5'/>
-        <see cref = 'Agent.Project'          id = '8'/>
-        <see cref = 'Agent.Proto'            id = '9'/>
-        <see cref = 'Agent.Version'          id = '2'/>
-        <see cref = 'LayoutFile.Info'        id = '1'/>
-        <see cref = 'LayoutFile.UID'         id = '0'/>
-        <see cref = 'Observer.Show_Code'     id = '11'/>
-        <see cref = 'Observer.Up_to_date'    id = '12'/>
-        <see cref = 'Server.Info'            id = '4'/>
-        <see cref = 'Server.Invitation'      id = '3'/>
-        <see cref = 'Server.Result'          id = '10'/>
-        <see cref = 'Server.InvitationUpdate'    id = '6'/>
-    */
-    public interface AdHocProtocol /*Ĭāƥſą*/ :
+	public interface AdHocProtocol :
         // This `_<>` block acts as a "Pack Set" inclusion. It propagates the constants from the `DataType` enum
         // to all hosts defined in this protocol, ensuring they are globally available and consistently defined.
         _<
@@ -91,7 +124,7 @@ namespace org.unirail{
         /// A base pack representing a generic entity with a name and documentation.
         /// This serves as a foundational building block for other metadata-carrying packs like `Constants`.
         /// </summary>
-        class Entity /*ÿ*/{
+        class Entity {
             string           name;
             max_65_000_chars doc;        // Field for full, XML-style documentation.
             string           inline_doc; // Field for a short, single-line summary.
@@ -102,10 +135,10 @@ namespace org.unirail{
         /// This structure is used to link protocol entities to their attributes (which are modeled as constants).
         /// The `parent` field creates a hierarchy, while `constants` is an array of indices into the global `constant_fields` array.
         /// </summary>
-        class Constants /*Ā*/ : Entity{
+        class Constants : Entity{
             /// <summary>
             /// Optional reference to a parent entity's index, used to build the protocol's hierarchical structure.
-            /// The virtual array of all entities is ordered: packs, hosts, channels, stages.
+            /// The virtual array of all entities is ordered: packs, hosts, multiplexers, connections, actors, states, fields.
             /// A value of 0xFFFF (ushort.MaxValue) signifies that this entity has no parent.
             /// </summary>
             [MinMax(0, 0xFFFF - 1)] ushort? parent;
@@ -122,21 +155,22 @@ namespace org.unirail{
         /// This pack is used by the `Observer` to send commands to the `Agent` related to a specific UI element,
         /// enabling features like "Show Code" for interactive visualization.
         /// </summary>
-        public class Item /*ā*/{
+        public class Item {
             /// <summary>
             /// The category of the referenced item, defined by the `Type` enum.
             /// An enum can be used directly as a field type.
             /// </summary>
             Type tYpe;
 
-            public enum Type /*ė*/ : byte{ // Enumeration defining the possible types of an item.
+            public enum Type : byte{ // Enumeration defining the possible types of an item.
                 Project,                   // A reference to the entire project.
                 Host,                      // A reference to a specific host.
                 Pack,                      // A reference to a specific pack.
                 Field,                     // A reference to a specific field.
                 Constant,                  // A reference to a constant.
-                Channel,                   // A reference to a communication channel.
-                Stage,                     // A reference to a stage within a channel's state machine.
+                Connection,                // A reference to a physical  link.
+                Actor,                     // A reference to a logical link within Connection.
+                State,                     // A reference to a state within a Actor's state machine.
             }
 
             /// <summary>
@@ -165,22 +199,22 @@ namespace org.unirail{
         <see cref = 'Agent.Version'/>
         <see cref = 'Server.Invitation'/>
         <see cref = 'Server.InvitationUpdate'/>
-        <see cref = 'Agent.Project.Channel.Stage.Branch'/>
+        <see cref = 'Agent.Project.Connection.Actor.State.Branch'/>
         <see cref = 'InJAVA'/>-- The remaining packs are generated in JAVA as abstract (without implementation).
         */
-        struct Server /*ÿ*/ : Host{
+        struct Server : Host{
             /// <summary>
-            /// An empty pack sent by the Server to invite the Agent to the next communication stage (e.g., proceed to login).
+            /// An empty pack sent by the Server to invite the Agent to the next communication state (e.g., proceed to login).
             /// Empty packs are implemented as highly efficient singletons, making them ideal for signaling state transitions.
             /// </summary>
-            public class Invitation /*Ă*/{ }
+            public class Invitation { }
 
             /// <summary>
-            /// Sent by the Server after a successful login to provide the Agent with a new, temporary (volatile) UUID for the session.
-            /// The 128-bit UUID is split into two `ulong` fields. Its volatile nature prevents reuse and supports automated
-            /// CI/CD workflows, as the new UUID is automatically stored in the `AdHocAgent.toml` config file.
+            /// Sent by the Server after a successful login to provide the Agent with a new session identifier.
+            /// Its volatile nature prevents reuse and supports automated CI/CD workflows,
+            /// as the new UUID is automatically stored in the `AdHocAgent.toml` config file.
             /// </summary>
-            public class InvitationUpdate /*ă*/{
+            public class InvitationUpdate {
                 /// <summary>The higher 64 bits of the new 128-bit volatile UUID.</summary>
                 public ulong uuid_hi;
 
@@ -191,7 +225,7 @@ namespace org.unirail{
             /// <summary>
             /// A generic informational or error message pack sent from the Server to the Agent.
             /// </summary>
-            public class Info /*Ą*/{
+            public class Info {
                 /// <summary>The unique task ID this information relates to.</summary>
                 string task;
 
@@ -202,14 +236,15 @@ namespace org.unirail{
             /// <summary>
             /// Contains the final result of a code generation task, sent from the Server to the Agent.
             /// </summary>
-            public class Result /*ą*/{
+            public class Result {
                 /// <summary>The unique task ID this result corresponds to.</summary>
                 string task;
 
-                /// <summary>The generated code, compressed as a binary array. The `[D(3_000_000)]` attribute sets the max size to 30MB.</summary>
-                [D(3_000_000)] Binary[,] result;
+                /// <summary>The generated code, compressed on the wire and typed at both ends: the Agent unpacks it to disk.</summary>
+                [SrcZip]
+                FileEntry.List result;
 
-                /// <summary>Additional information, server anonsments.</summary>
+                /// <summary>Additional information or server announcements.</summary>
                 max_65_000_chars info;
             }
         }
@@ -234,7 +269,7 @@ namespace org.unirail{
             <see cref = 'Observer.Show_Code'/>
             <see cref = 'InCS'/>-- The remaining packs are generated in C# as abstract (without implementation).
          */
-        struct Agent /*Ā*/ : Host{
+        struct Agent : Host{
             // --- META-PROTOCOL: The 'Project' pack describes the entire protocol structure ---
 
             /// <summary>
@@ -242,7 +277,7 @@ namespace org.unirail{
             /// description of a user's AdHoc protocol project. The Agent constructs this pack and sends
             /// it to the Server, which uses this structured data to perform code generation.
             /// </summary>
-            public class Project /*Ć*/ : Constants{
+            public class Project : Constants{
                 /// <summary>A unique ID for this specific code generation task.</summary>
                 string task;
 
@@ -252,14 +287,29 @@ namespace org.unirail{
                 /// <summary>The timestamp of when the project was submitted for generation.</summary>
                 long time;
 
-                /// <summary>The compressed (PPMd) source code of the user's protocol description files.</summary>
-                [D(0x1_FFFF)] Binary[,] source;
+                /// <summary>
+                /// The user's protocol description files. The Server stores the archive rather than reading it, so the
+                /// cut hands it over still compressed: `SrcZip` runs, the marker to its right stops the receiver there.
+                /// </summary>
+                [SrcZip, ToStream<IfSendingFrom<Agent, Communication>>]
+                FileEntry.List source;
 
                 /// <summary>The permanent, unique ID of the project itself.</summary>
                 ulong uid;
 
-                /// <summary>UIDs of other AdHoc projects imported by this one. The root project is at index 0.</summary>
-                [D(0xFF)] ulong[,] imported_projects_uid;
+                /// <summary>
+                /// Present only when the project asks to be listed in the catalog of projects using the AdHoc protocol. The URL of the `adhoc` folder in the user's public GitHub
+                /// repository that holds a copy of every protocol description file sent in `source`:
+                /// `https://github.com/owner/repo/tree/branch/path/to/adhoc`. The repository must have at least
+                /// 500 stars. The Agent verifies the stars and the copies before sending; the Server re-verifies them.
+                /// </summary>
+                max_1_000_chars github;
+
+                /// <summary>
+                /// Open source mode only, otherwise absent. Topical tags of the project: English words separated
+                /// by a single space.
+                /// </summary>
+                max_1_000_chars tags;
 
                 // --- FIXED ORDER METADATA ARRAYS ---
                 // The order of these arrays is critical. The Server's parser relies on this exact sequence
@@ -275,24 +325,22 @@ namespace org.unirail{
                 [D(0xFFFF)] Host.Pack[,] packs;
 
                 /// <summary>A list of all hosts defined in the project.</summary>
-                [D(0xFF)] Host[,] hosts;
+                [D(0xFF)] Host[,]      hosts;
+                [D(0xFF)] Multiplex[,] multiplex;
 
-                /// <summary>A list of all communication channels defined in the project.</summary>
-                [D(0xFF)] Channel[,] channels;
+                /// <summary>A list of all connections defined in the project.</summary>
+                [D(0xFF)] Connection[,] connections;
 #endregion
 
                 /// <summary>
                 /// Describes a single Host within the user's project.
                 /// </summary>
-                public class Host /*ć*/ : Constants{
+                public class Host : Constants{
                     /// <summary>Persistent unique identifier for this host.</summary>
                     byte uid;
 
                     /// <summary>A bitmask of `Langs` flags indicating which languages to generate code for.</summary>
                     Langs langs;
-
-                    /// <summary>If defined, enables MultiContext mode for this host, allowing the specified number of concurrent logical sessions on one connection.</summary>
-                    [MinMax(1, 0xFFFF)] ushort? contexts;
 
                     /**
                         Value:  16 Least Significant Bits - hash_equal info
@@ -311,11 +359,11 @@ namespace org.unirail{
                     /// <summary>Maps a field index to its language-specific implementation settings.</summary>
                     Map<ushort, Langs> field_impl;
 
-                    /// <summary>Indices of local packs (constants/enums) declared directly within this host's scope.</summary>
+                    /// <summary>Indices of local packs (constants/enums) declared directly within this host's scope or used by packs that transit throught the host.</summary>
                     [D(65_000)] ushort[,] packs;
 
                     [Flags]
-                    public enum Langs /*Ę*/ : ushort{
+                    public enum Langs : ushort{
                         InCPP   = 1 << 0,
                         InRS    = 1 << 1,
                         InCS    = 1 << 2,
@@ -329,12 +377,58 @@ namespace org.unirail{
                     /// <summary>
                     /// Describes a single Pack (data structure) within the user's project.
                     /// </summary>
-                    public class Pack /*Ĉ*/ : Constants{
+                    public class Pack : Constants{
                         /// <summary>The generated, project-specific ID for this pack, used for on-the-wire identification.</summary>
                         ushort id;
 
                         /// <summary>Persistent unique identifier for this pack, stable across compilations.</summary>
                         ushort uid;
+
+                        /// <summary>
+                        /// Index of this pack's <b>stream transform chain</b> container, or 0xFFFF when it carries none.
+                        /// <para>
+                        /// The container is a pack of the `t_constants` kind with `referred == true` (a combination no
+                        /// other pack has). Its `constants` are ordered references — one int each, holding a sub-pack
+                        /// index — to one sub-pack per chain entry, listed <b>wire end first</b>. `nested_max` records
+                        /// what the chain was declared on: 1 field, 2 pack, 3 connection.
+                        /// </para>
+                        /// <para>
+                        /// <b>What each entry is, is read from the sub-pack's `id`.</b> Existing `DataType` values are
+                        /// reused as tags: in this position none of them can mean a data type, and the run is
+                        /// contiguous, so `t_int16 &lt;= id &lt;= t_bool` identifies a chain entry in one test. The
+                        /// sub-pack's `name` (`Zstd`, `ChaCha20`, `ToStream`, …) is for humans; the tag carries meaning.
+                        /// <list type="table">
+                        ///   <item><description><c>t_bool</c> (65531) — <b>trim: ToStream</b>. On a leg it names, the
+                        ///   RECEIVER stops unwrapping at this depth and takes raw bytes.</description></item>
+                        ///   <item><description><c>t_int8</c> (65530) — <b>trim: FromStream</b>. On a leg it names, the
+                        ///   SENDER supplies raw bytes at this depth.</description></item>
+                        ///   <item><description><c>t_binary</c> (65529) — stage, role <b>compression</b>.</description></item>
+                        ///   <item><description><c>t_uint8</c> (65528) — stage, role <b>cipher</b>.</description></item>
+                        ///   <item><description><c>t_int16</c> (65527) — stage, <b>no role</b>: a plain byte transform.</description></item>
+                        /// </list>
+                        /// </para>
+                        /// <para>
+                        /// A <b>stage</b> sub-pack's own constants are its full parameter list — a value for each
+                        /// design-time parameter, null for each one to be injected at runtime.
+                        /// </para>
+                        /// <para>
+                        /// A <b>trim</b> sub-pack's constants are the endpoints it applies to, one int each: the
+                        /// connection index, positive when the sender is that connection's Left host, bitwise-inverted
+                        /// (`~idx`) when it is the Right one.
+                        /// A trim transforms nothing — it marks a position. Stages closer to the wire than the cut
+                        /// still run on that leg; everything beyond it, including the pack's own serialization, does
+                        /// not, and the payload crosses as opaque bytes. Every other leg runs the chain in full.
+                        /// </para>
+                        /// </summary>
+                        ushort link;
+
+                        /// <summary>
+                        /// Maximum payload size in bytes, with the kind encoded in the sign:
+                        ///   &lt; 0  → Stream kind (chunked, interruptible)  — stored as -N
+                        ///   &gt; 0 → File   kind (single length-prefix)     — stored as +N
+                        ///   == 0 → not a Stream/File (ordinary pack)
+                        /// </summary>
+                        long stream_max;
 
                         /// <summary>Maximum nesting depth for recursively defined packs (e.g., a tree data structure).</summary>
                         [MinMax(0, 0xFF - 1)] byte? nested_max;
@@ -348,8 +442,8 @@ namespace org.unirail{
                         /// <summary>
                         /// Describes a single Field within a Pack, including its type, constraints, and attributes.
                         /// </summary>
-                        public class Field /*ĉ*/ : Entity{
-                            /// <summary>Dimensions for multi-dimensional arrays, as defined by `[D(-N, ~N)]` attributes in the user's protocol.</summary>
+                        public class Field : Entity{
+                            /// <summary>Dimensions for multi-dimensional arrays, as defined by `[D(-N, ~N)]` attributes.</summary>
                             [D(32)] int[,] dims;
 
                             /// <summary>Maximum length constraint for a Map or Set collection.</summary>
@@ -359,20 +453,24 @@ namespace org.unirail{
                             uint? map_set_array;
 
                             // --- Type Information (External & Internal) ---
-                            /// <summary>The external (application-facing) data type of the field (e.g., the type used in the generated C# or Java class).</summary>
+                            /// <summary>The external (application-facing) data type of the field.</summary>
                             ushort exT;
-
-                            /// <summary>Length constraint for the external type (e.g., max string length).</summary>
-                            uint? exT_len;
 
                             /// <summary>Array dimensions for the external type.</summary>
                             uint? exT_array;
 
-                            /// <summary>The internal (storage-optimized) data type. Can differ from `exT` to save space or improve performance.</summary>
+                            /// <summary>The internal (storage-optimized) data type. Can differ from `exT` to save space.</summary>
                             ushort? inT;
 
                             // --- Value Constraints ---
                             long? min_value;
+
+                            /// <summary>The upper bound, in units that follow `exT`:
+                            ///   `t_string`          → the `[D(+N)]` cap in CHARACTERS (default `_DefaultMaxLengthOf.Strings`).
+                            ///                        On the streamed route of a directional string the wire prefix is a UTF-8 BYTE
+                            ///                        total - a derived bound (at most 3 bytes per char), not this number.
+                            ///   `t_stream`/`t_file` → the `[S(N)]` conduit cap in BYTES.
+                            ///   anything else       → the numeric range bound.</summary>
                             long? max_value;
 
                             /// <summary>Specifies the direction for Varint compression: -1 for V(max-val), 0 for X(zigzag), 1 for A(min-val).</summary>
@@ -381,7 +479,7 @@ namespace org.unirail{
                             double? min_valueD;
                             double? max_valueD;
 
-                            /// <summary>Number of bits required (1-7) if this field is part of a bitfield, enabling multiple fields to be packed into a single byte.</summary>
+                            /// <summary>Number of bits required (1-7) if this field is part of a bitfield.</summary>
                             [MinMax(1, 7)] byte? bits;
 
                             /// <summary>A bitmask that defines nullability behavior and special values, enabling efficient handling of optional fields.</summary>
@@ -401,7 +499,6 @@ namespace org.unirail{
 #region Map Value Parameters
                             // These fields specifically describe the 'Value' part of a Key-Value Map.
                             ushort? exTV;
-                            uint?   exTV_len;
                             uint?   exTV_array;
 
                             ushort?                inTV;
@@ -415,11 +512,8 @@ namespace org.unirail{
                             byte?                null_valueV;
 #endregion
 
-                            /// <summary>An array of indices pointing to packs that represent this field's custom attributes.</summary>
-                            public Pack[,] attributes;
-
-                            /// <summary>Internal enumeration of all possible data types recognized by the generator. These are abstract types mapped to platform-specific ones during code generation.</summary>
-                            public enum DataType /*ę*/{
+                            /// <summary>Internal enumeration of all data types recognized by the generator. Abstract types are mapped to platform-specific ones during code generation.</summary>
+                            public enum DataType {
                                 t_constants  = 65535, // Reserved for a constant set type
                                 t_enum_sw    = 65534, // Reserved for switch enums
                                 t_enum_exp   = 65533, // Reserved for expression enums
@@ -440,12 +534,15 @@ namespace org.unirail{
                                 t_string     = 65518, // Reserved for a string type
                                 t_map        = 65517, // Reserved for a map type
                                 t_set        = 65516, // Reserved for a set type
-                                t_subpack    = 65515, // Reserved for a sub-pack type
+                                t_stream     = 65515, // Reserved for a stream type
+                                t_file       = 65514, // Reserved for a file type
+                                t_date       = 65513, // Reserved for standard date time type
+                                t_subpack    = 65512, // Reserved for a sub-pack type
                             }
                         }
 
                         /// <summary>Describes a single constant or enum member within the protocol.</summary>
-                        public class Constant /*Ċ*/ : Entity{
+                        public class Constant : Entity{
                             ushort                      exT;
                             long?                       value_int;    // The value if the constant is an integer type.
                             double?                     value_double; // The value if the constant is a floating-point type.
@@ -455,65 +552,133 @@ namespace org.unirail{
                     }
                 }
 
+                public class Multiplex : Constants{
+                    byte[,] hosts;
+                }
+
                 /// <summary>
-                /// Describes a single communication Channel between two Hosts.
+                /// Describes a single Connection between two Hosts.
                 /// </summary>
-                public class Channel /*ċ*/ : Constants{
-                    /// <summary>Persistent unique identifier for this channel.</summary>
+                public class Connection : Constants{
+                    /// <summary>Persistent unique identifier for this connection.</summary>
                     byte uid;
 
                     /// <summary>Index of the Left Host in the project's `hosts` array.</summary>
                     byte hostL;
 
-                    /// <summary>A list of pack indices that the Left Host is allowed to transmit on this channel.</summary>
-                    [D(0xFFFF)] ushort[,] hostL_transmitting_packs;
-
-                    /// <summary>A list of pack indices related to (e.g., received by) the Left Host on this channel.</summary>
-                    [D(0xFFFF)] ushort[,] hostL_related_packs;
-
                     /// <summary>Index of the Right Host in the project's `hosts` array.</summary>
                     byte hostR;
 
-                    /// <summary>A list of pack indices that the Right Host is allowed to transmit on this channel.</summary>
-                    [D(0xFFFF)] ushort[,] hostR_transmitting_packs;
+                    public ushort id;
+                    public ushort link;
+                    public int[,] viaPath;
+                    public int    MaxTunnels;
+                    public uint   MaxStream_KiloBytes;
 
-                    /// <summary>A list of pack indices related to (e.g., received by) the Right Host on this channel.</summary>
-                    [D(0xFFFF)] ushort[,] hostR_related_packs;
+                    [D(0xFFF)] Actor[,] actors;
 
-                    /// <summary>The set of all stages that make up this channel's state machine.</summary>
-                    [D(0xFFF)] Stage[,] stages;
+                    /// <summary>Packs sent from the Left Host as a structured Source; the Right Host receives them as opaque raw bytes.</summary>
+                    [D(0xFFFF)] ushort[,] hostL_to_packs;
+
+                    /// <summary>Packs sent from the Left Host as raw bytes; the Right Host rehydrates them into structured objects (Sink).</summary>
+                    [D(0xFFFF)] ushort[,] hostL_from_packs;
+
+                    /// <summary>Packs sent from the Right Host as a structured Source; the Left Host receives them as opaque raw bytes.</summary>
+                    [D(0xFFFF)] ushort[,] hostR_to_packs;
+
+                    /// <summary>Packs sent from the Right Host as raw bytes; the Left Host rehydrates them into structured objects (Sink).</summary>
+                    [D(0xFFFF)] ushort[,] hostR_from_packs;
 
                     /// <summary>
-                    /// Describes a single state (Stage) in the channel's state machine.
+                    /// Actor.
                     /// </summary>
-                    public class Stage /*Č*/ : Constants{
-                        /// <summary>Persistent unique identifier for this stage.</summary>
+                    public class Actor : Constants{
+                        /// <summary>Persistent unique identifier for this actor.</summary>
                         ushort uid;
 
-                        /// <summary>The timeout in seconds for this stage. If exceeded, a connection error is typically triggered.</summary>
-                        ushort timeout;
+                        /// <summary>
+                        /// Defines the maximum number of concurrent instances and the addressing mode.
+                        /// </summary>
+                        /// <value>
+                        /// Use a standard integer (e.g., <c>10</c>) for individual addressing.
+                        /// Use the plus prefix (e.g., <c>+10</c>) to enable Multicasting/Pub-Sub behavior.
+                        /// </value>
+                        int MaxActiveInstances;
 
-                        /// <summary>The set of possible transitions (branches) for the Left Host from this stage.</summary>
-                        [D(0xFFF)] Branch[,] branchesL;
+                        bool Multicasting;
 
-                        /// <summary>The set of possible transitions (branches) for the Right Host from this stage.</summary>
-                        [D(0xFFF)] Branch[,] branchesR;
+#region L
+                        /// <summary>A list of pack indices that the Left Host is allowed to transmit on this connection.</summary>
+                        [D(0xFFFF)] ushort[,] hostL_transmitting_packs;
 
                         /// <summary>
-                        /// Describes a single transition (Branch) from a Stage, which is triggered by sending a specific pack.
+                        /// What the RIGHT Host parses out of `hostL_transmitting_packs`: the nested types it walks into,
+                        /// plus the payload of every field the Left Host hands over as raw bytes for it to rehydrate.
+                        /// A payload the Left Host serializes and the Right Host receives as opaque bytes is NOT here —
+                        /// that one is in `hostL_to_packs`. `hostL_from_packs` names the subset of this list the Left
+                        /// Host itself does not serialize.
                         /// </summary>
-                        public class Branch /*č*/{
-                            string doc;
+                        [D(0xFFFF)] ushort[,] hostL_related_packs;
+#endregion
+#region R
+                        /// <summary>A list of pack indices that the Right Host is allowed to transmit on this connection.</summary>
+                        [D(0xFFFF)] ushort[,] hostR_transmitting_packs;
 
-                            /// <summary>The index of the stage to transition to. A value of `ushort.MaxValue` is a special signal to terminate the connection.</summary>
-                            ushort goto_stage;
+                        /// <summary>
+                        /// What the LEFT Host parses out of `hostR_transmitting_packs`: the nested types it walks into,
+                        /// plus the payload of every field the Right Host hands over as raw bytes for it to rehydrate.
+                        /// A payload the Right Host serializes and the Left Host receives as opaque bytes is NOT here —
+                        /// that one is in `hostR_to_packs`. `hostR_from_packs` names the subset of this list the Right
+                        /// Host itself does not serialize.
+                        /// </summary>
+                        [D(0xFFFF)] ushort[,] hostR_related_packs;
+#endregion
 
-                            /// <summary>The set of packs that can be sent to trigger this transition.</summary>
-                            [D(0xFFFF)] ushort[,] packs;
+                        /// <summary>The set of all states that make up this connection's state machine.</summary>
+                        [D(0xFFF)] State[,] states;
+
+                        /// <summary>
+                        /// Describes a single state (State) in the connection's state machine.
+                        /// </summary>
+                        public class State : Constants{
+                            /// <summary>Persistent unique identifier for this state.</summary>
+                            ushort uid;
+
+                            /// <summary>The set of possible transitions (branches) for the Left Host from this state.</summary>
+                            [D(0xFFF)] Branch[,] branchesL;
+
+
+                            /// <summary>The set of possible transitions (branches) for the Right Host from this state.</summary>
+                            [D(0xFFF)] Branch[,] branchesR;
+
+
+                            /// <summary>
+                            /// Describes a single transition (Branch) from a State, which is triggered by sending a specific pack.
+                            /// </summary>
+                            public class Branch {
+                                max_65_000_chars doc;
+
+                                /// <summary>The index of the state to transition to. A value of `ushort.MaxValue` signifies connection termination.</summary>
+                                ushort goto_state;
+
+                                /// <summary>The set of packs that can be sent to trigger this transition.</summary>
+                                [D(0xFFFF)] ushort[,] packs;
+                            }
+
+                            /// <summary>
+                            /// A special terminal target state that deallocates the current Actors instance.
+                            /// This effectively deletes the linked actors,
+                            /// while leaving the underlying physical connection open for other actors.
+                            /// </summary>
+                            const ushort End = ushort.MaxValue - 1;
+
+                            /// <summary>
+                            /// A special terminal target state that gracefully terminates the physical connection.
+                            /// This ensures the transmission queue is fully drained before closing the pipe.
+                            /// Once all pending data is sent, the communication link between hosts is safely shut down.
+                            /// </summary>
+                            const ushort Close = ushort.MaxValue;
                         }
-
-                        /// <summary>A special constant representing a transition that terminates the connection.</summary>
-                        const ushort Exit = ushort.MaxValue;
                     }
                 }
             }
@@ -521,52 +686,62 @@ namespace org.unirail{
             // --- Agent-Specific Action Packs ---
 
             /// <summary>
-            /// Contains the user's credentials (a permanent UUID) used for authentication with the Server.
+            /// Contains the user's credentials used for authentication with the Server.
             /// </summary>
-            public class Login /*Ď*/{
+            public class Login {
                 public ulong uuid_hi; // Higher 64 bits of the 128-bit UUID.
                 public ulong uuid_lo; // Lower 64 bits of the 128-bit UUID.
             }
 
             /// <summary>
-            /// The first pack sent by the Agent to the Server to negotiate the protocol version.
+            /// The first pack sent by the Agent to negotiate the protocol version.
             /// </summary>
-            public class Version /*ď*/{
-                /// <summary>A unique hash or identifier representing the agent's protocol version.</summary>
-                public uint uid;
+            public class Version {
+                /// <summary>
+                /// The culture identifier for the current CultureInfo.
+                /// </summary>
+                public byte LCID;
+
+                /// <summary>
+                /// local UTC offset in 15-minute units
+                /// </summary>
+                /// <returns></returns>
+                public byte zone;
+
+                /// <summary>A unique hash representing the agent's protocol version.</summary>
+                public ushort uid;
             }
 
             /// <summary>
-            /// A pack used to send a `.proto` file (or files) to the Server for conversion into the AdHoc format.
+            /// A pack used to send a `.proto` file to the Server for conversion into AdHoc format.
             /// </summary>
-            public class Proto /*Đ*/{
+            public class Proto {
                 string task; // A unique ID for this conversion task.
                 string name;
 
                 /// <summary>The binary content of the `.proto` file(s).</summary>
-                [D(512_000)] Binary[,] proto;
+                [Zstd]
+                [D(+5_120_000)] string proto;
             }
         }
 
         /// <summary>
-        /// Defines the Observer host, representing the browser-based visualizer tool.
+        /// Defines the Observer host, representing the browser-based visualizer.
         /// It requests project data from the Agent and sends UI interaction commands back.
         /// </summary>
         /**
         <see cref = 'InTS'/>All packs of the `Observer` host are fully implemented and generated in TypeScript
         */
-        struct Observer /*ā*/ : Host{
+        struct Observer : Host{
             /// <summary>
-            /// A request from the Observer to check if its data is stale. The Agent will respond either
-            /// with an updated `Project` pack or with this same pack to confirm it's already up-to-date.
+            /// A request from the Observer to check if its project data is stale.
             /// </summary>
-            public class Up_to_date /*đ*/{
+            public class Up_to_date {
                 max_65_000_chars info; // Can be used to return an error description if an update check fails.
             }
 
             /// <summary>
-            /// A command from the Observer requesting that the Agent open the source code for a specific protocol item
-            /// in the user's configured local IDE.
+            /// A command requesting the Agent to open source code for a specific protocol item in the local IDE.
             /// </summary>
 
             //JetBrains Rider
@@ -576,23 +751,24 @@ namespace org.unirail{
             // https://code.visualstudio.com/docs/editor/command-line#_launching-from-command-line
             //-g or --goto	When used with a file:line{:character}, opens a file at a specific line and optional character position.
             //This argument is provided since some operating systems permit : in a file name.
-            public class Show_Code /*Ē*/ : Item{ }
+            //⚙️
+            public class Show_Code : Item{ }
         }
 
         /// <summary>
-        /// Defines a virtual host to model the `.layout` file on disk. This allows saving and loading
-        /// the visual state of the Observer's diagrams as a standard protocol interaction,
-        /// rather than handling it as a special case.
+        /// Defines a virtual host representing the `.layout` file on disk. This allows saving
+        /// diagram states as standard protocol interactions.
         /// </summary>
         /**
         <see cref = 'InCS'/>All packs of the virtual `LayoutFile` host are fully implemented and generated in C#
         */
-        struct LayoutFile /*Ă*/ : Host{
+        struct LayoutFile : Host{
             /// <summary>
-            /// Maps the persistent UIDs of protocol entities (hosts, packs, etc.) to their layout keys.
-            /// This ensures that diagram positions are preserved across sessions, even if volatile internal IDs change.
+            /// Maps persistent UIDs of entities to their layout keys, preserving diagram
+            /// positions across compilations and sessions.
             /// </summary>
-            public class UID /*ē*/{
+            ///🔠
+            public class UID {
                 [D(0xFF)]   ulong[,] hosts;    // Maps host UIDs to their layout positions.
                 [D(0xFFFF)] ulong[,] packs;    // Maps pack UIDs to their layout positions.
                 [D(0xFFF)]  ulong[,] branches; // Maps branch UIDs to their layout positions.
@@ -602,177 +778,164 @@ namespace org.unirail{
             /// Contains the actual layout information, such as coordinates, zoom levels, and splitter positions
             /// for the various diagrams displayed in the Observer.
             /// </summary>
-            public class Info /*Ĕ*/{
+            ///🔠
+            ///⚙️
+            public class Info {
                 View host_packs;  // View settings (zoom, pan) for the host-packs diagram.
                 View pack_fields; // View settings for the pack-fields diagram.
-                View channels;
+                View connections;
 
-                class XY /*ĕ*/{
+                class XY {
                     int x; // X-coordinate. A value of int.MinValue indicates an unassigned position.
                     int y; // Y-coordinate.
                 }
 
-                class View /*Ė*/ : XY{
-                    int  x;
-                    int  y;
-                    int  w;
-                    int  h;
+                class View : XY{
+                    int x;
+                    int y;
+                    int w;
+                    int h;
 
                     ushort hue;
 
-                    int    panX;
-                    int    panY;
-                    float  zoom; // The zoom level for this view.
+                    int   panX;
+                    int   panY;
+                    float zoom; // The zoom level for this view.
                 }
 
                 [D(0xFF)]   XY[,] hosts;    // Stores positions for hosts in the Hosts Diagram.
                 [D(0xFFFF)] XY[,] packs;    // Stores positions for packs in the Packs Diagram.
-                [D(0xFFF)]  XY[,] branches; // Stores positions for branches in the Channels Diagram.
+                [D(0xFFF)]  XY[,] branches; // Stores positions for branches in the Connections Diagram.
             }
         }
         // =================================================================================================
-        // == CHANNEL DEFINITIONS
+        // == CONNECTION DEFINITIONS
         // =================================================================================================
-        // Channels define the communication flows and state machines between two hosts.
+        // Connections define communication links and state machines between host pairs.
 
         /// <summary>
-        /// The main stateful communication channel between the Agent and the Server.
-        /// It defines the entire workflow: version check -> login -> job submission -> result retrieval.
+        /// The main stateful connection between the Agent and the Server.
+        /// Defines the lifecycle: version check -> login -> job submission -> result retrieval.
         /// </summary>
-        interface Communication /*ÿ*/ : ChannelFor<Agent, Server>{
+        interface Communication : Connects<Agent, Server>{
             /// <summary>A "Named Pack Set" that groups the two possible final responses from the Server (`Info` or `Result`).
             /// This simplifies referencing them in the state machine branches below.</summary>
             interface Info_Result : // This interface defines the pack set.
-                _<
+                _<(
                     Server.Info,
                     Server.Result
-                >{ }
+                    )>{ }
 
             // --- State Machine Definition ---
-            // Each nested interface here defines a "Stage" in the communication lifecycle.
-            /// <summary>STAGE 1: The initial state. The Agent (`L` for Left host) must send its `Version` pack,
-            /// which transitions the state machine to the `VersionMatching` stage.</summary>
-            [TransmitTimeout(12)]                       // Sets a 12-second timeout for this stage.
-            interface Start /*ÿ*/ : L,                  // 'L' indicates the Left host (Agent) is the sender in this stage.
-                                    _< /*ÿ*/            // This block defines a "Branch" for this stage.
-                                        Agent.Version,  // The pack that can be sent.
-                                        VersionMatching // The stage to transition to upon sending.
-                                    >{ }
+            // Each struct here defines a "State" in the communication lifecycle. Branches are declared as
+            // attributes. Transitional forms carry the target state as their first type argument.
 
-            /// <summary>STAGE 2: The Server (`R` for Right host) validates the version. It can either send
-            /// an `Invitation` (on success, moving to `Login` stage) or an `Info` pack (on failure, terminating with `Exit`).</summary>
+            /// <summary>STAGE 1: The initial state. The Agent (Left host) must send its `Version`,
+            /// which transitions the state machine to the `VersionMatching` state.</summary>
+            [TransmitTimeout(12)]                                       // Sets a 12-second timeout for this state.
+            [L____________ /*ÿ*/<VersionMatching, Agent.Version>/*ÿ*/] /*ÿ*/ // Master L→R: send Version, transition to VersionMatching.
+            struct Start /*ÿ*/{ }
+
+            /// <summary>STAGE 2: The Server (Right host) validates the version.</summary>
             [TransmitTimeout(1)]
-            interface VersionMatching /*Ā*/ : R,       // 'R' indicates the Right host (Server) is the sender.
-                                              _< /*ÿ*/ // Branch 1: Success case.
-                                                  Server.Invitation,
-                                                  Login
-                                              >,
-                                              _< /*Ā*/ // Branch 2: Failure case.
-                                                  Server.Info,
-                                                  Exit // `Exit` is a special target that terminates the connection.
-                                              >{ }
+            [____________R /*ÿ*/<Login, Server.Invitation>/*ÿ*/] /*ÿ*/ // Success: send Invitation, move to Login.
+            [____________R /*Ā*/<Close, Server.Info>/*Ā*/] /*Ā*/       // Failure: send Info, close the connection.
+            struct VersionMatching /*Ā*/{ }
 
-            /// <summary>STAGE 3: The Agent is expected to send its `Login` credentials, which moves the state to `LoginResponse`.</summary>
-            interface Login /*ā*/ : L,
-                                    _< /*ÿ*/
-                                        Agent.Login,
-                                        LoginResponse
-                                    >{ }
+            /// <summary>STAGE 3: The Agent sends its `Login` credentials, which moves the state to `LoginResponse`.</summary>
+            [L____________ /*ÿ*/<LoginResponse, Agent.Login>/*ÿ*/] /*ÿ*/
+            struct Login /*ā*/{ }
 
             /// <summary>STAGE 4: The Server validates the login. It can respond with an `Invitation` (with an optional UUID update)
             /// on success, or an `Info` pack on failure.</summary>
             [TransmitTimeout(12)]
-            interface LoginResponse /*Ă*/ : R,
-                                            _< /*ÿ*/                     // Branch for successful login.
-                                                Server.Invitation,       // A successful login response.
-                                                Server.InvitationUpdate, // A successful login that also updates the agent's volatile UUID.
-                                                TodoJobRequest           // Transition to the job request stage.
-                                            >,
-                                            _< /*Ā*/ // Branch for failed login.
-                                                Server.Info,
-                                                Exit
-                                            >{ }
+            [____________R /*ÿ*/<TodoJobRequest, (Server.Invitation, Server.InvitationUpdate)>/*ÿ*/] /*ÿ*/ // Success branch.
+            [____________R /*Ā*/<Close, Server.Info>/*Ā*/] /*Ā*/                                           // Failure branch.
+            struct LoginResponse /*Ă*/{ }
 
             /// <summary>STAGE 5: The authenticated Agent can now send a generation job, either a `Project` or a `Proto` file.</summary>
-            [TransmitTimeout(12)]
-            interface TodoJobRequest /*ă*/ : L,
-                                             _< /*ÿ*/ // Branch for a standard Project submission.
-                                                 Agent.Project,
-                                                 Project
-                                             >,
-                                             _< /*Ā*/ // Branch for a Proto file conversion submission.
-                                                 Agent.Proto,
-                                                 Proto
-                                             >{ }
+            [TransmitTimeout(2)]
+            [L____________ /*ÿ*/<Project, Agent.Project>/*ÿ*/] /*ÿ*/ // Project submission.
+            [L____________ /*Ā*/<Proto, Agent.Proto>/*Ā*/] /*Ā*/     // Proto file conversion submission.
+            struct TodoJobRequest /*ă*/{ }
 
             /// <summary>STAGE 6 (Project): The Server processes the project and sends a final response from the `Info_Result` pack set, then exits.</summary>
-            interface Project /*Ą*/ : R,
-                                      _<               /*ÿ*/
-                                          Info_Result, // Use the named pack set for the possible responses.
-                                          Exit
-                                      >{ }
+            [ReceiveTimeout(120)]
+            [____________R /*ÿ*/<Close, Info_Result>/*ÿ*/] /*ÿ*/
+            struct Project /*Ą*/{ }
 
             /// <summary>STAGE 6 (Proto): The Server processes the proto file and sends a final response from the `Info_Result` pack set, then exits.</summary>
-            interface Proto /*ą*/ : R,
-                                    _< /*ÿ*/
-                                        Info_Result,
-                                        Exit
-                                    >{ }
+            [____________R /*ÿ*/<Close, Info_Result>/*ÿ*/] /*ÿ*/
+            struct Proto /*ą*/{ }
         }
 
         /// <summary>
-        /// A simple, stateless channel for saving and restoring layout UID translations between the Agent and the virtual LayoutFile.
-        /// `LR` indicates that both hosts can send and receive packs in the `Start` stage without a state change.
+        /// A simple, stateless connection for saving and restoring layout UID translations between the Agent and the virtual LayoutFile.
+        /// `LR` indicates that both hosts can send and receive packs in the `Start` state without a state change.
         /// </summary>
-        interface SaveLayout /*Ā*/ : ChannelFor<Agent, LayoutFile>{
-            interface Start /*ÿ*/ : LR,      // `LR` allows bidirectional communication in this stage.
-                                    _< /*ÿ*/ // This is a self-referencing branch; the stage does not change after sending.
-                                        LayoutFile.UID,
-                                        LayoutFile.Info
-                                    >{ };
+        interface SaveLayout : Connects<Agent, LayoutFile>{
+            [KeepDoc("🔠")] interface LayoutFilter<SCOPE>{ }
+
+            // `_____lr_____` allows bidirectional peer communication in this state. The branch is
+            // self-referencing; the state does not change after sending.
+            [_____lr_____ /*ÿ*/<LayoutFilter<@AdHocProtocol>>/*ÿ*/] /*ÿ*/ //🔠
+            struct Start /*ÿ*/{ }
         }
 
         /// <summary>
-        /// Defines the persistent communication channel between the `Agent` and the `Observer`, allowing for
+        /// Defines the persistent connection between the `Agent` and the `Observer`, allowing for
         /// interactive updates and commands for the visualizer.
         /// </summary>
-        interface ObserverCommunication /*ā*/ : ChannelFor<Agent, Observer>{
+        interface ObserverCommunication : Connects<Agent, Observer>{
             /// <summary>STATE 1/3: The Agent initiates the session by pushing layout info and/or the full project to the Observer for initial rendering.</summary>
-            interface Start /*ÿ*/ : L,
-                                    _< /*ÿ*/ // Branch 1: Agent can send layout info first.
-                                        LayoutFile.Info,
-                                        LayoutSent // Transitions to a state where only the project can be sent.
-                                    >,
-                                    _< /*Ā*/ // Branch 2: Agent can send the project directly if there's no layout info.
-                                        Agent.Project,
-                                        Operate // Transitions directly to the interactive state.
-                                    >{ }
+            [L____________ /*ÿ*/<LayoutSent, LayoutFile.Info>/*ÿ*/] /*ÿ*/ // Branch 1: Agent sends layout info first, transitions to LayoutSent.
+            [L____________ /*Ā*/<Operate, Agent.Project>/*Ā*/] /*Ā*/      // Branch 2: Agent sends the project directly, jumps to Operate.
+            struct Start /*ÿ*/{ }
 
             /// <summary>A transient state ensuring the project is sent immediately after the layout information.</summary>
-            interface LayoutSent /*Ā*/ : L,
-                                         _<                 /*ÿ*/
-                                             Agent.Project, // Only `Agent.Project` can be sent from this state.
-                                             Operate        // Transition to the main interactive stage.
-                                         >{ }
+            [L____________ /*ÿ*/<Operate, Agent.Project>/*ÿ*/] /*ÿ*/
+            struct LayoutSent /*Ā*/{ }
+
+            [KeepDoc("⚙️")] interface LayoutFilter2<SCOPE>{ }
 
             /// <summary>STATE 2/3: The Observer is in an interactive state and can send commands (`Show_Code`, `Up_to_date`) to the Agent.</summary>
-            interface Operate /*ā*/ : R,
-                                      _< /*ÿ*/                // Branch 1: Observer sends commands that do not require a data refresh from the agent.
-                                          Observer.Show_Code, // The stage remains `Operate` after these are sent.
-                                          LayoutFile.Info
-                                      >,
-                                      _< /*Ā*/ // Branch 2: Observer requests a data refresh.
-                                          Observer.Up_to_date,
-                                          RefreshProject // Transition to a stage where the Agent will respond with data.
-                                      >{ }
+            [____________r /*ÿ*/<LayoutFilter2<@AdHocProtocol>>/*ÿ*/] /*ÿ*/       //⚙️ Branch 1: Observer sends commands (no state transition).
+            [____________R /*Ā*/<RefreshProject, Observer.Up_to_date>/*Ā*/] /*Ā*/ // Branch 2: Observer requests a data refresh.
+            struct Operate /*ā*/{ }
 
             /// <summary>STATE 3/3: The Agent responds to the Observer's update request with either the new project data or an "up-to-date" signal.</summary>
-            interface RefreshProject /*Ă*/ : L,
-                                             _<                       /*ÿ*/
-                                                 Agent.Project,       // Option 1: Send the updated project data.
-                                                 Observer.Up_to_date, // Option 2: Send a signal that the data is already current.
-                                                 Operate              // In either case, return to the interactive 'Operate' stage.
-                                             >{ }
+            [L____________ /*ÿ*/<Operate, (Agent.Project, Observer.Up_to_date)>/*ÿ*/] /*ÿ*/
+            struct RefreshProject /*Ă*/{ }
+        }
+
+
+        /// <summary>
+        /// The on-the-wire format of a file archive, and the single place it is defined.
+        ///
+        /// Every leg that hands an archive over as opaque bytes cuts the chain to the RIGHT of this flow, so the
+        /// opaque side holds exactly what this declaration produces. That the legs agree is what makes a stored
+        /// archive replayable: nothing on the wire announces the configuration, and a reader that ran a different
+        /// one simply fails. Naming it once is what keeps them from drifting apart.
+        ///
+        /// Change it and every archive stored earlier stops decoding, all of them at once. While old archives must
+        /// stay readable, declare a new flow beside this one instead of editing it.
+        /// </summary>
+        [Zstd]
+        public class SrcZip : StreamFlowAttribute{ }
+
+        public class FileEntry {
+            /// '/'-separated archive-relative path.
+            [D(+4096)] string path;
+
+            /// Raw file content.
+            [S(0x5_000_000)] Stream bytes;
+
+            /// Carries no chain and no trim of its own. Several packs carry this list, each over its own leg, and
+            /// each states at its own field what that leg needs: `Agent.Project.source`, `Server.Result.result`,
+            /// `Monitoring.Management.Upload.response`. One declaration here would have to serve all three at once.
+            public class  List {
+                [D(0xFFFF)] FileEntry[,] files;
+            }
         }
     }
 }

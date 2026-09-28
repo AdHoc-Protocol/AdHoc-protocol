@@ -2,10 +2,11 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <LangVersion>12</LangVersion>
-        <ApplicationIcon>Observer\favicon.ico</ApplicationIcon>
+        <LangVersion>14</LangVersion>
+        <!-- Same favicon the Observer serves; there is no copy inside this repo any more. -->
+        <ApplicationIcon>..\Observer\Observer\favicon.ico</ApplicationIcon>
 	<PlatformTarget>x64</PlatformTarget>
 
 	<DebugType>Full</DebugType>
@@ -13,18 +14,21 @@
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <PlatformTarget>x64</PlatformTarget>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
-        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.26" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.1-dev-00953" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="5.9.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+        <PackageReference Include="Microsoft.OpenApi" Version="3.10.2" />
+        <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="3.10.2" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
         <PackageReference Include="Tommy" Version="3.1.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="templ\DescriptionFile.md" />
-     
+        <PackageReference Include="ZstdSharp.Port" Version="0.8.8" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,19 +39,49 @@
       <Compile Remove="Templates\ProtocolDescription.cs" />
       <EmbeddedResource Include="Templates\ProtocolDescription.cs" />
       <Compile Remove="AdHocProtocol.cs" />
+      <Compile Remove="bench\**\*.cs" />
+      <None Remove="bench\**" />
     </ItemGroup>
 
     <ItemGroup>
       <_DeploymentManifestIconFile Remove="..\Observer\Observer\favicon.ico" />
     </ItemGroup>
 
+    <!--
+      The Observer's built assets, carried inside the assembly.
+
+      At runtime ToObserver serves them straight off disk from webpack's output folder, so
+      rebuilding the front end needs no agent rebuild. These resources are the shipping
+      alternative to that: flip the two halves of the FileStream line in ChannelToObserver.cs
+      over to GetManifestResourceStream and the agent runs with no asset folder at all.
+
+      They are embedded from the same generated output the runtime reads, so the two routes
+      cannot disagree about which build is the Observer.
+
+      `*.js` picks up observer.js together with every code-split chunk (the lazily imported
+      zstd codec is one), and matches neither the `.map` files nor observer.js.LICENSE.txt.
+      That chunk is not optional: the Observer awaits its codec before opening the WebSocket.
+
+      Source maps are left out on purpose: they are ~16 MB, more than the code they annotate,
+      and a browser only asks for them with devtools open. Add "$(ObserverBuild)*.map" below if
+      you want them in.
+
+      An explicit LogicalName keeps the resource names stable — MSBuild's default naming
+      derives them from the item path and would mangle the hyphens in a chunk file name.
+    -->
+    <PropertyGroup>
+      <ObserverBuild>..\Observer\Observer\</ObserverBuild>
+    </PropertyGroup>
+
     <ItemGroup>
-      <None Remove="Observer\observer.js" />
-      <None Remove="Observer\index.html" />
-      <None Remove="Observer\favicon.ico" />
-      <EmbeddedResource Include="Observer\favicon.ico">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
+      <ObserverAsset Include="$(ObserverBuild)index.html" />
+      <ObserverAsset Include="$(ObserverBuild)favicon.ico" />
+      <ObserverAsset Include="$(ObserverBuild)*.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="protocol\gen\" />
+      <Folder Include="protocol\lib\" />
     </ItemGroup>
 
 </Project>

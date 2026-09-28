@@ -22,19 +22,11 @@ namespace com.my.company // The namespace for your company's project. Required!
             public class PacketToServer{ } // Represents an empty packet to be sent from the client to the server
         }
 
-        // Defines a communication channel for exchanging data between the client and server
-        interface Channel : ChannelFor<Client, Server>{
-            interface Start :
-                L,
-                _<
-                    CommonPacket,
-                    Client.PacketToServer
-                >,
-                R,
-                _<
-                    CommonPacket,
-                    Server.PacketToClient
-                >{ }
+        // Defines a communication connection for exchanging data between the client and server
+        interface Connection : Connects<Client, Server>{
+            [l____________<(CommonPacket, Client.PacketToServer)>]
+            [____________r<(CommonPacket, Server.PacketToClient)>]
+            struct Start { }
         }
     }
 }

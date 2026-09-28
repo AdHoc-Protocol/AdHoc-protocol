@@ -1,4 +1,4 @@
-﻿// Copyright 2025 Chikirev Sirguy, Unirail Group
+// Copyright 2025 Chikirev Sirguy, Unirail Group
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,183 +17,247 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 using org.unirail.Agent;
 using org.unirail.Communication;
-using Tommy;
 using static org.unirail.AdHocAgent;
-using static org.unirail.Agent.AdHocProtocol.Server_;
 
-namespace org.unirail
-{
-    public class ChannelToServer
-    {
-        static ChannelToServer()
+namespace org.unirail{
+    public class ToServer{
+        static ToServer()
         {
-            Action<Context, Stages.TodoJobRequest.Transmitter> uploadTask = (context, transmitter) =>
-                                                                            {
-                                                                                if (proto == null)
-                                                                                    if (provided_path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
-                                                                                        transmitter.send(project ?? ProjectImpl.init(), context);
-                                                                                    else
-                                                                                        exit("Unsupported file type: " + provided_path, -1);
-                                                                                else
-                                                                                    transmitter.send(proto, context);
-                                                                            };
+            Action<Connection, Actor0, Actor0.State.TodoJobRequest.Transmitter> uploadTask = (conn, actor, transmitter) =>
+                                                                                             {
+                                                                                                 if( proto == null )
+                                                                                                     if( provided_path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) )
+                                                                                                         transmitter.send(project ?? ProjectImpl.init(), conn);
+                                                                                                     else
+                                                                                                         exit("Unsupported file type: " + provided_path, -1);
+                                                                                                 else
+                                                                                                     transmitter.send(proto, conn);
+                                                                                             };
 
-            Invitation.OnReceived_via_Communication_at_LoginResponse.handlers += uploadTask; //server invites agent to upload a client task
-
-
-            Invitation.OnReceived_via_Communication_at_VersionMatching.handlers += (context, transmitter) =>
-                                                                                   {
-                                                                                       PersonalVolatileUUID(out var hi, out var lo);                                             //get personal volatile UUID
-                                                                                       transmitter.send(new AdHocProtocol.Agent_.Login { uuid_hi = hi, uuid_lo = lo }, context); //send login
-                                                                                   };
-            InvitationUpdate.OnReceived_via_Communication_at_LoginResponse.handlers += (pack, context, transmitter) =>
-                                                                                       {
-                                                                                           PersonalVolatileUUID(out var hi, out var lo);
-                                                                                           if (hi != pack.uuid_hi || lo != pack.uuid_lo)
-                                                                                               updatePersonalVolatileUUID(Guid.Parse($"{pack.uuid_hi:x16}{pack.uuid_lo:x16}").ToString("D"));
-
-                                                                                           uploadTask(context, transmitter);
-                                                                                       };
+            Actor0.State.LoginResponse.OnReceiveD.AdHocProtocol_Server_Invitation.handlers += uploadTask; //server invites agent to upload a client task
 
 
-            Result.OnReceived_via_Communication_at_Project.handlers += (pack, context) =>
-                                                                       {
-                                                                           context.channel.ext_channal.CloseAndDispose();
-
-                                                                           _ = Task.Run(() =>
-                                                                                        {
-                                                                                            using var zipped_bytes = new MemoryStream(pack._result!);
-                                                                                            LOG.Information("Obtaining the generated code");
-                                                                                            try
-                                                                                            {
-                                                                                                if (Directory.Exists(RawFilesDirPath)) Directory.Delete(RawFilesDirPath, true);
-
-                                                                                                unzip(zipped_bytes, RawFilesDirPath);        // extract into the destination_dir_path/project_name
-                                                                                                new FileInfo(provided_path).IsReadOnly = false; // remove `file uploaded` mark
-
-                                                                                                LOG.Information("Received result of the task {task} into the {folder}", pack.task!, RawFilesDirPath);
-                                                                                                if (pack.info != null) LOG.Information("Information:\n{info}", pack.info); //output info into console
-
-                                                                                                Deployment.deploy(RawFilesDirPath); //code deployment is starting
-                                                                                                done.SetResult(true);
-                                                                                            }
-                                                                                            catch (Exception e)
-                                                                                            {
-                                                                                                Console.WriteLine(e);
-                                                                                                throw;
-                                                                                            }
-                                                                                        });
-                                                                       };
-            Info.OnReceived_via_Communication_at_Project.handlers += (pack, context) => LOG.Information("Received new information:\n{information}", pack.info);
-
-            Result.OnReceived_via_Communication_at_Proto.handlers += (pack, context) =>
-                                                                     {
-                                                                         context.channel.ext_channal.CloseAndDispose();
-
-                                                                         using var zipped_bytes = new MemoryStream(pack._result!);
-
-                                                                         LOG.Information("Receiving result of .proto format conversion");
-                                                                         unzip(zipped_bytes, destination_dir_path);
-
-                                                                         if (!string.IsNullOrEmpty(pack.info)) Console.Out.WriteLine($"Information:\n{pack.info}"); //output info into console
-                                                                         exit("Here is the result of the .proto format conversion: " + destination_dir_path, 0);
-                                                                     };
-            Info.OnReceived_via_Communication_at_VersionMatching.handlers += (pack, context) => //the agent and server have incompatible protocol versions
-                                                                             {
-                                                                                 LOG.Error("{info}", pack.info);
-                                                                                 exit("Resolve the issue and try again.");
-                                                                             };
-
-            Info.OnReceived_via_Communication_at_LoginResponse.handlers += (pack, context) =>
-                                                                           {
-                                                                               context.channel.ext_channal.CloseAndDispose();
-                                                                               LOG.Error(pack.info);
-                                                                           };
-
-            AdHocProtocol.Agent_.Project.OnSent_via_Communication_at_TodoJobRequest.handlers += (pack, context) =>
+            Actor0.State.VersionMatching.OnReceiveD.AdHocProtocol_Server_Invitation.handlers += (conn, actor, transmitter) =>
                                                                                                 {
-                                                                                                    new FileInfo(provided_path).IsReadOnly = true;                                             //+ delete old files - mark:  the file was sent
-                                                                                                    var result_output_folder = Path.Combine(destination_dir_path, ((ProjectImpl)pack!)._name); // destination_dir_path/project_name
-                                                                                                    if (Directory.Exists(result_output_folder))
-                                                                                                        Directory.Delete(result_output_folder, true);
+                                                                                                    PersonalVolatileUUID(out var hi, out var lo);                                          //get personal volatile UUID
+                                                                                                    transmitter.send(new AdHocProtocol.Agent_.Login { uuid_hi = hi, uuid_lo = lo }, conn); //send login
                                                                                                 };
+            Actor0.State.LoginResponse.OnReceiveD.AdHocProtocol_Server_InvitationUpdate.handlers += (pack, conn, actor, transmitter) =>
+                                                                                                    {
+                                                                                                        PersonalVolatileUUID(out var hi, out var lo);
+                                                                                                        if( hi != pack.uuid_hi || lo != pack.uuid_lo )
+                                                                                                            updatePersonalVolatileUUID(Guid.Parse($"{pack.uuid_hi:x16}{pack.uuid_lo:x16}").ToString("D"));
+
+                                                                                                        uploadTask(conn, actor, transmitter);
+                                                                                                    };
+
+
+            Actor0.State.Project.OnReceiveD.AdHocProtocol_Server_Result.handlers += (pack, conn, actor) =>
+                                                                                    {
+                                                                                        result_delivered = true;
+
+                                                                                        //conn.ext_connection.CloseAndDispose();
+
+                                                                                        _ = Task.Run(() =>
+                                                                                                     {
+                                                                                                         LOG.Information("Obtaining the generated code");
+                                                                                                         try
+                                                                                                         {
+                                                                                                             // The entries already streamed themselves into RawFilesDirPath while the pack was being
+                                                                                                             // deserialized — the folder was cleared and armed back in Start(project), before the connection.
+                                                                                                             new FileInfo(provided_path).IsReadOnly = false; // remove `file uploaded` mark
+
+                                                                                                             LOG.Information("Received result of the task {task} into the {folder}", pack.task!, RawFilesDirPath);
+                                                                                                             if( pack.info != null ) LOG.Information("Information:\n{info}", pack.info); //output info into console
+
+                                                                                                             // the hosts renumbered by this run: their custom code follows them, now and on a later redeploy
+                                                                                                             var renumbered = Path.Join(RawFilesDirPath, Deployment.RENUMBERED);
+                                                                                                             var lines      = ProjectImpl.renumbered_prefixes().Select(p => p.old + " " + p.@new).ToArray();
+                                                                                                             if( 0 < lines.Length ) File.WriteAllLines(renumbered, lines);
+                                                                                                             else File.Delete(renumbered);
+
+                                                                                                             Deployment.deploy(RawFilesDirPath); //code deployment is starting
+                                                                                                             done.SetResult(true);
+                                                                                                         }
+                                                                                                         catch( Exception e )
+                                                                                                         {
+                                                                                                             Console.WriteLine(e);
+                                                                                                             throw;
+                                                                                                         }
+                                                                                                     });
+                                                                                    };
+            Actor0.State.Project.OnReceiveD.AdHocProtocol_Server_Info.handlers += (pack, conn, actor) => LOG.Information("Received new information:\n{information}", pack.info);
+
+            Actor0.State.Proto.OnReceiveD.AdHocProtocol_Server_Result.handlers += (pack, conn, actor) =>
+                                                                                  {
+                                                                                      result_delivered = true;
+                                                                                     // conn.ext_connection.CloseAndDispose();
+
+
+                                                                                      LOG.Information("Received result of .proto format conversion"); // already on disk: the entries streamed into destination_dir_path as they arrived
+
+                                                                                      if( !string.IsNullOrEmpty(pack.info) ) Console.Out.WriteLine($"Information:\n{pack.info}"); //output info into console
+                                                                                      exit("Here is the result of the .proto format conversion: " + destination_dir_path, 0);
+                                                                                  };
+            Actor0.State.VersionMatching.OnReceiveD.AdHocProtocol_Server_Info.handlers += (pack, conn, actor) => //the agent and server have incompatible protocol versions
+                                                                                          {
+                                                                                              LOG.Error("{info}", pack.info);
+                                                                                              exit("Resolve the issue and try again.");
+                                                                                          };
+
+            Actor0.State.LoginResponse.OnReceiveD.AdHocProtocol_Server_Info.handlers += (pack, conn, actor) =>
+                                                                                        {
+                                                                                           // conn.ext_connection.CloseAndDispose();
+                                                                                            LOG.Error(pack.info);
+                                                                                            // The token the last rotation replaced is still in the config. The server keeps it valid until
+                                                                                            // the new one is confirmed, so if the current UUID was rejected as unknown, re-applying the
+                                                                                            // previous one gets a fresh token issued - no new sign-up needed.
+                                                                                            if( app_props.HasKey("PreviousVolatileUUID") )
+                                                                                                LOG.Information("The UUID this one replaced is kept in {file} as PreviousVolatileUUID. If the current UUID was rejected as unknown, re-apply it: AdHocAgent {uuid}", app_props_file, app_props["PreviousVolatileUUID"].AsString?.Value);
+                                                                                        };
+
+            Actor0.State.TodoJobRequest.OnSerializeD.AdHocProtocol_Agent_Project.handlers += (pack, conn, actor) =>
+                                                                                             {
+                                                                                                 new FileInfo(provided_path).IsReadOnly = true;                                             //+ delete old files - mark:  the file was sent
+                                                                                                 var result_output_folder = Path.Combine(destination_dir_path, ((ProjectImpl)pack!)._name); // destination_dir_path/project_name
+                                                                                                 if( Directory.Exists(result_output_folder) ) Directory.Delete(result_output_folder, true);
+                                                                                             };
+            // A connection that dies BEFORE the result is complete used to leave the Agent parked on
+            // `done.Task` for ever — no error, no exit, just a half-written tree as the only clue.
+            // Report what arrived and let Start() return instead of waiting for a completion that cannot come.
+            Connection.OnEvent.handlers += (conn, evenT) =>
+                                           {
+                                               if( result_delivered || !lost_connection.Contains(evenT) ) return;
+
+                                               LOG.Error("Connection closed before the result was complete: {event}. Nothing was deployed; whatever arrived is in {folder:l}", evenT, receiving_into);
+                                               done?.TrySetResult(false);
+                                           };
 #if DEBUG
-            Channel.OnEvent.handlers += (channel, evenT) => Network.TCP.onEventPrintConsole(channel.ext_channal, evenT);
+            Connection.OnEvent.handlers += (conn, evenT) => Network.TCP.onEventPrintConsole(conn.ext_connection, evenT);
 #endif
         }
 
+        // Events that end the exchange for reasons other than "we are done": every remote close, every abrupt
+        // close of ours, and the receive timeout.
+        static readonly HashSet<Network.TCP.ExternalConnection.Event> lost_connection =
+        [
+            Network.TCP.ExternalConnection.Event.REMOTE_CLOSE_GRACEFUL,
+            Network.TCP.ExternalConnection.Event.REMOTE_CLOSE_ABRUPTLY,
+            Network.TCP.ExternalConnection.Event.THIS_CLOSE_ABRUPTLY,
+            Network.TCP.ExternalConnection.Event.RECEIVE_TIMEOUT,
+            Network.TCP.ExternalConnection.Event.WEBSOCKET_REMOTE_CLOSE_GRACEFUL,
+            Network.TCP.ExternalConnection.Event.WEBSOCKET_REMOTE_CLOSE_ABRUPTLY,
+            Network.TCP.ExternalConnection.Event.WEBSOCKET_THIS_CLOSE_ABRUPTLY,
+            Network.TCP.ExternalConnection.Event.WEBSOCKET_PROTOCOL_ERROR,
+        ];
 
-        static ProjectImpl? project;
-        static TaskCompletionSource<bool> done = null!;
+        // Set the moment a Result pack has been fully deserialized: after that the closing connection is ours,
+        // and expected.
+        static bool result_delivered;
+
+        // Where the incoming `FileEntry.List` entries land — whatever the running task armed `Files.ONE` with.
+        // The abort message needs THIS, not `RawFilesDirPath`: that one is built by cutting a `.cs` off the
+        // provided path, so for a `.proto` task it names a folder that does not exist (`My.proto` → `My.pr`)
+        // and throws outright when the file name is shorter than the extension it cuts.
+        static string receiving_into = "";
+
+
+        static        ProjectImpl?                project;
+        static        TaskCompletionSource<bool>  done = null!;
         public static AdHocProtocol.Agent_.Proto? proto;
 
-        static readonly Random random = new Random();
+        static readonly Random random = new();
 
         public static async Task Start(ProjectImpl project) //send a project task
         {
-            ChannelToServer.project = project;
+            ToServer.project = project;
+
+            // Cleared and armed BEFORE the connection opens. `Result.result` entries stream straight to disk as
+            // they arrive, so the folder is already populated by the time the receive handler runs — wiping it
+            // there (as the pre-streaming code did) would delete exactly what was just received.
+            if( Directory.Exists(RawFilesDirPath) ) Directory.Delete(RawFilesDirPath, true);
+            Files.ONE.Receive(receiving_into = RawFilesDirPath);
+
             await Start();
         }
 
         public static async Task Start(AdHocProtocol.Agent_.Proto proto) //send protocol buffers task
         {
-            ChannelToServer.proto = proto;
+            ToServer.proto = proto;
+            Files.ONE.Receive(receiving_into = destination_dir_path); //overwrite in place, as the extraction used to
             await Start();
         }
 
         static async Task Start()
         {
             done = new TaskCompletionSource<bool>();
-            foreach (var connection in app_props["server"].AsArray.RawArray.Select(c => c.AsString.Value))
+            foreach( var url in app_props["server"].AsArray.RawArray.Select(c => c.AsString.Value) )
             {
-                LOG.Information("Connecting to the {connection}", connection);
-                Channel channel = null;
+                LOG.Information("Connecting to the {connection}", url);
+                Connection connection = null;
 
-                if (connection.StartsWith("ws:", StringComparison.OrdinalIgnoreCase) || connection.StartsWith("wss:", StringComparison.OrdinalIgnoreCase))
-                    channel = await new Network.TCP.WebSocket.Client<Channel>("http_client", (ext) => new Channel(ext), Network.TCP.onFailurePrintConsole, 1024).ConnectAsync(new Uri(connection), TimeSpan.FromSeconds(10));
-                else
+                // A refused/unreachable server must only cost us THIS url: both clients report a failed connect by
+                // throwing (the WebSocket one completes its task with the exception, the TCP one re-throws), so an
+                // uncaught attempt would escape Main and the remaining urls would never be tried. The try wraps the
+                // connect ALONE — a failure after this point is a protocol problem, not a reason to try elsewhere.
+                try
                 {
-                    var uri = new Uri("http://" + connection);
-                    var ipAddress = IPAddress.Loopback;
+                    if( url.StartsWith("ws:", StringComparison.OrdinalIgnoreCase) || url.StartsWith("wss:", StringComparison.OrdinalIgnoreCase) )
+                        connection = await new Network.TCP.WebSocket.Client<Connection>("http_client", (ext) => new Connection(), Network.TCP.onFailurePrintConsole, 1024, mux: true).ConnectAsync(new Uri(url), TimeSpan.FromSeconds(10));
+                    else
+                    {
+                        var uri       = new Uri("http://" + url);
+                        var ipAddress = IPAddress.Loopback;
 
-                    if (!uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
-                        try
-                        {
-                            var addresses = (await Dns.GetHostAddressesAsync(uri.Host));
-                            if (addresses.Length == 0)
+                        if( !uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) )
+                            try
                             {
-                                LOG.Warning("No IP address found for host {host}.", uri.Host);
+                                var addresses = (await Dns.GetHostAddressesAsync(uri.Host));
+                                if( addresses.Length == 0 )
+                                {
+                                    LOG.Warning("No IP address found for host {host}.", uri.Host);
+                                    continue;
+                                }
+
+                                ipAddress = addresses[random.Next(addresses.Length)];
+                            }
+                            catch( SocketException ex )
+                            {
+                                LOG.Warning("DNS lookup failed for {host}: {message}", uri.Host, ex.Message);
                                 continue;
                             }
 
-                            ipAddress = addresses[random.Next(addresses.Length)];
-                        }
-                        catch (SocketException ex)
-                        {
-                            LOG.Warning("DNS lookup failed for {host}: {message}", uri.Host, ex.Message);
-                            continue;
-                        }
-
-                    channel = await new Network.TCP.Client<Channel>("tcp_client", (ext) => new Channel(ext), Network.TCP.onFailurePrintConsole, 1024).ConnectAsync(new IPEndPoint(ipAddress, uri.Port), TimeSpan.FromSeconds(10));
+                        connection = await new Network.TCP.Client<Connection>("tcp_client", (ext) => new Connection(), Network.TCP.onFailurePrintConsole, 1024, mux: true).ConnectAsync(new IPEndPoint(ipAddress, uri.Port), TimeSpan.FromSeconds(10));
+                    }
                 }
-
-                if (channel == null)
+                catch( Exception ex ) //refused, unreachable, connect timeout, bad url — all mean "try the next one"
                 {
-                    LOG.Warning("The connection to {connection} has failed.", connection);
+                    LOG.Warning("The connection to {connection} has failed: {message}", url, ex.Message);
                     continue;
                 }
 
-                LOG.Information("Connected to {connection}.", connection);
-                Stages.O.transmitter.send(new AdHocProtocol.Agent_.Version(VER), channel.context(0));
+                if( connection == null ) //the older clients signalled failure with null instead of an exception
+                {
+                    LOG.Warning("The connection to {connection} has failed.", url);
+                    continue;
+                }
+
+                LOG.Information("Connected to {connection}.", url);
+
+                Actor0.State.O.transmitter.send(new AdHocProtocol.Agent_.Version
+                                                {
+                                                    LCID = (byte)CultureInfo.CurrentUICulture.LCID,
+                                                    zone = (byte)(TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes / 15),
+                                                    uid  = (ushort)VER
+                                                }, connection);
                 await done.Task;
                 return;
             }
@@ -203,7 +267,5 @@ namespace org.unirail
 
 
         const uint VER = 1; //version
-
-        const string INFO_MARK = "///" + "\uFFFF"; //generated section mark
     }
 }

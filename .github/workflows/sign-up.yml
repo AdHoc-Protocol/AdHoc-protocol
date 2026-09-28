@@ -65,12 +65,12 @@ jobs:
         env:
           CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
         run: |
-          # This single, efficient query gets all unique users and all required data fields.
-          USERS_PAYLOAD=$(gh api graphql -f query='
+          RAW=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
                 discussions(first: 100, categoryId: $categoryId) {
                   nodes {
+                    id
                     author {
                       login
                       url
@@ -84,19 +84,43 @@ jobs:
                 }
               }
             }
-          ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID" | \
-          jq -c '[.data.repository.discussions.nodes | .[] | .author] | unique_by(.login)')
+          ' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID")
 
+          NODES=$(echo "$RAW" | jq -c '.data.repository.discussions.nodes')
+
+          # Only User accounts sign up. `id` comes from the `... on User` fragment, so an author without it is
+          # an app (Bot), an organization, a mannequin, or a deleted account (author is null). Those never
+          # reach the server: their posts are simply deleted in the next step.
+          USERS_PAYLOAD=$(echo "$NODES" | jq -c '[ .[] | .author | select(. != null and .id != null) ] | unique_by(.login)')
           USER_COUNT=$(echo "$USERS_PAYLOAD" | jq 'length')
+          JUNK_IDS=$(echo "$NODES" | jq -r '[ .[] | select(.author == null or .author.id == null) | .id ] | join(" ")')
 
           if [[ "$USER_COUNT" -eq 0 ]]; then
             echo "No new sign-up discussions to process."
           else
             echo "Found $USER_COUNT unique user(s) to process."
           fi
-          
+          if [[ -n "$JUNK_IDS" ]]; then
+            echo "Found post(s) by non-User accounts to discard: $JUNK_IDS"
+          fi
+
           echo "users_json=$USERS_PAYLOAD" >> $GITHUB_OUTPUT
           echo "user_count=$USER_COUNT" >> $GITHUB_OUTPUT
+          echo "junk_ids=$JUNK_IDS" >> $GITHUB_OUTPUT
+
+      - name: Discard Sign-up Posts by Non-User Accounts
+        if: steps.get_users.outputs.junk_ids != ''
+        env:
+          JUNK_IDS: ${{ steps.get_users.outputs.junk_ids }}
+        run: |
+          for id in $JUNK_IDS; do
+            echo "Deleting sign-up post $id: its author is not a User account"
+            gh api graphql -f query='
+              mutation($id: ID!) {
+                deleteDiscussion(input: {id: $id}) { clientMutationId }
+              }' -F id="$id" || echo "::warning::Failed to delete discussion with ID: $id"
+            sleep 1 # Crucial to avoid hitting secondary rate limits.
+          done
 
   # Job 3: Process each user in parallel.
   process:
@@ -114,6 +138,7 @@ jobs:
           SIGN_UP_URL: ${{ secrets.SIGN_UP_URL }}
           SIGN_UP_HEADER: ${{ secrets.SIGN_UP_HEADER }}
           ORG_ID: ${{ needs.setup.outputs.org_id }}
+          CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
           USER_LOGIN: ${{ matrix.user.login }}
           USER_ID: ${{ matrix.user.id }}
           USER_URL: ${{ matrix.user.url }}
@@ -144,8 +169,57 @@ jobs:
           echo "  - UUID Lo: $uuid_lo_b64"
           echo "  - Timestamp: $ts_b64"
           
-          # 2. Send user data via HTTP GET request
-          REQUEST_URL="${SIGN_UP_URL}?h=${SIGN_UP_HEADER}&hi=${uuid_hi_b64}&lo=${uuid_lo_b64}&t=${ts_b64}&i=${USER_ID}&l=${USER_LOGIN}"
+          # 2. Ensure the user's private Project exists — its node id AND its number are sent with the
+          #    registration below: the number is what the project's page address is built from
+          #    (github.com/orgs/<org>/projects/<number>), and only GitHub knows it.
+          #    `query` is a search, not an equality: "bob" also finds "bob-smith". Ask for several and keep only
+          #    the project whose title IS the login, or a new user's UUID lands in somebody else's project.
+          PROJECT_JSON=$(gh api graphql -f query='
+            query($org: String!, $login: String!) {
+              organization(login: $org) {
+                projectsV2(first: 50, query: $login) { nodes { id number title } }
+              }
+            }' -F org="$ORG" -F login="$USER_LOGIN" \
+            | jq -c --arg login "$USER_LOGIN" '[.data.organization.projectsV2.nodes[] | select(.title == $login)] | .[0] // empty')
+          PROJECT_ID=$(echo "$PROJECT_JSON" | jq -r '.id // empty')
+          PROJECT_NUMBER=$(echo "$PROJECT_JSON" | jq -r '.number // empty')
+
+          if [[ -z "$PROJECT_ID" || "$PROJECT_ID" == "null" ]]; then
+            echo "Creating new project for $USER_LOGIN..."
+            PROJECT_JSON=$(gh api graphql -f query='
+              mutation($ownerId: ID!, $title: String!) {
+                createProjectV2(input: {ownerId: $ownerId, title: $title}) {
+                  projectV2 { id number }
+                }
+              }' -F ownerId="$ORG_ID" -F title="$USER_LOGIN" --jq '.data.createProjectV2.projectV2')
+            PROJECT_ID=$(echo "$PROJECT_JSON" | jq -r '.id // empty')
+            PROJECT_NUMBER=$(echo "$PROJECT_JSON" | jq -r '.number // empty')
+
+            # printf, so the newlines are real: inside "..." bash leaves \n as two characters.
+            README_CONTENT=$(printf '# [%s](%s)\n\n![Avatar](%s)' "$USER_LOGIN" "$USER_URL" "$USER_AVATAR_URL")
+
+            gh api graphql -f query='
+              mutation($projectId: ID!, $readme: String!) {
+                updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
+                  projectV2 { id }
+                }
+              }' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
+
+            gh api graphql -f query='
+              mutation($projectId: ID!, $userId: ID!) {
+                updateProjectV2Collaborators(input: {
+                  projectId: $projectId,
+                  collaborators: [{userId: $userId, role: WRITER}]
+                }) { clientMutationId }
+              }' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
+            echo "✓ Invited $USER_LOGIN to new project with write access."
+          else
+            echo "Project already exists. Using existing project ID: $PROJECT_ID"
+          fi
+
+          # 3. Register the user. Raw base64 — do NOT url-encode. Includes the project id (p) and number (n);
+          #    the server reads the parameters in exactly this order, so it must not change.
+          REQUEST_URL="${SIGN_UP_URL}?h=${SIGN_UP_HEADER}&hi=${uuid_hi_b64}&lo=${uuid_lo_b64}&t=${ts_b64}&i=${USER_ID}&l=${USER_LOGIN}&p=${PROJECT_ID}&n=${PROJECT_NUMBER}"
           http_status=$(curl -s -L -G \
             -w "%{http_code}" \
             -o /dev/null \
@@ -155,45 +229,7 @@ jobs:
             echo "::error::Received non-successful HTTP status '$http_status' for user '$USER_LOGIN'. Aborting this user's processing."
             exit 1
           fi
-          echo "✓ Successfully registered (HTTP $http_status). Now provisioning project."
-
-          # 3. Check for and provision a GitHub Project for the user
-          PROJECT_ID=$(gh api graphql -f query='
-            query($org: String!, $login: String!) {
-              organization(login: $org) {
-                projectsV2(first: 1, query: $login) { nodes { id } }
-              }
-            }' -F org="$ORG" -F login="$USER_LOGIN" --jq '.data.organization.projectsV2.nodes | .[0]?.id')
-
-          if [[ -z "$PROJECT_ID" || "$PROJECT_ID" == "null" ]]; then
-            echo "Creating new project for $USER_LOGIN..."
-            PROJECT_ID=$(gh api graphql -f query='
-              mutation($ownerId: ID!, $title: String!) {
-                createProjectV2(input: {ownerId: $ownerId, title: $title}) {
-                  projectV2 { id }
-                }
-              }' -F ownerId="$ORG_ID" -F title="$USER_LOGIN" --jq '.data.createProjectV2.projectV2.id')
-          
-            README_CONTENT="# [$USER_LOGIN]($USER_URL)  \n\n![Avatar]($USER_AVATAR_URL)"
-          
-            gh api graphql -f query='
-              mutation($projectId: ID!, $readme: String!) {
-                updateProjectV2(input: {projectId: $projectId, readme: $readme, public: false}) {
-                  projectV2 { id }
-                }
-              }' -F projectId="$PROJECT_ID" -F readme="$README_CONTENT"
-          
-            gh api graphql -f query='
-              mutation($projectId: ID!, $userId: ID!) {
-                updateProjectV2Collaborators(input: {
-                  projectId: $projectId, 
-                  collaborators: [{userId: $userId, role: WRITER}]
-                }) { clientMutationId }
-              }' -F projectId="$PROJECT_ID" -F userId="$USER_ID"
-            echo "✓ Invited $USER_LOGIN to new project with write access."
-          else
-            echo "Project already exists. Using existing project ID: $PROJECT_ID"
-          fi
+          echo "✓ Successfully registered (HTTP $http_status)."
           
           # 4. Add the sign-up UUID as a draft issue to their project
           gh api graphql -f query='
@@ -204,38 +240,27 @@ jobs:
             }' -F projectId="$PROJECT_ID" -F title="$uuid"
           echo "✓ Added sign-up record ($uuid) to project."
 
-  # Job 4: Clean up all discussions after processing is complete.
-  cleanup:
-    runs-on: ubuntu-latest
-    needs: [setup, discover, process]
-    # This job runs only if discovery and processing succeeded.
-    if: always() && needs.discover.result == 'success' && needs.process.result == 'success'
-    steps:
-      - name: Delete All Processed Sign-up Discussions
-        env:
-          CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
-        run: |
-          echo "Cleaning up all discussions in the 'Sign up' category..."
+          # 5. This user is done: delete THEIR sign-up post(s) right here. Deletion used to be one job that ran
+          #    only if every user's leg had succeeded, so a single failure kept every post in place and the
+          #    next run registered everyone again. Re-registering an existing user REPLACES their UUID on the
+          #    server - the token they had already copied stopped working for no visible reason.
+          #    A leg that fails above never gets here, and that user's post waits for the next run.
           DISCUSSION_IDS=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {
               repository(owner: $owner, name: $name) {
                 discussions(first: 100, categoryId: $categoryId) {
-                  nodes { id }
+                  nodes { id author { login } }
                 }
               }
-            }' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID" | jq -r '.data.repository.discussions.nodes[].id')
-          
-          if [[ -z "$DISCUSSION_IDS" ]]; then
-            echo "No discussions to delete."
-            exit 0
-          fi
-          
+            }' -F owner="$ORG" -F name="$REPO" -F categoryId="$CATEGORY_ID" \
+            | jq -r --arg login "$USER_LOGIN" '.data.repository.discussions.nodes[] | select(.author.login == $login) | .id')
+
           for id in $DISCUSSION_IDS; do
-            echo "Deleting discussion with ID: $id"
+            echo "Deleting sign-up discussion $id of $USER_LOGIN"
             gh api graphql -f query='
               mutation($id: ID!) {
                 deleteDiscussion(input: {id: $id}) { clientMutationId }
               }' -F id="$id" || echo "::warning::Failed to delete discussion with ID: $id"
             sleep 1 # Crucial to avoid hitting secondary rate limits.
           done
-          echo "✓ Cleanup complete."
+          echo "✓ Sign-up post(s) of $USER_LOGIN removed."

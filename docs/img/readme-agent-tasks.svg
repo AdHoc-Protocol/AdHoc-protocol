@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 450" width="960" height="450" role="img" aria-labelledby="title desc">
+<title id="title">AdHocAgent: the first argument picks the task</title>
+<desc id="desc">AdHocAgent: the first argument picks the task. Six commands on the left, each with an arrow to its result: AdHocAgent alone prints the help and writes the template MyProtocolDescription.cs; AdHocAgent with your UUID stores PersonalVolatileUUID in AdHocAgent.toml; AdHocAgent .\MyProtocol.cs checks the description locally and uploads it - its result box is the only one joined across a dashed boundary between your machine and the network to the generator, a cloud service that tests the code: the description goes out, the generated code comes back into the received folder and is deployed; AdHocAgent .\MyProtocol.cs~ writes the impact report MyProtocol.changes.html with JSON for scripts; AdHocAgent .\MyProtocol.md redeploys the received folder; AdHocAgent .\MyProtocol.cs? starts the AdHoc Observer at localhost:4321. Every result but the .cs one is marked local. A warning strip: AdHocAgent MyProtocol.cs without a directory part is taken as a UUID and nothing is generated. A note: ADHOC_PARSE_ONLY=1 checks a pull request in CI without uploading.</desc>
+<rect width="960" height="450" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">AdHocAgent: the first argument picks the task</text>
+<rect x="24" y="62" width="320" height="40" rx="6" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="37" y="86.5" font-size="15" fill="#9aa0a6">›</text>
+<text x="52" y="86.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">AdHocAgent</text>
+<path d="M346 82 L364 82" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M371 82 L363 86 L363 78 Z" fill="#9aa0a6"/>
+<rect x="372" y="62" width="328" height="40" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="386" y="79" font-size="13" fill="#e8eaed">help + template</text>
+<text x="386" y="95" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">MyProtocolDescription.cs</tspan></text>
+<rect x="651.5" y="68" width="40.5" height="16" rx="8" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="671.8" y="80.3" font-size="12" fill="#4cc38a" text-anchor="middle">local</text>
+<rect x="24" y="114" width="320" height="40" rx="6" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="37" y="138.5" font-size="15" fill="#9aa0a6">›</text>
+<text x="52" y="138.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">AdHocAgent &lt;your-uuid&gt;</text>
+<path d="M346 134 L364 134" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M371 134 L363 138 L363 130 Z" fill="#9aa0a6"/>
+<rect x="372" y="114" width="328" height="40" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="386" y="131" font-size="13" fill="#e8eaed">stores your UUID</text>
+<text x="386" y="147" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">PersonalVolatileUUID → AdHocAgent.toml</tspan></text>
+<rect x="651.5" y="120" width="40.5" height="16" rx="8" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="671.8" y="132.3" font-size="12" fill="#4cc38a" text-anchor="middle">local</text>
+<rect x="24" y="166" width="320" height="40" rx="6" fill="#1c1c1c" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="37" y="190.5" font-size="15" fill="#9aa0a6">›</text>
+<text x="52" y="190.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#4fb3ff" xml:space="preserve">AdHocAgent .\MyProtocol.cs</text>
+<path d="M346 186 L364 186" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M371 186 L363 190 L363 182 Z" fill="#9aa0a6"/>
+<rect x="372" y="166" width="328" height="40" rx="6" fill="#1f2f42" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="386" y="183" font-size="13" fill="#e8eaed">check locally → upload</text>
+<text x="386" y="199" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan>→ received folder → deployment</tspan></text>
+<rect x="24" y="218" width="320" height="40" rx="6" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="37" y="242.5" font-size="15" fill="#9aa0a6">›</text>
+<text x="52" y="242.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">AdHocAgent .\MyProtocol.cs~</text>
+<path d="M346 238 L364 238" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M371 238 L363 242 L363 234 Z" fill="#9aa0a6"/>
+<rect x="372" y="218" width="328" height="40" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="386" y="235" font-size="13" fill="#e8eaed">impact report</text>
+<text x="386" y="251" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">MyProtocol.changes.html</tspan><tspan> + JSON for scripts</tspan></text>
+<rect x="651.5" y="224" width="40.5" height="16" rx="8" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="671.8" y="236.3" font-size="12" fill="#4cc38a" text-anchor="middle">local</text>
+<rect x="24" y="270" width="320" height="40" rx="6" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="37" y="294.5" font-size="15" fill="#9aa0a6">›</text>
+<text x="52" y="294.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">AdHocAgent .\MyProtocol.md</text>
+<path d="M346 290 L364 290" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M371 290 L363 294 L363 286 Z" fill="#9aa0a6"/>
+<rect x="372" y="270" width="328" height="40" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="386" y="287" font-size="13" fill="#e8eaed">redeploy the received folder</text>
+<text x="386" y="303" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan>after you edited the routes</tspan></text>
+<rect x="651.5" y="276" width="40.5" height="16" rx="8" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="671.8" y="288.3" font-size="12" fill="#4cc38a" text-anchor="middle">local</text>
+<rect x="24" y="322" width="320" height="40" rx="6" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="37" y="346.5" font-size="15" fill="#9aa0a6">›</text>
+<text x="52" y="346.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">AdHocAgent .\MyProtocol.cs?</text>
+<path d="M346 342 L364 342" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M371 342 L363 346 L363 338 Z" fill="#9aa0a6"/>
+<rect x="372" y="322" width="328" height="40" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="386" y="339" font-size="13" fill="#e8eaed">AdHoc Observer</text>
+<text x="386" y="355" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan>interactive diagrams at </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">localhost:4321</tspan></text>
+<rect x="651.5" y="328" width="40.5" height="16" rx="8" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="671.8" y="340.3" font-size="12" fill="#4cc38a" text-anchor="middle">local</text>
+<line x1="752" y1="62" x2="752" y2="157" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="5 4"/>
+<line x1="752" y1="176" x2="752" y2="200" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="5 4"/>
+<line x1="752" y1="220" x2="752" y2="376" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="744" y="56" font-size="12" fill="#9aa0a6" text-anchor="end">your machine</text>
+<text x="760" y="56" font-size="12" fill="#9aa0a6">network</text>
+<rect x="808" y="146" width="128" height="76" rx="8" fill="#3a321d" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="872" y="171" font-size="15" fill="#f2c14e" text-anchor="middle" font-weight="600">generator</text>
+<text x="872" y="191" font-size="12" fill="#9aa0a6" text-anchor="middle">cloud service</text>
+<text x="872" y="207" font-size="12" fill="#9aa0a6" text-anchor="middle">tests the code</text>
+<text x="872" y="252" font-size="12" fill="#9aa0a6" text-anchor="middle">only the .cs task</text>
+<text x="872" y="268" font-size="12" fill="#9aa0a6" text-anchor="middle">crosses this line -</text>
+<text x="872" y="284" font-size="12" fill="#9aa0a6" text-anchor="middle">after the local check</text>
+<path d="M701 177 L799 177" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M807 177 L798 181.6 L798 172.4 Z" fill="#4fb3ff"/>
+<text x="752" y="168" font-size="12" fill="#4fb3ff" text-anchor="middle">description</text>
+<path d="M807 195 L709 195" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M701 195 L710 190.4 L710 199.6 Z" fill="#f2c14e"/>
+<text x="752" y="212" font-size="12" fill="#f2c14e" text-anchor="middle">generated code</text>
+<rect x="24" y="388" width="676" height="46" rx="6" fill="#3a321d" stroke="#f2c14e" stroke-width="1.4"/>
+<path d="M44 404 L52 418 L36 418 Z" fill="none" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/><path d="M44 409 v5" stroke="#f2c14e" stroke-width="1.6" stroke-linecap="round"/><circle cx="44" cy="416" r="1" fill="#f2c14e"/>
+<text x="62" y="408" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">AdHocAgent MyProtocol.cs</tspan><tspan> - no directory part:</tspan></text>
+<text x="62" y="425" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>taken as a UUID, nothing is generated. Write </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">.\</tspan><tspan> or </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">./</tspan></text>
+<rect x="716" y="388" width="220" height="46" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="728" y="407" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#4cc38a" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">ADHOC_PARSE_ONLY=1</tspan><tspan fill="#9aa0a6">  in CI</tspan></text>
+<text x="728" y="424" font-size="12" fill="#9aa0a6">checks a pull request, no upload</text>
+</g>
+</svg>

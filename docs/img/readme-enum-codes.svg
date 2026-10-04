@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 424" width="960" height="424" role="img" aria-labelledby="title desc">
+<title id="title">How an enum becomes a code</title>
+<desc id="desc">Three enums and their codes on the wire: the contiguous enum MID 1001-1008 travels as value - 1001, so 1004 is 011 in 3 bits; the sparse enum LOW = -7, MID = 0, HIGH = 300 travels as the index of the value, so 300 is 10 in 2 bits instead of 9; the flags enum B4 = 16, B5 = 32, B6 = 64 travels as its mask shifted down by 4, so B4 | B6 = 80 is 101 in 3 bits instead of 7.</desc>
+<rect width="960" height="424" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<defs><pattern id="en-ghost" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="6" stroke="#5a5a5a" stroke-width="2"/></pattern></defs>
+<text x="24" y="40" font-size="13" fill="#9aa0a6">declared enum</text>
+<text x="360" y="40" font-size="13" fill="#9aa0a6">what travels</text>
+<text x="584" y="40" font-size="13" fill="#9aa0a6">example on the wire</text>
+<text x="940" y="40" font-size="12" fill="#9aa0a6" text-anchor="end">hatched: the width it would take otherwise</text>
+<rect x="24" y="64" width="320" height="100" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="40" y="90" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#f2c14e">enum</tspan><tspan > MID {</tspan></text>
+<text x="40" y="109" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  ServerRegisterReq = 1001,</tspan></text>
+<text x="40" y="128" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  …</tspan></text>
+<text x="40" y="147" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  ServerEventRes    = 1008 }</tspan></text>
+<text x="360" y="110" font-size="14" fill="#e8eaed">contiguous: value - 1001</text>
+<text x="360" y="130" font-size="12" fill="#9aa0a6">8 values → 3 bits</text>
+<text x="674" y="110.5" font-size="13" fill="#e8eaed" text-anchor="end">1004 →</text>
+<rect x="684" y="95" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="693" y="110.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">0</text>
+<rect x="704" y="95" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="713" y="110.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1</text>
+<rect x="724" y="95" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="733" y="110.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1</text>
+<text x="750" y="110.5" font-size="12" fill="#4fb3ff">3 bits</text>
+<rect x="584" y="130" width="192" height="12" rx="2" fill="url(#en-ghost)" stroke="#6a6a6a" stroke-width="1"/>
+<rect x="584" y="130" width="18" height="12" rx="2" fill="#4fb3ff"/>
+<text x="786" y="140.3" font-size="12" fill="#9aa0a6">the constant as an int: 32 bits</text>
+<line x1="360" y1="172" x2="944" y2="172" stroke="#3a3a3a" stroke-width="1"/>
+<rect x="24" y="180" width="320" height="100" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="40" y="225" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#f2c14e">enum</tspan><tspan > Sparse { LOW = -7,</tspan></text>
+<text x="40" y="244" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  MID = 0, HIGH = 300 }</tspan></text>
+<text x="360" y="226" font-size="14" fill="#e8eaed">sparse: index among the values</text>
+<text x="360" y="246" font-size="12" fill="#9aa0a6">-7 → 0, 0 → 1, 300 → 2</text>
+<text x="674" y="226.5" font-size="13" fill="#e8eaed" text-anchor="end">300 →</text>
+<rect x="684" y="211" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="693" y="226.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1</text>
+<rect x="704" y="211" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="713" y="226.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">0</text>
+<text x="730" y="226.5" font-size="12" fill="#4fb3ff">2 bits</text>
+<rect x="584" y="246" width="54" height="12" rx="2" fill="url(#en-ghost)" stroke="#6a6a6a" stroke-width="1"/>
+<rect x="584" y="246" width="12" height="12" rx="2" fill="#4fb3ff"/>
+<text x="648" y="256.3" font-size="12" fill="#9aa0a6">an offset from -7: 9 bits</text>
+<line x1="360" y1="288" x2="944" y2="288" stroke="#3a3a3a" stroke-width="1"/>
+<rect x="24" y="296" width="320" height="80" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="40" y="331" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#f2c14e">[Flags] enum</tspan><tspan > AccessHigh {</tspan></text>
+<text x="40" y="350" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  B4 = 16, B5 = 32, B6 = 64 }</tspan></text>
+<text x="360" y="332" font-size="14" fill="#e8eaed">flags: the mask &gt;&gt; 4</text>
+<text x="360" y="352" font-size="12" fill="#9aa0a6">one bit per flag</text>
+<text x="674" y="332.5" font-size="13" fill="#e8eaed" text-anchor="end">B4 | B6 = 80 →</text>
+<rect x="684" y="317" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="693" y="332.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1</text>
+<rect x="704" y="317" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="713" y="332.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">0</text>
+<rect x="724" y="317" width="18" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="733" y="332.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1</text>
+<text x="750" y="332.5" font-size="12" fill="#4fb3ff">3 bits</text>
+<rect x="584" y="352" width="42" height="12" rx="2" fill="url(#en-ghost)" stroke="#6a6a6a" stroke-width="1"/>
+<rect x="584" y="352" width="18" height="12" rx="2" fill="#4fb3ff"/>
+<text x="636" y="362.3" font-size="12" fill="#9aa0a6">80 unshifted: 7 bits</text>
+<text x="24" y="403" font-size="12" fill="#9aa0a6">a null takes one more code where it fits · accessors convert both ways: your code sees only declared values · the same codes in C#, Java, TypeScript</text>
+</g>
+</svg>

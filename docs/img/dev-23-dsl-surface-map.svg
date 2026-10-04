@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="640" viewBox="0 0 980 640" role="img" aria-labelledby="dev23map-t dev23map-d">
+<title id="dev23map-t">Where attributes attach</title>
+<desc id="dev23map-d">A ladder of the description model, top to bottom: project, host, connection, actor, state, pack, field, ending in wire bytes. Beside each rung, what a description writes there. Project: the pack sets _ and X, Named Pack Sets with KeepName, SkipName, KeepDoc and SkipDoc, and Modify with ClearAttributes. Host: Host, the language markers InCS, InJAVA, InTS, and Modify of a host. Connection: Connects, VirtuallyConnects, SwapHosts; Resumable, UDP, UDP with an exclusion set, Zstd, ChaCha20 and your own stages and flows; Resumable of a host and packs and HeaderFor declared in its body; beside it a multiplexer, Multiplex, one port for several connections, which takes constants only. Actor: Actor with MaxActiveInstances, Idle, Grouped, and RPC methods. State: the five branch attributes, TransmitTimeout, ReceiveTimeout, Deadline, Idle, Resumable, and the targets End and Close. Pack: HeaderFor, FieldsInjectInto, Stream and File with S, stages and flows, the trims ToStream, FromStream and Stream. Field: MinMax, A, V, X, D, S, the Key and Val targets, stages, flows and trims, and ValueFor on a static field. An orange check on every rung from project to field marks where custom attributes become constants; a custom attribute never changes the wire bytes.</desc>
+<rect width="980" height="640" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="104" y="32" font-size="13" fill="#9aa0a6" text-anchor="middle">model</text>
+<text x="232" y="32" font-size="13" fill="#9aa0a6">what a description writes there: Meta.cs constructs and built-in attributes</text>
+
+<!-- ladder connectors -->
+<g stroke="#6b6f74" stroke-width="1.4">
+<line x1="104" y1="100" x2="104" y2="110"/>
+<line x1="104" y1="164" x2="104" y2="174"/>
+<line x1="104" y1="246" x2="104" y2="256"/>
+<line x1="104" y1="310" x2="104" y2="320"/>
+<line x1="104" y1="374" x2="104" y2="384"/>
+<line x1="104" y1="438" x2="104" y2="448"/>
+</g>
+<line x1="104" y1="502" x2="104" y2="524" stroke="#4fb3ff" stroke-width="2"/>
+
+<!-- rungs -->
+<g fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.6">
+<rect x="36" y="46"  width="136" height="54" rx="8"/>
+<rect x="36" y="110" width="136" height="54" rx="8"/>
+<rect x="36" y="174" width="136" height="72" rx="8"/>
+<rect x="36" y="256" width="136" height="54" rx="8"/>
+<rect x="36" y="320" width="136" height="54" rx="8"/>
+<rect x="36" y="384" width="136" height="54" rx="8"/>
+<rect x="36" y="448" width="136" height="54" rx="8"/>
+</g>
+<rect x="36" y="524" width="136" height="30" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.4" stroke-dasharray="4 3"/>
+<g font-size="15" fill="#e8eaed" text-anchor="middle">
+<text x="104" y="78">project</text>
+<text x="104" y="142">host</text>
+<text x="104" y="215">connection</text>
+<text x="104" y="288">actor</text>
+<text x="104" y="352">state</text>
+<text x="104" y="416">pack</text>
+<text x="104" y="480">field</text>
+</g>
+<text x="104" y="544" font-size="13" fill="#9aa0a6" text-anchor="middle">wire bytes</text>
+
+<!-- custom attributes -> constants -->
+<g fill="none" stroke="#e8833a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+<path d="M187 73 L192 78 L201 67"/>
+<path d="M187 137 L192 142 L201 131"/>
+<path d="M187 210 L192 215 L201 204"/>
+<path d="M187 283 L192 288 L201 277"/>
+<path d="M187 347 L192 352 L201 341"/>
+<path d="M187 411 L192 416 L201 405"/>
+<path d="M187 475 L192 480 L201 469"/>
+</g>
+
+<!-- row panels -->
+<g fill="#323232">
+<rect x="216" y="46"  width="728" height="54" rx="6"/>
+<rect x="216" y="110" width="728" height="54" rx="6"/>
+<rect x="216" y="174" width="520" height="72" rx="6"/>
+<rect x="216" y="256" width="728" height="54" rx="6"/>
+<rect x="216" y="320" width="728" height="54" rx="6"/>
+<rect x="216" y="384" width="728" height="54" rx="6"/>
+<rect x="216" y="448" width="728" height="54" rx="6"/>
+</g>
+
+<g font-size="13" fill="#9aa0a6">
+<text x="232" y="68"><tspan fill="#e8eaed">_&lt;…&gt;   X&lt;…&gt;</tspan><tspan dx="9">pack sets, exclusions</tspan><tspan dx="18" fill="#e8eaed">Named Pack Sets</tspan><tspan dx="7">with</tspan><tspan dx="7" fill="#f2c14e">[KeepName]  [SkipName]  [KeepDoc]  [SkipDoc]</tspan></text>
+<text x="232" y="87"><tspan fill="#e8eaed">Modify&lt;…&gt;</tspan><tspan dx="7">+</tspan><tspan dx="7" fill="#f2c14e">[ClearAttributes]</tspan><tspan dx="18">modifiers of imported packs, hosts, enums, constants, connections</tspan></text>
+<text x="232" y="132"><tspan fill="#e8eaed">Host</tspan><tspan dx="18">language markers</tspan><tspan dx="7" fill="#e8eaed">InCS   InJAVA   InTS</tspan></text>
+<text x="232" y="151"><tspan fill="#e8eaed">Modify&lt;Host&gt;</tspan><tspan dx="18">configures an imported host</tspan></text>
+<text x="232" y="196"><tspan fill="#e8eaed">Connects&lt;L, R&gt;</tspan><tspan dx="18" fill="#e8eaed">VirtuallyConnects&lt;L, R, PATH&gt;</tspan><tspan dx="18" fill="#e8eaed">SwapHosts&lt;C&gt;</tspan></text>
+<text x="232" y="215"><tspan fill="#f2c14e">[Resumable]  [UDP]  [UDP&lt;…&gt;]</tspan><tspan dx="18" fill="#f2c14e">[Zstd]  [ChaCha20]</tspan><tspan dx="7">+ your stages / flows</tspan></text>
+<text x="232" y="234"><tspan fill="#e8eaed">Resumable&lt;HOST, PACKS&gt;</tspan><tspan dx="18" fill="#e8eaed">HeaderFor&lt;…&gt;</tspan><tspan dx="9">declared in its body</tspan></text>
+<text x="232" y="278"><tspan fill="#e8eaed">Actor</tspan><tspan dx="7">with</tspan><tspan dx="7" fill="#e8eaed">MaxActiveInstances</tspan><tspan dx="7">/</tspan><tspan dx="7" fill="#e8eaed">UNLIMITED</tspan><tspan dx="28" fill="#f2c14e">[Idle]  [Grouped]</tspan></text>
+<text x="232" y="297"><tspan>RPC methods in a connection body: each one becomes an actor</tspan></text>
+<text x="232" y="342"><tspan fill="#f2c14e">[l____________]  [L____________]  [____________r]  [____________R]  [_____lr_____]</tspan><tspan dx="9">branch attributes</tspan></text>
+<text x="232" y="361"><tspan fill="#f2c14e">[TransmitTimeout]  [ReceiveTimeout]  [Deadline]  [Idle]  [Resumable]</tspan><tspan dx="28">targets</tspan><tspan dx="7" fill="#e8eaed">End   Close</tspan></text>
+<text x="232" y="406"><tspan fill="#e8eaed">HeaderFor&lt;…&gt;</tspan><tspan dx="18" fill="#e8eaed">FieldsInjectInto&lt;…&gt;</tspan><tspan dx="28">conduits</tspan><tspan dx="7" fill="#e8eaed">Stream   File</tspan><tspan dx="7">+</tspan><tspan dx="7" fill="#f2c14e">[S]</tspan></text>
+<text x="232" y="425"><tspan fill="#f2c14e">[Zstd]  [ChaCha20]</tspan><tspan dx="9">stages / flows</tspan><tspan dx="28">trims</tspan><tspan dx="7" fill="#f2c14e">[ToStream&lt;E&gt;]  [FromStream&lt;E&gt;]  [Stream&lt;To, From&gt;]</tspan></text>
+<text x="232" y="470"><tspan fill="#f2c14e">[MinMax]  [A]  [V]  [X]  [D]  [S]</tspan><tspan dx="28">targets</tspan><tspan dx="7" fill="#f2c14e">[Key: …]  [Val: …]</tspan></text>
+<text x="232" y="489"><tspan fill="#f2c14e">[Zstd]  [ChaCha20]</tspan><tspan dx="9">stages / flows</tspan><tspan dx="28">trims</tspan><tspan dx="28">on a static field:</tspan><tspan dx="7" fill="#f2c14e">[ValueFor]</tspan></text>
+</g>
+
+<!-- multiplexer, beside the connection rung -->
+<rect x="748" y="174" width="196" height="72" rx="6" fill="#2e2a36" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="846" y="197" font-size="14" fill="#e8eaed" text-anchor="middle">Multiplex&lt;(…)&gt;</text>
+<text x="846" y="216" font-size="12.5" fill="#9aa0a6" text-anchor="middle">one port, several connections</text>
+<text x="846" y="234" font-size="12.5" fill="#9aa0a6" text-anchor="middle">constants only, no attributes</text>
+
+<text x="216" y="544" font-size="13" fill="#9aa0a6">a custom attribute never changes these bytes</text>
+
+<!-- legend -->
+<path d="M40 597 L45 602 L54 591" fill="none" stroke="#e8833a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="601" font-size="13" fill="#9aa0a6">custom attributes become constants of this entity<tspan dx="36" fill="#f2c14e">yellow</tspan> = built-in attribute<tspan dx="36" fill="#e8eaed">white</tspan> = Meta.cs interface or type<tspan dx="36">grey = what it is</tspan></text>
+</g>
+</svg>

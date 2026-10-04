@@ -1,0 +1,6 @@
+# Generator sources of the documentation diagrams (docs/img/*.svg): kept locally, not distributed
+docs/img/dev-src/
+
+# Working notes of the documentation rewrite: kept locally, not distributed
+DOC.md
+DOC-DISCREPANCIES.md

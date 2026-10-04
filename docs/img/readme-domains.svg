@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 608" width="960" height="608" role="img" aria-labelledby="title desc">
+<title id="title">The same AdHoc declarations answer everyday problems of devices, backends and apps</title>
+<desc id="desc">Three columns, each problem tagged with the number of its ready solution. Devices and the field (C# or Java on the device side): R13 every byte costs airtime; R4 no event lost on a dropout; R5 sure commands, fresh samples; R2 generations, no version field; R10 OTA updates of any size; R14 moves only when armed; R19 video that yields to alerts; R22 serial links that resync. Backends and clusters (C# or Java servers): R3 one public port, many services; R16 cluster protocol, same port; R1 store bytes it cannot read; R11 compress once, fan out; R17 audit without the payload; R12 each role sees its own; R15 ingest into your structures; R20 one pack, many recipients; R21 store and broadcast at once. Apps and browsers (TypeScript, C# and Java clients): R7 live dashboards, push both ways; R8 jobs with progress, cancel and deadline; R9 subscriptions with leases; R18 rooms, presence, turn-taking; R6 private hosts via a gateway; R4 orders survive a flaky network; R19 video, commands never wait; R20 one tick to every player. Below, an orange bar - one description, one C# file - feeds a yellow bar - generated code in C#, Java and TypeScript, one protocol, the same bytes - which feeds all three columns. Footnote: device-side hosts are C# or Java programs today; a TypeScript host always dials.</desc>
+<rect width="960" height="608" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="35" font-size="18" fill="#e8eaed" font-weight="700">The same declarations, three worlds</text>
+<rect x="24" y="52" width="296" height="388" rx="10" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="80" font-size="16" fill="#e8eaed" font-weight="700">Devices and the field</text>
+<text x="40" y="98" font-size="13" fill="#9aa0a6">C# or Java on the device side</text>
+<line x1="40" y1="110" x2="304" y2="110" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="40" y="119.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="134" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R13</text>
+<text x="88" y="134" font-size="13" fill="#e8eaed">every byte costs airtime</text>
+<rect x="40" y="155.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="170" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R4</text>
+<text x="88" y="170" font-size="13" fill="#e8eaed">no event lost on a dropout</text>
+<rect x="40" y="191.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="206" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R5</text>
+<text x="88" y="206" font-size="13" fill="#e8eaed">sure commands, fresh samples</text>
+<rect x="40" y="227.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="242" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R2</text>
+<text x="88" y="242" font-size="13" fill="#e8eaed">generations, no version field</text>
+<rect x="40" y="263.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="278" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R10</text>
+<text x="88" y="278" font-size="13" fill="#e8eaed">OTA updates of any size</text>
+<rect x="40" y="299.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="314" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R14</text>
+<text x="88" y="314" font-size="13" fill="#e8eaed">moves only when armed</text>
+<rect x="40" y="335.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="350" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R19</text>
+<text x="88" y="350" font-size="13" fill="#e8eaed">video that yields to alerts</text>
+<rect x="40" y="371.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="386" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R22</text>
+<text x="88" y="386" font-size="13" fill="#e8eaed">serial links that resync</text>
+<rect x="332" y="52" width="296" height="388" rx="10" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="348" y="80" font-size="16" fill="#e8eaed" font-weight="700">Backends and clusters</text>
+<text x="348" y="98" font-size="13" fill="#9aa0a6">C# or Java servers</text>
+<line x1="348" y1="110" x2="612" y2="110" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="348" y="119.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="134" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R3</text>
+<text x="396" y="134" font-size="13" fill="#e8eaed">one public port, many services</text>
+<rect x="348" y="155.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="170" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R16</text>
+<text x="396" y="170" font-size="13" fill="#e8eaed">cluster protocol, same port</text>
+<rect x="348" y="191.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="206" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R1</text>
+<text x="396" y="206" font-size="13" fill="#e8eaed">store bytes it cannot read</text>
+<rect x="348" y="227.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="242" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R11</text>
+<text x="396" y="242" font-size="13" fill="#e8eaed">compress once, fan out</text>
+<rect x="348" y="263.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="278" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R17</text>
+<text x="396" y="278" font-size="13" fill="#e8eaed">audit without the payload</text>
+<rect x="348" y="299.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="314" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R12</text>
+<text x="396" y="314" font-size="13" fill="#e8eaed">each role sees its own</text>
+<rect x="348" y="335.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="350" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R15</text>
+<text x="396" y="350" font-size="13" fill="#e8eaed">ingest into your structures</text>
+<rect x="348" y="371.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="386" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R20</text>
+<text x="396" y="386" font-size="13" fill="#e8eaed">one pack, many recipients</text>
+<rect x="348" y="407.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="422" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R21</text>
+<text x="396" y="422" font-size="13" fill="#e8eaed">store and broadcast at once</text>
+<rect x="640" y="52" width="296" height="388" rx="10" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="656" y="80" font-size="16" fill="#e8eaed" font-weight="700">Apps and browsers</text>
+<text x="656" y="98" font-size="13" fill="#9aa0a6">TypeScript, C# and Java clients</text>
+<line x1="656" y1="110" x2="920" y2="110" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="656" y="119.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="134" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R7</text>
+<text x="704" y="134" font-size="13" fill="#e8eaed">live dashboards, push both ways</text>
+<rect x="656" y="155.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="170" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R8</text>
+<text x="704" y="170" font-size="13" fill="#e8eaed">jobs: progress, cancel, deadline</text>
+<rect x="656" y="191.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="206" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R9</text>
+<text x="704" y="206" font-size="13" fill="#e8eaed">subscriptions with leases</text>
+<rect x="656" y="227.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="242" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R18</text>
+<text x="704" y="242" font-size="13" fill="#e8eaed">rooms, presence, turn-taking</text>
+<rect x="656" y="263.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="278" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R6</text>
+<text x="704" y="278" font-size="13" fill="#e8eaed">private hosts via a gateway</text>
+<rect x="656" y="299.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="314" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R4</text>
+<text x="704" y="314" font-size="13" fill="#e8eaed">orders survive a flaky network</text>
+<rect x="656" y="335.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="350" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R19</text>
+<text x="704" y="350" font-size="13" fill="#e8eaed">video, commands never wait</text>
+<rect x="656" y="371.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="386" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R20</text>
+<text x="704" y="386" font-size="13" fill="#e8eaed">one tick to every player</text>
+<rect x="24" y="462" width="912" height="36" rx="8" fill="#f2c14e" fill-opacity="0.08" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="480" y="485" font-size="14" fill="#e8eaed" text-anchor="middle">generated code: C# - Java - TypeScript - one protocol, the same bytes</text>
+<rect x="24" y="518" width="912" height="36" rx="8" fill="#e8833a" fill-opacity="0.1" stroke="#e8833a" stroke-width="1.5"/>
+<text x="480" y="541.5" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">one description - one C# file</text>
+<line x1="480" y1="518" x2="480" y2="506" stroke="#e8833a" stroke-width="1.5"/>
+<path d="M480 498 L485 507 L475 507 Z" fill="#e8833a"/>
+<line x1="172" y1="462" x2="172" y2="448" stroke="#f2c14e" stroke-width="1.5"/>
+<path d="M172 440 L177 449 L167 449 Z" fill="#f2c14e"/>
+<line x1="480" y1="462" x2="480" y2="448" stroke="#f2c14e" stroke-width="1.5"/>
+<path d="M480 440 L485 449 L475 449 Z" fill="#f2c14e"/>
+<line x1="788" y1="462" x2="788" y2="448" stroke="#f2c14e" stroke-width="1.5"/>
+<path d="M788 440 L793 449 L783 449 Z" fill="#f2c14e"/>
+<text x="24" y="582" font-size="12" fill="#9aa0a6">Device-side hosts are C# or Java programs today: gateways, industrial PCs, vehicle computers, laptops. A TypeScript host always dials. R-numbers: the ready solutions below.</text>
+</g>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 420" width="980" height="420" role="img"><rect width="980" height="420" rx="10" fill="#2b2b2b"/><title>The two shapes of an actor: a chain, a function group, and the rejected mix of a chain with an isolated state</title>
+<rect x="24" y="16" width="300" height="388" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="340" y="16" width="300" height="388" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="656" y="16" width="300" height="388" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<path d="M44 41 l5 6 l11 -13" fill="none" stroke="#e8833a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="70" y="46" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="600">Chain</text>
+<rect x="124" y="66" width="100" height="36" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="174" y="89" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Start</text>
+<path d="M174 102 L174 138" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M174 146 L169.5 137 L178.5 137 Z" fill="#c9ccd1"/>
+<text x="184" y="129" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan fill="#e8833a" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">L</tspan><tspan >  JobStart</tspan></text>
+<rect x="124" y="146" width="100" height="36" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="174" y="169" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Running</text>
+<path d="M224 156 L250 156 L250 172 L232 172" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M224 172 L233 167.5 L233 176.5 Z" fill="#c9ccd1"/>
+<text x="258" y="168" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">stay</text>
+<path d="M148 182 L107.7 222.3" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M102 228 L105.2 218.5 L111.5 224.8 Z" fill="#c9ccd1"/>
+<rect x="54" y="228" width="84" height="34" rx="17" fill="#2f3338" stroke="#c9ccd1" stroke-width="1.6"/><rect x="58" y="232" width="76" height="26" rx="13" fill="none" stroke="#c9ccd1" stroke-width="1"/><text x="96" y="250" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<path d="M200 182 L220.3 220.9" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M224 228 L215.8 222.1 L223.8 217.9 Z" fill="#c9ccd1"/>
+<rect x="174" y="228" width="96" height="36" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="222" y="251" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Ready</text>
+<path d="M270 238 L294 238 L294 254 L278 254" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M270 254 L279 249.5 L279 258.5 Z" fill="#c9ccd1"/>
+<text x="222" y="282" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">final station: only stays,</text>
+<text x="222" y="297" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">reached by a transition</text>
+<line x1="40" y1="310" x2="308" y2="310" stroke="#4a4a4a" stroke-width="1"/>
+<text x="42" y="330" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">any transitional branch → a chain</text>
+<text x="42" y="348" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">every state reachable from the first declared</text>
+<text x="42" y="366" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">dispatch: the current state's branches, per side</text>
+<path d="M360 41 l5 6 l11 -13" fill="none" stroke="#e8833a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="386" y="46" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="600">Function group</text>
+<rect x="392" y="62" width="210" height="214" rx="8" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="5 4" stroke-opacity="0.55"/>
+<text x="497" y="296" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#f2c14e" text-anchor="middle">active together</text>
+<rect x="420" y="80" width="112" height="36" rx="6" fill="#3e3a2c" stroke="#b89a52" stroke-width="1.6"/><text x="476" y="103" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Messages</text>
+<path d="M532 90 L558 90 L558 106 L540 106" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M532 106 L541 101.5 L541 110.5 Z" fill="#c9ccd1"/>
+<text x="566" y="102" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">stay</text>
+<rect x="420" y="146" width="112" height="36" rx="6" fill="#3e3a2c" stroke="#b89a52" stroke-width="1.6"/><text x="476" y="169" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Flags</text>
+<path d="M532 156 L558 156 L558 172 L540 172" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M532 172 L541 167.5 L541 176.5 Z" fill="#c9ccd1"/>
+<text x="566" y="168" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">stay</text>
+<rect x="420" y="212" width="112" height="36" rx="6" fill="#3e3a2c" stroke="#b89a52" stroke-width="1.6"/><text x="476" y="235" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Alerts</text>
+<path d="M532 222 L558 222 L558 238 L540 238" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M532 238 L541 233.5 L541 242.5 Z" fill="#c9ccd1"/>
+<text x="566" y="234" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">stay</text>
+<line x1="356" y1="310" x2="624" y2="310" stroke="#4a4a4a" stroke-width="1"/>
+<text x="358" y="330" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">only stay branches</text>
+<text x="358" y="348" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">all states active at once</text>
+<text x="358" y="366" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">dispatch: all states together, per side</text>
+<text x="358" y="384" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">no instance, nobody leads</text>
+<path d="M678 34 L690 46 M690 34 L678 46" stroke="#e5534b" stroke-width="3" stroke-linecap="round"/>
+<text x="702" y="46" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="600">Mixed - rejected</text>
+<rect x="682" y="66" width="96" height="36" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="730" y="89" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Start</text>
+<path d="M730 102 L730 132" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M730 140 L725.5 131 L734.5 131 Z" fill="#c9ccd1"/>
+<rect x="682" y="140" width="96" height="36" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="730" y="163" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Running</text>
+<path d="M730 176 L730 206" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M730 214 L725.5 205 L734.5 205 Z" fill="#c9ccd1"/>
+<rect x="688" y="214" width="84" height="34" rx="17" fill="#2f3338" stroke="#c9ccd1" stroke-width="1.6"/><rect x="692" y="218" width="76" height="26" rx="13" fill="none" stroke="#c9ccd1" stroke-width="1"/><text x="730" y="236" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<rect x="820" y="140" width="96" height="36" rx="6" fill="#363a40" stroke="#e5534b" stroke-width="2"/><text x="868" y="163" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Overlay</text>
+<path d="M916 150 L938 150 L938 166 L924 166" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M916 166 L925 161.5 L925 170.5 Z" fill="#c9ccd1"/>
+<circle cx="916" cy="140" r="9" fill="#232323" stroke="#e5534b" stroke-width="1.6"/>
+<path d="M912.5 136.5 L919.5 143.5 M919.5 136.5 L912.5 143.5" stroke="#e5534b" stroke-width="2" stroke-linecap="round"/>
+<text x="868" y="198" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">no transition</text>
+<text x="868" y="213" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">leads here</text>
+<line x1="672" y1="310" x2="940" y2="310" stroke="#4a4a4a" stroke-width="1"/>
+<text x="674" y="330" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">an isolated state next to a chain:</text>
+<text x="674" y="348" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e5534b" text-anchor="start" xml:space="preserve" style="white-space:pre">[FSM Integrity Error] ... illegally</text>
+<text x="674" y="366" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e5534b" text-anchor="start" xml:space="preserve" style="white-space:pre">mixes linked and isolated states</text>
+<text x="674" y="384" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="start">→ move it into an actor of its own</text>
+</svg>

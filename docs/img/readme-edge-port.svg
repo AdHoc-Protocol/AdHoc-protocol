@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="960" height="440" role="img" aria-labelledby="title desc">
+<title id="title">One public port for many services</title>
+<desc id="desc">A port per service against one multiplexed port: Browser, Admin and Mobile dial one port of Edge; Query is relayed to a hidden Backend without being decoded.</desc>
+<rect width="960" height="440" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<defs><pattern id="wall" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#2f2f2f"/><line x1="0" y1="0" x2="0" y2="6" stroke="#6a6a6a" stroke-width="2"/></pattern></defs>
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="600">One public port for many services</text>
+<text x="32" y="72" font-size="14" fill="#9aa0a6" font-weight="600">A port per service</text>
+<rect x="32" y="93" width="84" height="30" rx="5" fill="#2f3236" stroke="#8a8a8a" stroke-width="1.3"/><text x="74" y="112.5" font-size="12" fill="#9aa0a6" text-anchor="middle" font-weight="600">Browser</text>
+<rect x="32" y="153" width="84" height="30" rx="5" fill="#2f3236" stroke="#8a8a8a" stroke-width="1.3"/><text x="74" y="172.5" font-size="12" fill="#9aa0a6" text-anchor="middle" font-weight="600">Admin</text>
+<rect x="32" y="255" width="84" height="30" rx="5" fill="#2f3236" stroke="#8a8a8a" stroke-width="1.3"/><text x="74" y="274.5" font-size="12" fill="#9aa0a6" text-anchor="middle" font-weight="600">Mobile</text>
+<rect x="196" y="88" width="108" height="112" rx="6" fill="#2f3236" stroke="#8a8a8a" stroke-width="1.3"/>
+<text x="256" y="112" font-size="13" fill="#9aa0a6" text-anchor="middle" font-weight="600">Edge</text>
+<rect x="196" y="244" width="108" height="56" rx="6" fill="#2f3236" stroke="#8a8a8a" stroke-width="1.3"/>
+<text x="256" y="277" font-size="13" fill="#9aa0a6" text-anchor="middle" font-weight="600">Backend</text>
+<line x1="266" y1="200" x2="266" y2="244" stroke="#8a8a8a" stroke-width="1.4"/>
+<path d="M116 108 L185 108" fill="none" stroke="#8a8a8a" stroke-width="1.5" stroke-linejoin="round"/><path d="M191 108 L184 111.5 L184 104.5 Z" fill="#8a8a8a"/>
+<rect x="192" y="98" width="8" height="20" rx="1.5" fill="#3a3a3a" stroke="#9aa0a6" stroke-width="1.3"/>
+<text x="126" y="101" font-size="12" fill="#9aa0a6">:443</text>
+<g data-nocheck="1"><rect x="150" y="113" width="15" height="11" rx="1.5" fill="none" stroke="#9aa0a6" stroke-width="1.2"/><path d="M153 116.5 H159 M153 119.5 H157" stroke="#9aa0a6" stroke-width="1"/><circle cx="162" cy="121" r="2.6" fill="#9aa0a6"/></g>
+<g data-nocheck="1" fill="none" stroke="#9aa0a6" stroke-width="1.1"><rect x="170" y="113" width="16" height="11" rx="1"/><path d="M170 118.5 H186 M178 113 V118.5 M174 118.5 V124 M182 118.5 V124"/></g>
+<path d="M116 168 L185 168" fill="none" stroke="#8a8a8a" stroke-width="1.5" stroke-linejoin="round"/><path d="M191 168 L184 171.5 L184 164.5 Z" fill="#8a8a8a"/>
+<rect x="192" y="158" width="8" height="20" rx="1.5" fill="#3a3a3a" stroke="#9aa0a6" stroke-width="1.3"/>
+<text x="126" y="161" font-size="12" fill="#9aa0a6">:8443</text>
+<g data-nocheck="1"><rect x="150" y="173" width="15" height="11" rx="1.5" fill="none" stroke="#9aa0a6" stroke-width="1.2"/><path d="M153 176.5 H159 M153 179.5 H157" stroke="#9aa0a6" stroke-width="1"/><circle cx="162" cy="181" r="2.6" fill="#9aa0a6"/></g>
+<g data-nocheck="1" fill="none" stroke="#9aa0a6" stroke-width="1.1"><rect x="170" y="173" width="16" height="11" rx="1"/><path d="M170 178.5 H186 M178 173 V178.5 M174 178.5 V184 M182 178.5 V184"/></g>
+<path d="M116 270 L185 270" fill="none" stroke="#8a8a8a" stroke-width="1.5" stroke-linejoin="round"/><path d="M191 270 L184 273.5 L184 266.5 Z" fill="#8a8a8a"/>
+<rect x="192" y="260" width="8" height="20" rx="1.5" fill="#3a3a3a" stroke="#9aa0a6" stroke-width="1.3"/>
+<text x="126" y="263" font-size="12" fill="#9aa0a6">:9443</text>
+<g data-nocheck="1"><rect x="150" y="275" width="15" height="11" rx="1.5" fill="none" stroke="#9aa0a6" stroke-width="1.2"/><path d="M153 278.5 H159 M153 281.5 H157" stroke="#9aa0a6" stroke-width="1"/><circle cx="162" cy="283" r="2.6" fill="#9aa0a6"/></g>
+<g data-nocheck="1" fill="none" stroke="#9aa0a6" stroke-width="1.1"><rect x="170" y="275" width="16" height="11" rx="1"/><path d="M170 280.5 H186 M178 275 V280.5 M174 280.5 V286 M182 280.5 V286"/></g>
+<g data-nocheck="1"><path d="M212 310.5 L220.5 325.5 L203.5 325.5 Z" fill="#e06c6c" stroke="#e06c6c" stroke-width="1" stroke-linejoin="round"/><rect x="211" y="315" width="2" height="5.5" fill="#2b2b2b"/><rect x="211" y="321.9" width="2" height="2" fill="#2b2b2b"/></g>
+<text x="226" y="323" font-size="12" fill="#e06c6c" font-weight="600">backend exposed</text>
+<text x="32" y="356" font-size="12" fill="#9aa0a6">three listeners, three certificates,</text>
+<text x="32" y="372" font-size="12" fill="#9aa0a6">three firewall rules - and Mobile needs</text>
+<text x="32" y="388" font-size="12" fill="#9aa0a6">a way in to Backend</text>
+<line x1="336" y1="56" x2="336" y2="396" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="352" y="72" font-size="14" fill="#e8eaed" font-weight="600">One port: EdgePort</text>
+<path d="M474 126 C529 126 524 202 567 202" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M574 202 L566 206 L566 198 Z" fill="#4fb3ff"/>
+<rect data-nocheck="1" x="556" y="195.7" width="8" height="8" rx="1" fill="#f2c14e" stroke="#2b2b2b" stroke-width="1"/>
+<text x="482" y="118" font-size="12" fill="#f2c14e" font-weight="600">Browser.uid</text>
+<rect x="352" y="104" width="122" height="44" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="413" y="121.5" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Browser</text>
+<text x="413" y="138.5" font-size="12" fill="#9aa0a6" text-anchor="middle">TypeScript</text>
+<path d="M474 206 C529 206 524 216 567 216" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M574 216 L566 220 L566 212 Z" fill="#4fb3ff"/>
+<rect data-nocheck="1" x="556" y="211.7" width="8" height="8" rx="1" fill="#f2c14e" stroke="#2b2b2b" stroke-width="1"/>
+<text x="482" y="198" font-size="12" fill="#f2c14e" font-weight="600">Admin.uid</text>
+<rect x="352" y="184" width="122" height="44" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="413" y="201.5" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Admin</text>
+<text x="413" y="218.5" font-size="12" fill="#9aa0a6" text-anchor="middle">C#</text>
+<path d="M474 286 C529 286 524 230 567 230" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M574 230 L566 234 L566 226 Z" fill="#4fb3ff"/>
+<rect data-nocheck="1" x="556" y="227.7" width="8" height="8" rx="1" fill="#f2c14e" stroke="#2b2b2b" stroke-width="1"/>
+<text x="482" y="304" font-size="12" fill="#f2c14e" font-weight="600">Mobile.uid</text>
+<rect x="352" y="264" width="122" height="44" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="413" y="281.5" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Mobile</text>
+<text x="413" y="298.5" font-size="12" fill="#9aa0a6" text-anchor="middle">Java</text>
+<rect x="580" y="92" width="180" height="248" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="670" y="114" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Edge</text>
+<text x="670" y="132" font-size="12" fill="#f2c14e" text-anchor="middle">EdgePort.apply(uid)</text>
+<rect data-nocheck="1" x="575" y="191" width="10" height="50" rx="2" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="570" y="184" font-size="12" fill="#f2c14e" text-anchor="end" font-weight="600">443</text>
+<g data-nocheck="1"><path d="M594.2 188.5 V186.6 a2.8 2.8 0 0 1 5.6 0 V188.5" fill="none" stroke="#e8eaed" stroke-width="1.5"/><rect x="592" y="188.2" width="10" height="8" rx="1.5" fill="#e8eaed"/><rect x="596.3" y="190.6" width="1.4" height="3" fill="#2b2b2b"/></g>
+<g data-nocheck="1"><path d="M610 216 C626 216 628 162 646 162" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/></g>
+<rect x="646" y="150" width="102" height="24" rx="4" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="697" y="166.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Console</text>
+<g data-nocheck="1"><path d="M610 216 C626 216 628 196 646 196" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/></g>
+<rect x="646" y="184" width="102" height="24" rx="4" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="697" y="200.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">AdminLink</text>
+<g data-nocheck="1"><path d="M610 216 C626 216 628 274 646 274" fill="none" stroke="#a06fd0" stroke-width="1.4" stroke-dasharray="5 4" stroke-linejoin="round"/></g>
+<rect x="646" y="262" width="102" height="24" rx="4" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="697" y="278.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Query</text>
+<line x1="585" y1="216" x2="602" y2="216" stroke="#f2c14e" stroke-width="1.6"/>
+<g data-nocheck="1"><circle cx="610" cy="216" r="8" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.6"/><line x1="610" y1="216" x2="614.9" y2="219.4" stroke="#f2c14e" stroke-width="2" stroke-linecap="round"/><circle cx="610" cy="216" r="2" fill="#f2c14e"/></g>
+<text x="697" y="228" font-size="12" fill="#9aa0a6" text-anchor="middle">served by Edge</text>
+<text x="594" y="306" font-size="12" fill="#a06fd0">relayed to Backend:</text>
+<text x="594" y="322" font-size="12" fill="#a06fd0">Edge does not decode it</text>
+<text x="849" y="112" font-size="12" fill="#9aa0a6" text-anchor="middle">private network</text>
+<text x="849" y="128" font-size="12" fill="#9aa0a6" text-anchor="middle">not exposed</text>
+<rect x="852" y="140" width="12" height="200" fill="url(#wall)" stroke="#8a8a8a" stroke-width="1"/>
+<path d="M760 274 L861 274" fill="none" stroke="#4fb3ff" stroke-width="2.2" stroke-linejoin="round"/><path d="M868 274 L860 278 L860 270 Z" fill="#4fb3ff"/>
+<path d="M756 266 L859 266" fill="none" stroke="#a06fd0" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<path d="M868 266 L860 270 L860 262 Z" fill="#a06fd0"/>
+<path data-nocheck="1" d="M748 274 C762 274 754 266 762 266" fill="none" stroke="#a06fd0" stroke-width="1.4" stroke-dasharray="5 4" stroke-linejoin="round"/>
+<text x="768" y="296" font-size="12" fill="#e8eaed" font-weight="600">EdgeBackend</text>
+<text x="768" y="312" font-size="12" fill="#9aa0a6">(carrier)</text>
+<rect x="868" y="230" width="76" height="66" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="906" y="252" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Backend</text>
+<rect x="876" y="260" width="60" height="24" rx="4" fill="#32293e" stroke="#a06fd0" stroke-width="1.3"/>
+<text x="906" y="276.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Query</text>
+<g data-nocheck="1"><path d="M354.2 357.5 V355.6 a2.8 2.8 0 0 1 5.6 0 V357.5" fill="none" stroke="#e8eaed" stroke-width="1.5"/><rect x="352" y="357.2" width="10" height="8" rx="1.5" fill="#e8eaed"/><rect x="356.3" y="359.6" width="1.4" height="3" fill="#2b2b2b"/></g>
+<text x="370" y="364" font-size="12" fill="#e8eaed">X25519 key on Edge: a Noise NK handshake, then ChaCha20-Poly1305</text>
+<text x="370" y="380" font-size="12" fill="#e8eaed">records on every connection - the uid byte travels encrypted</text>
+<text x="480" y="418" font-size="13" fill="#9aa0a6" text-anchor="middle">One listener, one address, one certificate, one NAT hole. A port per connection or one shared port: chosen at deployment, same generated code.</text>
+</g>
+</svg>

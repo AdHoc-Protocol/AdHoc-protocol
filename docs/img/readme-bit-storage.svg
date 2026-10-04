@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" width="960" height="430" role="img" aria-labelledby="title desc">
+<title id="title">Bit fields: small values share the pack's bits</title>
+<desc id="desc">Top: the pack Status on the wire - its id, the 8 bytes of the long field at, 3 bytes of bit storage, a byte of null bits and the string driver. The bit storage is zoomed below as 24 bits in three bytes, bit 0 first, in declaration order: ignition 1 bit (bool), door_open 2 bits (bool?: false, true, none), gear 2 bits (Gear), wanted 2 bits (Gear?), fuel_pct 7 bits (0 to 100), tilt 6 bits (-20 to 20) and 4 unused bits. Each field holds its code, value minus min, and none is one more code inside the field. Bottom: six small fields at a byte each would be 6 bytes; in bit storage they take 3 bytes, 20 bits used.</desc>
+<rect width="960" height="430" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Bit fields: small values share the pack's bits</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">every field whose codes fit in 7 bits goes into the pack's bit storage - rounded up to whole bytes once per pack</text>
+<text x="24" y="82" font-size="12.5" fill="#e8eaed" font-weight="700">Status on the wire</text>
+<rect x="24" y="88" width="44" height="34" rx="3" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="46" y="110" font-size="12.5" fill="#e8eaed" text-anchor="middle">id</text>
+<rect x="72" y="88" width="230" height="34" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="187" y="110" font-size="12.5" fill="#e8eaed" text-anchor="middle">at - 8 bytes</text>
+<rect x="306" y="88" width="210" height="34" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="2"/>
+<text x="411" y="110" font-size="12.5" fill="#e8eaed" text-anchor="middle">bit storage - 3 bytes</text>
+<rect x="520" y="88" width="90" height="34" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="565" y="110" font-size="12.5" fill="#e8eaed" text-anchor="middle">null bits</text>
+<rect x="614" y="88" width="150" height="34" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="689" y="110" font-size="12.5" fill="#e8eaed" text-anchor="middle">driver …</text>
+<path d="M306 122 L24 158 M516 122 L912 158" stroke="#f2c14e" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+<rect x="24" y="176" width="40" height="40" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="44" y="201" font-size="12" fill="#f2c14e" text-anchor="middle">1 bit</text>
+<text x="44" y="238" font-size="12.5" fill="#e8eaed" text-anchor="middle">ignition</text>
+<text x="44" y="256" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">bool</text>
+<rect x="64" y="176" width="80" height="40" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<line x1="104" y1="206" x2="104" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<text x="104" y="201" font-size="12" fill="#f2c14e" text-anchor="middle">2 bits</text>
+<text x="104" y="238" font-size="12.5" fill="#e8eaed" text-anchor="middle">door_open</text>
+<text x="104" y="256" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">bool?</text>
+<rect x="144" y="176" width="80" height="40" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<line x1="184" y1="206" x2="184" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<text x="184" y="201" font-size="12" fill="#f2c14e" text-anchor="middle">2 bits</text>
+<text x="184" y="238" font-size="12.5" fill="#e8eaed" text-anchor="middle">gear</text>
+<text x="184" y="256" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">Gear</text>
+<rect x="224" y="176" width="80" height="40" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<line x1="264" y1="206" x2="264" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<text x="264" y="201" font-size="12" fill="#f2c14e" text-anchor="middle">2 bits</text>
+<text x="264" y="238" font-size="12.5" fill="#e8eaed" text-anchor="middle">wanted</text>
+<text x="264" y="256" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">Gear?</text>
+<rect x="304" y="176" width="280" height="40" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<line x1="344" y1="206" x2="344" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="384" y1="206" x2="384" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="424" y1="206" x2="424" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="464" y1="206" x2="464" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="504" y1="206" x2="504" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="544" y1="206" x2="544" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<text x="444" y="201" font-size="12" fill="#f2c14e" text-anchor="middle">7 bits</text>
+<text x="444" y="238" font-size="12.5" fill="#e8eaed" text-anchor="middle">fuel_pct</text>
+<text x="444" y="256" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">0 … 100</text>
+<rect x="584" y="176" width="240" height="40" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<line x1="624" y1="206" x2="624" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="664" y1="206" x2="664" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="704" y1="206" x2="704" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="744" y1="206" x2="744" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<line x1="784" y1="206" x2="784" y2="216" stroke="#6b5a2a" stroke-width="1"/>
+<text x="704" y="201" font-size="12" fill="#f2c14e" text-anchor="middle">6 bits</text>
+<text x="704" y="238" font-size="12.5" fill="#e8eaed" text-anchor="middle">tilt</text>
+<text x="704" y="256" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">-20 … 20</text>
+<rect x="824" y="176" width="88" height="40" rx="3" fill="#2b2b2b" stroke="#4a4a4a" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="846" y1="206" x2="846" y2="216" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="868" y1="206" x2="868" y2="216" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="890" y1="206" x2="890" y2="216" stroke="#3a3a3a" stroke-width="1"/>
+<text x="868" y="201" font-size="12" fill="#9aa0a6" text-anchor="middle">unused</text>
+<line x1="24" y1="166" x2="24" y2="224" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="28" y="164" font-size="12" fill="#4fb3ff">byte 0</text>
+<line x1="344" y1="166" x2="344" y2="224" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="348" y="164" font-size="12" fill="#4fb3ff">byte 1</text>
+<line x1="664" y1="166" x2="664" y2="224" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="668" y="164" font-size="12" fill="#4fb3ff">byte 2</text>
+<line x1="912" y1="166" x2="912" y2="224" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="24" y="284" font-size="12" fill="#9aa0a6">bit 0 first, in declaration order · each field holds its code (value - min); &quot;none&quot; is one more code inside the field</text>
+<rect x="24" y="318" width="440" height="90" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="344" font-size="12.5" fill="#e8eaed" font-weight="700">six small fields, a byte each</text>
+<rect x="40" y="358" width="40" height="30" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="84" y="358" width="40" height="30" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="128" y="358" width="40" height="30" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="172" y="358" width="40" height="30" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="216" y="358" width="40" height="30" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="260" y="358" width="40" height="30" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="316" y="379" font-size="14" fill="#e8eaed" font-weight="700">6 bytes</text>
+<rect x="496" y="318" width="440" height="90" rx="8" fill="#2b2a23" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="512" y="344" font-size="12.5" fill="#f2c14e" font-weight="700">the same six fields in bit storage</text>
+<rect x="512" y="358" width="40" height="30" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<rect x="556" y="358" width="40" height="30" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<rect x="600" y="358" width="40" height="30" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="656" y="379" font-size="14" fill="#f2c14e" font-weight="700">3 bytes - 20 bits used</text>
+</g>
+</svg>

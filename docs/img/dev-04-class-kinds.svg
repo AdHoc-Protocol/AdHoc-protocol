@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" role="img">
+<title>A class declaration on the left with six arrows to what it becomes. A class with instance fields becomes a transmittable pack. A class with no instance fields becomes an empty pack if a branch sends it (only the id travels; as a field it is a bool), otherwise a constants container with no wire id. A class whose only field is named TYPEDEF becomes a type alias; a class implementing DateTimeDef, TimeSpanDef or Duration becomes a time type; both are field types only. A class implementing FieldsInjectInto, HeaderFor or Modify becomes a composition construct that is never sent and never a field type. Transmittable outcomes are orange, compile-time outcomes grey</title>
+<rect width="980" height="520" rx="10" fill="#2b2b2b"/>
+<text x="24" y="40" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" font-weight="600" fill="#e8eaed">What a class of a description becomes</text>
+<rect x="700" y="27" width="14" height="14" rx="2" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="722" y="39" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">transmittable</text>
+<rect x="826" y="27" width="14" height="14" rx="2" fill="#262626" stroke="#6a6e72" stroke-width="1.6"/>
+<text x="848" y="39" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">compile-time only</text>
+<rect x="24" y="231" width="156" height="60" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="102" y="267" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="16" fill="#e8eaed" text-anchor="middle">class X { ... }</text>
+<line x1="180" y1="261" x2="212" y2="261" stroke="#9aa0a6" stroke-width="1.6"/>
+<line x1="212" y1="96" x2="212" y2="426" stroke="#9aa0a6" stroke-width="1.6"/>
+<line x1="212" y1="96" x2="548" y2="96" stroke="#e8833a" stroke-width="1.6"/>
+<path d="M556 96 L547 91.5 L547 100.5 Z" fill="#e8833a"/>
+<text x="228" y="88" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">has instance fields</text>
+<rect x="556" y="71" width="400" height="50" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="572" y="92" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#e8eaed">pack</text>
+<text x="572" y="111" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">a branch can send it; it can be a field type</text>
+<line x1="212" y1="162" x2="548" y2="162" stroke="#e8833a" stroke-width="1.6"/>
+<path d="M556 162 L547 157.5 L547 166.5 Z" fill="#e8833a"/>
+<text x="228" y="154" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">no instance fields, a branch sends it</text>
+<rect x="556" y="137" width="400" height="50" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="572" y="158" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#e8eaed">empty pack</text>
+<text x="572" y="177" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">singleton: only the id on the wire; as a field: bool</text>
+<line x1="212" y1="228" x2="548" y2="228" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 228 L547 223.5 L547 232.5 Z" fill="#9aa0a6"/>
+<text x="228" y="220" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">no instance fields, no branch sends it</text>
+<rect x="556" y="203" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="224" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">constants container</text>
+<text x="572" y="243" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">no wire id, no generated pack</text>
+<line x1="212" y1="294" x2="548" y2="294" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 294 L547 289.5 L547 298.5 Z" fill="#9aa0a6"/>
+<text x="228" y="286" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">one field, named TYPEDEF</text>
+<rect x="556" y="269" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="290" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">type alias (TYPEDEF)</text>
+<text x="572" y="309" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">a field type only</text>
+<line x1="212" y1="360" x2="548" y2="360" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 360 L547 355.5 L547 364.5 Z" fill="#9aa0a6"/>
+<text x="228" y="352" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">: DateTimeDef / TimeSpanDef / Duration</text>
+<rect x="556" y="335" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="356" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">time type</text>
+<text x="572" y="375" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">a field type only</text>
+<line x1="212" y1="426" x2="548" y2="426" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 426 L547 421.5 L547 430.5 Z" fill="#9aa0a6"/>
+<text x="228" y="418" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">: FieldsInjectInto / HeaderFor / Modify</text>
+<rect x="556" y="401" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="422" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">composition construct</text>
+<text x="572" y="441" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">never sent, never a field type</text>
+<text x="24" y="482" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">A branch that lists a grey kind stops the agent. Scope selections (@Project, @Host, a pack scope, a Pack Set filter) skip grey kinds.</text>
+<text x="24" y="502" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">An orange pack gets a wire id only when a branch selects it; used only as a field type, it travels inside its parent.</text>
+</svg>

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 484" width="960" height="484" role="img" aria-labelledby="title desc">
+<title id="title">[UDP&lt;Volatile&gt;(30)]: a lost datagram, replayed</title>
+<desc id="desc">UDP with every pack guaranteed except the Volatile ones, as a sequence from a Client to a Server. Datagram 41 carries Input 101 and a Position; datagram 42, with Input 102 and a Position, is lost; datagram 43 carries Input 103. The Inputs are copied into the sender journal, the Positions are not. The receiver sees the gap from the datagram numbers and asks to continue from its position, in the datagram header; the sender replays Input 102 and Input 103 from its journal. The lost Position is not replayed: the next one replaces it. The receiving code sees Input 101, 102 and 103 once, in order. A strip shows the 9-byte datagram header: flags 1 byte, connection id 4, series 1, datagram number 3.</desc>
+<rect width="960" height="484" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="700" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[UDP&lt;Volatile&gt;(30)]</tspan><tspan >: a lost datagram, replayed</tspan></text>
+<rect x="100" y="54" width="140" height="46" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="170" y="74.6" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">Client</text>
+<text x="170" y="90.2" font-size="12" fill="#9aa0a6" text-anchor="middle">sender</text>
+<rect x="720" y="54" width="140" height="46" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="790" y="74.6" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<text x="790" y="90.2" font-size="12" fill="#9aa0a6" text-anchor="middle">receiver</text>
+<g data-nocheck="1"><line x1="170" y1="100" x2="170" y2="400" stroke="#4a4a4a" stroke-width="1.6" stroke-dasharray="5 5"/></g>
+<g data-nocheck="1"><line x1="790" y1="100" x2="790" y2="400" stroke="#4a4a4a" stroke-width="1.6" stroke-dasharray="5 5"/></g>
+<rect x="24" y="116" width="122" height="278" rx="6" fill="#242424" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="36" y="134" font-size="12" fill="#f2c14e" font-weight="700">journal</text>
+<rect x="36" y="142" width="98" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="85" y="156.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 101</text>
+<line x1="134" y1="152" x2="166" y2="152" stroke="#f2c14e" stroke-width="1.1" stroke-dasharray="2 3"/>
+<rect x="36" y="192" width="98" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="85" y="206.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 102</text>
+<line x1="134" y1="202" x2="166" y2="202" stroke="#f2c14e" stroke-width="1.1" stroke-dasharray="2 3"/>
+<rect x="36" y="242" width="98" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="85" y="256.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 103</text>
+<line x1="134" y1="252" x2="166" y2="252" stroke="#f2c14e" stroke-width="1.1" stroke-dasharray="2 3"/>
+<text x="36" y="290" font-size="12" fill="#9aa0a6">Position is not</text>
+<text x="36" y="305" font-size="12" fill="#9aa0a6">journalled</text>
+<text x="36" y="320" font-size="12" fill="#9aa0a6">(Volatile)</text>
+<g data-nocheck="1"><path d="M170 152 L782 152" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M790 152 L781 156.6 L781 147.4 Z" fill="#4fb3ff"/></g>
+<rect x="214" y="137" width="196" height="30" rx="6" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="224" y="156.5" font-size="12" fill="#4fb3ff" font-weight="700">#41</text>
+<rect x="256" y="142" width="76" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="294" y="156.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 101</text>
+<rect x="338" y="142" width="64" height="20" rx="4" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="3 2"/><text x="370" y="156.5" font-size="12" fill="#9aa0a6" text-anchor="middle">Position</text>
+<g data-nocheck="1"><line x1="170" y1="202" x2="552" y2="202" stroke="#4fb3ff" stroke-width="2"/></g>
+<path d="M553.5 195.5 L566.5 208.5 M566.5 195.5 L553.5 208.5" stroke="#e06c6c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+<text x="576" y="206.5" font-size="13" fill="#e06c6c" font-weight="600">lost</text>
+<rect x="214" y="187" width="196" height="30" rx="6" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="224" y="206.5" font-size="12" fill="#4fb3ff" font-weight="700">#42</text>
+<rect x="256" y="192" width="76" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="294" y="206.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 102</text>
+<rect x="338" y="192" width="64" height="20" rx="4" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="3 2"/><text x="370" y="206.5" font-size="12" fill="#9aa0a6" text-anchor="middle">Position</text>
+<g data-nocheck="1"><path d="M170 252 L782 252" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M790 252 L781 256.6 L781 247.4 Z" fill="#4fb3ff"/></g>
+<rect x="214" y="237" width="126" height="30" rx="6" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="224" y="256.5" font-size="12" fill="#4fb3ff" font-weight="700">#43</text>
+<rect x="256" y="242" width="76" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="294" y="256.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 103</text>
+<text x="334" y="230" font-size="12" fill="#9aa0a6">not replayed - the next Position replaces it</text>
+<text x="778" y="280" font-size="12" fill="#a06fd0" text-anchor="end">gap: #42 missing - seen from the datagram numbers</text>
+<path d="M790 306 L178 306" fill="none" stroke="#a06fd0" stroke-width="2" stroke-linejoin="round"/><path d="M170 306 L179 301.4 L179 310.6 Z" fill="#a06fd0"/>
+<text x="480" y="300" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">continue from my position</text>
+<text x="480" y="322" font-size="12" fill="#9aa0a6" text-anchor="middle">carried in the datagram header</text>
+<path d="M146 354 L782 354" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M790 354 L781 358.6 L781 349.4 Z" fill="#f2c14e"/>
+<text x="480" y="348" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#e8eaed" font-weight="600">Input 102</tspan><tspan fill="#f2c14e"> - replayed</tspan></text>
+<path d="M146 386 L782 386" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M790 386 L781 390.6 L781 381.4 Z" fill="#f2c14e"/>
+<text x="480" y="380" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#e8eaed" font-weight="600">Input 103</tspan><tspan fill="#f2c14e"> - replayed</tspan></text>
+<rect x="818" y="136" width="122" height="258" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="830" y="156" font-size="12" fill="#9aa0a6">your code sees</text>
+<rect x="830" y="172" width="98" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="879" y="186.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 101</text>
+<rect x="830" y="200" width="98" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="879" y="214.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 102</text>
+<rect x="830" y="228" width="98" height="20" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="879" y="242.5" font-size="12" fill="#e8eaed" text-anchor="middle">Input 103</text>
+<text x="830" y="282" font-size="12" fill="#e8eaed">each once,</text>
+<text x="830" y="297" font-size="12" fill="#e8eaed">in order</text>
+<line x1="830" y1="311" x2="928" y2="311" stroke="#4a4a4a" stroke-width="1"/>
+<text x="830" y="330" font-size="12" fill="#9aa0a6">Position of #41,</text>
+<text x="830" y="345" font-size="12" fill="#9aa0a6">then the next one</text>
+<text x="830" y="360" font-size="12" fill="#9aa0a6">never the lost one</text>
+<text x="24" y="431" font-size="12" fill="#9aa0a6">datagram header, 9 bytes:</text>
+<rect x="178" y="414" width="72" height="26" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="214" y="431" font-size="12" fill="#e8eaed" text-anchor="middle">flags 1 B</text>
+<rect x="250" y="414" width="140" height="26" rx="0" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="320" y="431" font-size="12" fill="#e8eaed" text-anchor="middle">connection id 4 B</text>
+<rect x="390" y="414" width="72" height="26" rx="0" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="426" y="431" font-size="12" fill="#e8eaed" text-anchor="middle">series 1 B</text>
+<rect x="462" y="414" width="134" height="26" rx="0" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="529" y="431" font-size="12" fill="#e8eaed" text-anchor="middle">datagram number 3 B</text>
+<rect x="602" y="414" width="150" height="26" rx="4" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="677" y="431" font-size="12" fill="#9aa0a6" text-anchor="middle">stream data (packs)</text>
+<text x="480" y="466" font-size="13" fill="#9aa0a6" text-anchor="middle">On TCP you choose the packs that must not be lost; on UDP you choose the ones that may be. C# and Java runtimes.</text>
+</g>
+</svg>

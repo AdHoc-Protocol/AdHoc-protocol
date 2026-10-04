@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 404" width="960" height="404" role="img" aria-labelledby="title desc">
+<title id="title">Where AdHoc fits</title>
+<desc id="desc">Where AdHoc fits, as two cards. Left, AdHoc fits: peers you deploy and can list - services, devices, apps, consoles; high message rates where bytes and CPU count; large or live payloads - files, media, streams; conversations with phases and pushes from both sides; middle tiers that must route or store without the schema; one protocol in several languages - C#, Java, TypeScript. Right, text request/response fits better: open public APIs for clients you will never meet; peers that evolve independently forever, with no bound on their generations; traffic read by eye or parsed by generic intermediaries; rare, small calls where bytes do not matter; a language AdHoc does not generate yet - C++, Rust, Go are markers only. Strip: AdHoc carries generations as separate hosts - right for a population you know, wrong for an ecosystem without bounds.</desc>
+<rect width="960" height="404" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">Where AdHoc fits</text>
+<rect x="24" y="58" width="444" height="274" rx="8" fill="#303236" stroke="#4cc38a" stroke-width="1.5"/>
+<path d="M24.75 98 V66 a7.25 7.25 0 0 1 7.25 -7.25 H460 a7.25 7.25 0 0 1 7.25 7.25 V98 Z" fill="#1f3a2e"/>
+<line x1="24" y1="98" x2="468" y2="98" stroke="#4cc38a" stroke-width="1"/>
+<polyline points="37,78 41.7,82.7 49.6,73.3" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="66" y="84" font-size="16" fill="#4cc38a" font-weight="600">AdHoc fits</text>
+<circle cx="44" cy="119.5" r="4" fill="#4cc38a"/>
+<text x="58" y="124" font-size="13" fill="#e8eaed">peers you deploy and can list</text>
+<text x="58" y="140" font-size="12" fill="#9aa0a6">services, devices, apps, consoles</text>
+<circle cx="44" cy="155.9" r="4" fill="#4cc38a"/>
+<text x="58" y="160.4" font-size="13" fill="#e8eaed">high message rates</text>
+<text x="58" y="176.4" font-size="12" fill="#9aa0a6">bytes and CPU count</text>
+<circle cx="44" cy="192.3" r="4" fill="#4cc38a"/>
+<text x="58" y="196.8" font-size="13" fill="#e8eaed">large or live payloads</text>
+<text x="58" y="212.8" font-size="12" fill="#9aa0a6">files, media, streams</text>
+<circle cx="44" cy="228.7" r="4" fill="#4cc38a"/>
+<text x="58" y="233.2" font-size="13" fill="#e8eaed">conversations with phases</text>
+<text x="58" y="249.2" font-size="12" fill="#9aa0a6">pushes from both sides</text>
+<circle cx="44" cy="265.1" r="4" fill="#4cc38a"/>
+<text x="58" y="269.6" font-size="13" fill="#e8eaed">middle tiers that must not read</text>
+<text x="58" y="285.6" font-size="12" fill="#9aa0a6">route or store without the schema</text>
+<circle cx="44" cy="301.5" r="4" fill="#4cc38a"/>
+<text x="58" y="306" font-size="13" fill="#e8eaed">one protocol, several languages</text>
+<text x="58" y="322" font-size="12" fill="#9aa0a6">C#, Java, TypeScript</text>
+<rect x="492" y="58" width="444" height="274" rx="8" fill="#303236" stroke="#9aa0a6" stroke-width="1.5"/>
+<path d="M492.75 98 V66 a7.25 7.25 0 0 1 7.25 -7.25 H928 a7.25 7.25 0 0 1 7.25 7.25 V98 Z" fill="#262626"/>
+<line x1="492" y1="98" x2="936" y2="98" stroke="#9aa0a6" stroke-width="1"/>
+<rect x="505" y="69" width="14" height="18" rx="2" fill="none" stroke="#e8eaed" stroke-width="1.4"/>
+<line x1="508" y1="74" x2="516" y2="74" stroke="#e8eaed" stroke-width="1.2"/>
+<line x1="508" y1="78" x2="516" y2="78" stroke="#e8eaed" stroke-width="1.2"/>
+<line x1="508" y1="82" x2="516" y2="82" stroke="#e8eaed" stroke-width="1.2"/>
+<text x="534" y="84" font-size="16" fill="#e8eaed" font-weight="600">text request/response fits better</text>
+<circle cx="512" cy="119.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="124" font-size="13" fill="#e8eaed">open public APIs</text>
+<text x="526" y="140" font-size="12" fill="#9aa0a6">clients you will never meet</text>
+<circle cx="512" cy="157.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="162" font-size="13" fill="#e8eaed">peers that evolve independently, forever</text>
+<text x="526" y="178" font-size="12" fill="#9aa0a6">no bound on their generations</text>
+<circle cx="512" cy="195.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="200" font-size="13" fill="#e8eaed">traffic read by eye</text>
+<text x="526" y="216" font-size="12" fill="#9aa0a6">or parsed by generic intermediaries</text>
+<circle cx="512" cy="233.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="238" font-size="13" fill="#e8eaed">rare, small calls</text>
+<text x="526" y="254" font-size="12" fill="#9aa0a6">bytes do not matter</text>
+<circle cx="512" cy="271.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="276" font-size="13" fill="#e8eaed">a language AdHoc does not generate yet</text>
+<text x="526" y="292" font-size="12" fill="#9aa0a6">C++, Rust, Go: markers only</text>
+<rect x="24" y="346" width="912" height="40" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="371" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>AdHoc carries generations as separate hosts</tspan><tspan fill="#9aa0a6"> - right for a population you know, wrong for an ecosystem without bounds</tspan></text>
+</g>
+</svg>

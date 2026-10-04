@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" width="960" height="280" role="img" aria-labelledby="title desc">
+<title id="title">The cost of confirmation</title>
+<desc id="desc">The cost of confirming 4 KiB of guaranteed 15-byte packs, 273 packs, as two bars on one scale of 1 px per 10 bytes. Request/response: 273 replies of at least 27 bytes each, 7 371 bytes in all. AdHoc: one REPORT control record, the pack id with all bits set plus 8 bytes, 9 bytes in all, about 0.2 percent. The packs themselves carry nothing for the guarantee, and a connection without Resumable carries nothing of it; the sender keeps a journal, the newest bytes in memory and the rest in 4 MB files, up to resumable_megabytes, 100 MB by default.</desc>
+<rect width="960" height="280" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Confirming 4 KiB of guaranteed 15-byte packs (273 packs)</text>
+<text x="24" y="92" font-size="13" fill="#e8eaed">request/response</text>
+<text x="24" y="108" font-size="12" fill="#9aa0a6">a reply to every request</text>
+<rect x="180" y="76" width="737" height="36" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<line x1="207" y1="79" x2="207" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="234" y1="79" x2="234" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="261" y1="79" x2="261" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="288" y1="79" x2="288" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="315" y1="79" x2="315" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="342" y1="79" x2="342" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="369" y1="79" x2="369" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="396" y1="79" x2="396" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="693" y1="79" x2="693" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="720" y1="79" x2="720" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="747" y1="79" x2="747" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="774" y1="79" x2="774" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="801" y1="79" x2="801" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="828" y1="79" x2="828" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="855" y1="79" x2="855" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="882" y1="79" x2="882" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="909" y1="79" x2="909" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<text x="548.5" y="99" font-size="13" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#3a3a3a" stroke-width="4" stroke-linejoin="round">273 replies × 27 B (minimal) = 7 371 B</text>
+<text x="917" y="128" font-size="12" fill="#9aa0a6" text-anchor="end">1 px = 10 bytes · a tick = 10 replies</text>
+<text x="24" y="162" font-size="13" fill="#e8eaed">AdHoc</text>
+<text x="24" y="178" font-size="12" fill="#9aa0a6">one REPORT per 4 KiB</text>
+<rect x="180" y="146" width="1.2" height="36" rx="0" fill="#f2c14e"/>
+<text x="192" y="169" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed">1 control record: pack id with all bits set + 8 bytes = </tspan><tspan fill="#f2c14e" font-weight="700">9 B</tspan><tspan fill="#9aa0a6"> (~0.2 %)</tspan></text>
+<text x="24" y="226" font-size="12" fill="#9aa0a6">The packs themselves carry nothing for the guarantee; a connection without Resumable carries nothing of it.</text>
+<text x="24" y="246" font-size="12" fill="#9aa0a6">The sender keeps a journal: newest bytes in memory, the rest in 4 MB files, up to resumable_megabytes (100 MB by default).</text>
+</g>
+</svg>

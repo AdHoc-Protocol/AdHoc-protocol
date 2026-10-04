@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 636" width="960" height="636" role="img" aria-labelledby="title desc">
+<title id="title">The AdHoc pipeline: from your description to the generator in the cloud and back into your projects</title>
+<desc id="desc">Your machine on the left, the AdHoc cloud on the right. Top row, left to right, towards the server: 1 MyProtocol.cs, your description in plain C#; 2 AdHocAgent compiles and checks it, writes the numbers tables back into the file, and uploads the description with your UUID. 3 The generator in the cloud produces and tests code for every host in each of its languages. Bottom row, right to left, back from the server: 4 the received folder, a folder per language and per host with gen, lib and demo; 5 deployment routes the files into your folders, keeps your code by smart merge and makes backups; 6 your projects build hosts from gen, lib and your code. A dashed arrow from your projects back to the description: when the description changes, steps 2 to 5 run again. Below, at runtime, the hosts exchange packs as bytes over a connection.</desc>
+<rect width="960" height="636" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="40" font-size="12" fill="#9aa0a6" font-weight="700">YOUR MACHINE</text>
+<rect x="20" y="52" width="652" height="448" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="6 5"/>
+<text x="696" y="40" font-size="12" fill="#9aa0a6" font-weight="700">ADHOC CLOUD</text>
+<rect x="692" y="52" width="248" height="448" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="6 5"/>
+<rect x="40" y="96" width="170" height="156" rx="8" fill="#3a2c20" stroke="#e8833a" stroke-width="1.8"/>
+<text x="125" y="124" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">MyProtocol.cs</text>
+<text x="125" y="142" font-size="12" fill="#9aa0a6" text-anchor="middle">the description</text>
+<text x="125" y="181" font-size="12" fill="#e8eaed" text-anchor="middle">plain C# in a .NET project</text>
+<text x="125" y="201" font-size="12" fill="#e8eaed" text-anchor="middle">checked by your IDE</text>
+<text x="125" y="221" font-size="12" fill="#e8eaed" text-anchor="middle">packs · hosts · connections</text>
+<rect x="246" y="96" width="170" height="156" rx="8" fill="#333536" stroke="#8c9198" stroke-width="1.8"/>
+<text x="331" y="124" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">AdHocAgent</text>
+<text x="331" y="142" font-size="12" fill="#9aa0a6" text-anchor="middle">checks before upload</text>
+<text x="331" y="181" font-size="12" fill="#e8eaed" text-anchor="middle">compiles (Roslyn)</text>
+<text x="331" y="201" font-size="12" fill="#e8eaed" text-anchor="middle">checks the AdHoc rules</text>
+<text x="331" y="221" font-size="12" fill="#e8eaed" text-anchor="middle">stops on the first error</text>
+<rect x="716" y="96" width="200" height="384" rx="8" fill="#32293e" stroke="#a06fd0" stroke-width="1.8"/>
+<text x="816" y="246" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Generator</text>
+<text x="816" y="264" font-size="12" fill="#9aa0a6" text-anchor="middle">cloud service</text>
+<text x="816" y="294" font-size="12" fill="#e8eaed" text-anchor="middle">code for every host</text>
+<text x="816" y="316" font-size="12" fill="#e8eaed" text-anchor="middle">in each of its languages</text>
+<text x="816" y="338" font-size="12" fill="#9aa0a6" text-anchor="middle">C# · Java · TypeScript</text>
+<text x="816" y="360" font-size="12" fill="#e8eaed" text-anchor="middle">tested before return</text>
+<rect x="452" y="324" width="180" height="156" rx="8" fill="#3d3520" stroke="#f2c14e" stroke-width="1.8"/>
+<text x="542" y="352" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Received folder</text>
+<text x="542" y="370" font-size="12" fill="#9aa0a6" text-anchor="middle">&lt;output&gt;/MyProtocol/</text>
+<text x="474" y="400" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">InCS/Server/</text>
+<text x="474" y="417" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">  gen  lib  demo</text>
+<text x="474" y="434" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">InJAVA/…</text>
+<text x="474" y="451" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">InTS/…</text>
+<text x="542" y="470" font-size="12" fill="#9aa0a6" text-anchor="middle">per language, per host</text>
+<rect x="246" y="324" width="170" height="156" rx="8" fill="#333536" stroke="#8c9198" stroke-width="1.8"/>
+<text x="331" y="352" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Deployment</text>
+<text x="331" y="370" font-size="12" fill="#9aa0a6" text-anchor="middle">AdHocAgent +</text>
+<text x="331" y="385" font-size="12" fill="#9aa0a6" text-anchor="middle">MyProtocol.md</text>
+<text x="331" y="419" font-size="12" fill="#e8eaed" text-anchor="middle">routes files to your folders</text>
+<text x="331" y="439" font-size="12" fill="#e8eaed" text-anchor="middle">smart merge keeps your code</text>
+<text x="331" y="459" font-size="12" fill="#e8eaed" text-anchor="middle">backups + restore scripts</text>
+<rect x="40" y="324" width="170" height="156" rx="8" fill="#3a2c20" stroke="#e8833a" stroke-width="1.8"/>
+<text x="125" y="352" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Your projects</text>
+<rect x="54" y="366" width="142" height="48" rx="5" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.2"/>
+<text x="125" y="384" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server</text>
+<text x="66" y="403" font-size="12" fill="#f2c14e">gen + lib</text>
+<text x="184" y="403" font-size="12" fill="#e8833a" text-anchor="end">+ your code</text>
+<rect x="54" y="422" width="142" height="48" rx="5" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.2"/>
+<text x="125" y="440" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<text x="66" y="459" font-size="12" fill="#f2c14e">gen + lib</text>
+<text x="184" y="459" font-size="12" fill="#e8833a" text-anchor="end">+ your code</text>
+<circle cx="40" cy="96" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="40" y="100.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">1</text>
+<circle cx="246" cy="96" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="246" y="100.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">2</text>
+<circle cx="716" cy="96" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="716" y="100.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">3</text>
+<circle cx="452" cy="324" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="452" y="328.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">4</text>
+<circle cx="246" cy="324" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="246" y="328.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">5</text>
+<circle cx="40" cy="324" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="40" y="328.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">6</text>
+<path d="M210 174 L238 174" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M246 174 L237 178.6 L237 169.4 Z" fill="#4fb3ff"/>
+<path d="M416 174 L708 174" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M716 174 L707 178.6 L707 169.4 Z" fill="#4fb3ff"/>
+<text x="566" y="164" font-size="12" fill="#4fb3ff" text-anchor="middle">upload: description + UUID</text>
+<text x="566" y="196" font-size="12" fill="#9aa0a6" text-anchor="middle">nothing leaves your machine</text>
+<text x="566" y="211" font-size="12" fill="#9aa0a6" text-anchor="middle">until the description passes</text>
+<path d="M331 96 C331 66 125 66 125 88" fill="none" stroke="#9aa0a6" stroke-width="1.6" stroke-linejoin="round"/><path d="M125 96 L120.4 87 L129.6 87 Z" fill="#9aa0a6"/>
+<text x="228" y="66" font-size="12" fill="#9aa0a6" text-anchor="middle">writes the numbers tables into the file</text>
+<path d="M716 402 L640 402" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M632 402 L641 397.4 L641 406.6 Z" fill="#4fb3ff"/>
+<text x="674" y="392" font-size="12" fill="#4fb3ff" text-anchor="middle">files</text>
+<path d="M452 402 L424 402" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M416 402 L425 397.4 L425 406.6 Z" fill="#4fb3ff"/>
+<path d="M246 402 L218 402" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M210 402 L219 397.4 L219 406.6 Z" fill="#4fb3ff"/>
+<path d="M125 322 L125 262" fill="none" stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="6 4" stroke-linejoin="round"/><path d="M125 254 L129.6 263 L120.4 263 Z" fill="#9aa0a6"/>
+<text x="137" y="292" font-size="12" fill="#9aa0a6">description changed? run steps 2-5 again</text>
+<rect x="20" y="520" width="920" height="100" rx="10" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="542" font-size="12" fill="#9aa0a6" font-weight="700">RUNTIME</text>
+<rect x="64" y="556" width="122" height="40" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="125" y="581" font-size="13" fill="#e8eaed" text-anchor="middle">Server (C#)</text>
+<rect x="392" y="556" width="160" height="40" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="472" y="581" font-size="13" fill="#e8eaed" text-anchor="middle">Client (TypeScript)</text>
+<line x1="186" y1="576" x2="392" y2="576" stroke="#4fb3ff" stroke-width="2.4"/>
+<rect x="250" y="570" width="18" height="12" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="278" y="570" width="18" height="12" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="306" y="570" width="18" height="12" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="289" y="614" font-size="12" fill="#9aa0a6" text-anchor="middle">packs as bytes over a connection</text>
+<path d="M125 480 L125 548" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M125 556 L120.4 547 L129.6 547 Z" fill="#4fb3ff"/>
+<text x="135" y="512" font-size="12" fill="#4fb3ff">build and run</text>
+<rect x="620" y="558" width="13" height="13" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="640" y="569" font-size="12" fill="#9aa0a6">yours</text>
+<rect x="770" y="558" width="13" height="13" rx="3" fill="#333536" stroke="#8c9198" stroke-width="1.6"/>
+<text x="790" y="569" font-size="12" fill="#9aa0a6">AdHocAgent</text>
+<rect x="620" y="586" width="13" height="13" rx="3" fill="#32293e" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="640" y="597" font-size="12" fill="#9aa0a6">AdHoc service</text>
+<rect x="770" y="586" width="13" height="13" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="790" y="597" font-size="12" fill="#9aa0a6">generated</text>
+</g>
+</svg>

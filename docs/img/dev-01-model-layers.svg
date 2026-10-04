@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" width="960" height="640" role="img" aria-labelledby="title desc">
+<title id="title">The layers of an AdHoc description, from the project down to the bytes</title>
+<desc id="desc">Nine stacked layers: Project (interface Telemetry), Host (struct Sensor : Host), Connection (interface Link : Connects&lt;Sensor, Collector&gt;), Actor (interface Name : Actor), State (struct Idle { }), Branch ([L____________&lt;Waiting, Sensor.Reading&gt;]), Pack (class Reading), Field ([MinMax(-40, 125)] short celsius;) and Bytes (wire id, then the fields). Brackets group them into topology, conversation and data. Dashed arrows show that a branch selects packs and that a host, or the project, declares them.</desc>
+<rect width="960" height="640" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="200" y="20" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="21" width="5" height="46" rx="2" fill="#e8833a"/>
+<text x="220" y="50" font-size="16" fill="#e8eaed" font-weight="700">Project</text>
+<text x="328" y="40" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">interface Telemetry</text>
+<text x="328" y="59" font-size="12.5" fill="#9aa0a6">the whole system, one description</text>
+<line x1="260" y1="68" x2="260" y2="74" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M260 80 L256 74 L264 74 Z" fill="#9aa0a6"/>
+<rect x="200" y="80" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="81" width="5" height="46" rx="2" fill="#e8833a"/>
+<text x="220" y="110" font-size="16" fill="#e8eaed" font-weight="700">Host</text>
+<text x="328" y="100" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">struct Sensor : Host</text>
+<text x="328" y="119" font-size="12.5" fill="#9aa0a6">one program and its languages</text>
+<line x1="260" y1="128" x2="260" y2="134" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M260 140 L256 134 L264 134 Z" fill="#9aa0a6"/>
+<rect x="200" y="140" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="141" width="5" height="46" rx="2" fill="#e8833a"/>
+<text x="220" y="170" font-size="16" fill="#e8eaed" font-weight="700">Connection</text>
+<text x="328" y="160" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">interface Link : Connects&lt;Sensor, Collector&gt;</text>
+<text x="328" y="179" font-size="12.5" fill="#9aa0a6">the link between two hosts</text>
+<line x1="260" y1="188" x2="260" y2="194" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M260 200 L256 194 L264 194 Z" fill="#9aa0a6"/>
+<rect x="200" y="200" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="201" width="5" height="46" rx="2" fill="#f2c14e"/>
+<text x="220" y="230" font-size="16" fill="#e8eaed" font-weight="700">Actor</text>
+<text x="328" y="220" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">interface Name : Actor</text>
+<text x="328" y="239" font-size="12.5" fill="#9aa0a6">one conversation; many run at once</text>
+<line x1="260" y1="248" x2="260" y2="254" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M260 260 L256 254 L264 254 Z" fill="#9aa0a6"/>
+<rect x="200" y="260" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="261" width="5" height="46" rx="2" fill="#f2c14e"/>
+<text x="220" y="290" font-size="16" fill="#e8eaed" font-weight="700">State</text>
+<text x="328" y="280" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">struct Idle { }</text>
+<text x="328" y="299" font-size="12.5" fill="#9aa0a6">a step: who may send what now</text>
+<line x1="260" y1="308" x2="260" y2="314" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M260 320 L256 314 L264 314 Z" fill="#9aa0a6"/>
+<rect x="200" y="320" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="321" width="5" height="46" rx="2" fill="#f2c14e"/>
+<text x="220" y="350" font-size="16" fill="#e8eaed" font-weight="700">Branch</text>
+<text x="328" y="340" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[L____________&lt;Waiting, Sensor.Reading&gt;]</text>
+<text x="328" y="359" font-size="12.5" fill="#9aa0a6">packs one side may send + next state</text>
+<rect x="200" y="380" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="381" width="5" height="46" rx="2" fill="#4fb3ff"/>
+<text x="220" y="410" font-size="16" fill="#e8eaed" font-weight="700">Pack</text>
+<text x="328" y="400" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">class Reading</text>
+<text x="328" y="419" font-size="12.5" fill="#9aa0a6">the unit that travels</text>
+<line x1="260" y1="428" x2="260" y2="434" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M260 440 L256 434 L264 434 Z" fill="#9aa0a6"/>
+<rect x="200" y="440" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="441" width="5" height="46" rx="2" fill="#4fb3ff"/>
+<text x="220" y="470" font-size="16" fill="#e8eaed" font-weight="700">Field</text>
+<text x="328" y="460" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[MinMax(-40, 125)] short celsius;</text>
+<text x="328" y="479" font-size="12.5" fill="#9aa0a6">a typed value, known by its place</text>
+<line x1="260" y1="488" x2="260" y2="494" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M260 500 L256 494 L264 494 Z" fill="#9aa0a6"/>
+<rect x="200" y="500" width="520" height="48" rx="6" fill="#323232" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="201" y="501" width="5" height="46" rx="2" fill="#4fb3ff"/>
+<text x="220" y="530" font-size="16" fill="#e8eaed" font-weight="700">Bytes</text>
+<rect x="328" y="512" width="66" height="24" rx="3" fill="#4fb3ff" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="361" y="528.5" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">wire id</text>
+<rect x="398" y="512" width="52" height="24" rx="3" fill="#2b2b2b" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="424" y="528.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">field</text>
+<rect x="454" y="512" width="52" height="24" rx="3" fill="#2b2b2b" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="480" y="528.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">field</text>
+<rect x="510" y="512" width="34" height="24" rx="3" fill="#2b2b2b" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="527" y="528.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">…</text>
+<text x="562" y="529" font-size="12.5" fill="#9aa0a6">what goes on the wire</text>
+<path d="M192 22 L184 22 L184 186 L192 186" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/>
+<text x="172" y="102" font-size="15" fill="#e8833a" text-anchor="end" font-weight="700">Topology</text>
+<text x="172" y="120" font-size="12" fill="#9aa0a6" text-anchor="end">who exists, who talks</text>
+<path d="M192 202 L184 202 L184 366 L192 366" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/>
+<text x="172" y="282" font-size="15" fill="#f2c14e" text-anchor="end" font-weight="700">Conversation</text>
+<text x="172" y="300" font-size="12" fill="#9aa0a6" text-anchor="end">what may be sent when</text>
+<path d="M192 382 L184 382 L184 546 L192 546" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/>
+<text x="172" y="462" font-size="15" fill="#4fb3ff" text-anchor="end" font-weight="700">Data</text>
+<text x="172" y="480" font-size="12" fill="#9aa0a6" text-anchor="end">what is sent</text>
+<path d="M720 338 C778 338 778 396 730 396" fill="none" stroke="#a06fd0" stroke-width="2" stroke-dasharray="6 4" stroke-linejoin="round"/><path d="M722 396 L731 391.4 L731 400.6 Z" fill="#a06fd0"/>
+<text x="784" y="372" font-size="13" fill="#a06fd0">selects packs</text>
+<path d="M720 104 L886 104 Q902 104 902 120 L902 396 Q902 412 886 412 L730 412" fill="none" stroke="#a06fd0" stroke-width="2" stroke-dasharray="6 4" stroke-linejoin="round"/><path d="M722 412 L731 407.4 L731 416.6 Z" fill="#a06fd0"/>
+<text x="742" y="226" font-size="13" fill="#a06fd0">declares packs</text>
+<text x="742" y="243" font-size="12" fill="#a06fd0">(or the project does)</text>
+<text x="480" y="600" font-size="12.5" fill="#9aa0a6" text-anchor="middle">A branch does not contain packs: it selects packs declared in the project or in a host, outside any connection.</text>
+</g>
+</svg>

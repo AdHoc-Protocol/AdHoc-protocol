@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 436" width="960" height="436" role="img" aria-labelledby="title desc">
+<title id="title">What Resumable&lt;Client, (Order, Cancel)&gt; costs</title>
+<desc id="desc">On the wire from Client to Server, guaranteed packs Order and Cancel, marked G, travel between ordinary Beat packs and carry no extra bytes. Each guaranteed pack is copied into the Client journal as it goes out; ordinary packs are not journalled. The journal holds the unacknowledged packs in memory first, then in 4 MB files on disk, capped by resumable_megabytes, default 100. Back from the Server, one REPORT(position) control record, the pack id plus 8 bytes, every 4 KiB of guaranteed packs, frees every journal byte below the position. After a reconnect, CONTINUE(position) makes the sender replay from the journal before new packs.</desc>
+<rect width="960" height="436" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="700" xml:space="preserve"><tspan >What </tspan><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Resumable&lt;Client, (Order, Cancel)&gt;</tspan><tspan > costs</tspan></text>
+<rect x="24" y="70" width="130" height="70" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="89" y="103.4" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Client</text>
+<text x="89" y="118.1" font-size="12" fill="#9aa0a6" text-anchor="middle">sends the packs</text>
+<rect x="806" y="70" width="130" height="70" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="871" y="103.4" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<text x="871" y="118.1" font-size="12" fill="#9aa0a6" text-anchor="middle">receives them</text>
+<g data-nocheck="1"><path d="M154 105 L797 105" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M806 105 L796 110 L796 100 Z" fill="#4fb3ff"/></g>
+<rect x="162" y="92" width="76" height="26" rx="5" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="170" y="110" font-size="13" fill="#e8eaed">Order</text>
+<rect x="217" y="97" width="15" height="16" rx="3" fill="#f2c14e"/>
+<text data-ok="1" x="224.5" y="109.5" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">G</text>
+<rect x="273" y="92" width="54" height="26" rx="5" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.3"/>
+<text x="300" y="110" font-size="13" fill="#9aa0a6" text-anchor="middle">Beat</text>
+<rect x="382" y="92" width="76" height="26" rx="5" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="390" y="110" font-size="13" fill="#e8eaed">Order</text>
+<rect x="437" y="97" width="15" height="16" rx="3" fill="#f2c14e"/>
+<text data-ok="1" x="444.5" y="109.5" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">G</text>
+<rect x="478" y="92" width="84" height="26" rx="5" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="486" y="110" font-size="13" fill="#e8eaed">Cancel</text>
+<rect x="541" y="97" width="15" height="16" rx="3" fill="#f2c14e"/>
+<text data-ok="1" x="548.5" y="109.5" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">G</text>
+<rect x="582" y="92" width="76" height="26" rx="5" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="590" y="110" font-size="13" fill="#e8eaed">Order</text>
+<rect x="637" y="97" width="15" height="16" rx="3" fill="#f2c14e"/>
+<text data-ok="1" x="644.5" y="109.5" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">G</text>
+<rect x="703" y="92" width="54" height="26" rx="5" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.3"/>
+<text x="730" y="110" font-size="13" fill="#9aa0a6" text-anchor="middle">Beat</text>
+<text x="162" y="84" font-size="13" fill="#f2c14e" font-weight="600">+0 bytes in the pack</text>
+<text x="24" y="182" font-size="13" fill="#f2c14e" font-weight="700">journal</text>
+<text x="84" y="182" font-size="12" fill="#9aa0a6">(on the Client)</text>
+<rect x="24" y="190" width="176" height="40" rx="4" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="4 4"/>
+<text x="112" y="215" font-size="12" fill="#9aa0a6" text-anchor="middle">room</text>
+<rect x="200" y="190" width="90" height="40" rx="0" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="245" y="215" font-size="13" fill="#e8eaed" text-anchor="middle">Order</text>
+<rect x="290" y="190" width="90" height="40" rx="0" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="335" y="215" font-size="13" fill="#e8eaed" text-anchor="middle">Order</text>
+<rect x="380" y="190" width="90" height="40" rx="0" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="425" y="215" font-size="13" fill="#e8eaed" text-anchor="middle">Cancel</text>
+<rect x="470" y="190" width="90" height="40" rx="0" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="515" y="215" font-size="13" fill="#e8eaed" text-anchor="middle">Order</text>
+<rect x="560" y="190" width="80" height="40" rx="0" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.2"/>
+<path d="M560 199 L569 190 M560 208 L578 190 M560 217 L587 190 M560 226 L596 190 M565 230 L605 190 M574 230 L614 190 M583 230 L623 190 M592 230 L632 190 M601 230 L640 191 M610 230 L640 200 M619 230 L640 209 M628 230 L640 218 M637 230 L640 227" stroke="#555a60" stroke-width="1.2" fill="none" data-nocheck="1"/>
+<text x="600" y="215" font-size="12" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#2e2e2e" stroke-width="4" stroke-linejoin="round">freed</text>
+<rect x="24" y="190" width="616" height="40" rx="4" fill="none" stroke="#f2c14e" stroke-width="1.6"/>
+<line x1="560" y1="184" x2="560" y2="236" stroke="#a06fd0" stroke-width="2"/>
+<text x="560" y="250" font-size="12" fill="#a06fd0" text-anchor="middle">position</text>
+<path d="M202 236 V240 H558 V236" fill="none" stroke="#9aa0a6" stroke-width="1" stroke-linejoin="round"/>
+<text x="380" y="254" font-size="12" fill="#9aa0a6" text-anchor="middle">unacknowledged</text>
+<text x="24" y="290" font-size="12" fill="#9aa0a6" xml:space="preserve">memory first, then 4 MB files on disk  ·  cap: resumable_megabytes (default 100)</text>
+<path d="M200 118 L241.3 183.1" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/><path d="M245 189 L237.5 184.3 L243.9 180.2 Z" fill="#f2c14e"/>
+<line x1="300" y1="118" x2="300" y2="144" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="3 3"/>
+<line x1="295" y1="144" x2="305" y2="144" stroke="#9aa0a6" stroke-width="1.6"/>
+<text x="300" y="160" font-size="12" fill="#9aa0a6" text-anchor="middle">not journalled</text>
+<path d="M420 118 L340.4 184.5" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/><path d="M335 189 L338.7 181 L343.6 186.8 Z" fill="#f2c14e"/>
+<path d="M520 118 L430.6 184.8" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/><path d="M425 189 L429.1 181.2 L433.7 187.3 Z" fill="#f2c14e"/>
+<path d="M620 118 L520.8 185.1" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/><path d="M515 189 L519.5 181.4 L523.8 187.7 Z" fill="#f2c14e"/>
+<line x1="730" y1="118" x2="730" y2="144" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="3 3"/>
+<line x1="725" y1="144" x2="735" y2="144" stroke="#9aa0a6" stroke-width="1.6"/>
+<text x="730" y="160" font-size="12" fill="#9aa0a6" text-anchor="middle">not journalled</text>
+<g data-nocheck="1"><path d="M871 140 V312 H600 V260" fill="none" stroke="#a06fd0" stroke-width="2" stroke-linejoin="round"/></g>
+<path d="M600 261 L600 239" fill="none" stroke="#a06fd0" stroke-width="2" stroke-linejoin="round"/><path d="M600 231 L604.6 240 L595.4 240 Z" fill="#a06fd0"/>
+<rect x="674" y="300" width="136" height="24" rx="5" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="742" y="316.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">REPORT(position)</text>
+<text x="610" y="262" font-size="12" fill="#a06fd0">frees every byte</text>
+<text x="610" y="277" font-size="12" fill="#a06fd0">below the position</text>
+<text x="616" y="336" font-size="12" fill="#e8eaed">1 control record = pack id + 8 bytes,</text>
+<text x="616" y="352" font-size="12" fill="#e8eaed">every 4 KiB of guaranteed packs</text>
+<rect x="24" y="312" width="470" height="54" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="38" y="333" font-size="13" fill="#e8eaed" font-weight="700">after a reconnect</text>
+<text x="38" y="353" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#a06fd0" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">CONTINUE(position)</tspan><tspan fill="#e8eaed">: the sender replays from the journal, then sends new packs</tspan></text>
+<text x="480" y="400" font-size="14" fill="#e8eaed" text-anchor="middle">Packs outside the set, and connections without a Resumable, carry nothing of it.</text>
+<text x="480" y="419" font-size="13" fill="#9aa0a6" text-anchor="middle">On [UDP] every pack is journalled - you name the ones that may be lost.</text>
+</g>
+</svg>

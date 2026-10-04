@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" role="img" aria-labelledby="title desc">
+<title id="title">Memory for one message</title>
+<desc id="desc">Memory held for one message against message size, both on log scales from 1 KB to 1 GB. A whole text body is a rising diagonal: the memory grows with the message, to at least 1 GB for a 1 GB body. AdHoc is a flat line at two buffers per connection, 2 KB with 1 KB buffers. A side panel: 10 000 connections with 1 KB buffers hold about 20 MB; a 1 GB Stream field uses the same two buffers; a full sink makes the transport stop reading, so the data waits in the network; no buffer the size of a pack is allocated in either direction. Pack objects, journals and codec contexts are counted apart.</desc>
+<rect width="960" height="380" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="700">Memory held for one message on the serialization path</text>
+<line x1="24" y1="52" x2="46" y2="52" stroke="#f2c14e" stroke-width="3"/>
+<text x="54" y="56" font-size="12" fill="#e8eaed">AdHoc: two buffers per connection, whatever the size</text>
+<line x1="440" y1="52" x2="462" y2="52" stroke="#8a8a8a" stroke-width="2.5"/>
+<text x="470" y="56" font-size="12" fill="#e8eaed">a whole text body: grows with the message</text>
+<line x1="90" y1="320" x2="530" y2="320" stroke="#5a5a5a" stroke-width="1.2"/>
+<line x1="90" y1="320" x2="90" y2="72" stroke="#5a5a5a" stroke-width="1.2"/>
+<path d="M536 320 L529 323.6 L529 316.4 Z" fill="#5a5a5a"/>
+<path d="M90 66 L93.6 73 L86.4 73 Z" fill="#5a5a5a"/>
+<line x1="110" y1="320" x2="110" y2="325" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="110" y="340" font-size="12" fill="#9aa0a6" text-anchor="middle">1 KB</text>
+<line x1="310" y1="320" x2="310" y2="325" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="310" y="340" font-size="12" fill="#9aa0a6" text-anchor="middle">1 MB</text>
+<line x1="510" y1="320" x2="510" y2="325" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="510" y="340" font-size="12" fill="#9aa0a6" text-anchor="middle">1 GB</text>
+<text x="310" y="362" font-size="12" fill="#9aa0a6" text-anchor="middle">message size (log scale)</text>
+<line x1="85" y1="300" x2="90" y2="300" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="81" y="304" font-size="12" fill="#9aa0a6" text-anchor="end">1 KB</text>
+<line x1="85" y1="190" x2="90" y2="190" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="81" y="194" font-size="12" fill="#9aa0a6" text-anchor="end">1 MB</text>
+<line x1="85" y1="80" x2="90" y2="80" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="81" y="84" font-size="12" fill="#9aa0a6" text-anchor="end">1 GB</text>
+<text x="0" y="0" transform="translate(38 190) rotate(-90)" font-size="12" fill="#9aa0a6" text-anchor="middle">memory (log scale)</text>
+<line x1="91" y1="190" x2="510" y2="190" stroke="#353535" stroke-width="1"/>
+<line x1="91" y1="80" x2="510" y2="80" stroke="#353535" stroke-width="1"/>
+<line x1="110" y1="300" x2="510" y2="80" stroke="#8a8a8a" stroke-width="2.5" stroke-linecap="round"/>
+<text x="518" y="84" font-size="12" fill="#c9ccd1">the message</text>
+<line x1="110" y1="289" x2="510" y2="289" stroke="#f2c14e" stroke-width="3" stroke-linecap="round"/>
+<text x="518" y="293" font-size="12" fill="#f2c14e">2 × bufferSize</text>
+<line x1="510" y1="88" x2="510" y2="283" stroke="#9aa0a6" stroke-width="1" stroke-dasharray="3 3"/>
+<text x="502" y="214" font-size="12" fill="#e8eaed" text-anchor="end">at 1 GB: the body ≥ 1 GB,</text>
+<text x="502" y="230" font-size="12" fill="#e8eaed" text-anchor="end">AdHoc 2 KB with 1 KB buffers</text>
+<rect x="640" y="72" width="304" height="258" rx="8" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="660" y="118" font-size="30" fill="#f2c14e" font-weight="700">~ 20 MB</text>
+<text x="660" y="142" font-size="13" fill="#e8eaed">10 000 connections × 2 buffers × 1 KB</text>
+<line x1="660" y1="158" x2="924" y2="158" stroke="#3c3c3c" stroke-width="1"/>
+<circle cx="666" cy="176" r="3.5" fill="#f2c14e" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="678" y="180" font-size="13" fill="#e8eaed">a 1 GB Stream field:</text>
+<text x="678" y="197" font-size="13" fill="#e8eaed">the same two buffers</text>
+<circle cx="666" cy="218" r="3.5" fill="#f2c14e" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="678" y="222" font-size="13" fill="#e8eaed">a full sink: the transport stops</text>
+<text x="678" y="239" font-size="13" fill="#e8eaed">reading - data waits in the network</text>
+<circle cx="666" cy="260" r="3.5" fill="#f2c14e" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="678" y="264" font-size="13" fill="#e8eaed">no buffer the size of a pack,</text>
+<text x="678" y="281" font-size="13" fill="#e8eaed">in either direction</text>
+<text x="660" y="304" font-size="12" fill="#9aa0a6">counted apart: pack objects, journals,</text>
+<text x="660" y="320" font-size="12" fill="#9aa0a6">codec contexts</text>
+</g>
+</svg>

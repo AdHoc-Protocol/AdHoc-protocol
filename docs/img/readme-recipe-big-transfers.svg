@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="960" height="560" role="img" aria-labelledby="title desc">
+<title id="title">Files and OTA updates of any size: constant memory, the Update machine, resume after a drop or a reboot</title>
+<desc id="desc">Top band: Fleet reads a 100 MB image.bin from disk in blocks into its socket buffer; a train of FirmwareChunk packs, each with an offset and up to 64 KiB of data, crosses the wire; on the vehicle each chunk's data is handed over as a window of the receive buffer and written straight to flash, with no 64 KiB array. A flat gauge on each host: one buffer per direction, whatever the size. Middle band: the Update state machine - FirmwareOffer from Fleet (sha256 32 bytes, signature 64 bytes) moves Start to Offered; Accept with from_offset from the vehicle moves it to Downloading, Decline ends it; FirmwareChunk from Fleet and Progress from the vehicle loop on Downloading, which has a 6-hour Deadline; Installed or Rejected from the vehicle ends it; MaxActiveInstances 1 allows one update at a time. Bottom band: a progress bar, one cell per chunk. At a lightning bolt the socket is lost and the backend parks the session; after reconnect, login and reclaim the vehicle names its position, and the two chunks it had not taken whole are replayed from the journal, once and in order. At a power symbol the vehicle reboots and its session is gone; an orange marker shows Accept with from_offset: the persisted offset continues the download in a new session.</desc>
+<rect width="960" height="560" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="600">Flat memory, and a drop costs only what was not taken whole</text>
+<rect x="20" y="50" width="920" height="152" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="6 5"/>
+<text x="36" y="70" font-size="12" fill="#9aa0a6" font-weight="700">CONSTANT MEMORY</text>
+<text x="480" y="70" font-size="12" fill="#4fb3ff" text-anchor="middle">memory: one buffer per direction - whatever the size</text>
+<rect x="36" y="82" width="214" height="110" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="48" y="102" font-size="14" fill="#e8eaed" font-weight="700">Fleet</text>
+<text x="48" y="118" font-size="12" fill="#9aa0a6">backend</text>
+<rect x="150" y="93" width="88" height="9" rx="4.5" fill="#1e1e1e" stroke="#9aa0a6" stroke-width="1"/>
+<rect x="151" y="94" width="13" height="7" rx="3.5" fill="#4fb3ff"/>
+<text x="238" y="117" font-size="12" fill="#9aa0a6" text-anchor="end">memory</text>
+<g data-nocheck="1"><path d="M50 134.7 L50 163.3 A23 6.7 0 0 0 96 163.3 L96 134.7" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><ellipse cx="73" cy="134.7" rx="23" ry="6.7" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><path d="M50 146.9 A23 6.7 0 0 0 96 146.9" fill="none" stroke="#4fb3ff" stroke-width="1" opacity="0.6"/></g>
+<text x="48" y="186" font-size="12" fill="#e8eaed">image.bin · 100 MB</text>
+<path d="M100 149 L176 149" fill="none" stroke="#8c9198" stroke-width="1.8" stroke-linejoin="round"/><path d="M184 149 L175 153.6 L175 144.4 Z" fill="#8c9198"/>
+<text x="142" y="141" font-size="12" fill="#9aa0a6" text-anchor="middle">read in blocks</text>
+<rect x="188" y="128" width="52" height="42" rx="4" fill="#303236" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="214" y="146" font-size="12" fill="#e8eaed" text-anchor="middle">socket</text>
+<text x="214" y="161" font-size="12" fill="#e8eaed" text-anchor="middle">buffer</text>
+<rect x="710" y="82" width="214" height="110" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="722" y="102" font-size="14" fill="#e8eaed" font-weight="700">Vehicle</text>
+<text x="722" y="118" font-size="12" fill="#9aa0a6">Java · device</text>
+<rect x="824" y="93" width="88" height="9" rx="4.5" fill="#1e1e1e" stroke="#9aa0a6" stroke-width="1"/>
+<rect x="825" y="94" width="13" height="7" rx="3.5" fill="#4fb3ff"/>
+<text x="912" y="117" font-size="12" fill="#9aa0a6" text-anchor="end">memory</text>
+<rect x="724" y="128" width="52" height="42" rx="4" fill="#303236" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="750" y="146" font-size="12" fill="#e8eaed" text-anchor="middle">receive</text>
+<text x="750" y="161" font-size="12" fill="#e8eaed" text-anchor="middle">buffer</text>
+<path d="M778 149 L832 149" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M840 149 L831 153.6 L831 144.4 Z" fill="#f2c14e"/>
+<text x="809" y="141" font-size="12" fill="#f2c14e" text-anchor="middle">window</text>
+<g data-nocheck="1"><rect x="852" y="131" width="40" height="36" rx="3" fill="#333536" stroke="#e8eaed" stroke-width="1.4"/><line x1="846" y1="135.5" x2="852" y2="135.5" stroke="#e8eaed" stroke-width="1.6"/><line x1="892" y1="135.5" x2="898" y2="135.5" stroke="#e8eaed" stroke-width="1.6"/><line x1="846" y1="144.5" x2="852" y2="144.5" stroke="#e8eaed" stroke-width="1.6"/><line x1="892" y1="144.5" x2="898" y2="144.5" stroke="#e8eaed" stroke-width="1.6"/><line x1="846" y1="153.5" x2="852" y2="153.5" stroke="#e8eaed" stroke-width="1.6"/><line x1="892" y1="153.5" x2="898" y2="153.5" stroke="#e8eaed" stroke-width="1.6"/><line x1="846" y1="162.5" x2="852" y2="162.5" stroke="#e8eaed" stroke-width="1.6"/><line x1="892" y1="162.5" x2="898" y2="162.5" stroke="#e8eaed" stroke-width="1.6"/><circle cx="858" cy="137" r="1.8" fill="#e8eaed"/></g>
+<text x="872" y="186" font-size="12" fill="#e8eaed" text-anchor="middle">flash</text>
+<text x="724" y="186" font-size="12" fill="#9aa0a6">no 64 KiB array</text>
+<path d="M250 149 L702 149" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M710 149 L701 153.6 L701 144.4 Z" fill="#4fb3ff"/>
+<rect x="270" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="322" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="374" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="426" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="478" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="530" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="582" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="634" y="138" width="40" height="22" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="480" y="128" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">FirmwareChunk { offset, data ≤ 64 KiB }</text>
+<text x="480" y="180" font-size="12" fill="#9aa0a6" text-anchor="middle">one pack per chunk, written buffer by buffer</text>
+<rect x="20" y="212" width="920" height="144" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="6 5"/>
+<text x="36" y="232" font-size="12" fill="#9aa0a6" font-weight="700">THE UPDATE MACHINE</text>
+<rect x="40" y="268" width="80" height="44" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<rect x="320" y="268" width="96" height="44" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<rect x="566" y="268" width="160" height="44" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<rect x="846" y="268" width="60" height="44" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="80" y="295" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Start</text>
+<text x="368" y="295" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Offered</text>
+<text x="876" y="295" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<text x="646" y="286" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Downloading</text>
+<g data-nocheck="1"><path d="M576.9 296.4 L581.1 296.4 L579 299.5 Z" fill="#f2c14e" opacity="0.85"/><path d="M576.1 306 L581.9 306 L579 303.8 Z" fill="#f2c14e" opacity="0.85"/><path d="M573.9 294 L584.1 294 L580 300 L584.1 306 L573.9 306 L578 300 Z" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/><line x1="571.9" y1="293.3" x2="586.1" y2="293.3" stroke="#f2c14e" stroke-width="2" stroke-linecap="round"/><line x1="571.9" y1="306.7" x2="586.1" y2="306.7" stroke="#f2c14e" stroke-width="2" stroke-linecap="round"/></g>
+<text x="589" y="305" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">[Deadline(6 * 3600)]</text>
+<path d="M120 290 L312 290" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M320 290 L311 294.6 L311 285.4 Z" fill="#4fb3ff"/>
+<text x="220" y="283" font-size="12" fill="#4fb3ff" text-anchor="middle">FirmwareOffer</text>
+<text x="220" y="305" font-size="12" fill="#9aa0a6" text-anchor="middle">(sha256 32 B, signature 64 B)</text>
+<path d="M416 290 L558 290" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M566 290 L557 294.6 L557 285.4 Z" fill="#e8833a"/>
+<text x="491" y="283" font-size="12" fill="#e8833a" text-anchor="middle">Accept { from_offset }</text>
+<path d="M726 290 L838 290" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M846 290 L837 294.6 L837 285.4 Z" fill="#e8833a"/>
+<text x="786" y="283" font-size="12" fill="#e8833a" text-anchor="middle">Installed | Rejected</text>
+<path d="M380 268 L380 256 Q380 246 390 246 L869 246 Q876 246 876 253 L876 260" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M876 268 L871.4 259 L880.6 259 Z" fill="#e8833a"/>
+<text x="620" y="240" font-size="12" fill="#e8833a" text-anchor="middle">Decline</text>
+<path d="M590 312 C586 346 626 346 622.9 319.9" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M622 312 L627.6 320.4 L618.5 321.5 Z" fill="#4fb3ff"/>
+<text x="582" y="338" font-size="12" fill="#4fb3ff" text-anchor="end">FirmwareChunk</text>
+<path d="M670 312 C666 346 706 346 702.9 319.9" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M702 312 L707.6 320.4 L698.5 321.5 Z" fill="#e8833a"/>
+<text x="710" y="338" font-size="12" fill="#e8833a">Progress</text>
+<rect x="40" y="323" width="300" height="23" rx="11.5" fill="#3d3520" stroke="#f2c14e" stroke-width="1.3"/>
+<text x="190" y="339" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">MaxActiveInstances =&gt; 1</tspan><tspan > · one update at a time</tspan></text>
+<rect x="20" y="366" width="920" height="156" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="6 5"/>
+<text x="36" y="386" font-size="12" fill="#9aa0a6" font-weight="700">A LINK THAT DROPS</text>
+<rect x="41" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="63" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="85" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="107" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="129" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="151" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="173" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="195" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="217" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="239" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="261" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="283" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="305" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="327" y="438" width="20" height="24" rx="2" fill="#4fb3ff" stroke="#f2c14e" stroke-width="2.2"/>
+<rect x="349" y="438" width="20" height="24" rx="2" fill="#4fb3ff" stroke="#f2c14e" stroke-width="2.2"/>
+<rect x="371" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="393" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="415" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="437" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="459" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="481" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="503" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="525" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="547" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="569" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="591" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="613" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="635" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="657" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="679" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="701" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="723" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="745" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="767" y="438" width="20" height="24" rx="2" fill="#4fb3ff" opacity="0.82"/>
+<rect x="789" y="438" width="20" height="24" rx="2" fill="#242424" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="811" y="438" width="20" height="24" rx="2" fill="#242424" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="833" y="438" width="20" height="24" rx="2" fill="#242424" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="855" y="438" width="20" height="24" rx="2" fill="#242424" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="877" y="438" width="20" height="24" rx="2" fill="#242424" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="899" y="438" width="20" height="24" rx="2" fill="#242424" stroke="#4a4a4a" stroke-width="1"/>
+<text x="40" y="430" font-size="12" fill="#9aa0a6">0</text>
+<text x="918" y="430" font-size="12" fill="#9aa0a6" text-anchor="end">end of image.bin</text>
+<text x="40" y="486" font-size="12" fill="#9aa0a6">one cell = one chunk, ≤ 64 KiB</text>
+<path data-nocheck="1" d="M339.4 398 L329.4 415.9 L336.2 415.9 L333 430 L345 410.8 L338 410.8 L343 398 Z" fill="#e5534b"/>
+<text x="354" y="412" font-size="12" fill="#e5534b" font-weight="600">socket lost</text>
+<text x="354" y="427" font-size="12" fill="#9aa0a6">the backend parks the session</text>
+<path d="M327 466 L327 471 L369 471 L369 466" fill="none" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="326" y="488" font-size="12" fill="#9aa0a6">reconnect, login, reclaim → the vehicle names its position</text>
+<text x="326" y="504" font-size="12" fill="#f2c14e">replayed from the journal - once, in order</text>
+<g data-nocheck="1"><path d="M650 408.9 A9.5 9.5 0 1 1 640 408.9" fill="none" stroke="#e5534b" stroke-width="2.4" stroke-linecap="round"/><line x1="645" y1="405.5" x2="645" y2="416" stroke="#e5534b" stroke-width="2.4" stroke-linecap="round"/></g>
+<text x="662" y="412" font-size="12" fill="#e5534b" font-weight="600">vehicle reboots</text>
+<text x="662" y="427" font-size="12" fill="#9aa0a6">its session is gone</text>
+<line x1="634" y1="434" x2="634" y2="506" stroke="#e8833a" stroke-width="2"/>
+<path d="M634 466 L649 471 L634 476 Z" fill="#e8833a"/>
+<text x="642" y="488" font-size="12" fill="#e8833a">Accept { from_offset }</text>
+<text x="642" y="504" font-size="12" fill="#e8833a">persisted offset → new session</text>
+<rect x="24" y="531" width="12" height="12" rx="2" fill="#4fb3ff" stroke="#4fb3ff" stroke-width="1.2"/><text x="42" y="541" font-size="12" fill="#9aa0a6">sent by Fleet</text>
+<rect x="140" y="531" width="12" height="12" rx="2" fill="#e8833a" stroke="#e8833a" stroke-width="1.2"/><text x="158" y="541" font-size="12" fill="#9aa0a6">sent by the Vehicle</text>
+<rect x="286" y="531" width="12" height="12" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/><text x="304" y="541" font-size="12" fill="#9aa0a6">generated: journal, positions, replay, deadline</text>
+<rect x="580" y="531" width="12" height="12" rx="2" fill="#e5534b" stroke="#e5534b" stroke-width="1.2"/><text x="598" y="541" font-size="12" fill="#9aa0a6">loss</text>
+</g>
+</svg>

@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 530" width="960" height="530" role="img" aria-labelledby="title desc">
+<title id="title">One connection, several conversations - each with its own state machine</title>
+<desc id="desc">A Client and a Server joined by one connection, interface Link : Connects&lt;Client, Server&gt;, carrying four conversations in lanes: Actor0 (Start, Authorizing, Ready on Login and Welcome, with a Beat loop sent by either side); Notify, a function group that is always active, through which the Server pushes Note and Alert; ping, an RPC going Call, Return, End on Ping and Pong; and Job, a swarm of up to 8 instance pairs, three shown, each going Start, Running, End with its own Deadline(30) clock. Below, one socket on which the packs of all four interleave, colored by actor.</desc>
+<rect width="960" height="530" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="700">One connection, several conversations - each with its own state machine</text>
+<rect x="24" y="60" width="110" height="330" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="79" y="223.4" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Client</text>
+<text x="79" y="238.1" font-size="12" fill="#9aa0a6" text-anchor="middle">Left host</text>
+<rect x="826" y="60" width="110" height="330" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="881" y="223.4" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<text x="881" y="238.1" font-size="12" fill="#9aa0a6" text-anchor="middle">Right host</text>
+<g data-nocheck="1"><rect x="150" y="60" width="660" height="330" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/></g>
+<text x="164" y="82" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#f2c14e" xml:space="preserve">interface Link : Connects&lt;Client, Server&gt;</text>
+<text x="164" y="116" font-size="14" fill="#e8833a" font-weight="700">Actor0</text>
+<text x="164" y="133" font-size="12" fill="#9aa0a6">the connection's</text>
+<text x="164" y="148" font-size="12" fill="#9aa0a6">own machine</text>
+<line x1="150" y1="158" x2="810" y2="158" stroke="#4a4a4a" stroke-width="1"/>
+<text x="164" y="192" font-size="14" fill="#f2c14e" font-weight="700">Notify</text>
+<text x="164" y="209" font-size="12" fill="#9aa0a6">function group</text>
+<line x1="150" y1="230" x2="810" y2="230" stroke="#4a4a4a" stroke-width="1"/>
+<text x="164" y="261" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#a06fd0" font-weight="700" xml:space="preserve">ping</text>
+<text x="164" y="278" font-size="12" fill="#9aa0a6">RPC</text>
+<line x1="150" y1="296" x2="810" y2="296" stroke="#4a4a4a" stroke-width="1"/>
+<text x="164" y="341" font-size="14" fill="#4fb3ff" font-weight="700">Job</text>
+<text x="164" y="358" font-size="12" fill="#9aa0a6">swarm, up to 8</text>
+<line x1="306" y1="92" x2="306" y2="390" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<rect x="318" y="110" width="76" height="30" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.4"/>
+<text x="356" y="129.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Start</text>
+<path d="M394 125 L451 125" fill="none" stroke="#e8833a" stroke-width="1.8" stroke-linejoin="round"/><path d="M458 125 L450 129 L450 121 Z" fill="#e8833a"/><text x="426" y="119" font-size="12" fill="#e8eaed" text-anchor="middle">Login</text><text x="426" y="140" font-size="12" fill="#9aa0a6" text-anchor="middle">Client</text>
+<rect x="458" y="110" width="108" height="30" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.4"/>
+<text x="512" y="129.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Authorizing</text>
+<path d="M566 125 L623 125" fill="none" stroke="#e8833a" stroke-width="1.8" stroke-linejoin="round"/><path d="M630 125 L622 129 L622 121 Z" fill="#e8833a"/><text x="598" y="119" font-size="12" fill="#e8eaed" text-anchor="middle">Welcome</text><text x="598" y="140" font-size="12" fill="#9aa0a6" text-anchor="middle">Server</text>
+<rect x="630" y="110" width="70" height="30" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.4"/>
+<text x="665" y="129.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Ready</text>
+<path d="M700 118 C730 101 730 149 706.2 135" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M701 132 L708.9 132.4 L705.2 138.6 Z" fill="#e8833a"/>
+<text x="738" y="123" font-size="12" fill="#e8eaed">Beat</text>
+<text x="738" y="138" font-size="12" fill="#9aa0a6">either side</text>
+<rect x="318" y="168" width="104" height="30" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="370" y="187.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Messages</text>
+<rect x="432" y="173" width="92" height="20" rx="10" fill="#46401f" stroke="#f2c14e" stroke-width="1.1"/>
+<text x="478" y="187" font-size="12" fill="#f2c14e" text-anchor="middle">always active</text>
+<path d="M798 182 L555 182" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M548 182 L556 178 L556 186 Z" fill="#f2c14e"/>
+<text x="684" y="177" font-size="12" fill="#e8eaed" text-anchor="middle">Note</text>
+<path d="M798 204 L555 204" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M548 204 L556 200 L556 208 Z" fill="#f2c14e"/>
+<text x="684" y="199" font-size="12" fill="#e8eaed" text-anchor="middle">Alert</text>
+<text x="318" y="222" font-size="12" fill="#9aa0a6">one shared object per host - no instance, nothing to track</text>
+<text x="798" y="222" font-size="12" fill="#9aa0a6" text-anchor="end">the Server pushes</text>
+<rect x="318" y="238" width="82" height="28" rx="6" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="359" y="256.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Call</text>
+<path d="M400 252 L483 252" fill="none" stroke="#a06fd0" stroke-width="1.8" stroke-linejoin="round"/><path d="M490 252 L482 256 L482 248 Z" fill="#a06fd0"/><text x="445" y="246" font-size="12" fill="#e8eaed" text-anchor="middle">Ping</text><text x="445" y="267" font-size="12" fill="#9aa0a6" text-anchor="middle">Client</text>
+<rect x="490" y="238" width="92" height="28" rx="6" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="536" y="256.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Return</text>
+<path d="M582 252 L665 252" fill="none" stroke="#a06fd0" stroke-width="1.8" stroke-linejoin="round"/><path d="M672 252 L664 256 L664 248 Z" fill="#a06fd0"/><text x="627" y="246" font-size="12" fill="#e8eaed" text-anchor="middle">Pong</text><text x="627" y="267" font-size="12" fill="#9aa0a6" text-anchor="middle">Server</text>
+<rect x="672" y="238" width="64" height="28" rx="14" fill="#2e2e2e" stroke="#a06fd0" stroke-width="1.3"/><rect x="675" y="241" width="58" height="22" rx="11" fill="none" stroke="#a06fd0" stroke-width="1"/><text x="704" y="256.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<text x="318" y="288" font-size="12" fill="#9aa0a6">the caller's instance holds the callback - no correlation ids</text>
+<text x="318" y="316.5" font-size="12" fill="#e8eaed">Job #1</text>
+<rect x="366" y="303" width="62" height="19" rx="5" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="397" y="316.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Start</text>
+<path d="M428 312.5 L446 312.5" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M452 312.5 L445 316 L445 309 Z" fill="#4fb3ff"/>
+<rect x="452" y="303" width="84" height="19" rx="5" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="485" y="316.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Running</text>
+<circle cx="524" cy="312.5" r="6.2" fill="#2b2b2b" stroke="#f2c14e" stroke-width="1.5"/><path d="M524 308.5 L524 312.5 L526.6 309.4" stroke="#f2c14e" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M536 312.5 L554 312.5" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M560 312.5 L553 316 L553 309 Z" fill="#4fb3ff"/>
+<rect x="560" y="303" width="56" height="19" rx="9.5" fill="#2e2e2e" stroke="#4fb3ff" stroke-width="1.3"/><rect x="563" y="306" width="50" height="13" rx="6.5" fill="none" stroke="#4fb3ff" stroke-width="1"/><text x="588" y="316.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<text x="318" y="338.5" font-size="12" fill="#e8eaed">Job #2</text>
+<rect x="366" y="325" width="62" height="19" rx="5" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="397" y="338.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Start</text>
+<path d="M428 334.5 L446 334.5" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M452 334.5 L445 338 L445 331 Z" fill="#4fb3ff"/>
+<rect x="452" y="325" width="84" height="19" rx="5" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="485" y="338.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Running</text>
+<circle cx="524" cy="334.5" r="6.2" fill="#2b2b2b" stroke="#f2c14e" stroke-width="1.5"/><path d="M524 330.5 L524 334.5 L525.4 338.3" stroke="#f2c14e" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M536 334.5 L554 334.5" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M560 334.5 L553 338 L553 331 Z" fill="#4fb3ff"/>
+<rect x="560" y="325" width="56" height="19" rx="9.5" fill="#2e2e2e" stroke="#4fb3ff" stroke-width="1.3"/><rect x="563" y="328" width="50" height="13" rx="6.5" fill="none" stroke="#4fb3ff" stroke-width="1"/><text x="588" y="338.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<text x="318" y="360.5" font-size="12" fill="#e8eaed">Job #3</text>
+<rect x="366" y="347" width="62" height="19" rx="5" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="397" y="360.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Start</text>
+<path d="M428 356.5 L446 356.5" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M452 356.5 L445 360 L445 353 Z" fill="#4fb3ff"/>
+<rect x="452" y="347" width="84" height="19" rx="5" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="485" y="360.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Running</text>
+<circle cx="524" cy="356.5" r="6.2" fill="#2b2b2b" stroke="#f2c14e" stroke-width="1.5"/><path d="M524 352.5 L524 356.5 L520.1 355.8" stroke="#f2c14e" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M536 356.5 L554 356.5" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M560 356.5 L553 360 L553 353 Z" fill="#4fb3ff"/>
+<rect x="560" y="347" width="56" height="19" rx="9.5" fill="#2e2e2e" stroke="#4fb3ff" stroke-width="1.3"/><rect x="563" y="350" width="50" height="13" rx="6.5" fill="none" stroke="#4fb3ff" stroke-width="1"/><text x="588" y="360.8" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<text x="632" y="338" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">[Deadline(30)]</text>
+<text x="632" y="356" font-size="12" fill="#9aa0a6">on Running: one clock per job</text>
+<text x="318" y="382" font-size="12" fill="#9aa0a6">a pair of instances per job; Acquire returns null at the limit</text>
+<text x="24" y="440" font-size="12" fill="#9aa0a6">one socket</text>
+<g data-nocheck="1"><path d="M110 390 V436 H850 V390" fill="none" stroke="#4fb3ff" stroke-width="2.4" stroke-linejoin="round"/></g>
+<rect x="126" y="425" width="58" height="22" rx="4" fill="#4a3322" stroke="#e8833a" stroke-width="1.3"/>
+<text x="151" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Login</text>
+<path d="M172 432 L180 436 L172 440 Z" fill="#e8833a"/>
+<rect x="193.6" y="425" width="76" height="22" rx="4" fill="#4a3322" stroke="#e8833a" stroke-width="1.3"/>
+<text x="235.6" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Welcome</text>
+<path d="M205.6 432 L197.6 436 L205.6 440 Z" fill="#e8833a"/>
+<rect x="279.1" y="425" width="64" height="22" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="307.1" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Job#1</text>
+<path d="M331.1 432 L339.1 436 L331.1 440 Z" fill="#4fb3ff"/>
+<rect x="352.7" y="425" width="58" height="22" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/>
+<text x="385.7" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Note</text>
+<path d="M364.7 432 L356.7 436 L364.7 440 Z" fill="#f2c14e"/>
+<rect x="420.2" y="425" width="58" height="22" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<text x="445.2" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Ping</text>
+<path d="M466.2 432 L474.2 436 L466.2 440 Z" fill="#a06fd0"/>
+<rect x="487.8" y="425" width="64" height="22" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="515.8" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Job#2</text>
+<path d="M539.8 432 L547.8 436 L539.8 440 Z" fill="#4fb3ff"/>
+<rect x="561.3" y="425" width="64" height="22" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="597.3" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Prog#1</text>
+<path d="M573.3 432 L565.3 436 L573.3 440 Z" fill="#4fb3ff"/>
+<rect x="634.9" y="425" width="58" height="22" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<text x="667.9" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Pong</text>
+<path d="M646.9 432 L638.9 436 L646.9 440 Z" fill="#a06fd0"/>
+<rect x="702.4" y="425" width="58" height="22" rx="4" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/>
+<text x="735.4" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Alert</text>
+<path d="M714.4 432 L706.4 436 L714.4 440 Z" fill="#f2c14e"/>
+<rect x="770" y="425" width="64" height="22" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="806" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Done#1</text>
+<path d="M782 432 L774 436 L782 440 Z" fill="#4fb3ff"/>
+<text x="126" y="466" font-size="12" fill="#9aa0a6" xml:space="preserve">in the order they cross, left to right;  ▶ Client to Server,  ◀ Server to Client</text>
+<text x="480" y="494" font-size="14" fill="#e8eaed" text-anchor="middle">Every pack carries its actor - and its instance, for actors with instances.</text>
+<text x="480" y="512" font-size="13" fill="#9aa0a6" text-anchor="middle">Each actor keeps its own state; no conversation waits for another to reach a state.</text>
+</g>
+</svg>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 392" width="960" height="392" role="img" aria-labelledby="title desc">
+<title id="title">A virtual connection through a relay</title>
+<desc id="desc">A Viewer in the browser, in TypeScript, and a Server in Java joined by a dashed arc, VirtuallyConnects&lt;Viewer, Server, Hub&gt;: they talk as if wired - packs, actors, state machines, RPC. Their bytes ride two physical connections, ViewerToHub and HubToServer, through the Hub, whose generated Relay holds no schema, no keys and one region of memory, the same for 64 bytes or 1 GB. Sealed chunks travel both legs; [Zstd(6), ChaCha20] runs at the Viewer, the inverse chain at the Server. Under the Hub: a frame is the wire id, the tunnel_id and chunks closed by 0; up to MaxTunnels, 256, tunnels on one link.</desc>
+<rect width="960" height="392" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="480" y="38" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#f2c14e" text-anchor="middle" font-weight="700" xml:space="preserve">VirtuallyConnects&lt;Viewer, Server, Hub&gt;</text>
+<text x="480" y="62" font-size="14" fill="#e8eaed" text-anchor="middle">talk as if wired: packs, actors, state machines, RPC</text>
+<path d="M109 150 V84 H851 V150" fill="none" stroke="#f2c14e" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<rect x="24" y="150" width="170" height="70" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="109" y="183.4" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Viewer</text>
+<text x="109" y="198.1" font-size="12" fill="#9aa0a6" text-anchor="middle">browser, TypeScript</text>
+<rect x="766" y="150" width="170" height="70" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="851" y="183.4" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<text x="851" y="198.1" font-size="12" fill="#9aa0a6" text-anchor="middle">Java</text>
+<rect x="360" y="112" width="240" height="140" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="480" y="134" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Hub</text>
+<rect x="376" y="144" width="208" height="98" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="480" y="165" font-size="14" fill="#f2c14e" text-anchor="middle" font-weight="700">Relay (generated)</text>
+<text x="480" y="184" font-size="12" fill="#e8eaed" text-anchor="middle">no schema</text>
+<text x="480" y="199" font-size="12" fill="#e8eaed" text-anchor="middle">no keys</text>
+<text x="480" y="214" font-size="12" fill="#e8eaed" text-anchor="middle">one region in memory -</text>
+<text x="480" y="229" font-size="12" fill="#e8eaed" text-anchor="middle">64 B or 1 GB alike</text>
+<g data-nocheck="1"><line x1="194" y1="185" x2="360" y2="185" stroke="#4fb3ff" stroke-width="2.4"/></g>
+<text x="277" y="166" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#9aa0a6">Connects</tspan><tspan fill="#e8eaed"> - ViewerToHub</tspan></text>
+<rect x="209.8" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M221.5 183.6 V181.5 A2.3 2.3 0 0 1 226 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="220" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<rect x="245.3" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M257 183.6 V181.5 A2.3 2.3 0 0 1 261.5 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="255.5" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<rect x="280.8" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M292.5 183.6 V181.5 A2.3 2.3 0 0 1 297 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="291" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<rect x="316.3" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M328 183.6 V181.5 A2.3 2.3 0 0 1 332.5 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="326.5" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<g data-nocheck="1"><line x1="600" y1="185" x2="766" y2="185" stroke="#4fb3ff" stroke-width="2.4"/></g>
+<text x="683" y="166" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#9aa0a6">Connects</tspan><tspan fill="#e8eaed"> - HubToServer</tspan></text>
+<rect x="615.8" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M627.5 183.6 V181.5 A2.3 2.3 0 0 1 632 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="626" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<rect x="651.3" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M663 183.6 V181.5 A2.3 2.3 0 0 1 667.5 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="661.5" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<rect x="686.8" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M698.5 183.6 V181.5 A2.3 2.3 0 0 1 703 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="697" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<rect x="722.3" y="176" width="28" height="18" rx="4" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.3"/>
+<path d="M734 183.6 V181.5 A2.3 2.3 0 0 1 738.5 181.5 V183.6" stroke="#a06fd0" stroke-width="1.2349999999999999" fill="none"/><rect x="732.5" y="183.6" width="7.6" height="5.7" rx="1" fill="#a06fd0"/>
+<text x="109" y="244" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#f2c14e" text-anchor="middle" xml:space="preserve">[Zstd(6), ChaCha20]</text>
+<text x="109" y="262" font-size="12" fill="#9aa0a6" text-anchor="middle">compress, then encrypt - once</text>
+<text x="851" y="244" font-size="12" fill="#9aa0a6" text-anchor="middle">the inverse chain</text>
+<text x="851" y="262" font-size="12" fill="#9aa0a6" text-anchor="middle">decrypt, then decompress</text>
+<text x="480" y="274" font-size="12" fill="#a06fd0" text-anchor="middle">forwards sealed chunks it cannot read</text>
+<text x="480" y="292" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">frame: [wire id][tunnel_id][len][data]…[0]</text>
+<text x="480" y="310" font-size="12" fill="#9aa0a6" text-anchor="middle">up to MaxTunnels (256) tunnels on one link</text>
+<text x="480" y="348" font-size="14" fill="#e8eaed" text-anchor="middle">Change the packs - the Hub is not rebuilt. Backpressure runs end to end; ABORT ends one tunnel, not the link.</text>
+<text x="480" y="370" font-size="13" fill="#9aa0a6" text-anchor="middle">[ChaCha20] keeps the relay from reading, not from altering - add a MAC stage of your own for integrity.</text>
+</g>
+</svg>

@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 452" width="980" height="452" role="img" aria-labelledby="title desc">
+<title id="title">One description, every host</title>
+<desc id="desc">One description, from left to right. An orange card, MyProtocol.cs - one C# file declaring packs and fields, hosts and languages, connections, actors, states and branches, sessions and guaranteed packs, streams, chains and trims, virtual connections and ports. A grey AdHocAgent box compiles it with Roslyn, checks every AdHoc rule and writes the numbers tables; the first error stops the run and nothing is uploaded. A purple generator box, a cloud service, writes code for every host in each language and tests it. Three yellow host cards - Device in C#, Server in Java, Browser in TypeScript - each with the same Reading class, the same MIN, MAX and STR_LEN_MAX constants and the same state machine, and the same 15 bytes on the wire. A dashed path at the bottom leads from the description to the hosts for every later change: edit MyProtocol.cs, .cs~ names the hosts the edit reaches, regenerate, deploy with smart merge keeping your code.</desc>
+<rect width="980" height="452" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="16" y="40" width="220" height="210" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/>
+<text x="126" y="64" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="700">MyProtocol.cs</text>
+<text x="126" y="82" font-size="12" fill="#9aa0a6" text-anchor="middle">one C# file</text>
+<circle cx="36" cy="100" r="2.5" fill="#e8833a" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="46" y="104" font-size="12" fill="#e8eaed">packs and fields</text>
+<circle cx="36" cy="120" r="2.5" fill="#e8833a" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="46" y="124" font-size="12" fill="#e8eaed">hosts and languages</text>
+<circle cx="36" cy="140" r="2.5" fill="#e8833a" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="46" y="144" font-size="12" fill="#e8eaed">connections</text>
+<circle cx="36" cy="160" r="2.5" fill="#e8833a" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="46" y="164" font-size="12" fill="#e8eaed">actors, states, branches</text>
+<circle cx="36" cy="180" r="2.5" fill="#e8833a" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="46" y="184" font-size="12" fill="#e8eaed">sessions, guaranteed packs</text>
+<circle cx="36" cy="200" r="2.5" fill="#e8833a" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="46" y="204" font-size="12" fill="#e8eaed">streams, chains, trims</text>
+<circle cx="36" cy="220" r="2.5" fill="#e8833a" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="46" y="224" font-size="12" fill="#e8eaed">virtual connections, ports</text>
+<path d="M237 145 L254 145" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M261 145 L253 149.2 L253 140.8 Z" fill="#4fb3ff"/>
+<rect x="262" y="90" width="170" height="110" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="347" y="120.8" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="700">AdHocAgent</text><text x="347" y="139.8" font-size="12" fill="#e8eaed" text-anchor="middle">compiles (Roslyn)</text><text x="347" y="158.8" font-size="12" fill="#e8eaed" text-anchor="middle">checks every AdHoc rule</text><text x="347" y="177.8" font-size="12" fill="#e8eaed" text-anchor="middle">writes numbers tables</text>
+<text x="347" y="222" font-size="12" fill="#e06c6c" text-anchor="middle">first error stops - nothing uploaded</text>
+<path d="M433 145 L450 145" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M457 145 L449 149.2 L449 140.8 Z" fill="#4fb3ff"/>
+<rect x="458" y="90" width="150" height="110" rx="6" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="533" y="120.8" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="700">generator</text><text x="533" y="139.8" font-size="12" fill="#9aa0a6" text-anchor="middle">cloud service</text><text x="533" y="158.8" font-size="12" fill="#e8eaed" text-anchor="middle">code for every host,</text><text x="533" y="177.8" font-size="12" fill="#e8eaed" text-anchor="middle">each language, tested</text>
+<path d="M609 145 L615.5 145 Q622 145 622 138.5 L622 77 Q622 72 627 72 L632 72" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M639 72 L631 76.2 L631 67.8 Z" fill="#f2c14e"/>
+<rect x="640" y="26" width="324" height="92" rx="6" fill="#2b2a23" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="652" y="47" font-size="13" fill="#e8eaed" font-weight="700">Device · C#</text>
+<text x="652" y="68" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">class Reading { ... }</text>
+<text x="652" y="86" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">MIN, MAX, STR_LEN_MAX</text>
+<rect x="652" y="94" width="100" height="18" rx="9" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="702" y="107.3" font-size="12" fill="#e8eaed" text-anchor="middle">state machine</text>
+<rect x="818" y="64" width="9" height="14" rx="1" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="827" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="836" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="845" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="854" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="863" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="872" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="881" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="890" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="899" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="908" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="917" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="926" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="935" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="944" y="64" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<text x="885.5" y="96" font-size="12" fill="#9aa0a6" text-anchor="middle">same 15 bytes</text>
+<path d="M609 145 L615.5 145 Q622 145 622 151.5 L622 173 Q622 178 627 178 L632 178" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M639 178 L631 182.2 L631 173.8 Z" fill="#f2c14e"/>
+<rect x="640" y="132" width="324" height="92" rx="6" fill="#2b2a23" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="652" y="153" font-size="13" fill="#e8eaed" font-weight="700">Server · Java</text>
+<text x="652" y="174" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">class Reading { ... }</text>
+<text x="652" y="192" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">MIN, MAX, STR_LEN_MAX</text>
+<rect x="652" y="200" width="100" height="18" rx="9" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="702" y="213.3" font-size="12" fill="#e8eaed" text-anchor="middle">state machine</text>
+<rect x="818" y="170" width="9" height="14" rx="1" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="827" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="836" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="845" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="854" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="863" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="872" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="881" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="890" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="899" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="908" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="917" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="926" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="935" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="944" y="170" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<text x="885.5" y="202" font-size="12" fill="#9aa0a6" text-anchor="middle">same 15 bytes</text>
+<path d="M609 145 L615.5 145 Q622 145 622 151.5 L622 279 Q622 284 627 284 L632 284" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M639 284 L631 288.2 L631 279.8 Z" fill="#f2c14e"/>
+<rect x="640" y="238" width="324" height="92" rx="6" fill="#2b2a23" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="652" y="259" font-size="13" fill="#e8eaed" font-weight="700">Browser · TypeScript</text>
+<text x="652" y="280" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">class Reading { ... }</text>
+<text x="652" y="298" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">MIN, MAX, STR_LEN_MAX</text>
+<rect x="652" y="306" width="100" height="18" rx="9" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="702" y="319.3" font-size="12" fill="#e8eaed" text-anchor="middle">state machine</text>
+<rect x="818" y="276" width="9" height="14" rx="1" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="827" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="836" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="845" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="854" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="863" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="872" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="881" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="890" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="899" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="908" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="917" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="926" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="935" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="944" y="276" width="9" height="14" rx="1" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<text x="885.5" y="308" font-size="12" fill="#9aa0a6" text-anchor="middle">same 15 bytes</text>
+<path d="M900 331 L904.6 340 L895.4 340 Z" fill="#9aa0a6"/>
+<path d="M126 251 L126 384 L145.4 384" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 4" stroke-linejoin="round"/>
+<rect x="146.4" y="371" width="132" height="26" rx="13" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="212.4" y="388.3" font-size="12" fill="#e8eaed" text-anchor="middle">edit MyProtocol.cs</text>
+<line x1="279.4" y1="384" x2="289.8" y2="384" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 4"/>
+<path d="M297.8 384 L289.8 388 L289.8 380 Z" fill="#9aa0a6"/>
+<rect x="298.8" y="371" width="206" height="26" rx="13" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/><text x="401.8" y="388.3" font-size="12" fill="#e8eaed" text-anchor="middle">.cs~: the hosts the edit reaches</text>
+<line x1="505.8" y1="384" x2="516.2" y2="384" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 4"/>
+<path d="M524.2 384 L516.2 388 L516.2 380 Z" fill="#9aa0a6"/>
+<rect x="525.2" y="371" width="88" height="26" rx="13" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/><text x="569.2" y="388.3" font-size="12" fill="#e8eaed" text-anchor="middle">regenerate</text>
+<line x1="614.2" y1="384" x2="624.6" y2="384" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 4"/>
+<path d="M632.6 384 L624.6 388 L624.6 380 Z" fill="#9aa0a6"/>
+<rect x="633.6" y="371" width="246" height="26" rx="13" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="756.6" y="388.3" font-size="12" fill="#e8eaed" text-anchor="middle">deploy: smart merge keeps your code</text>
+<path d="M880.6 384 L900 384 L900 340" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 4" stroke-linejoin="round"/>
+<text x="24" y="428" font-size="12" fill="#9aa0a6">every change: one edit, one report, one regeneration</text>
+</g>
+</svg>

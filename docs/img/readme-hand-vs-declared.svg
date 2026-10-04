@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" width="960" height="620" role="img" aria-labelledby="title desc">
+<title id="title">Written by hand, per message, per side and per language - or declared once in an AdHoc description</title>
+<desc id="desc">Left: a grey stack of eleven layers of hand-written network plumbing, with two offset copies behind it tabbed C#, Java and TypeScript: encoder and decoder for every message; a dispatch switch and &quot;may this arrive now?&quot; flags; correlation ids and a map of pending calls; reconnect, session restore and a resend queue; sequence numbers, acks and a retransmit window; chunking and temp files for big payloads; compression and cipher wrappers; a store that decrypts, decodes and re-encodes; a proxy that parses and holds the keys; a router in front or a port per service; a version field with if (version &gt;= 3) branches. Under it: times both sides of every connection, kept in step by hand. Right: an orange card, declared once, one line in the description per layer, each joined to its layer by an arrow: class Order with [MinMax(1, 100)] byte quantity; [L____________&lt;Shopping, Login&gt;] struct Start; (L____________, Pong) ping(Ping req); [Resumable(30)] plus Resumable&lt;Client, Order&gt;; [UDP&lt;Samples&gt;(10)]; [S(200_000)] Stream feed; [Zstd, ChaCha20]; [ToStream&lt;FromCamera&gt;] Snapshot snapshot; VirtuallyConnects&lt;Operator, Fleet, Edge&gt;; Multiplex&lt;(Telemetry, TelemetryV2, Console)&gt;; struct VehicleV2 : Host, a new generation. An arrow from the card to a yellow band: generated for every host, in each of its languages - C#, Java, TypeScript - the same bytes on the wire; your code says what a pack means and what a state starts, in injection points kept by smart merge.</desc>
+<rect width="960" height="620" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="700">Written by hand</text>
+<text x="24" y="54" font-size="13" fill="#9aa0a6">per message - per side - per language</text>
+<text x="560" y="34" font-size="18" fill="#e8833a" font-weight="700">Declared once</text>
+<text x="560" y="54" font-size="13" fill="#9aa0a6">one line in the description</text>
+<g data-nocheck="1">
+<rect x="40" y="92" width="440" height="390" rx="8" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="32" y="84" width="440" height="390" rx="8" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+</g>
+<rect x="24" y="76" width="440" height="390" rx="8" fill="#2b2b2b"/>
+<path d="M270 76 L270 62 Q270 58 274 58 L312 58 Q316 58 316 62 L316 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="293" y="72" font-size="12" fill="#9aa0a6" text-anchor="middle">C#</text>
+<path d="M320 76 L320 62 Q320 58 324 58 L374 58 Q378 58 378 62 L378 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="349" y="72" font-size="12" fill="#9aa0a6" text-anchor="middle">Java</text>
+<path d="M382 76 L382 62 Q382 58 386 58 L460 58 Q464 58 464 62 L464 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="423" y="72" font-size="12" fill="#9aa0a6" text-anchor="middle">TypeScript</text>
+<rect x="560" y="66" width="384" height="414" rx="8" fill="#e8833a" fill-opacity="0.08" stroke="#e8833a" stroke-width="1.5"/>
+<rect x="24" y="76" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="95.5" font-size="13" fill="#e8eaed">encoder + decoder for every message</text>
+<line x1="496" y1="91" x2="549" y2="91" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 91 L548 95.2 L548 86.8 Z" fill="#e8833a"/>
+<text x="574" y="95.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >class Order { [MinMax(1, 100)] byte quantity; }</tspan></text>
+<rect x="24" y="112" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="131.5" font-size="13" fill="#e8eaed">dispatch switch + &quot;may this arrive now?&quot; flags</text>
+<line x1="496" y1="127" x2="549" y2="127" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 127 L548 131.2 L548 122.8 Z" fill="#e8833a"/>
+<text x="574" y="131.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >[L____________&lt;Shopping, Login&gt;] struct Start { }</tspan></text>
+<rect x="24" y="148" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="167.5" font-size="13" fill="#e8eaed">correlation ids, map of pending calls</text>
+<line x1="496" y1="163" x2="549" y2="163" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 163 L548 167.2 L548 158.8 Z" fill="#e8833a"/>
+<text x="574" y="167.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >(L____________, Pong) ping(Ping req);</tspan></text>
+<rect x="24" y="184" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="203.5" font-size="13" fill="#e8eaed">reconnect, session restore, resend queue</text>
+<line x1="496" y1="199" x2="549" y2="199" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 199 L548 203.2 L548 194.8 Z" fill="#e8833a"/>
+<text x="574" y="203.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >[Resumable(30)]</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">  +  </tspan><tspan >Resumable&lt;Client, Order&gt;</tspan></text>
+<rect x="24" y="220" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="239.5" font-size="13" fill="#e8eaed">sequence numbers, acks, retransmit window</text>
+<line x1="496" y1="235" x2="549" y2="235" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 235 L548 239.2 L548 230.8 Z" fill="#e8833a"/>
+<text x="574" y="239.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >[UDP&lt;Samples&gt;(10)]</tspan></text>
+<rect x="24" y="256" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="275.5" font-size="13" fill="#e8eaed">chunking, temp files for big payloads</text>
+<line x1="496" y1="271" x2="549" y2="271" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 271 L548 275.2 L548 266.8 Z" fill="#e8833a"/>
+<text x="574" y="275.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >[S(200_000)] Stream feed;</tspan></text>
+<rect x="24" y="292" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="311.5" font-size="13" fill="#e8eaed">compression and cipher wrappers</text>
+<line x1="496" y1="307" x2="549" y2="307" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 307 L548 311.2 L548 302.8 Z" fill="#e8833a"/>
+<text x="574" y="311.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >[Zstd, ChaCha20]</tspan></text>
+<rect x="24" y="328" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="347.5" font-size="13" fill="#e8eaed">store: decrypt → decode → re-encode</text>
+<line x1="496" y1="343" x2="549" y2="343" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 343 L548 347.2 L548 338.8 Z" fill="#e8833a"/>
+<text x="574" y="347.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >[ToStream&lt;FromCamera&gt;] Snapshot snapshot;</tspan></text>
+<rect x="24" y="364" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="383.5" font-size="13" fill="#e8eaed">proxy that parses and holds the keys</text>
+<line x1="496" y1="379" x2="549" y2="379" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 379 L548 383.2 L548 374.8 Z" fill="#e8833a"/>
+<text x="574" y="383.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >VirtuallyConnects&lt;Operator, Fleet, Edge&gt;</tspan></text>
+<rect x="24" y="400" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="419.5" font-size="13" fill="#e8eaed">router in front, or a port per service</text>
+<line x1="496" y1="415" x2="549" y2="415" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 415 L548 419.2 L548 410.8 Z" fill="#e8833a"/>
+<text x="574" y="419.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >Multiplex&lt;(Telemetry, TelemetryV2, Console)&gt;</tspan></text>
+<rect x="24" y="436" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="455.5" font-size="13" fill="#e8eaed">version field + if (version &gt;= 3) ...</text>
+<line x1="496" y1="451" x2="549" y2="451" stroke="#9aa0a6" stroke-width="1"/>
+<path d="M556 451 L548 455.2 L548 446.8 Z" fill="#e8833a"/>
+<text x="574" y="455.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >struct VehicleV2 : Host { }</tspan><tspan fill="#9aa0a6">  // new generation</tspan></text>
+<text x="24" y="508" font-size="13" fill="#9aa0a6">× both sides of every connection - kept in step by hand</text>
+<line x1="752" y1="481" x2="752" y2="504" stroke="#e8833a" stroke-width="1.5"/>
+<line x1="752" y1="504" x2="752" y2="521" stroke="#f2c14e" stroke-width="1.5"/>
+<path d="M752 528 L747 519 L757 519 Z" fill="#f2c14e"/>
+<rect x="24" y="530" width="920" height="70" rx="8" fill="#f2c14e" fill-opacity="0.08" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="484" y="558" font-size="15" fill="#e8eaed" text-anchor="middle">generated for every host, in each of its languages: C# - Java - TypeScript - the same bytes on the wire</text>
+<text x="484" y="582" font-size="13" fill="#9aa0a6" text-anchor="middle">your code: what a pack means, what a state starts - in injection points, kept by smart merge</text>
+</g>
+</svg>

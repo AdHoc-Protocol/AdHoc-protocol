@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" width="980" height="560" role="img" aria-labelledby="title desc">
+<title id="title">Rooms, presence and turns on Talk : Connects&lt;Member, Hub&gt;</title>
+<desc id="desc">Left, the Hub: Connection.Groups lists the rooms. In #general the member instances M1, M2, M4 and M3 are linked by prev and next, with the group's own lock at its head; one Said fans out into one queued copy per member, because a send only queues and a slow member sets nobody's pace. #design links M2, M5 and M3. M3 is drawn leaving both rooms: a red note says an instance leaves its room by itself when it ends - through Leave in its state machine, through Idle(60) after 60 s without Say, Typing or Here, or when its session ends after the parked wait that follows a lost socket - Release, no ghosts, no sweeper. Right, the Edit state machine: Editing, led by the member, stays on TextInsert, TextDelete and CursorMove from both sides and goes to Reviewing on FinalizeDoc; Reviewing, led by the hub, returns on Approved or NeedsChanges; a TextInsert in Reviewing is refused before it leaves with DISCARDED_BYSTATE. Bottom: Say is a guaranteed leg, Resumable&lt;Member, Member.Say&gt;, delivered once and in order across a lost socket; Typing is not journalled; with Resumable(10) an identified member whose socket drops is parked and keeps its rooms.</desc>
+<rect width="980" height="560" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="600" xml:space="preserve"><tspan >Rooms, presence and turns on </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Talk : Connects&lt;Member, Hub&gt;</tspan></text>
+<rect x="24" y="52" width="456" height="396" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="76" font-size="14" fill="#9aa0a6" font-weight="600">Hub</text>
+<text x="80" y="76" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Connection.Groups</tspan><tspan >: its list of rooms</tspan></text>
+<rect x="36" y="92" width="432" height="104" rx="6" fill="#2e2e2e" stroke="#4a4a4a" stroke-width="1.2"/>
+<path d="M48 107.1 L48 103.5 A4.1 4.1 0 0 1 56.1 103.5 L56.1 107.1" fill="none" stroke="#f2c14e" stroke-width="1.6"/><rect x="45.7" y="107.1" width="12.6" height="9.9" rx="1.8" fill="#f2c14e"/><circle cx="52" cy="111.6" r="1.4" fill="#2b2b2b"/>
+<text x="66" y="113" font-size="13" fill="#e8eaed" font-weight="700">#general</text>
+<text x="456" y="113" font-size="12" fill="#9aa0a6" text-anchor="end">members linked by prev / next; the group is its own lock</text>
+<rect x="44" y="134" width="24" height="16" rx="2" fill="#1f3347" stroke="#4fb3ff" stroke-width="1.5"/><path d="M45 135.5 L56 143.3 L67 135.5" fill="none" stroke="#4fb3ff" stroke-width="1.3" stroke-linejoin="round"/>
+<text x="72" y="147" font-size="12" fill="#4fb3ff" font-weight="600">Said</text>
+<rect x="106" y="130" width="24" height="24" rx="3" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<text x="118" y="146.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">M1</text>
+<rect x="172" y="130" width="24" height="24" rx="3" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<text x="184" y="146.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">M2</text>
+<rect x="238" y="130" width="24" height="24" rx="3" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<text x="250" y="146.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">M4</text>
+<rect x="304" y="130" width="24" height="24" rx="3" fill="none" stroke="#e06c6c" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="316" y="146.5" font-size="12" fill="#e06c6c" text-anchor="middle" font-weight="600">M3</text>
+<path d="M134 138 L163 138" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M168 138 L162 141.2 L162 134.8 Z" fill="#9aa0a6"/>
+<path d="M168 146 L139 146" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M134 146 L140 142.8 L140 149.2 Z" fill="#9aa0a6"/>
+<path d="M200 138 L229 138" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M234 138 L228 141.2 L228 134.8 Z" fill="#9aa0a6"/>
+<path d="M234 146 L205 146" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M200 146 L206 142.8 L206 149.2 Z" fill="#9aa0a6"/>
+<path d="M266 138 L295 138" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M300 138 L294 141.2 L294 134.8 Z" fill="#9aa0a6"/>
+<path d="M300 146 L271 146" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M266 146 L272 142.8 L272 149.2 Z" fill="#9aa0a6"/>
+<rect x="109.5" y="162" width="5" height="9" rx="1" fill="#4fb3ff" stroke="#4fb3ff" stroke-width="1"/><rect x="115.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#4fb3ff" stroke-width="1"/><rect x="121.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#4fb3ff" stroke-width="1"/>
+<path d="M118 184 L118 178" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M118 173 L121.2 179 L114.8 179 Z" fill="#4fb3ff"/>
+<rect x="175.5" y="162" width="5" height="9" rx="1" fill="#4fb3ff" stroke="#4fb3ff" stroke-width="1"/><rect x="181.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#4fb3ff" stroke-width="1"/><rect x="187.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#4fb3ff" stroke-width="1"/>
+<path d="M184 184 L184 178" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M184 173 L187.2 179 L180.8 179 Z" fill="#4fb3ff"/>
+<rect x="241.5" y="162" width="5" height="9" rx="1" fill="#4fb3ff" stroke="#4fb3ff" stroke-width="1"/><rect x="247.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#4fb3ff" stroke-width="1"/><rect x="253.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#4fb3ff" stroke-width="1"/>
+<path d="M250 184 L250 178" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M250 173 L253.2 179 L246.8 179 Z" fill="#4fb3ff"/>
+<rect x="307.5" y="162" width="5" height="9" rx="1" fill="#e06c6c" stroke="#e06c6c" stroke-width="1"/><rect x="313.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#e06c6c" stroke-width="1"/><rect x="319.5" y="162" width="5" height="9" rx="1" fill="none" stroke="#e06c6c" stroke-width="1"/>
+<path d="M316 184 L316 178" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M316 173 L319.2 179 L312.8 179 Z" fill="#4fb3ff"/>
+<path d="M56 150 L56 184 L316 184" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="40" y="214" font-size="12" fill="#9aa0a6">a send only queues - a slow member sets nobody's pace</text>
+<rect x="36" y="232" width="300" height="74" rx="6" fill="#2e2e2e" stroke="#4a4a4a" stroke-width="1.2"/>
+<path d="M48 247.1 L48 243.5 A4.1 4.1 0 0 1 56.1 243.5 L56.1 247.1" fill="none" stroke="#f2c14e" stroke-width="1.6"/><rect x="45.7" y="247.1" width="12.6" height="9.9" rx="1.8" fill="#f2c14e"/><circle cx="52" cy="251.6" r="1.4" fill="#2b2b2b"/>
+<text x="66" y="253" font-size="13" fill="#e8eaed" font-weight="700">#design</text>
+<rect x="106" y="268" width="24" height="24" rx="3" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<text x="118" y="284.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">M2</text>
+<rect x="172" y="268" width="24" height="24" rx="3" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<text x="184" y="284.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">M5</text>
+<rect x="238" y="268" width="24" height="24" rx="3" fill="none" stroke="#e06c6c" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="250" y="284.5" font-size="12" fill="#e06c6c" text-anchor="middle" font-weight="600">M3</text>
+<path d="M134 276 L163 276" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M168 276 L162 279.2 L162 272.8 Z" fill="#9aa0a6"/>
+<path d="M168 284 L139 284" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M134 284 L140 280.8 L140 287.2 Z" fill="#9aa0a6"/>
+<path d="M200 276 L229 276" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M234 276 L228 279.2 L228 272.8 Z" fill="#9aa0a6"/>
+<path d="M234 284 L205 284" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/><path d="M200 284 L206 280.8 L206 287.2 Z" fill="#9aa0a6"/>
+<path d="M330 142 L432 142 Q440 142 440 150 L440 318" fill="none" stroke="#e06c6c" stroke-width="1.6" stroke-dasharray="2 3" stroke-linejoin="round"/><path d="M440 326 L435.4 317 L444.6 317 Z" fill="#e06c6c"/>
+<path d="M264 280 L440 280" fill="none" stroke="#e06c6c" stroke-width="1.6" stroke-dasharray="2 3" stroke-linejoin="round"/>
+<rect x="36" y="326" width="432" height="108" rx="6" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.4"/>
+<line x1="48" y1="352" x2="134" y2="352" stroke="#7d858f" stroke-width="4"/>
+<path d="M93 340 L86 353 L91 353 L88 364 L97 350 L92 350 L95 340 Z" fill="#e06c6c" stroke="#2b2b2b" stroke-width="1"/>
+<text x="48" y="380" font-size="12" fill="#9aa0a6">socket lost:</text>
+<text x="48" y="394" font-size="12" fill="#9aa0a6">parked up to</text>
+<text x="48" y="408" font-size="12" fill="#9aa0a6">10 min, still in</text>
+<text x="48" y="422" font-size="12" fill="#9aa0a6">its rooms</text>
+<line x1="146" y1="338" x2="146" y2="422" stroke="#6a3a3a" stroke-width="1"/>
+<text x="158" y="347" font-size="13" fill="#e8eaed" font-weight="600">an instance leaves its room by itself when it ends</text>
+<text x="158" y="367" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan >· </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Leave</tspan><tspan > - its state machine ends it</tspan></text>
+<text x="158" y="383" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan >· </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Idle(60)]</tspan><tspan > - no Say, Typing or Here for 60 s</tspan></text>
+<text x="158" y="399" font-size="12" fill="#e8eaed">· its session ends after the parked wait</text>
+<text x="158" y="421" font-size="13" fill="#e8eaed" font-weight="600" xml:space="preserve"><tspan fill="#e06c6c" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Release</tspan><tspan fill="#e06c6c"> - no ghosts, no sweeper</tspan></text>
+<rect x="500" y="52" width="456" height="396" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="516" y="76" font-size="14" fill="#9aa0a6" font-weight="600" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Edit</tspan><tspan > - turn-taking</tspan></text>
+<rect x="520" y="162" width="172" height="72" rx="8" fill="#353535" stroke="#7d858f" stroke-width="1.6"/>
+<text x="606" y="192" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Editing</text>
+<text x="606" y="212" font-size="13" fill="#e8833a" text-anchor="middle">Member leads</text>
+<rect x="776" y="162" width="164" height="72" rx="8" fill="#353535" stroke="#7d858f" stroke-width="1.6"/>
+<text x="858" y="192" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Reviewing</text>
+<text x="858" y="212" font-size="13" fill="#4fb3ff" text-anchor="middle">Hub leads</text>
+<path d="M548 162 L548 136 L584 136 L584 154" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M584 162 L579.4 153 L588.6 153 Z" fill="#e8833a"/>
+<path d="M640 162 L640 136 L676 136 L676 154" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M676 162 L671.4 153 L680.6 153 Z" fill="#4fb3ff"/>
+<text x="516" y="108" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">TextInsert · TextDelete · CursorMove</tspan></text>
+<text x="516" y="124" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#9aa0a6">from both sides</tspan><tspan fill="#9aa0a6"> (stay)</tspan></text>
+<path d="M692 188 L768 188" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M776 188 L767 192.6 L767 183.4 Z" fill="#e8833a"/>
+<text x="734" y="180" font-size="13" fill="#e8833a" text-anchor="middle">FinalizeDoc</text>
+<text x="734" y="212" font-size="12" fill="#9aa0a6" text-anchor="middle">(member)</text>
+<path d="M858 234 L858 260 L606 260 L606 242" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M606 234 L610.6 243 L601.4 243 Z" fill="#4fb3ff"/>
+<text x="732" y="280" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#4fb3ff">Approved / NeedsChanges</tspan><tspan fill="#9aa0a6">  (hub)</tspan></text>
+<text x="516" y="348.5" font-size="13" fill="#e8eaed" font-weight="600">in Reviewing:</text>
+<path d="M700 344 L838 344" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M846 344 L837 348.6 L837 339.4 Z" fill="#e8833a"/>
+<text x="773" y="331" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8833a" text-anchor="middle" xml:space="preserve">TextInsert</text>
+<g data-nocheck="1"><path d="M765 336 L781 352 M781 336 L765 352" stroke="#e06c6c" stroke-width="3" stroke-linecap="round" fill="none"/></g>
+<text x="854" y="348.5" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e06c6c" font-weight="600">refused</tspan></text>
+<text x="700" y="372" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e06c6c">before it leaves: </tspan><tspan fill="#e06c6c" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">DISCARDED_BYSTATE</tspan></text>
+<text x="516" y="412" font-size="12" fill="#9aa0a6">only the side that leads a state moves it on; both replicas move on the same pack</text>
+<rect x="24" y="462" width="932" height="80" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="38" y="474" width="516" height="26" rx="13" fill="#3a2c20" stroke="#e8833a" stroke-width="1.5"/>
+<text x="52" y="491.5" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan font-weight="700">Say</tspan><tspan > - </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Resumable&lt;Member, Member.Say&gt;</tspan><tspan >: once, in order, across a lost socket</tspan></text>
+<rect x="566" y="474" width="176" height="26" rx="13" fill="#303030" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="580" y="491.5" font-size="13" fill="#9aa0a6" xml:space="preserve"><tspan font-weight="700">Typing</tspan><tspan > - not journalled</tspan></text>
+<text x="40" y="524" font-size="12.5" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Resumable(10)]</tspan><tspan >: an identified member whose socket drops is parked and keeps its rooms</tspan></text>
+</g>
+</svg>

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 460" width="980" height="460" role="img" aria-labelledby="title desc">
+<title id="title">Reliable where it matters, fresh where it does not</title>
+<desc id="desc">Six datagrams over UDP: the guaranteed packs of a lost datagram are replayed from the journal and arrive once, in order; a lost snapshot is not replayed.</desc>
+<rect width="980" height="460" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="600">Reliable where it matters, fresh where it does not</text>
+<g data-nocheck="1"><path d="M156 136 L817 136" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-dasharray="2 4" stroke-linejoin="round"/><path d="M824 136 L816 140 L816 132 Z" fill="#4fb3ff"/></g>
+<rect x="24" y="106" width="132" height="60" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="90" y="131.5" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Client</text>
+<text x="90" y="148.5" font-size="12" fill="#9aa0a6" text-anchor="middle">C#, Java</text>
+<rect x="824" y="106" width="132" height="60" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="890" y="131.5" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<text x="890" y="148.5" font-size="12" fill="#9aa0a6" text-anchor="middle">C#, Java</text>
+<line x1="220" y1="172" x2="220" y2="326" stroke="#3a3a3a" stroke-width="1" stroke-dasharray="2 4" data-nocheck="1"/>
+<line x1="328" y1="172" x2="328" y2="326" stroke="#3a3a3a" stroke-width="1" stroke-dasharray="2 4" data-nocheck="1"/>
+<line x1="436" y1="172" x2="436" y2="326" stroke="#3a3a3a" stroke-width="1" stroke-dasharray="2 4" data-nocheck="1"/>
+<line x1="544" y1="172" x2="544" y2="326" stroke="#3a3a3a" stroke-width="1" stroke-dasharray="2 4" data-nocheck="1"/>
+<line x1="652" y1="172" x2="652" y2="326" stroke="#3a3a3a" stroke-width="1" stroke-dasharray="2 4" data-nocheck="1"/>
+<line x1="760" y1="172" x2="760" y2="326" stroke="#3a3a3a" stroke-width="1" stroke-dasharray="2 4" data-nocheck="1"/>
+<rect x="172" y="104" width="96" height="64" rx="6" fill="#20272e" stroke="#4fb3ff" stroke-width="1.5"/>
+<path d="M178 104 H186 V168 H178 A6 6 0 0 1 172 162 V110 A6 6 0 0 1 178 104 Z" fill="#2a5478" stroke="#4fb3ff" stroke-width="1.5" data-nocheck="1"/>
+<text x="179" y="140.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">1</text>
+<rect x="191" y="117.5" width="72" height="17" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="197" y="130" font-size="12" fill="#e8eaed">Input 1</text>
+<g data-nocheck="1"><rect x="251" y="121.5" width="7" height="9" rx="1" fill="none" stroke="#e8833a" stroke-width="1.1"/><path d="M253 124.5 H256.5 M253 127 H256.5" stroke="#e8833a" stroke-width="1"/></g>
+<rect x="191" y="137.5" width="72" height="17" rx="3" fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="197" y="150" font-size="12" fill="#9aa0a6">Position</text>
+<rect x="280" y="104" width="96" height="64" rx="6" fill="#20272e" stroke="#4fb3ff" stroke-width="1.5"/>
+<path d="M286 104 H294 V168 H286 A6 6 0 0 1 280 162 V110 A6 6 0 0 1 286 104 Z" fill="#2a5478" stroke="#4fb3ff" stroke-width="1.5" data-nocheck="1"/>
+<text x="287" y="140.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">2</text>
+<rect x="299" y="117.5" width="72" height="17" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="305" y="130" font-size="12" fill="#e8eaed">Chat 2</text>
+<g data-nocheck="1"><rect x="359" y="121.5" width="7" height="9" rx="1" fill="none" stroke="#e8833a" stroke-width="1.1"/><path d="M361 124.5 H364.5 M361 127 H364.5" stroke="#e8833a" stroke-width="1"/></g>
+<rect x="299" y="137.5" width="72" height="17" rx="3" fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="305" y="150" font-size="12" fill="#9aa0a6">Position</text>
+<rect x="388" y="104" width="96" height="64" rx="6" fill="#20272e" stroke="#4fb3ff" stroke-width="1.5"/>
+<path d="M394 104 H402 V168 H394 A6 6 0 0 1 388 162 V110 A6 6 0 0 1 394 104 Z" fill="#2a5478" stroke="#4fb3ff" stroke-width="1.5" data-nocheck="1"/>
+<text x="395" y="140.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">3</text>
+<rect x="407" y="107.5" width="72" height="17" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="413" y="120" font-size="12" fill="#e8eaed">Input 3</text>
+<g data-nocheck="1"><rect x="467" y="111.5" width="7" height="9" rx="1" fill="none" stroke="#e8833a" stroke-width="1.1"/><path d="M469 114.5 H472.5 M469 117 H472.5" stroke="#e8833a" stroke-width="1"/></g>
+<rect x="407" y="127.5" width="72" height="17" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="413" y="140" font-size="12" fill="#e8eaed">Chat 4</text>
+<g data-nocheck="1"><rect x="467" y="131.5" width="7" height="9" rx="1" fill="none" stroke="#e8833a" stroke-width="1.1"/><path d="M469 134.5 H472.5 M469 137 H472.5" stroke="#e8833a" stroke-width="1"/></g>
+<rect x="407" y="147.5" width="72" height="17" rx="3" fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="413" y="160" font-size="12" fill="#9aa0a6">Position</text>
+<rect x="496" y="104" width="96" height="64" rx="6" fill="#20272e" stroke="#4fb3ff" stroke-width="1.5"/>
+<path d="M502 104 H510 V168 H502 A6 6 0 0 1 496 162 V110 A6 6 0 0 1 502 104 Z" fill="#2a5478" stroke="#4fb3ff" stroke-width="1.5" data-nocheck="1"/>
+<text x="503" y="140.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">4</text>
+<rect x="515" y="127.5" width="72" height="17" rx="3" fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="521" y="140" font-size="12" fill="#9aa0a6">Position</text>
+<rect x="604" y="104" width="96" height="64" rx="6" fill="#20272e" stroke="#4fb3ff" stroke-width="1.5"/>
+<path d="M610 104 H618 V168 H610 A6 6 0 0 1 604 162 V110 A6 6 0 0 1 610 104 Z" fill="#2a5478" stroke="#4fb3ff" stroke-width="1.5" data-nocheck="1"/>
+<text x="611" y="140.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">5</text>
+<rect x="623" y="117.5" width="72" height="17" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="629" y="130" font-size="12" fill="#e8eaed">Input 3</text>
+<g data-nocheck="1"><rect x="683" y="121.5" width="7" height="9" rx="1" fill="none" stroke="#e8833a" stroke-width="1.1"/><path d="M685 124.5 H688.5 M685 127 H688.5" stroke="#e8833a" stroke-width="1"/></g>
+<rect x="623" y="137.5" width="72" height="17" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="629" y="150" font-size="12" fill="#e8eaed">Chat 4</text>
+<g data-nocheck="1"><rect x="683" y="141.5" width="7" height="9" rx="1" fill="none" stroke="#e8833a" stroke-width="1.1"/><path d="M685 144.5 H688.5 M685 147 H688.5" stroke="#e8833a" stroke-width="1"/></g>
+<rect x="712" y="104" width="96" height="64" rx="6" fill="#20272e" stroke="#4fb3ff" stroke-width="1.5"/>
+<path d="M718 104 H726 V168 H718 A6 6 0 0 1 712 162 V110 A6 6 0 0 1 718 104 Z" fill="#2a5478" stroke="#4fb3ff" stroke-width="1.5" data-nocheck="1"/>
+<text x="719" y="140.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">6</text>
+<rect x="731" y="117.5" width="72" height="17" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="737" y="130" font-size="12" fill="#e8eaed">Input 5</text>
+<g data-nocheck="1"><rect x="791" y="121.5" width="7" height="9" rx="1" fill="none" stroke="#e8833a" stroke-width="1.1"/><path d="M793 124.5 H796.5 M793 127 H796.5" stroke="#e8833a" stroke-width="1"/></g>
+<rect x="731" y="137.5" width="72" height="17" rx="3" fill="none" stroke="#8a8a8a" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="737" y="150" font-size="12" fill="#9aa0a6">Position</text>
+<text x="172" y="88" font-size="12" fill="#9aa0a6">9-byte header: flags | connection id | series | number</text>
+<path d="M178 92 L178 102" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/>
+<g data-nocheck="1"><line x1="382" y1="98" x2="490" y2="174" stroke="#e06c6c" stroke-width="2.2" stroke-linecap="round" opacity="0.9"/><line x1="490" y1="98" x2="382" y2="174" stroke="#e06c6c" stroke-width="2.2" stroke-linecap="round" opacity="0.9"/></g>
+<text x="436" y="190" font-size="12" fill="#e06c6c" text-anchor="middle" font-weight="700">lost</text>
+<text x="544" y="190" font-size="12" fill="#4fb3ff" text-anchor="middle">gap in the numbers:</text>
+<text x="544" y="206" font-size="12" fill="#4fb3ff" text-anchor="middle">asks to continue</text>
+<text x="652" y="88" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="600">replayed from the journal</text>
+<path d="M652 92 L652 102" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="24" y="240" font-size="14" fill="#e8833a" font-weight="600">guaranteed</text>
+<text x="24" y="256" font-size="12" fill="#9aa0a6">what Server receives</text>
+<text x="24" y="304" font-size="14" fill="#9aa0a6" font-weight="600">unguarded</text>
+<path data-nocheck="1" d="M186 232 L188.9 235.1 L194.5 228.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="200" y="236" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Input 1</text>
+<path data-nocheck="1" d="M294 232 L296.9 235.1 L302.5 228.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="308" y="236" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Chat 2</text>
+<path data-nocheck="1" d="M618 224 L620.9 227.1 L626.5 220.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="632" y="228" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Input 3</text>
+<path data-nocheck="1" d="M618 242 L620.9 245.1 L626.5 238.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="632" y="246" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Chat 4</text>
+<path data-nocheck="1" d="M726 232 L728.9 235.1 L734.5 228.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="740" y="236" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Input 5</text>
+<text x="172" y="276" font-size="12" fill="#6cc08b" font-weight="600">once, in order: 1 2 3 4 5</text>
+<path data-nocheck="1" d="M186 296 L188.9 299.1 L194.5 292.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="200" y="300" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Position</text>
+<path data-nocheck="1" d="M294 296 L296.9 299.1 L302.5 292.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="308" y="300" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Position</text>
+<path data-nocheck="1" d="M510 296 L512.9 299.1 L518.5 292.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="524" y="300" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Position</text>
+<path data-nocheck="1" d="M726 296 L728.9 299.1 L734.5 292.8" fill="none" stroke="#6cc08b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="740" y="300" font-size="12" fill="#e8eaed" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Position</text>
+<path data-nocheck="1" d="M402.8 292.8 L409.2 299.2 M409.2 292.8 L402.8 299.2" stroke="#9aa0a6" stroke-width="1.6" stroke-linecap="round"/>
+<text x="416" y="300" font-size="12" fill="#8a8a8a" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">Position</text>
+<line x1="415" y1="296" x2="458.5475" y2="296" stroke="#8a8a8a" stroke-width="1.3" data-nocheck="1"/>
+<text x="544" y="322" font-size="12" fill="#9aa0a6" text-anchor="middle">the next one replaces it - no replay</text>
+<text x="24" y="368" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8833a" font-weight="700" xml:space="preserve">[UDP&lt;Volatile&gt;(30)]</text>
+<text x="24" y="390" font-size="12" fill="#9aa0a6">on TCP you name the packs that must not be lost; on UDP, the ones that may be</text>
+<text x="24" y="420" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan >Position</tspan><tspan fill="#9aa0a6"> is </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">PlayerPosition { float x; float y; }</tspan><tspan fill="#9aa0a6"> - 64 bits, one number: a Value Pack</tspan></text>
+<rect x="604" y="340" width="352" height="96" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="618" y="361" font-size="12" fill="#e8eaed" font-weight="700">UDP host settings</text>
+<text x="618" y="380" font-size="12" fill="#e8eaed">keepalive 15 s (NAT) · idle 30 s · mtu 1200 bytes</text>
+<text x="618" y="398" font-size="12" fill="#e8eaed">window 256 KiB · congestion control on</text>
+<text x="618" y="416" font-size="12" fill="#e8eaed">X25519 key → every datagram encrypted and</text>
+<text x="618" y="432" font-size="12" fill="#e8eaed">authenticated (a 16-byte tag)</text>
+</g>
+</svg>

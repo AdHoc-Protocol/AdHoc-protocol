@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" width="960" height="700" role="img" aria-labelledby="title desc">
+<title id="title">What the Shop description becomes: three hosts, one state machine, an RPC, and a session that outlives its socket</title>
+<desc id="desc">Left: the Shop description, condensed, as an orange code card with seven numbered markers: 1 struct Client : Host, generated in TypeScript and C#; 2 struct Server : Host, generated in Java; 3 class Order with [MinMax(1, 100)] byte quantity; 4 [Resumable(30)] on interface Link : Connects&lt;Client, Server&gt;; 5 the state Start with [L____________&lt;Shopping, Client.Login&gt;] and the state Shopping; 6 the RPC line (L____________, Pong) ping(Ping req); 7 interface Orders : Resumable&lt;Client, Client.Order&gt;. Right, top: three yellow host cards - Client in TypeScript, Client in C#, Server in Java - each with the packs, the Link connection, its state machine and the ping actor. Middle: one state machine, generated into both hosts: from Start, Login sent by the client leads to Shopping; in Shopping, Order from the client and Welcome and Accepted from the server keep the state; anything else is refused before it is sent. Beside it the ping actor, one per call from a pool: Call, Ping, Return, Pong, End; the reply reaches the caller. Below: an Order without a note on the wire - the id, item in 8 bytes, quantity in one byte using 7 bits, one byte of null bits: 10 bytes after the id, no names, no tags; an absent note costs 1 bit. Bottom: a timeline. On socket 1 orders O1 and O2 arrive and O3 is lost in flight; the session is parked for up to 30 minutes with its actors, states, your objects and the journal; on socket 2 the client logs in with its session id, the server calls reclaim, the conversation is in Shopping again, and O3 is replayed once. The server’s code sees O1, O2, O3, once each, in order.</desc>
+<rect width="960" height="700" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="16" y="16" width="388" height="668" rx="8" fill="#e8833a" fill-opacity="0.06" stroke="#e8833a" stroke-width="1.5"/>
+<text x="30" y="42" font-size="15" fill="#e8833a" font-weight="700">Shop.cs - the whole system</text>
+<text x="30" y="74" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >interface Shop</tspan></text>
+<text x="30" y="98" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  struct Client : Host</tspan><tspan fill="#9aa0a6">   // InTS, InCS</tspan></text>
+<circle cx="384" cy="93.7" r="10" fill="#e8833a"/><text data-ok="1" x="384" y="97.9" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">1</text>
+<text x="30" y="122" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    class Login { string token; long session; }</tspan></text>
+<text x="30" y="146" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    class Order {</tspan></text>
+<text x="30" y="170" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >      long item;</tspan></text>
+<text x="30" y="194" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >      [MinMax(1, 100)] byte quantity;</tspan></text>
+<circle cx="384" cy="189.7" r="10" fill="#e8833a"/><text data-ok="1" x="384" y="193.9" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">3</text>
+<text x="30" y="218" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >      string note; }</tspan></text>
+<text x="30" y="242" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  struct Server : Host</tspan><tspan fill="#9aa0a6">   // InJAVA</tspan></text>
+<circle cx="384" cy="237.7" r="10" fill="#e8833a"/><text data-ok="1" x="384" y="241.9" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">2</text>
+<text x="30" y="266" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    class Welcome  { long session; }</tspan></text>
+<text x="30" y="290" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    class Accepted { long item; }</tspan></text>
+<text x="30" y="314" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  class Ping { long stamp; }</tspan></text>
+<text x="30" y="338" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  class Pong { long stamp; }</tspan></text>
+<text x="30" y="362" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  [Resumable(30)]</tspan></text>
+<circle cx="384" cy="357.7" r="10" fill="#e8833a"/><text data-ok="1" x="384" y="361.9" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">4</text>
+<text x="30" y="386" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >  interface Link : Connects&lt;Client, Server&gt;</tspan></text>
+<text x="30" y="410" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    [L____________&lt;Shopping, Client.Login&gt;]</tspan></text>
+<circle cx="384" cy="405.7" r="10" fill="#e8833a"/><text data-ok="1" x="384" y="409.9" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">5</text>
+<text x="30" y="434" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    struct Start { }</tspan></text>
+<text x="30" y="458" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    [l____________&lt;Client.Order&gt;]</tspan></text>
+<text x="30" y="482" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    [____________r&lt;(Server.Welcome,</tspan></text>
+<text x="30" y="506" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >                    Server.Accepted)&gt;]</tspan></text>
+<text x="30" y="530" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    struct Shopping { }</tspan></text>
+<text x="30" y="554" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    (L____________, Pong) ping(Ping req);</tspan></text>
+<circle cx="384" cy="549.7" r="10" fill="#e8833a"/><text data-ok="1" x="384" y="553.9" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">6</text>
+<text x="30" y="578" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >    interface Orders :</tspan></text>
+<text x="30" y="602" font-size="12.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan >      Resumable&lt;Client, Client.Order&gt; { }</tspan></text>
+<circle cx="384" cy="597.7" r="10" fill="#e8833a"/><text data-ok="1" x="384" y="601.9" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">7</text>
+<text x="30" y="648" font-size="12" fill="#9aa0a6">condensed: braces, doc comments and the</text>
+<text x="30" y="664" font-size="12" fill="#9aa0a6">numbers tables left out</text>
+<rect x="420" y="18" width="162" height="110" rx="8" fill="#f2c14e" fill-opacity="0.08" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="434" y="44" font-size="14" fill="#e8eaed" font-weight="700">Client</text>
+<text x="434" y="62" font-size="13" fill="#f2c14e">TypeScript</text>
+<text x="434" y="86" font-size="12.5" fill="#9aa0a6">packs, Link connection</text>
+<text x="434" y="102" font-size="12.5" fill="#9aa0a6">its state machine</text>
+<text x="434" y="118" font-size="12.5" fill="#9aa0a6">the ping actor</text>
+<circle cx="564" cy="36" r="10" fill="#e8833a"/><text data-ok="1" x="564" y="40.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">1</text>
+<rect x="600" y="18" width="162" height="110" rx="8" fill="#f2c14e" fill-opacity="0.08" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="614" y="44" font-size="14" fill="#e8eaed" font-weight="700">Client</text>
+<text x="614" y="62" font-size="13" fill="#f2c14e">C#</text>
+<text x="614" y="86" font-size="12.5" fill="#9aa0a6">packs, Link connection</text>
+<text x="614" y="102" font-size="12.5" fill="#9aa0a6">its state machine</text>
+<text x="614" y="118" font-size="12.5" fill="#9aa0a6">the ping actor</text>
+<circle cx="744" cy="36" r="10" fill="#e8833a"/><text data-ok="1" x="744" y="40.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">1</text>
+<rect x="780" y="18" width="162" height="110" rx="8" fill="#f2c14e" fill-opacity="0.08" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="794" y="44" font-size="14" fill="#e8eaed" font-weight="700">Server</text>
+<text x="794" y="62" font-size="13" fill="#f2c14e">Java</text>
+<text x="794" y="86" font-size="12.5" fill="#9aa0a6">packs, Link connection</text>
+<text x="794" y="102" font-size="12.5" fill="#9aa0a6">its state machine</text>
+<text x="794" y="118" font-size="12.5" fill="#9aa0a6">the ping actor</text>
+<circle cx="924" cy="36" r="10" fill="#e8833a"/><text data-ok="1" x="924" y="40.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">2</text>
+<circle cx="430" cy="166" r="10" fill="#e8833a"/><text data-ok="1" x="430" y="170.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">5</text>
+<text x="446" y="170.5" font-size="13" fill="#9aa0a6">one state machine, generated into both hosts</text>
+<circle cx="428" cy="262" r="5" fill="#e8eaed"/>
+<line x1="433" y1="262" x2="440" y2="262" stroke="#e8eaed" stroke-width="1.5"/>
+<path d="M446 262 L439 266 L439 258 Z" fill="#e8eaed"/>
+<rect x="446" y="238" width="80" height="48" rx="8" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.4"/><text x="486" y="266.9" font-size="14" fill="#e8eaed" text-anchor="middle">Start</text>
+<rect x="626" y="238" width="120" height="48" rx="8" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.4"/><text x="686" y="266.9" font-size="14" fill="#e8eaed" text-anchor="middle">Shopping</text>
+<path d="M526 262 L618 262" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M626 262 L617 266.6 L617 257.4 Z" fill="#4fb3ff"/>
+<text x="576" y="254" font-size="12.5" fill="#e8eaed" text-anchor="middle">Login - client</text>
+<path d="M666 238 C666 198 716 198 716 230" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M716 238 L711.4 229 L720.6 229 Z" fill="#4fb3ff"/>
+<text x="691" y="200" font-size="12.5" fill="#e8eaed" text-anchor="middle">Order - client</text>
+<path d="M716 286 C716 326 666 326 666 294" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M666 286 L670.6 295 L661.4 295 Z" fill="#4fb3ff"/>
+<text x="691" y="336" font-size="12.5" fill="#e8eaed" text-anchor="middle">Welcome, Accepted - server</text>
+<text x="446" y="308" font-size="12" fill="#9aa0a6">anything else:</text>
+<text x="446" y="324" font-size="12" fill="#9aa0a6">refused before it is sent</text>
+<circle cx="798" cy="166" r="10" fill="#e8833a"/><text data-ok="1" x="798" y="170.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">6</text>
+<text x="814" y="170.5" font-size="13" fill="#9aa0a6">ping: an actor per call,</text>
+<text x="814" y="187.5" font-size="13" fill="#9aa0a6">from a pool</text>
+<rect x="808" y="206" width="110" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.4"/><text x="863" y="225.6" font-size="13" fill="#e8eaed" text-anchor="middle">Call</text>
+<rect x="808" y="262" width="110" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.4"/><text x="863" y="281.6" font-size="13" fill="#e8eaed" text-anchor="middle">Return</text>
+<rect x="808" y="318" width="110" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.4" stroke-dasharray="5 4"/><text x="863" y="337.6" font-size="13" fill="#e8eaed" text-anchor="middle">End</text>
+<path d="M863 236 L863 255" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M863 262 L858.8 254 L867.2 254 Z" fill="#4fb3ff"/>
+<text x="872" y="253" font-size="12" fill="#4fb3ff">Ping</text>
+<path d="M863 292 L863 311" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M863 318 L858.8 310 L867.2 310 Z" fill="#4fb3ff"/>
+<text x="872" y="309" font-size="12" fill="#4fb3ff">Pong</text>
+<text x="798" y="368" font-size="12" fill="#9aa0a6">the reply reaches the caller</text>
+<circle cx="430" cy="398" r="10" fill="#e8833a"/><text data-ok="1" x="430" y="402.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">3</text>
+<text x="446" y="402.5" font-size="13" fill="#9aa0a6">an Order without a note: 10 bytes after its id - no names, no tags</text>
+<rect x="436" y="414" width="40" height="38" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="456" y="437.5" font-size="12.5" fill="#e8eaed" text-anchor="middle">id</text>
+<rect x="476" y="414" width="200" height="38" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="576" y="430" font-size="12.5" fill="#e8eaed" text-anchor="middle">item</text>
+<text x="576" y="445" font-size="12" fill="#9aa0a6" text-anchor="middle">8 bytes</text>
+<rect x="676" y="414" width="130" height="38" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="741" y="430" font-size="12.5" fill="#e8eaed" text-anchor="middle">quantity</text>
+<text x="741" y="445" font-size="12" fill="#9aa0a6" text-anchor="middle">1 byte, 7 bits used</text>
+<rect x="806" y="414" width="90" height="38" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="851" y="430" font-size="12.5" fill="#e8eaed" text-anchor="middle">null bits</text>
+<text x="851" y="445" font-size="12" fill="#9aa0a6" text-anchor="middle">1 byte</text>
+<text x="851" y="468" font-size="12" fill="#9aa0a6" text-anchor="middle">an absent note costs 1 bit</text>
+<circle cx="430" cy="496" r="10" fill="#e8833a"/><text data-ok="1" x="430" y="500.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">4</text>
+<text x="446" y="500.5" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Resumable(30)]</tspan><tspan fill="#9aa0a6">: the session outlives its socket</tspan></text>
+<circle cx="430" cy="520" r="10" fill="#e8833a"/><text data-ok="1" x="430" y="524.2" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">7</text>
+<text x="446" y="524.5" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Resumable&lt;Client, Client.Order&gt;</tspan><tspan fill="#9aa0a6">: each order once, in order</tspan></text>
+<text x="432" y="562" font-size="12" fill="#4fb3ff">socket 1</text>
+<g data-nocheck="1">
+<line x1="432" y1="600" x2="566" y2="600" stroke="#4fb3ff" stroke-width="2"/>
+<line x1="740" y1="600" x2="940" y2="600" stroke="#4fb3ff" stroke-width="2"/>
+</g>
+<rect x="445" y="591" width="26" height="18" rx="3" fill="#2b2b2b" stroke="#4fb3ff" stroke-width="1.4"/><text x="458" y="604.2" font-size="12" fill="#e8eaed" text-anchor="middle">O1</text>
+<rect x="493" y="591" width="26" height="18" rx="3" fill="#2b2b2b" stroke="#4fb3ff" stroke-width="1.4"/><text x="506" y="604.2" font-size="12" fill="#e8eaed" text-anchor="middle">O2</text>
+<rect x="553" y="591" width="26" height="18" rx="3" fill="#2b2b2b" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="3 2"/><text x="566" y="604.2" font-size="12" fill="#9aa0a6" text-anchor="middle">O3</text>
+<circle cx="580" cy="589" r="6.5" fill="#2b2b2b" stroke="#9aa0a6" stroke-width="1.2"/>
+<line x1="576.5" y1="585.5" x2="583.5" y2="592.5" stroke="#9aa0a6" stroke-width="1.4"/>
+<line x1="583.5" y1="585.5" x2="576.5" y2="592.5" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="579" y="626" font-size="12" fill="#9aa0a6" text-anchor="end">lost in flight</text>
+<rect x="594" y="566" width="132" height="68" rx="8" fill="none" stroke="#9aa0a6" stroke-width="1.3" stroke-dasharray="5 4"/>
+<text x="660" y="586" font-size="12.5" fill="#e8eaed" text-anchor="middle">parked ≤ 30 min</text>
+<text x="660" y="604" font-size="12" fill="#9aa0a6" text-anchor="middle">actors, states,</text>
+<text x="660" y="620" font-size="12" fill="#9aa0a6" text-anchor="middle">your objects, journal</text>
+<text x="740" y="562" font-size="12" fill="#4fb3ff">socket 2</text>
+<line x1="756" y1="592" x2="756" y2="608" stroke="#4fb3ff" stroke-width="2.5"/>
+<text x="750" y="586" font-size="12" fill="#e8eaed">Login + session id</text>
+<line x1="800" y1="592" x2="800" y2="608" stroke="#f2c14e" stroke-width="2.5"/>
+<text x="800" y="626" font-size="12" fill="#e8eaed" text-anchor="middle">reclaim</text>
+<path d="M842 612 L842 616 L940 616 L940 612" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="891" y="632" font-size="12" fill="#e8eaed" text-anchor="middle">Shopping again</text>
+<rect x="905" y="591" width="26" height="18" rx="3" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/><text x="918" y="604.2" font-size="12" fill="#e8eaed" text-anchor="middle">O3</text>
+<text x="940" y="586" font-size="12" fill="#e8833a" text-anchor="end">replayed once</text>
+<text x="432" y="668" font-size="13" fill="#e8eaed">the server’s code sees O1, O2, O3 - once each, in order</text>
+</g>
+</svg>

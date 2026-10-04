@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540" role="img" aria-labelledby="title desc">
+<title id="title">One WebSocket between a TypeScript dashboard and a Java server carries three conversation shapes</title>
+<desc id="desc">Notify, a function group: Note and Alert pushed by the server and Flag sent by the browser, served by one shared object on each host - nothing to acquire, track or release. getCpu, an RPC: the browser's caller instance moves Call, Return, End and holds the callback context; the server answers through a pooled context that is not registered; status is the same shape mirrored. Feed, up to 16 stateful subscriptions with Idle 120: each instance pair has its own address; Subscribe opens one, the server pushes Samples, renewals from the browser keep it alive; on the server an hourglass runs out when the browser stops renewing, and the server's own Samples do not count. One WebSocket dispatches by pack id and actor address; a server key seals every record (Noise NK, ChaCha20-Poly1305) and the browser pins it. No type strings, no correlation ids, no switch, no sweeper.</desc>
+<rect width="960" height="540" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="600">One WebSocket, three conversation shapes</text>
+<rect x="606" y="18" width="330" height="26" rx="13" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="771" y="35.5" font-size="12" fill="#e8eaed" text-anchor="middle">no type strings · no correlation ids · no switch · no sweeper</text>
+<rect x="24" y="60" width="220" height="426" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<path d="M24 82 L24 68 Q24 60 32 60 L236 60 Q244 60 244 68 L244 82 Z" fill="#333536"/>
+<line x1="24" y1="82" x2="244" y2="82" stroke="#4a4a4a" stroke-width="1.2"/>
+<circle cx="38" cy="71" r="3.2" fill="#9aa0a6"/>
+<circle cx="49" cy="71" r="3.2" fill="#9aa0a6"/>
+<circle cx="60" cy="71" r="3.2" fill="#9aa0a6"/>
+<rect x="84" y="65" width="150" height="12" rx="6" fill="#2b2b2b"/>
+<text x="36" y="101" font-size="14" fill="#e8eaed" font-weight="700">Dashboard</text>
+<text x="36" y="117" font-size="12" fill="#9aa0a6">TypeScript · browser · dials</text>
+<rect x="716" y="60" width="220" height="426" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="896" y="70" width="26" height="7" rx="2" fill="#333536" stroke="#9aa0a6" stroke-width="1"/>
+<circle cx="901" cy="73.5" r="1.4" fill="#4fb3ff"/>
+<rect x="896" y="79" width="26" height="7" rx="2" fill="#333536" stroke="#9aa0a6" stroke-width="1"/>
+<circle cx="901" cy="82.5" r="1.4" fill="#4fb3ff"/>
+<rect x="896" y="88" width="26" height="7" rx="2" fill="#333536" stroke="#9aa0a6" stroke-width="1"/>
+<circle cx="901" cy="91.5" r="1.4" fill="#4fb3ff"/>
+<text x="728" y="101" font-size="14" fill="#e8eaed" font-weight="700">Server</text>
+<text x="728" y="117" font-size="12" fill="#9aa0a6">Java · listens · X25519 key</text>
+<line x1="256" y1="177" x2="704" y2="177" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="256" y1="307" x2="704" y2="307" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="256" y="100" font-size="13" fill="#f2c14e" font-weight="600" xml:space="preserve"><tspan >Notify</tspan><tspan > · function group</tspan></text>
+<text x="704" y="100" font-size="12" fill="#9aa0a6" text-anchor="end">nothing to acquire, track or release</text>
+<rect x="36" y="128" width="196" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="134" y="147.5" font-size="13" fill="#e8eaed" text-anchor="middle">one shared object</text>
+<rect x="728" y="128" width="196" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="826" y="147.5" font-size="13" fill="#e8eaed" text-anchor="middle">one shared object</text>
+<path d="M728 136 L240 136" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M232 136 L241 131.4 L241 140.6 Z" fill="#4fb3ff"/>
+<text x="480" y="129" font-size="12" fill="#4fb3ff" text-anchor="middle">Note, Alert</text>
+<path d="M232 150 L720 150" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M728 150 L719 154.6 L719 145.4 Z" fill="#e8833a"/>
+<text x="480" y="168" font-size="12" fill="#e8833a" text-anchor="middle">Flag</text>
+<text x="256" y="203" font-size="13" fill="#f2c14e" font-weight="600" xml:space="preserve"><tspan >getCpu</tspan><tspan > · RPC</tspan></text>
+<rect x="36" y="218" width="196" height="44" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="134" y="236" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">caller instance</text>
+<text x="134" y="253" font-size="12" fill="#f2c14e" text-anchor="middle">Call → Return → End</text>
+<rect x="728" y="218" width="196" height="44" rx="6" fill="none" stroke="#f2c14e" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="826" y="236" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">pooled context</text>
+<text x="826" y="253" font-size="12" fill="#f2c14e" text-anchor="middle">not registered</text>
+<path d="M232 231 L720 231" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M728 231 L719 235.6 L719 226.4 Z" fill="#e8833a"/>
+<text x="480" y="224" font-size="12" fill="#e8833a" text-anchor="middle">ForPeriod</text>
+<path d="M728 249 L240 249" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M232 249 L241 244.4 L241 253.6 Z" fill="#4fb3ff"/>
+<text x="480" y="267" font-size="12" fill="#4fb3ff" text-anchor="middle">CpuList</text>
+<text x="480" y="291" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">status</tspan><tspan >: the same shape mirrored - the server asks, the browser answers</tspan></text>
+<text x="256" y="333" font-size="13" fill="#f2c14e" font-weight="600" xml:space="preserve"><tspan >Feed ×16</tspan><tspan > · stateful · </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Idle(120)]</tspan></text>
+<line x1="234" y1="358" x2="726" y2="358" stroke="#9aa0a6" stroke-width="1.1"/>
+<rect x="214" y="348" width="20" height="20" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text data-ok="1" x="224" y="362.5" font-size="12" fill="#e8eaed" text-anchor="middle">#1</text>
+<rect x="726" y="348" width="20" height="20" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text data-ok="1" x="736" y="362.5" font-size="12" fill="#e8eaed" text-anchor="middle">#1</text>
+<line x1="234" y1="390" x2="726" y2="390" stroke="#9aa0a6" stroke-width="1.1"/>
+<rect x="214" y="380" width="20" height="20" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text data-ok="1" x="224" y="394.5" font-size="12" fill="#e8eaed" text-anchor="middle">#2</text>
+<rect x="726" y="380" width="20" height="20" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text data-ok="1" x="736" y="394.5" font-size="12" fill="#e8eaed" text-anchor="middle">#2</text>
+<text x="480" y="384" font-size="12" fill="#9aa0a6" text-anchor="middle">own address</text>
+<line x1="234" y1="422" x2="726" y2="422" stroke="#9aa0a6" stroke-width="1.1"/>
+<rect x="214" y="412" width="20" height="20" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text data-ok="1" x="224" y="426.5" font-size="12" fill="#e8eaed" text-anchor="middle">#3</text>
+<rect x="726" y="412" width="20" height="20" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text data-ok="1" x="736" y="426.5" font-size="12" fill="#e8eaed" text-anchor="middle">#3</text>
+<text x="480" y="416" font-size="12" fill="#9aa0a6" text-anchor="middle">own address</text>
+<path d="M262 358 L326 358" fill="none" stroke="#e8833a" stroke-width="2.4" stroke-linejoin="round"/><path d="M334 358 L325 362.6 L325 353.4 Z" fill="#e8833a"/>
+<text x="298" y="351" font-size="12" fill="#e8833a" text-anchor="middle">Subscribe</text>
+<path d="M400 358 L368 358" fill="none" stroke="#4fb3ff" stroke-width="2.4" stroke-linejoin="round"/><path d="M360 358 L369 353.4 L369 362.6 Z" fill="#4fb3ff"/>
+<text x="380" y="351" font-size="12" fill="#4fb3ff" text-anchor="middle">Sample</text>
+<path d="M452 358 L420 358" fill="none" stroke="#4fb3ff" stroke-width="2.4" stroke-linejoin="round"/><path d="M412 358 L421 353.4 L421 362.6 Z" fill="#4fb3ff"/>
+<text x="432" y="351" font-size="12" fill="#4fb3ff" text-anchor="middle">Sample</text>
+<path d="M504 358 L472 358" fill="none" stroke="#4fb3ff" stroke-width="2.4" stroke-linejoin="round"/><path d="M464 358 L473 353.4 L473 362.6 Z" fill="#4fb3ff"/>
+<text x="484" y="351" font-size="12" fill="#4fb3ff" text-anchor="middle">Sample</text>
+<path d="M566 358 L642 358" fill="none" stroke="#e8833a" stroke-width="2.4" stroke-linejoin="round"/><path d="M650 358 L641 362.6 L641 353.4 Z" fill="#e8833a"/>
+<text x="608" y="351" font-size="12" fill="#e8833a" text-anchor="middle">Subscribe (renewal)</text>
+<text x="36" y="374" font-size="12" fill="#9aa0a6">one instance pair</text>
+<text x="36" y="390" font-size="12" fill="#9aa0a6">per subscription,</text>
+<text x="36" y="406" font-size="12" fill="#9aa0a6">up to 16 per tab</text>
+<g data-nocheck="1"><path d="M761.2 388.8 L762.8 388.8 L762 389.5 Z" fill="#f2c14e" opacity="0.85"/><path d="M756 399.6 L768 399.6 L762 392 Z" fill="#f2c14e" opacity="0.85"/><path d="M753.8 380.4 L770.2 380.4 L763 390 L770.2 399.6 L753.8 399.6 L761 390 Z" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/><line x1="751.8" y1="378.8" x2="772.2" y2="378.8" stroke="#f2c14e" stroke-width="2" stroke-linecap="round"/><line x1="751.8" y1="401.2" x2="772.2" y2="401.2" stroke="#f2c14e" stroke-width="2" stroke-linecap="round"/></g>
+<rect x="778" y="348" width="150" height="80" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="786" y="368" font-size="12" fill="#e8eaed">no renewal from the</text>
+<text x="786" y="384" font-size="12" fill="#e8eaed">browser → instance ends;</text>
+<text x="786" y="400" font-size="12" fill="#e8eaed">the server's own</text>
+<text x="786" y="416" font-size="12" fill="#e8eaed">Samples do not count</text>
+<rect x="244" y="452" width="472" height="28" rx="5" fill="#4fb3ff" fill-opacity="0.2" stroke="#4fb3ff" stroke-width="1.6"/>
+<rect x="236" y="455" width="16" height="22" rx="3" fill="#1e1e1e" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="708" y="455" width="16" height="22" rx="3" fill="#1e1e1e" stroke="#4fb3ff" stroke-width="1.4"/>
+<g data-nocheck="1"><path d="M267.8 464.9 L267.8 462.8 A4.2 4.2 0 0 1 276.2 462.8 L276.2 464.9" fill="none" stroke="#a06fd0" stroke-width="2"/><rect x="265" y="464.9" width="14" height="10.1" rx="1.5" fill="#a06fd0"/><circle cx="272" cy="469.5" r="1.3" fill="#2b2b2b"/></g>
+<text x="488" y="470.5" font-size="12" fill="#e8eaed" text-anchor="middle">one WebSocket · dispatch by pack id + actor address</text>
+<text x="480" y="500" font-size="12" fill="#a06fd0" text-anchor="middle">server key → every record sealed (Noise NK, ChaCha20-Poly1305); the browser pins the key</text>
+<rect x="24" y="512" width="12" height="12" rx="2" fill="#e8833a" stroke="#e8833a" stroke-width="1.2"/><text x="42" y="522" font-size="12" fill="#9aa0a6">sent by the browser</text>
+<rect x="176" y="512" width="12" height="12" rx="2" fill="#4fb3ff" stroke="#4fb3ff" stroke-width="1.2"/><text x="194" y="522" font-size="12" fill="#9aa0a6">sent by the server</text>
+<rect x="318" y="512" width="12" height="12" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/><text x="336" y="522" font-size="12" fill="#9aa0a6">generated: send methods, dispatch, pools, lease timers</text>
+</g>
+</svg>

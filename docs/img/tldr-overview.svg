@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430" role="img" aria-labelledby="title desc">
+<title id="title">One model for the whole conversation</title><desc id="desc">A C# protocol description defines data, participants, behaviour and transfer rules. AdHocAgent and the cloud generator produce code for C#, Java and TypeScript hosts. Your application supplies business logic.</desc>
+<rect width="960" height="430" rx="12" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="32" y="40" font-size="23" fill="#e8eaed" text-anchor="start" font-weight="600">One model for the whole conversation</text>
+<rect x="32" y="66" width="896" height="182" rx="9" fill="#39372e" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="54" y="96" font-size="16" fill="#f2c14e" text-anchor="start" font-weight="600">YOUR C# PROTOCOL DESCRIPTION</text>
+<rect x="54" y="114" width="192" height="110" rx="9" fill="#34383f" stroke="#6a717d" stroke-width="1.5"/>
+<text x="68" y="142" font-size="19" fill="#4fb3ff" text-anchor="start" font-weight="600">Data</text>
+<text x="68" y="173" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="400">Packs, fields</text>
+<text x="68" y="198" font-size="16" fill="#b6bdc8" text-anchor="start" font-weight="400">Types and limits</text>
+<rect x="274" y="114" width="192" height="110" rx="9" fill="#34383f" stroke="#6a717d" stroke-width="1.5"/>
+<text x="288" y="142" font-size="19" fill="#4fb3ff" text-anchor="start" font-weight="600">Participants</text>
+<text x="288" y="173" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="400">Hosts and languages</text>
+<text x="288" y="198" font-size="16" fill="#b6bdc8" text-anchor="start" font-weight="400">Connections</text>
+<rect x="494" y="114" width="192" height="110" rx="9" fill="#34383f" stroke="#6a717d" stroke-width="1.5"/>
+<text x="508" y="142" font-size="19" fill="#4fb3ff" text-anchor="start" font-weight="600">Behaviour</text>
+<text x="508" y="173" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="400">Actors, RPC</text>
+<text x="508" y="198" font-size="16" fill="#b6bdc8" text-anchor="start" font-weight="400">States and branches</text>
+<rect x="714" y="114" width="192" height="110" rx="9" fill="#34383f" stroke="#6a717d" stroke-width="1.5"/>
+<text x="728" y="142" font-size="19" fill="#4fb3ff" text-anchor="start" font-weight="600">Transfer rules</text>
+<text x="728" y="173" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="400">Sessions, streams</text>
+<text x="728" y="198" font-size="16" fill="#b6bdc8" text-anchor="start" font-weight="400">Tunnels, shared ports</text>
+<line x1="480" y1="248" x2="480" y2="295" stroke="#f2c14e" stroke-width="2"/>
+<path d="M480 295 L475 287 L485 287 Z" fill="#f2c14e"/>
+<text x="500" y="278" font-size="16" fill="#f2c14e" text-anchor="start" font-weight="400">AdHocAgent + cloud generator</text>
+<rect x="32" y="299" width="268" height="84" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="166" y="329" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Device / Java</text>
+<text x="166" y="356" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Generated protocol code</text>
+<rect x="346" y="299" width="268" height="84" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="480" y="329" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Backend / C#</text>
+<text x="480" y="356" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Generated protocol code</text>
+<rect x="660" y="299" width="268" height="84" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="794" y="329" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Browser / TypeScript</text>
+<text x="794" y="356" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Generated protocol code</text>
+<line x1="301" y1="341" x2="345" y2="341" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M345 341 L337 336 L337 346 Z" fill="#4fb3ff"/>
+<line x1="659" y1="341" x2="615" y2="341" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M615 341 L623 336 L623 346 Z" fill="#4fb3ff"/>
+<text x="480" y="412" font-size="17" fill="#b6bdc8" text-anchor="middle" font-weight="400">Your application adds authentication, business logic and routing.</text>
+</g></svg>

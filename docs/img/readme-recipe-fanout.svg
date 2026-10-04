@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500" role="img" aria-labelledby="title desc">
+<title id="title">Fan-out subscriptions: the subscription instances themselves are the group lists</title>
+<desc id="desc">The backend keeps Connection.Groups, a list of three groups - model X region Y, model X region Z, floor 3. Each group is a chain of Subscription instances linked through their own prev and next fields, with a lock at its head: the group is its own lock. A ConfigUpdate v42 enters the first group and walks its chain; from every member one pack goes into that vehicle's send queue, so a slow vehicle holds up nobody, and each vehicle has its own link. Three members leave by themselves: V4 slides out of the first group after its Unsubscribe ends the instance; V3 fades out of the second group when Idle 300 runs out because it stopped renewing; V6 drops out of the third group when its connection is lost. No subscriber map, no sweeper, join and leave in O(1) with no allocation, and Idle counts only what the vehicle sends.</desc>
+<rect width="960" height="500" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="600">The subscriptions are the group</text>
+<rect x="170" y="52" width="470" height="394" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="186" y="76" font-size="14" fill="#e8eaed" font-weight="700">Backend (Java)</text>
+<text x="298" y="76" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Grouped]</tspan><tspan > Subscription instances</tspan></text>
+<rect x="186" y="90" width="362" height="346" rx="8" fill="#2a2820" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="198" y="108" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">Connection.Groups</text>
+<line x1="196" y1="244" x2="538" y2="244" stroke="#5a5030" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="196" y1="340" x2="538" y2="340" stroke="#5a5030" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="200" y="134" font-size="13" fill="#e8eaed" font-weight="600">model X · region Y</text>
+<g data-nocheck="1"><path d="M207.3 194.8 L207.3 192.4 A4.7 4.7 0 0 1 216.7 192.4 L216.7 194.8" fill="none" stroke="#f2c14e" stroke-width="2.2"/><rect x="204.2" y="194.8" width="15.6" height="11.2" rx="1.7" fill="#f2c14e"/><circle cx="212" cy="199.8" r="1.4" fill="#2b2b2b"/></g>
+<line x1="221" y1="196" x2="235" y2="196" stroke="#f2c14e" stroke-width="1.3"/>
+<rect x="236" y="182" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="250" y="200.5" font-size="12" fill="#e8eaed" text-anchor="middle">V1</text>
+<rect x="282" y="182" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="296" y="200.5" font-size="12" fill="#e8eaed" text-anchor="middle">V2</text>
+<rect x="328" y="182" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="342" y="200.5" font-size="12" fill="#e8eaed" text-anchor="middle">V3</text>
+<rect x="374" y="182" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="388" y="200.5" font-size="12" fill="#e8eaed" text-anchor="middle">V5</text>
+<path d="M265 196 L276 196" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M281 196 L275 199.2 L275 192.8 Z" fill="#f2c14e"/><path d="M265 196 L271 192.8 L271 199.2 Z" fill="#f2c14e"/>
+<path d="M311 196 L322 196" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M327 196 L321 199.2 L321 192.8 Z" fill="#f2c14e"/><path d="M311 196 L317 192.8 L317 199.2 Z" fill="#f2c14e"/>
+<path d="M357 196 L368 196" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M373 196 L367 199.2 L367 192.8 Z" fill="#f2c14e"/><path d="M357 196 L363 192.8 L363 199.2 Z" fill="#f2c14e"/>
+<text x="200" y="230" font-size="12" fill="#9aa0a6">the group is its own lock</text>
+<rect x="420" y="182" width="28" height="28" rx="4" fill="none" stroke="#9aa0a6" stroke-width="1" stroke-dasharray="3 3"/>
+<rect x="430" y="208" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="444" y="226.5" font-size="12" fill="#e8eaed" text-anchor="middle">V4</text>
+<path d="M540 222 L468 222" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M460 222 L469 217.4 L469 226.6 Z" fill="#e8833a"/>
+<text x="506" y="216" font-size="12" fill="#e8833a" text-anchor="middle">Unsubscribe</text>
+<text x="464" y="240" font-size="12" fill="#e5534b">→ End → out</text>
+<text x="200" y="262" font-size="13" fill="#e8eaed" font-weight="600">model X · region Z</text>
+<text x="536" y="262" font-size="12" fill="#9aa0a6" text-anchor="end">prev / next live inside the instances</text>
+<g data-nocheck="1"><path d="M207.3 290.8 L207.3 288.4 A4.7 4.7 0 0 1 216.7 288.4 L216.7 290.8" fill="none" stroke="#f2c14e" stroke-width="2.2"/><rect x="204.2" y="290.8" width="15.6" height="11.2" rx="1.7" fill="#f2c14e"/><circle cx="212" cy="295.8" r="1.4" fill="#2b2b2b"/></g>
+<line x1="221" y1="292" x2="235" y2="292" stroke="#f2c14e" stroke-width="1.3"/>
+<rect x="236" y="278" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="250" y="296.5" font-size="12" fill="#e8eaed" text-anchor="middle">V2</text>
+<g opacity="0.4"><rect x="282" y="278" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="296" y="296.5" font-size="12" fill="#e8eaed" text-anchor="middle">V3</text></g>
+<rect x="328" y="278" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="342" y="296.5" font-size="12" fill="#e8eaed" text-anchor="middle">V5</text>
+<rect x="374" y="278" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="388" y="296.5" font-size="12" fill="#e8eaed" text-anchor="middle">V1</text>
+<path d="M265 292 L276 292" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M281 292 L275 295.2 L275 288.8 Z" fill="#f2c14e"/><path d="M265 292 L271 288.8 L271 295.2 Z" fill="#f2c14e"/>
+<path d="M311 292 L322 292" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M327 292 L321 295.2 L321 288.8 Z" fill="#f2c14e"/><path d="M311 292 L317 288.8 L317 295.2 Z" fill="#f2c14e"/>
+<path d="M357 292 L368 292" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M373 292 L367 295.2 L367 288.8 Z" fill="#f2c14e"/><path d="M357 292 L363 288.8 L363 295.2 Z" fill="#f2c14e"/>
+<g data-nocheck="1"><path d="M292.1 331.2 L299.9 331.2 L296 324.7 Z" fill="#f2c14e" opacity="0.85"/><path d="M289.9 316.8 L302.1 316.8 L297 324 L302.1 331.2 L289.9 331.2 L295 324 Z" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-linejoin="round"/><line x1="287.9" y1="315.8" x2="304.1" y2="315.8" stroke="#f2c14e" stroke-width="2" stroke-linecap="round"/><line x1="287.9" y1="332.2" x2="304.1" y2="332.2" stroke="#f2c14e" stroke-width="2" stroke-linecap="round"/></g>
+<text x="308" y="329" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Idle(300)]</tspan><tspan fill="#e5534b">: no renewal → Release → out</tspan></text>
+<text x="200" y="358" font-size="13" fill="#e8eaed" font-weight="600">floor 3</text>
+<g data-nocheck="1"><path d="M207.3 384.8 L207.3 382.4 A4.7 4.7 0 0 1 216.7 382.4 L216.7 384.8" fill="none" stroke="#f2c14e" stroke-width="2.2"/><rect x="204.2" y="384.8" width="15.6" height="11.2" rx="1.7" fill="#f2c14e"/><circle cx="212" cy="389.8" r="1.4" fill="#2b2b2b"/></g>
+<line x1="221" y1="386" x2="235" y2="386" stroke="#f2c14e" stroke-width="1.3"/>
+<rect x="236" y="372" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="250" y="390.5" font-size="12" fill="#e8eaed" text-anchor="middle">V1</text>
+<rect x="282" y="372" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="296" y="390.5" font-size="12" fill="#e8eaed" text-anchor="middle">V4</text>
+<rect x="328" y="372" width="28" height="28" rx="4" fill="#3d2423" stroke="#e5534b" stroke-width="1.5" stroke-dasharray="4 3"/><text data-ok="1" x="342" y="390.5" font-size="12" fill="#e8eaed" text-anchor="middle">V6</text>
+<rect x="374" y="372" width="28" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/><text data-ok="1" x="388" y="390.5" font-size="12" fill="#e8eaed" text-anchor="middle">V2</text>
+<path d="M265 386 L276 386" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M281 386 L275 389.2 L275 382.8 Z" fill="#f2c14e"/><path d="M265 386 L271 382.8 L271 389.2 Z" fill="#f2c14e"/>
+<path d="M311 386 L322 386" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M327 386 L321 389.2 L321 382.8 Z" fill="#f2c14e"/><path d="M311 386 L317 382.8 L317 389.2 Z" fill="#f2c14e"/>
+<path d="M357 386 L368 386" fill="none" stroke="#f2c14e" stroke-width="1.3" stroke-linejoin="round"/><path d="M373 386 L367 389.2 L367 382.8 Z" fill="#f2c14e"/><path d="M357 386 L363 382.8 L363 389.2 Z" fill="#f2c14e"/>
+<text x="326" y="422" font-size="12" fill="#e5534b">connection lost → out</text>
+<rect x="24" y="171" width="120" height="50" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="84" y="192" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">ConfigUpdate</text>
+<text x="84" y="209" font-size="12" fill="#9aa0a6" text-anchor="middle">v42</text>
+<path d="M144 196 L192 196" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M200 196 L191 200.6 L191 191.4 Z" fill="#4fb3ff"/>
+<rect x="724" y="79" width="76" height="34" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="762" y="101" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">V1</text>
+<g data-nocheck="1"><rect x="604" y="90" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="613" y="90" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="622" y="90" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/></g>
+<path d="M629 96 L718 96" fill="none" stroke="#4fb3ff" stroke-width="1.3" stroke-linejoin="round"/><path d="M724 96 L717 99.6 L717 92.4 Z" fill="#4fb3ff"/>
+<rect x="724" y="143" width="76" height="34" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="762" y="165" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">V2</text>
+<g data-nocheck="1"><rect x="604" y="154" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="613" y="154" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="622" y="154" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/></g>
+<path d="M629 160 L718 160" fill="none" stroke="#4fb3ff" stroke-width="1.3" stroke-linejoin="round"/><path d="M724 160 L717 163.6 L717 156.4 Z" fill="#4fb3ff"/>
+<rect x="724" y="207" width="76" height="34" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="762" y="229" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">V3</text>
+<g data-nocheck="1"><rect x="604" y="218" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="613" y="218" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="622" y="218" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/></g>
+<path d="M629 224 L718 224" fill="none" stroke="#4fb3ff" stroke-width="1.3" stroke-linejoin="round"/><path d="M724 224 L717 227.6 L717 220.4 Z" fill="#4fb3ff"/>
+<rect x="724" y="271" width="76" height="34" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="762" y="293" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">V4</text>
+<g data-nocheck="1"><rect x="604" y="282" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="613" y="282" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="622" y="282" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/></g>
+<line x1="629" y1="288" x2="724" y2="288" stroke="#4fb3ff" stroke-width="1.3"/>
+<rect x="724" y="335" width="76" height="34" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="762" y="357" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">V5</text>
+<g data-nocheck="1"><rect x="604" y="346" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="613" y="346" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="622" y="346" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/></g>
+<path d="M629 352 L718 352" fill="none" stroke="#4fb3ff" stroke-width="1.3" stroke-linejoin="round"/><path d="M724 352 L717 355.6 L717 348.4 Z" fill="#4fb3ff"/>
+<rect x="724" y="399" width="76" height="34" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="762" y="421" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">V6</text>
+<g data-nocheck="1"><rect x="604" y="410" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="613" y="410" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/><rect x="622" y="410" width="7" height="12" rx="1.5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/></g>
+<line x1="629" y1="416" x2="662" y2="416" stroke="#4fb3ff" stroke-width="1.3"/>
+<line x1="690" y1="416" x2="724" y2="416" stroke="#4fb3ff" stroke-width="1.3"/>
+<path data-nocheck="1" d="M678.4 401 L668.4 417.8 L675.2 417.8 L672 431 L684 413 L677 413 L682 401 Z" fill="#e5534b"/>
+<path d="M250 182 L250 151 Q250 146 255 146 L581 146 Q586 146 586 141 L586 101 Q586 96 591 96 L596 96" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M602 96 L595 99.6 L595 92.4 Z" fill="#4fb3ff"/>
+<path d="M296 182 L296 159 Q296 154 301 154 L573 154 Q576 154 576 157 L576 157 Q576 160 579 160 L596 160" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M602 160 L595 163.6 L595 156.4 Z" fill="#4fb3ff"/>
+<path d="M342 182 L342 167 Q342 162 347 162 L561 162 Q566 162 566 167 L566 219 Q566 224 571 224 L596 224" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M602 224 L595 227.6 L595 220.4 Z" fill="#4fb3ff"/>
+<path d="M388 182 L388 175 Q388 170 393 170 L551 170 Q556 170 556 175 L556 347 Q556 352 561 352 L596 352" fill="none" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/><path d="M602 352 L595 355.6 L595 348.4 Z" fill="#4fb3ff"/>
+<text x="652" y="66" font-size="12" fill="#4fb3ff">a send only queues - a slow vehicle holds up nobody</text>
+<text x="480" y="478" font-size="12" fill="#9aa0a6" text-anchor="middle">no subscriber map · no sweeper · join / leave O(1), no allocation · [Idle] counts only what the vehicle sends</text>
+</g>
+</svg>

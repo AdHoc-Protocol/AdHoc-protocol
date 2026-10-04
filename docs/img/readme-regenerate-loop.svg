@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="960" height="480" role="img" aria-labelledby="title desc">
+<title id="title">Regenerate as often as you like</title>
+<desc id="desc">The regeneration loop, clockwise in five stations: 1, edit MyProtocol.cs, your description; 2, AdHocAgent .\MyProtocol.cs~ tells locally which hosts the edit reaches; 3, AdHocAgent .\MyProtocol.cs checks, uploads, and the generator generates and tests; 4, deployment: routes from MyProtocol.md, processing steps such as formatters, smart merge into your files, backup and restore scripts; 5, build and run your project, then back to editing. In the middle, an injection point of a generated file - #region&gt; Actor, your code, #endregion&gt; followed by the entity’s number - keyed by the number, so it survives regeneration and renames; an edited generated block is kept, with a todo note if the generator changed it. A red callout: a region with your code is gone, the deployment stops and asks Proceed with the merge? (y/N). A purple callout: the backup folder MyProtocol_5 with restore.bat, restore.ps1, restore.sh and .description, the description the code came from.</desc>
+<rect width="960" height="480" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">Regenerate as often as you like - your code stays</text>
+<rect x="40" y="64" width="250" height="66" rx="8" fill="#45301f" stroke="#e8833a" stroke-width="1.6"/>
+<text x="165" y="92" font-size="14" fill="#e8eaed" text-anchor="middle">edit MyProtocol.cs</text>
+<text x="165" y="112" font-size="12" fill="#9aa0a6" text-anchor="middle">your description</text>
+<circle cx="42" cy="66" r="11" fill="#2b2b2b" stroke="#e8eaed" stroke-width="1.5"/>
+<text data-ok="1" x="42" y="70.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">1</text>
+<rect x="355" y="64" width="250" height="66" rx="8" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.6"/>
+<text x="480" y="92" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent .\MyProtocol.cs~</text>
+<text x="480" y="112" font-size="12" fill="#9aa0a6" text-anchor="middle">which hosts the edit reaches · local</text>
+<circle cx="357" cy="66" r="11" fill="#2b2b2b" stroke="#e8eaed" stroke-width="1.5"/>
+<text data-ok="1" x="357" y="70.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">2</text>
+<rect x="670" y="64" width="250" height="66" rx="8" fill="#3a321d" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="795" y="92" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent .\MyProtocol.cs</text>
+<text x="795" y="112" font-size="12" fill="#9aa0a6" text-anchor="middle">check · upload · generate · test</text>
+<circle cx="672" cy="66" r="11" fill="#2b2b2b" stroke="#e8eaed" stroke-width="1.5"/>
+<text data-ok="1" x="672" y="70.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">3</text>
+<rect x="40" y="290" width="250" height="66" rx="8" fill="#303236" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="165" y="318" font-size="14" fill="#e8eaed" text-anchor="middle">build and run your project</text>
+<text x="165" y="338" font-size="12" fill="#9aa0a6" text-anchor="middle">gen + lib + your code</text>
+<circle cx="42" cy="292" r="11" fill="#2b2b2b" stroke="#e8eaed" stroke-width="1.5"/>
+<text data-ok="1" x="42" y="296.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">5</text>
+<rect x="600" y="204" width="320" height="166" rx="8" fill="#26384d" stroke="#4fb3ff" stroke-width="1.6"/>
+<circle cx="602" cy="206" r="11" fill="#2b2b2b" stroke="#e8eaed" stroke-width="1.5"/>
+<text data-ok="1" x="602" y="210.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">4</text>
+<text x="622" y="232" font-size="15" fill="#4fb3ff" font-weight="600">deployment</text>
+<circle cx="626" cy="251.5" r="3" fill="#9aa0a6"/>
+<text x="638" y="256" font-size="13" fill="#e8eaed">routes from MyProtocol.md</text>
+<circle cx="626" cy="273.5" r="3" fill="#9aa0a6"/>
+<text x="638" y="278" font-size="13" fill="#e8eaed">processing steps: formatters</text>
+<circle cx="626" cy="295.5" r="3" fill="#4fb3ff"/>
+<text x="638" y="300" font-size="13" fill="#e8eaed">smart merge into your files</text>
+<circle cx="626" cy="343.5" r="3" fill="#a06fd0"/>
+<text x="638" y="348" font-size="13" fill="#e8eaed">backup + restore scripts</text>
+<path d="M291 97 L345 97" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M354 97 L344 102 L344 92 Z" fill="#9aa0a6"/>
+<path d="M606 97 L660 97" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M669 97 L659 102 L659 92 Z" fill="#9aa0a6"/>
+<path d="M795 131 L795 194" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M795 203 L790 193 L800 193 Z" fill="#9aa0a6"/>
+<path d="M599 323 L300 323" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M291 323 L301 318 L301 328 Z" fill="#9aa0a6"/>
+<path d="M165 289 L165 140" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M165 131 L170 141 L160 141 Z" fill="#9aa0a6"/>
+<rect x="310" y="142" width="270" height="164" rx="6" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="324" y="162" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">#region&gt; Actor</text>
+<text x="324" y="178" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" xml:space="preserve">    your code</text>
+<text x="324" y="194" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">    …</text>
+<text x="324" y="210" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#9aa0a6">#endregion&gt; </tspan><tspan fill="#f2c14e">Āÿÿ</tspan><tspan fill="#9aa0a6">.Actor</tspan></text>
+<line x1="322" y1="222" x2="568" y2="222" stroke="#4a4a4a" stroke-width="1"/>
+<text x="324" y="240" font-size="12" fill="#9aa0a6">keyed by the entity’s number:</text>
+<text x="324" y="256" font-size="12" fill="#9aa0a6">survives regeneration and renames</text>
+<text x="324" y="278" font-size="12" fill="#e8eaed">an edited generated block is kept;</text>
+<text x="324" y="294" font-size="12" fill="#9aa0a6">a todo note if the generator changed it</text>
+<line x1="581" y1="295.5" x2="621" y2="295.5" stroke="#4fb3ff" stroke-width="1.4" stroke-dasharray="4 3"/>
+<rect x="600" y="392" width="320" height="64" rx="6" fill="#3a1f1d" stroke="#e0453a" stroke-width="1.4"/>
+<text x="614" y="412" font-size="12" fill="#e8eaed">a region with your code is gone from the new file:</text>
+<text x="614" y="429" font-size="12" fill="#9aa0a6">the deployment stops before writing and asks</text>
+<text x="614" y="446" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e0453a" xml:space="preserve">Proceed with the merge? (y/N)</text>
+<line x1="760" y1="371" x2="760" y2="391" stroke="#e0453a" stroke-width="1.4"/>
+<rect x="310" y="392" width="270" height="64" rx="6" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="324" y="412" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13">MyProtocol_5/</tspan><tspan fill="#9aa0a6">   backup folder</tspan></text>
+<text x="324" y="429" font-size="12" fill="#9aa0a6">restore.bat · restore.ps1 · restore.sh</text>
+<text x="324" y="446" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">.description/</tspan><tspan fill="#9aa0a6">  the source description</tspan></text>
+<path d="M621 343.5 H445 V391" fill="none" stroke="#a06fd0" stroke-width="1.4" stroke-dasharray="4 3" stroke-linejoin="round"/>
+<rect x="44" y="394" width="12" height="12" rx="2" fill="#45301f" stroke="#e8833a" stroke-width="1.4"/>
+<text x="64" y="404" font-size="12" fill="#9aa0a6">yours</text>
+<rect x="168" y="394" width="12" height="12" rx="2" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.4"/>
+<text x="188" y="404" font-size="12" fill="#9aa0a6">local check</text>
+<rect x="44" y="416" width="12" height="12" rx="2" fill="#3a321d" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="64" y="426" font-size="12" fill="#9aa0a6">generator</text>
+<rect x="168" y="416" width="12" height="12" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="188" y="426" font-size="12" fill="#9aa0a6">deployment</text>
+<rect x="44" y="438" width="12" height="12" rx="2" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="64" y="448" font-size="12" fill="#9aa0a6">backup</text>
+<rect x="168" y="438" width="12" height="12" rx="2" fill="#3a1f1d" stroke="#e0453a" stroke-width="1.4"/>
+<text x="188" y="448" font-size="12" fill="#9aa0a6">stop prompt</text>
+</g>
+</svg>

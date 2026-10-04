@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540" role="img" aria-labelledby="title desc">
+<title id="title">Declare what you know - the generator picks the bits: the fields of a telemetry Sample, what each declaration says about its values, and what each costs on the wire</title>
+<desc id="desc">Eight fields of class Sample. A TimeSpanDef window of the last ~28 hours costs 3 bytes; a MinMax(-40, 125) temperature 1 byte, sent as value + 40; a MinMax(0, 100) percentage 7 bits; a four-value enum 2 bits; a bool 1 bit - the bit fields are packed together and rounded up to whole bytes; an X(1000) varint costs a length bit plus one byte within ±127; a V(30000, 0) varint a length bit plus one byte near 30 000 and two when far; an absent nullable ushort one null bit. A ribbon shows the exTernal values your code sees, the inTernal codes of the generated object and the ioT bits on the wire. The custom Unit attribute and the range become constants in C#, Java and TypeScript and never travel; MANUAL's worked Reading pack is 14 bytes after its pack id.</desc>
+<rect width="960" height="540" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8eaed" font-weight="600">Declare what you know - the generator picks the bits</text>
+<text x="24" y="58" font-size="13" fill="#9aa0a6">class Sample: each field costed by what its declaration says</text>
+<text x="24" y="88" font-size="13" fill="#9aa0a6" font-weight="600">your declaration</text>
+<text x="452" y="88" font-size="13" fill="#9aa0a6" font-weight="600">what it says about the values</text>
+<text x="640" y="88" font-size="13" fill="#9aa0a6" font-weight="600">on the wire</text>
+<rect x="24" y="97" width="412" height="310" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="42" y="123.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#9aa0a6">SecondsADay                            </tspan><tspan fill="#e8eaed">taken</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<text x="42" y="161.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8833a">[Unit(&quot;degC&quot;), MinMax(-40, 125)] </tspan><tspan fill="#9aa0a6">short </tspan><tspan fill="#e8eaed">coolant</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<text x="42" y="199.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8833a">[MinMax(0, 100)]                 </tspan><tspan fill="#9aa0a6">byte  </tspan><tspan fill="#e8eaed">fuel_pct</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<text x="42" y="237.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#9aa0a6">Gear                                   </tspan><tspan fill="#e8eaed">gear</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<text x="42" y="275.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#9aa0a6">bool                                   </tspan><tspan fill="#e8eaed">ignition</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<text x="42" y="313.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8833a">[X(1_000)]                       </tspan><tspan fill="#9aa0a6">int   </tspan><tspan fill="#e8eaed">accel</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<text x="42" y="351.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8833a">[V(30_000, 0)]                   </tspan><tspan fill="#9aa0a6">int   </tspan><tspan fill="#e8eaed">lease</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<text x="42" y="389.5" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#9aa0a6">ushort?                                </tspan><tspan fill="#e8eaed">dtc</tspan><tspan fill="#9aa0a6">;</tspan></text>
+<circle cx="33" cy="157" r="4" fill="#a06fd0"/>
+<circle cx="463" cy="119" r="10" fill="none" stroke="#9aa0a6" stroke-width="1.3"/>
+<path d="M463 109 A10 10 0 1 1 454.3 114" fill="none" stroke="#e8833a" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="463" y1="119" x2="463" y2="113" stroke="#9aa0a6" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="463" y1="119" x2="467.5" y2="121" stroke="#9aa0a6" stroke-width="1.5" stroke-linecap="round"/>
+<text x="482" y="123.5" font-size="12" fill="#e8eaed">the last ~28 h</text>
+<text x="488" y="161.5" font-size="12" fill="#e8eaed" text-anchor="end">-40</text>
+<rect x="494" y="154" width="78" height="6" rx="3" fill="rgba(232,131,58,0.35)" stroke="#e8833a" stroke-width="1"/>
+<line x1="494" y1="150" x2="494" y2="164" stroke="#e8833a" stroke-width="2" stroke-linecap="round"/>
+<line x1="572" y1="150" x2="572" y2="164" stroke="#e8833a" stroke-width="2" stroke-linecap="round"/>
+<text x="578" y="161.5" font-size="12" fill="#e8eaed">125 °C</text>
+<text x="488" y="199.5" font-size="12" fill="#e8eaed" text-anchor="end">0</text>
+<rect x="494" y="192" width="78" height="6" rx="3" fill="rgba(232,131,58,0.35)" stroke="#e8833a" stroke-width="1"/>
+<line x1="494" y1="188" x2="494" y2="202" stroke="#e8833a" stroke-width="2" stroke-linecap="round"/>
+<line x1="572" y1="188" x2="572" y2="202" stroke="#e8833a" stroke-width="2" stroke-linecap="round"/>
+<text x="578" y="199.5" font-size="12" fill="#e8eaed">100 %</text>
+<rect x="494" y="224" width="16" height="18" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="502" y="237.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">P</text>
+<rect x="514" y="224" width="16" height="18" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="522" y="237.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">R</text>
+<rect x="534" y="224" width="16" height="18" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="542" y="237.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">N</text>
+<rect x="554" y="224" width="16" height="18" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="562" y="237.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">D</text>
+<text x="578" y="237.5" font-size="12" fill="#9aa0a6">4 values</text>
+<line x1="516.5" y1="271" x2="520" y2="271" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<line x1="513.4" y1="278.4" x2="515.9" y2="280.9" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<line x1="506" y1="281.5" x2="506" y2="285" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<line x1="498.6" y1="278.4" x2="496.1" y2="280.9" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<line x1="495.5" y1="271" x2="492" y2="271" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<line x1="498.6" y1="263.6" x2="496.1" y2="261.1" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<line x1="506" y1="260.5" x2="506" y2="257" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<line x1="513.4" y1="263.6" x2="515.9" y2="261.1" stroke="#e8833a" stroke-width="1.4" stroke-linecap="round"/>
+<circle cx="506" cy="271" r="7.5" fill="rgba(232,131,58,0.45)" stroke="#e8833a" stroke-width="1.5"/>
+<text x="528" y="275.5" font-size="12" fill="#e8eaed">on / off</text>
+<text x="488" y="313.5" font-size="12" fill="#e8eaed" text-anchor="end">0</text>
+<circle cx="506.5" cy="308" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="498.2" cy="307.9" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="499" cy="309.6" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="515.9" cy="306.2" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="530.3" cy="304.8" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="511.9" cy="312.2" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="532.7" cy="311" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="501.4" cy="305.1" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="501" cy="309.4" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="522.6" cy="308.9" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="511.5" cy="304.1" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="509.6" cy="313.3" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="512.7" cy="308.7" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="507.2" cy="307.9" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="503.7" cy="310.8" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="526.4" cy="310.5" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="528.6" cy="307.9" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="524.1" cy="307" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="530.6" cy="308.6" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="505.1" cy="313.9" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="505.2" cy="306.9" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="529.4" cy="303.4" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="514.4" cy="306.1" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="534.3" cy="306.5" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="515.4" cy="303.9" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="500.4" cy="304.7" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="533.9" cy="309.3" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="521.7" cy="308.7" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="520.8" cy="310.7" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="515.2" cy="309.3" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="508.4" cy="309.7" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="537.9" cy="315.3" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="539.1" cy="313.8" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="524.5" cy="306.6" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="497.2" cy="315.4" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="499.9" cy="304.5" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="504.3" cy="305.5" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="519.7" cy="305.6" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="515.4" cy="308.9" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="515" cy="314.6" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="521.8" cy="312.5" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="524.1" cy="308.5" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="526" cy="313.9" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="520.7" cy="309.3" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="508.7" cy="314.5" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="497.2" cy="304.2" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="519.1" cy="307.8" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="496.3" cy="309" r="1.25" fill="#e8833a" opacity="0.7"/>
+<line x1="494" y1="309" x2="542" y2="309" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="550" y="307" font-size="12" fill="#e8eaed">mostly small,</text>
+<text x="550" y="320" font-size="12" fill="#e8eaed">either sign</text>
+<text x="488" y="342.5" font-size="12" fill="#e8eaed" text-anchor="end">30 000</text>
+<circle cx="506.6" cy="343.5" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="527.5" cy="341.6" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="500.6" cy="341.2" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="511.8" cy="345.5" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="513.3" cy="342" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="501.6" cy="340" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="509.4" cy="347.1" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="511.9" cy="340.1" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="538.6" cy="346.2" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="497.4" cy="344.2" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="508.4" cy="339.5" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="527.9" cy="347.4" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="521.1" cy="339.6" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="516" cy="340.1" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="497.6" cy="342.4" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="508.3" cy="339.8" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="497.8" cy="340.3" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="528.2" cy="340.9" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="504.6" cy="342.6" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="499" cy="343" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="507.3" cy="341.2" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="510" cy="340.4" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="533.1" cy="346.1" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="503.2" cy="344.1" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="538.2" cy="343" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="522.7" cy="343.6" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="510.5" cy="346.6" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="517.1" cy="342.9" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="520.3" cy="340.9" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="528.3" cy="346.6" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="499" cy="354.4" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="521.5" cy="341.1" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="536.8" cy="344.1" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="513.6" cy="344.3" r="1.25" fill="#e8833a" opacity="0.7"/>
+<circle cx="512.5" cy="343.3" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="518.1" cy="343.3" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="507.5" cy="344.5" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="525.6" cy="339.9" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="507.1" cy="341.4" r="1.25" fill="#e8833a" opacity="0.8"/>
+<circle cx="520.3" cy="341.8" r="1.25" fill="#e8833a" opacity="0.6"/>
+<circle cx="533.3" cy="340.7" r="1.25" fill="#e8833a" opacity="0.9"/>
+<circle cx="531.6" cy="348.5" r="1.25" fill="#e8833a" opacity="0.9"/>
+<line x1="494" y1="338" x2="542" y2="338" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="550" y="345" font-size="12" fill="#e8eaed">mostly near</text>
+<text x="550" y="358" font-size="12" fill="#e8eaed">the ceiling</text>
+<rect x="494" y="376" width="22" height="18" rx="3" fill="none" stroke="#9aa0a6" stroke-width="1.3" stroke-dasharray="3 3"/>
+<text x="524" y="389.5" font-size="12" fill="#e8eaed">may be absent</text>
+<rect x="640" y="110" width="168" height="18" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="647" y1="115" x2="647" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="654" y1="115" x2="654" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="661" y1="115" x2="661" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="668" y1="115" x2="668" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="675" y1="115" x2="675" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="682" y1="115" x2="682" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="689" y1="115" x2="689" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="696" y1="111.5" x2="696" y2="126.5" stroke="#4fb3ff" stroke-width="1.3" opacity="0.9"/><line x1="703" y1="115" x2="703" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="710" y1="115" x2="710" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="717" y1="115" x2="717" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="724" y1="115" x2="724" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="731" y1="115" x2="731" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="738" y1="115" x2="738" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="745" y1="115" x2="745" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="752" y1="111.5" x2="752" y2="126.5" stroke="#4fb3ff" stroke-width="1.3" opacity="0.9"/><line x1="759" y1="115" x2="759" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="766" y1="115" x2="766" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="773" y1="115" x2="773" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="780" y1="115" x2="780" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="787" y1="115" x2="787" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="794" y1="115" x2="794" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="801" y1="115" x2="801" y2="123" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/>
+<text x="818" y="123.5" font-size="13" fill="#e8eaed">3 bytes</text>
+<rect x="640" y="148" width="56" height="18" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="647" y1="153" x2="647" y2="161" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="654" y1="153" x2="654" y2="161" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="661" y1="153" x2="661" y2="161" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="668" y1="153" x2="668" y2="161" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="675" y1="153" x2="675" y2="161" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="682" y1="153" x2="682" y2="161" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="689" y1="153" x2="689" y2="161" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/>
+<text x="706" y="161.5" font-size="13" fill="#e8eaed">1 byte - value + 40</text>
+<rect x="640" y="186" width="49" height="18" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="647" y1="191" x2="647" y2="199" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="654" y1="191" x2="654" y2="199" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="661" y1="191" x2="661" y2="199" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="668" y1="191" x2="668" y2="199" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="675" y1="191" x2="675" y2="199" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="682" y1="191" x2="682" y2="199" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/>
+<text x="699" y="199.5" font-size="13" fill="#e8eaed">7 bits</text>
+<rect x="640" y="224" width="14" height="18" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="647" y1="229" x2="647" y2="237" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/>
+<text x="664" y="237.5" font-size="13" fill="#e8eaed">2 bits</text>
+<rect x="640" y="262" width="7" height="18" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="657" y="275.5" font-size="13" fill="#e8eaed">1 bit</text>
+<rect x="640" y="300" width="7" height="18" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<rect x="650" y="300" width="56" height="18" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="657" y1="305" x2="657" y2="313" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="664" y1="305" x2="664" y2="313" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="671" y1="305" x2="671" y2="313" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="678" y1="305" x2="678" y2="313" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="685" y1="305" x2="685" y2="313" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="692" y1="305" x2="692" y2="313" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="699" y1="305" x2="699" y2="313" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/>
+<text x="716" y="307" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e">length bit</tspan><tspan > + 1 byte</tspan></text>
+<text x="716" y="321" font-size="12" fill="#9aa0a6">within ±127</text>
+<rect x="640" y="338" width="7" height="18" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<rect x="650" y="338" width="56" height="18" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="657" y1="343" x2="657" y2="351" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="664" y1="343" x2="664" y2="351" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="671" y1="343" x2="671" y2="351" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="678" y1="343" x2="678" y2="351" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="685" y1="343" x2="685" y2="351" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="692" y1="343" x2="692" y2="351" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="699" y1="343" x2="699" y2="351" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/>
+<text x="716" y="345" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e">length bit</tspan><tspan > + 1 byte</tspan></text>
+<text x="716" y="359" font-size="12" fill="#9aa0a6">near 30 000, 2 bytes when far</text>
+<rect x="640" y="376" width="7" height="18" rx="2" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-dasharray="true"/>
+<text x="657" y="389.5" font-size="13" fill="#e8eaed">1 null bit when absent</text>
+<path d="M754 185 Q760 185 760 197 L760 221 Q760 233 766 233 Q760 233 760 245 L760 269 Q760 281 754 281" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="774" y="196" font-size="12" fill="#f2c14e">bit fields: packed</text>
+<text x="774" y="211" font-size="12" fill="#f2c14e">together, rounded up</text>
+<text x="774" y="226" font-size="12" fill="#f2c14e">to whole bytes</text>
+<rect x="774" y="264" width="7" height="12" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="787" y="273" font-size="12" fill="#9aa0a6">length bits join</text>
+<text x="787" y="287" font-size="12" fill="#9aa0a6">the bit-field bytes</text>
+<rect x="24" y="428" width="290" height="42" rx="8" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="36" y="445" font-size="13" fill="#e8833a" font-weight="600">exTernal - your code</text>
+<text x="36" y="462" font-size="12" fill="#e8eaed">-40 … 125 °C · 0 … 100 % · P / R / N / D</text>
+<path d="M318 442 L331 449 L318 456 Z" fill="#f2c14e"/>
+<rect x="335" y="428" width="290" height="42" rx="8" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="347" y="445" font-size="13" fill="#f2c14e" font-weight="600">inTernal - the generated object</text>
+<text x="347" y="462" font-size="12" fill="#e8eaed">codes, e.g. coolant + 40 → 0 … 165</text>
+<path d="M629 442 L642 449 L629 456 Z" fill="#f2c14e"/>
+<rect x="646" y="428" width="290" height="42" rx="8" fill="#1f3347" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="658" y="445" font-size="13" fill="#4fb3ff" font-weight="600">ioT - the wire</text>
+<text x="658" y="462" font-size="12" fill="#e8eaed">bits and bytes: 1 byte · 7 bits · 2 bits</text>
+<rect x="24" y="486" width="440" height="40" rx="8" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<circle cx="38" cy="506" r="4" fill="#a06fd0"/>
+<path d="M51 513 A13 13 0 0 1 77 513" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
+<path d="M51 513 A13 13 0 0 1 59.6 500.8" fill="none" stroke="#e8833a" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="64" y1="513" x2="72" y2="505" stroke="#e8eaed" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="64" cy="513" r="2" fill="#e8eaed"/>
+<text x="88" y="503" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8833a" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Unit(&quot;degC&quot;)]</tspan><tspan >, </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">MIN -40</tspan><tspan >, </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">MAX 125</tspan><tspan >:</tspan></text>
+<text x="88" y="520" font-size="12" fill="#e8eaed">constants in C#, Java, TypeScript - never on the wire</text>
+<rect x="488" y="486" width="448" height="40" rx="8" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="502" y="503" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan >MANUAL's worked </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Reading</tspan><tspan > pack: 14 bytes after its pack id</tspan></text>
+<text x="502" y="520" font-size="12" fill="#9aa0a6">seven fields - no names, no tags: each known by its position</text>
+</g>
+</svg>

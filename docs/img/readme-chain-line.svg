@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 356" width="960" height="356" role="img" aria-labelledby="title desc">
+<title id="title">One attribute line, the whole codec chain</title>
+<desc id="desc">The field [Zstd(6), ChaCha20] Order secured; explained: Zstd(6) is the compression, written left, nearer the data; ChaCha20 the cipher, written right, nearer the wire. Send row: the typed Order is serialized, compressed by Zstd(6), encrypted by ChaCha20 and framed as chunks, length then data, closed by 0, onto the wire. Receive row, right to left: de-framing, inverse ChaCha20, inverse Zstd, parsing, and the typed Order again. Badges C#, Java and TypeScript: the same chain is generated for each, no codec code to write. Notes: Zstd is lossless, level 1 to 22, default 3; ChaCha20 hides the bytes but does not detect tampering; a pack that cannot exceed 1024 bytes loses Zstd automatically, while a chain on a field stays as written.</desc>
+<rect width="960" height="356" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="314.4" y="18" width="331.2" height="32" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="330.4" y="40" font-size="16" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#f2c14e">[Zstd(6)</tspan><tspan fill="#a06fd0">, ChaCha20]</tspan><tspan fill="#e8eaed"> Order secured;</tspan></text>
+<line x1="365.6" y1="52" x2="365.6" y2="66" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="377.6" y="80" font-size="12" fill="#9aa0a6" text-anchor="end">compression - written left, nearer the data</text>
+<line x1="453.6" y1="52" x2="453.6" y2="66" stroke="#a06fd0" stroke-width="1.2"/>
+<text x="441.6" y="80" font-size="12" fill="#9aa0a6">cipher - written right, nearer the wire</text>
+<text x="24" y="132" font-size="13" fill="#9aa0a6" font-weight="700">send</text>
+<text x="24" y="224" font-size="13" fill="#9aa0a6" font-weight="700">receive</text>
+<rect x="84" y="104" width="92" height="46" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.5"/>
+<text x="130" y="124.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Order</text>
+<text x="130" y="139.9" font-size="12" fill="#9aa0a6" text-anchor="middle">typed</text>
+<rect x="200" y="104" width="92" height="46" rx="6" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.5"/>
+<text x="246" y="132" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">serialize</text>
+<rect x="316" y="104" width="92" height="46" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="362" y="132" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Zstd(6)</text>
+<rect x="432" y="104" width="92" height="46" rx="6" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="478" y="132" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">ChaCha20</text>
+<rect x="548" y="104" width="130" height="46" rx="6" fill="#203d56" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="613" y="124.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">chunks</text>
+<text x="613" y="139.9" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">[len][data]…[0]</text>
+<rect x="84" y="196" width="92" height="46" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.5"/>
+<text x="130" y="216.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Order</text>
+<text x="130" y="231.9" font-size="12" fill="#9aa0a6" text-anchor="middle">typed again</text>
+<rect x="200" y="196" width="92" height="46" rx="6" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.5"/>
+<text x="246" y="224" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">parse</text>
+<rect x="316" y="196" width="92" height="46" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="362" y="216.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Zstd</text>
+<text x="362" y="231.9" font-size="12" fill="#9aa0a6" text-anchor="middle">inverse</text>
+<rect x="432" y="196" width="92" height="46" rx="6" fill="#3a2f4c" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="478" y="216.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">ChaCha20</text>
+<text x="478" y="231.9" font-size="12" fill="#9aa0a6" text-anchor="middle">inverse</text>
+<rect x="548" y="196" width="130" height="46" rx="6" fill="#203d56" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="613" y="224" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">de-frame</text>
+<rect x="702" y="104" width="56" height="138" rx="6" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.5"/>
+<text x="730" y="178" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">wire</text>
+<path d="M176 127 L193 127" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M200 127 L192 131 L192 123 Z" fill="#e8eaed"/>
+<path d="M200 219 L183 219" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M176 219 L184 215 L184 223 Z" fill="#e8eaed"/>
+<path d="M292 127 L309 127" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M316 127 L308 131 L308 123 Z" fill="#e8eaed"/>
+<path d="M316 219 L299 219" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M292 219 L300 215 L300 223 Z" fill="#e8eaed"/>
+<path d="M408 127 L425 127" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M432 127 L424 131 L424 123 Z" fill="#e8eaed"/>
+<path d="M432 219 L415 219" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M408 219 L416 215 L416 223 Z" fill="#e8eaed"/>
+<path d="M524 127 L541 127" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M548 127 L540 131 L540 123 Z" fill="#e8eaed"/>
+<path d="M548 219 L531 219" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M524 219 L532 215 L532 223 Z" fill="#e8eaed"/>
+<path d="M678 127 L695 127" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M702 127 L694 131 L694 123 Z" fill="#e8eaed"/>
+<path d="M702 219 L685 219" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M678 219 L686 215 L686 223 Z" fill="#e8eaed"/>
+<line x1="790" y1="96" x2="790" y2="276" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<rect x="818" y="104" width="110" height="26" rx="5" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.3"/>
+<text x="873" y="121.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">C#</text>
+<rect x="818" y="136" width="110" height="26" rx="5" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.3"/>
+<text x="873" y="153.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Java</text>
+<rect x="818" y="168" width="110" height="26" rx="5" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.3"/>
+<text x="873" y="185.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">TypeScript</text>
+<text x="818" y="216" font-size="12" fill="#9aa0a6">the same chain,</text>
+<text x="818" y="231" font-size="12" fill="#9aa0a6">generated -</text>
+<text x="818" y="246" font-size="12" fill="#9aa0a6">no codec code</text>
+<text x="818" y="261" font-size="12" fill="#9aa0a6">to write</text>
+<rect x="169" y="284" width="236" height="24" rx="12" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="287" y="300.5" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#f2c14e" font-weight="700">Zstd</tspan><tspan >: lossless, level 1-22, default 3</tspan></text>
+<rect x="419" y="284" width="372" height="24" rx="12" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="605" y="300.5" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#a06fd0" font-weight="700">ChaCha20</tspan><tspan >: hides the bytes, does not detect tampering</tspan></text>
+<rect x="188" y="318" width="584" height="24" rx="12" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="480" y="334.5" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan >a pack that cannot exceed 1024 B loses </tspan><tspan fill="#f2c14e" font-weight="700">Zstd</tspan><tspan > automatically; a field's chain stays as written</tspan></text>
+</g>
+</svg>

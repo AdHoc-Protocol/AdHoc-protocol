@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" role="img" aria-labelledby="title desc">
+<title id="title">Receive, store and broadcast in one pass</title>
+<desc id="desc">A Source sends packs on a guaranteed leg into the Monitoring host. In one pass over the receive buffer, the decoder calls your setters, which put the values straight into the database command parameters, and the consumed bytes are captured once into a pooled BytesCopy.InMemory holding the pack body with three references. After the insert in OnReceived, Broadcast(receiver) queues the one capture on every subscriber; each subscriber transmitter copies it with its own cursor to Observer 1 to 3; Observer 4 has a full queue: it misses this event, stays subscribed and nobody waits. No subscriber means no capture; the pack is never encoded again. A timeline: pack arrives, decode and capture, OnReceived insert, Broadcast, each subscriber sends, the last one returns the capture to the pool. Store, then forward.</desc>
+<rect width="980" height="520" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Receive, store and broadcast in one pass</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">the bytes of an incoming pack are decoded into the store and captured for the subscribers at the same time</text>
+<rect x="16" y="150" width="110" height="60" rx="6" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="71" y="176" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">Source</text>
+<text x="71" y="194" font-size="12" fill="#9aa0a6" text-anchor="middle">guaranteed leg</text>
+<rect x="150" y="76" width="470" height="330" rx="10" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="166" y="98" font-size="12" fill="#e8eaed" font-weight="700">Monitoring host</text>
+<text x="166" y="132" font-size="12" fill="#9aa0a6">receive buffer</text>
+<rect x="166" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="188" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="210" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="232" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="254" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="276" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="298" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="320" y="140" width="20" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<path d="M126 180 L157.2 160.3" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M164 156 L158.8 164.7 L153.9 156.9 Z" fill="#4fb3ff"/>
+<text x="352" y="136" font-size="12" fill="#f2c14e" font-weight="700">one pass</text>
+<path d="M300 170 L300 190 Q300 196 294 196 L270 196" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M262 196 L271 191.4 L271 200.6 Z" fill="#4fb3ff"/>
+<rect x="166" y="200" width="200" height="62" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="178" y="222" font-size="12.5" fill="#e8eaed">decoder calls your setters</text>
+<text x="178" y="244" font-size="12" fill="#9aa0a6">values land in DB parameters</text>
+<path d="M266 262 L266 292" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M266 300 L261.4 291 L270.6 291 Z" fill="#e8833a"/>
+<path d="M214 308 v44 a52 8 0 0 0 104 0 v-44" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<ellipse cx="266" cy="308" rx="52" ry="8" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="266" y="336" font-size="12.5" fill="#e8eaed" text-anchor="middle">database</text>
+<text x="266" y="380" font-size="12" fill="#9aa0a6" text-anchor="middle">insert in OnReceived</text>
+<path d="M346 156 L414 156 Q420 156 420 162 L420 190" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M420 198 L415.4 189 L424.6 189 Z" fill="#f2c14e"/>
+<rect x="392" y="200" width="214" height="98" rx="6" fill="#2b2a23" stroke="#f2c14e" stroke-width="1.8"/>
+<text x="404" y="222" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#f2c14e" xml:space="preserve">BytesCopy.InMemory</text>
+<text x="404" y="242" font-size="12" fill="#e8eaed">the body, captured once</text>
+<rect x="404" y="252" width="24" height="22" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="430" y="252" width="24" height="22" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="456" y="252" width="24" height="22" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="482" y="252" width="24" height="22" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="508" y="252" width="24" height="22" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="534" y="252" width="24" height="22" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="560" y="252" width="24" height="22" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<text x="404" y="290" font-size="12" fill="#9aa0a6">references: 3 · pooled</text>
+<text x="392" y="330" font-size="12" fill="#f2c14e">Broadcast(receiver) after the insert</text>
+<text x="392" y="348" font-size="12" fill="#9aa0a6">no subscriber - no capture</text>
+<text x="392" y="366" font-size="12" fill="#9aa0a6">never encoded again</text>
+<rect x="650" y="100" width="16" height="24" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="668" y="100" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="686" y="100" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="704" y="100" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<path d="M606 250 L643.8 119.7" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M646 112 L647.9 121.9 L639.1 119.4 Z" fill="#f2c14e"/>
+<rect x="740" y="96" width="96" height="32" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="742" y="98" width="69" height="28" rx="3" fill="#26384d" stroke="none" stroke-width="1.4"/>
+<line x1="811" y1="94" x2="811" y2="130" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M836 112 L850 112" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M858 112 L849 116.6 L849 107.4 Z" fill="#4fb3ff"/>
+<rect x="858" y="96" width="106" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="911" y="117" font-size="12.5" fill="#e8eaed" text-anchor="middle">Observer 1</text>
+<rect x="650" y="178" width="16" height="24" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="668" y="178" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="686" y="178" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="704" y="178" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<path d="M606 250 L641.6 196.7" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M646 190 L644.8 200 L637.2 194.9 Z" fill="#f2c14e"/>
+<rect x="740" y="174" width="96" height="32" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="742" y="176" width="28" height="28" rx="3" fill="#26384d" stroke="none" stroke-width="1.4"/>
+<line x1="770" y1="172" x2="770" y2="208" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M836 190 L850 190" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M858 190 L849 194.6 L849 185.4 Z" fill="#4fb3ff"/>
+<rect x="858" y="174" width="106" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="911" y="195" font-size="12.5" fill="#e8eaed" text-anchor="middle">Observer 2</text>
+<rect x="650" y="256" width="16" height="24" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1"/>
+<rect x="668" y="256" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="686" y="256" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="704" y="256" width="16" height="24" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<path d="M606 250 L638.7 264.7" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M646 268 L635.9 268.5 L639.7 260.1 Z" fill="#f2c14e"/>
+<rect x="740" y="252" width="96" height="32" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="742" y="254" width="46" height="28" rx="3" fill="#26384d" stroke="none" stroke-width="1.4"/>
+<line x1="788" y1="250" x2="788" y2="286" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M836 268 L850 268" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M858 268 L849 272.6 L849 263.4 Z" fill="#4fb3ff"/>
+<rect x="858" y="252" width="106" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="911" y="273" font-size="12.5" fill="#e8eaed" text-anchor="middle">Observer 3</text>
+<rect x="650" y="334" width="16" height="24" rx="2" fill="#4a2626" stroke="#e06c6c" stroke-width="1"/>
+<rect x="668" y="334" width="16" height="24" rx="2" fill="#4a2626" stroke="#e06c6c" stroke-width="1"/>
+<rect x="686" y="334" width="16" height="24" rx="2" fill="#4a2626" stroke="#e06c6c" stroke-width="1"/>
+<rect x="704" y="334" width="16" height="24" rx="2" fill="#4a2626" stroke="#e06c6c" stroke-width="1"/>
+<text x="650" y="378" font-size="12" fill="#e06c6c">queue full: misses this event,</text>
+<text x="650" y="394" font-size="12" fill="#e06c6c">stays subscribed, nobody waits</text>
+<rect x="858" y="330" width="106" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="911" y="351" font-size="12.5" fill="#e8eaed" text-anchor="middle">Observer 4</text>
+<text x="740" y="82" font-size="12" fill="#9aa0a6">each its own cursor</text>
+<rect x="16" y="430" width="104" height="34" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="68" y="452" font-size="12.5" fill="#e8eaed" text-anchor="middle">pack arrives</text>
+<path d="M120 447 L134 447" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M142 447 L133 451.6 L133 442.4 Z" fill="#9aa0a6"/>
+<rect x="144" y="430" width="124" height="34" rx="6" fill="#262626" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="206" y="452" font-size="12.5" fill="#e8eaed" text-anchor="middle">decode + capture</text>
+<path d="M268 447 L282 447" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M290 447 L281 451.6 L281 442.4 Z" fill="#9aa0a6"/>
+<rect x="292" y="430" width="140" height="34" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="362" y="452" font-size="12.5" fill="#e8eaed" text-anchor="middle">OnReceived: insert</text>
+<path d="M432 447 L446 447" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M454 447 L445 451.6 L445 442.4 Z" fill="#9aa0a6"/>
+<rect x="456" y="430" width="92" height="34" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="502" y="452" font-size="12.5" fill="#e8eaed" text-anchor="middle">Broadcast</text>
+<path d="M548 447 L562 447" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M570 447 L561 451.6 L561 442.4 Z" fill="#9aa0a6"/>
+<rect x="572" y="430" width="156" height="34" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="650" y="452" font-size="12.5" fill="#e8eaed" text-anchor="middle">each subscriber sends</text>
+<path d="M728 447 L742 447" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M750 447 L741 451.6 L741 442.4 Z" fill="#9aa0a6"/>
+<rect x="752" y="430" width="176" height="34" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="840" y="452" font-size="12.5" fill="#e8eaed" text-anchor="middle">last one: back to the pool</text>
+<text x="24" y="494" font-size="12" fill="#9aa0a6">store, then forward: subscribers get the pack after it has fully arrived and been stored</text>
+</g>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" width="960" height="460" role="img" aria-labelledby="d21g-t d21g-d">
+<title id="d21g-t">A new generation is a new host</title>
+<desc id="d21g-d">Two generations of a peer in one description. Left, frozen - firmware 2.x, drawn grey with a padlock: host VehicleLegacy with uid 1, pack PositionV2 with float lat and float lon, connection TelemetryLegacy; deployed and never edited, since an edit here reaches devices in the field. A dashed orange frame around it says that AdHocAgent .cs~ must not list VehicleLegacy. Right, free - firmware 3.x: host Vehicle with uid 2, packs Position and Alarm, connection Telemetry; free to change. Below, the backend host Fleet with uid 0 has one port; its multiplexer FleetPort, Multiplex of Telemetry and TelemetryLegacy, reads the first byte of each socket: byte 1 goes to TelemetryLegacy, byte 2 to Telemetry. Footer: retirement deletes VehicleLegacy, TelemetryLegacy and PositionV2 with their table lines and takes TelemetryLegacy out of FleetPort; a multiplexer lists at least two connections.</desc>
+<rect width="960" height="460" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">A new generation is a new host</text>
+
+<!-- LEFT: frozen generation -->
+<rect x="24" y="54" width="420" height="200" rx="8" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="432" y="58" font-size="12.5" fill="#e8833a" text-anchor="end" paint-order="stroke" stroke="#2b2b2b" stroke-width="6" stroke-linejoin="round">AdHocAgent .cs~ must not list VehicleLegacy</text>
+
+<path d="M43 75 V71 a4 4 0 0 1 8 0 V75" fill="none" stroke="#9aa0a6" stroke-width="1.8"/>
+<rect x="40" y="74" width="14" height="11" rx="2" fill="#9aa0a6"/>
+<text x="62" y="85" font-size="15" fill="#9aa0a6" font-weight="600">frozen - firmware 2.x</text>
+
+<rect x="40" y="96" width="388" height="28" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="52" y="115" font-size="14" fill="#9aa0a6"><tspan fill="#7d8288">host</tspan>  VehicleLegacy</text>
+<text x="416" y="115" font-size="13" fill="#9aa0a6" text-anchor="end">uid 1</text>
+
+<rect x="40" y="132" width="388" height="28" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="52" y="151" font-size="14" fill="#9aa0a6"><tspan fill="#7d8288">pack</tspan>  PositionV2 <tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13">{ float lat; float lon; }</tspan></text>
+
+<rect x="40" y="168" width="388" height="28" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="52" y="187" font-size="14" fill="#9aa0a6"><tspan fill="#7d8288">connection</tspan>  TelemetryLegacy</text>
+
+<text x="40" y="222" font-size="12.5" fill="#9aa0a6">deployed, never edited:</text>
+<text x="40" y="239" font-size="12.5" fill="#9aa0a6">an edit here reaches devices in the field</text>
+
+<!-- RIGHT: free generation -->
+<text x="532" y="85" font-size="15" fill="#e8833a" font-weight="600">free - firmware 3.x</text>
+
+<rect x="532" y="96" width="388" height="28" rx="5" fill="#303236" stroke="#e8833a" stroke-width="1.4"/>
+<text x="544" y="115" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">host</tspan>  Vehicle</text>
+<text x="908" y="115" font-size="13" fill="#f2c14e" text-anchor="end">uid 2</text>
+
+<rect x="532" y="132" width="388" height="28" rx="5" fill="#303236" stroke="#e8833a" stroke-width="1.4"/>
+<text x="544" y="151" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">packs</tspan>  Position, Alarm</text>
+
+<rect x="532" y="168" width="388" height="28" rx="5" fill="#303236" stroke="#e8833a" stroke-width="1.4"/>
+<text x="544" y="187" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">connection</tspan>  Telemetry</text>
+
+<text x="920" y="222" font-size="12.5" fill="#9aa0a6" text-anchor="end">free to change: add fields, change types, add states</text>
+
+<!-- arrows into the one port -->
+<path d="M404 196 V270 H466 V278" fill="none" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M466 286 L461.5 278 L470.5 278 Z" fill="#4fb3ff"/>
+<path d="M556 196 V270 H494 V278" fill="none" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M494 286 L489.5 278 L498.5 278 Z" fill="#4fb3ff"/>
+<text x="394" y="291" font-size="13" fill="#4fb3ff" text-anchor="end">byte 1 → TelemetryLegacy</text>
+<text x="566" y="291" font-size="13" fill="#4fb3ff">byte 2 → Telemetry</text>
+
+<!-- Fleet -->
+<rect x="300" y="294" width="360" height="98" rx="6" fill="#2a3542" stroke="#6f9fd8" stroke-width="1.6"/>
+<rect x="452" y="286" width="56" height="16" rx="3" fill="#243447" stroke="#e8833a" stroke-width="1.8"/>
+<text x="316" y="320" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">host</tspan>  Fleet<tspan dx="10" fill="#f2c14e" font-size="13">uid 0</tspan></text>
+<text x="480" y="320" font-size="12" fill="#9aa0a6" text-anchor="middle">one port</text>
+<rect x="316" y="330" width="328" height="50" rx="4" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="480" y="351" font-size="13.5" fill="#e8eaed" text-anchor="middle"><tspan fill="#9aa0a6">multiplexer</tspan> FleetPort: reads the first byte</text>
+<text x="480" y="370" font-size="12" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Multiplex&lt;(Telemetry, TelemetryLegacy)&gt;</text>
+
+<!-- footer -->
+<text x="480" y="420" font-size="12.5" fill="#9aa0a6" text-anchor="middle">retirement: delete VehicleLegacy, TelemetryLegacy and PositionV2 with their table lines, and take TelemetryLegacy out of FleetPort</text>
+<text x="480" y="438" font-size="12.5" fill="#9aa0a6" text-anchor="middle">a multiplexer lists at least two connections: keep a second one on the port while devices still open their sockets with a uid byte</text>
+</g>
+</svg>

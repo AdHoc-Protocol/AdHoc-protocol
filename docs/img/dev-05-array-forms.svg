@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 400" width="980" height="400" role="img">
+<title>Three rows show where the length of an array lives when the array is the value of a Map with three keys. T[] constant length: three values of exactly four items each and no length anywhere; the length is the declared N and is never sent. T[,] fixed at creation: one length box, len 3, written once for the whole field, then three values of exactly three items each. T[,,] dynamic: every value is preceded by its own length box, len 2, len 5 and len 1, followed by that many items</title>
+<rect width="980" height="400" rx="10" fill="#2b2b2b"/>
+<text x="290" y="40" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#9aa0a6">Map&lt;string, T&gt;: the values of three keys</text>
+<text x="24" y="86" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8eaed">T[]</text>
+<text x="24" y="108" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed">constant length</text>
+<rect x="290" y="72" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="306" y="92" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k1</text>
+<rect x="326" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="360" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="394" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="428" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="482" y="72" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="498" y="92" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k2</text>
+<rect x="518" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="552" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="586" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="620" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="674" y="72" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="690" y="92" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k3</text>
+<rect x="710" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="744" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="778" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="812" y="72" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="290" y="126" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">the length is the declared N (here 4); never sent</text>
+<line x1="24" y1="150" x2="956" y2="150" stroke="#3a3a3a" stroke-width="1"/>
+<text x="24" y="192" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8eaed">T[,]</text>
+<text x="24" y="214" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed">fixed at creation</text>
+<text x="316" y="170" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#f2c14e" text-anchor="middle">once per field</text>
+<rect x="290" y="178" width="52" height="30" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="316" y="198" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#f2c14e" text-anchor="middle">len 3</text>
+<rect x="366" y="178" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="382" y="198" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k1</text>
+<rect x="402" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="436" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="470" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="524" y="178" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="540" y="198" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k2</text>
+<rect x="560" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="594" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="628" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="682" y="178" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="698" y="198" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k3</text>
+<rect x="718" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="752" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="786" y="178" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="290" y="232" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">one length for every value of the field, chosen when the field is created</text>
+<line x1="24" y1="256" x2="956" y2="256" stroke="#3a3a3a" stroke-width="1"/>
+<text x="24" y="298" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8eaed">T[,,]</text>
+<text x="24" y="320" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed">dynamic</text>
+<rect x="290" y="284" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="306" y="304" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k1</text>
+<rect x="326" y="284" width="52" height="30" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="352" y="304" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#f2c14e" text-anchor="middle">len 2</text>
+<rect x="382" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="416" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="470" y="284" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="486" y="304" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k2</text>
+<rect x="506" y="284" width="52" height="30" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="532" y="304" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#f2c14e" text-anchor="middle">len 5</text>
+<rect x="562" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="596" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="630" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="664" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="698" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="752" y="284" width="32" height="30" rx="3" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="768" y="304" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">k3</text>
+<rect x="788" y="284" width="52" height="30" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="814" y="304" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#f2c14e" text-anchor="middle">len 1</text>
+<rect x="844" y="284" width="30" height="30" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="290" y="338" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">every value carries its own length</text>
+<rect x="760" y="365" width="14" height="14" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="780" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">length</text>
+<rect x="845.2" y="365" width="14" height="14" rx="2" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="865.2" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">item</text>
+<rect x="916" y="365" width="14" height="14" rx="2" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="936" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">key</text>
+</svg>

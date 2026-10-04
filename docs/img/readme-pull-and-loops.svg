@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 576" width="980" height="576" role="img" aria-labelledby="title desc">
+<title id="title">Bytes pulled by the socket, two loops per connection</title>
+<desc id="desc">Top: a timeline with lanes for your code, the sending queue, the transmitter, a 1024-byte send buffer and the socket. send(A) and send(B) only queue the packs; each time the socket has room, the transmitter refills the same buffer, stopping mid-field if need be, and each fill leaves as one chunk. Bottom: the receive loop and the transmit loop each handle packs and timeouts one at a time; state touched by both is the one place to coordinate.</desc>
+<rect width="980" height="576" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<defs><pattern id="pl-free" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="6" stroke="#4a4a4a" stroke-width="2"/></pattern></defs>
+<rect x="16" y="16" width="948" height="348" rx="10" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="32" y="42" font-size="15" fill="#e8eaed" font-weight="700">Sending: the socket pulls the bytes</text>
+<text x="948" y="42" font-size="12" fill="#9aa0a6" text-anchor="end">time →</text>
+<text x="176" y="84.5" font-size="13" fill="#9aa0a6" text-anchor="end">your code</text>
+<g data-nocheck="1"><line x1="190" y1="80" x2="948" y2="80" stroke="#3a3a3a" stroke-width="1"/></g>
+<text x="176" y="134.5" font-size="13" fill="#9aa0a6" text-anchor="end">sending queue</text>
+<g data-nocheck="1"><line x1="190" y1="130" x2="948" y2="130" stroke="#3a3a3a" stroke-width="1"/></g>
+<text x="176" y="184.5" font-size="13" fill="#9aa0a6" text-anchor="end">transmitter</text>
+<g data-nocheck="1"><line x1="190" y1="180" x2="948" y2="180" stroke="#3a3a3a" stroke-width="1"/></g>
+<text x="176" y="240.5" font-size="13" fill="#9aa0a6" text-anchor="end">send buffer (1024 B)</text>
+<g data-nocheck="1"><line x1="190" y1="236" x2="948" y2="236" stroke="#3a3a3a" stroke-width="1"/></g>
+<text x="176" y="304.5" font-size="13" fill="#9aa0a6" text-anchor="end">socket → wire</text>
+<g data-nocheck="1"><line x1="190" y1="300" x2="948" y2="300" stroke="#3a3a3a" stroke-width="1"/></g>
+<rect x="198" y="68" width="68" height="24" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.5"/>
+<text x="232" y="84.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">send(A)</text>
+<path d="M232 92 L232 113" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M232 119 L228.4 112 L235.6 112 Z" fill="#e8833a"/>
+<rect x="221" y="119" width="22" height="22" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="232" y="134.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">A</text>
+<rect x="296" y="68" width="68" height="24" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.5"/>
+<text x="330" y="84.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">send(B)</text>
+<path d="M330 92 L330 113" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M330 119 L326.4 112 L333.6 112 Z" fill="#e8833a"/>
+<rect x="295" y="119" width="22" height="22" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="306" y="134.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">A</text>
+<rect x="319" y="119" width="22" height="22" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="330" y="134.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">B</text>
+<text data-ok="1" paint-order="stroke" stroke="#262626" stroke-width="6" stroke-linejoin="round" x="374" y="84" font-size="12" fill="#9aa0a6">returns at once - nothing serialized</text>
+<rect x="429" y="119" width="22" height="22" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="440" y="134.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">A</text>
+<rect x="453" y="119" width="22" height="22" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="464" y="134.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">B</text>
+<path d="M400 305 L412 305 L406 294 Z" fill="#4fb3ff"/>
+<text data-ok="1" paint-order="stroke" stroke="#262626" stroke-width="6" stroke-linejoin="round" x="417" y="304.5" font-size="12" fill="#4fb3ff">room</text>
+<path d="M406 292 L406 198" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M406 192 L409.6 199 L402.4 199 Z" fill="#4fb3ff"/>
+<rect x="394" y="168" width="112" height="24" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="450" y="184.5" font-size="12" fill="#e8eaed" text-anchor="middle">transmitter fills</text>
+<path d="M446 192 L446 217" fill="none" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/><path d="M446 223 L442.4 216 L449.6 216 Z" fill="#f2c14e"/>
+<rect x="416" y="223" width="144" height="26" rx="3" fill="#26384d"/>
+<rect x="416" y="223" width="28" height="26" rx="0" fill="#24476a"/>
+<text data-ok="1" x="430" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">id A</text>
+<line x1="444" y1="223" x2="444" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="459" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">A.f1</text>
+<line x1="474" y1="223" x2="474" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="489" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">A.f2</text>
+<line x1="504" y1="223" x2="504" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="532" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">A.f3 1/2</text>
+<rect x="416" y="223" width="144" height="26" rx="3" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<line x1="560" y1="218" x2="560" y2="254" stroke="#e8833a" stroke-width="2.2"/>
+<text x="558" y="214" font-size="12" fill="#e8833a" text-anchor="end">stopped mid-field</text>
+<path d="M524 249 L524 283" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M524 289 L520.4 282 L527.6 282 Z" fill="#4fb3ff"/>
+<rect x="492" y="289" width="64" height="22" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="524" y="304.3" font-size="12" fill="#e8eaed" text-anchor="middle">chunk 1</text>
+<path d="M556 300 L570 300" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M576 300 L569 303.6 L569 296.4 Z" fill="#4fb3ff"/>
+<rect x="619" y="119" width="22" height="22" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="630" y="134.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">B</text>
+<path d="M590 305 L602 305 L596 294 Z" fill="#4fb3ff"/>
+<text data-ok="1" paint-order="stroke" stroke="#262626" stroke-width="6" stroke-linejoin="round" x="607" y="304.5" font-size="12" fill="#4fb3ff">room</text>
+<path d="M596 292 L596 198" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M596 192 L599.6 199 L592.4 199 Z" fill="#4fb3ff"/>
+<rect x="584" y="168" width="112" height="24" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="640" y="184.5" font-size="12" fill="#e8eaed" text-anchor="middle">transmitter fills</text>
+<path d="M636 192 L636 217" fill="none" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/><path d="M636 223 L632.4 216 L639.6 216 Z" fill="#f2c14e"/>
+<rect x="606" y="223" width="144" height="26" rx="3" fill="#26384d"/>
+<text data-ok="1" x="634" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">A.f3 2/2</text>
+<line x1="662" y1="223" x2="662" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="677" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">A.f4</text>
+<rect x="692" y="223" width="28" height="26" rx="0" fill="#24476a"/>
+<line x1="692" y1="223" x2="692" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="706" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">id B</text>
+<line x1="720" y1="223" x2="720" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="735" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">B.f1</text>
+<rect x="606" y="223" width="144" height="26" rx="3" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<path d="M714 249 L714 283" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M714 289 L710.4 282 L717.6 282 Z" fill="#4fb3ff"/>
+<rect x="682" y="289" width="64" height="22" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="714" y="304.3" font-size="12" fill="#e8eaed" text-anchor="middle">chunk 2</text>
+<path d="M746 300 L760 300" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M766 300 L759 303.6 L759 296.4 Z" fill="#4fb3ff"/>
+<text data-ok="1" paint-order="stroke" stroke="#262626" stroke-width="6" stroke-linejoin="round" x="810" y="134.5" font-size="12" fill="#9aa0a6">(empty)</text>
+<path d="M780 305 L792 305 L786 294 Z" fill="#4fb3ff"/>
+<text data-ok="1" paint-order="stroke" stroke="#262626" stroke-width="6" stroke-linejoin="round" x="797" y="304.5" font-size="12" fill="#4fb3ff">room</text>
+<path d="M786 292 L786 198" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M786 192 L789.6 199 L782.4 199 Z" fill="#4fb3ff"/>
+<rect x="774" y="168" width="112" height="24" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="830" y="184.5" font-size="12" fill="#e8eaed" text-anchor="middle">transmitter fills</text>
+<path d="M826 192 L826 217" fill="none" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/><path d="M826 223 L822.4 216 L829.6 216 Z" fill="#f2c14e"/>
+<rect x="796" y="223" width="144" height="26" rx="3" fill="#26384d"/>
+<text data-ok="1" x="811" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">B.f2</text>
+<line x1="826" y1="223" x2="826" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="841" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">B.f3</text>
+<rect x="856" y="223" width="84" height="26" rx="0" fill="url(#pl-free)"/>
+<line x1="856" y1="223" x2="856" y2="249" stroke="#3f6f99" stroke-width="1"/>
+<text data-ok="1" x="898" y="240.3" font-size="12" fill="#9aa0a6" text-anchor="middle">(free)</text>
+<rect x="796" y="223" width="144" height="26" rx="3" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<path d="M904 249 L904 283" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M904 289 L900.4 282 L907.6 282 Z" fill="#4fb3ff"/>
+<rect x="872" y="289" width="64" height="22" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="904" y="304.3" font-size="12" fill="#e8eaed" text-anchor="middle">chunk 3</text>
+<path d="M936 300 L950 300" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M956 300 L949 303.6 L949 296.4 Z" fill="#4fb3ff"/>
+<path d="M416 322 Q416 328 424 328 L668 328 Q676 328 676 334 Q676 328 684 328 L928 328 Q936 328 936 322" fill="none" stroke="#9aa0a6" stroke-width="1.3" stroke-linejoin="round"/>
+<text x="676" y="352" font-size="13" fill="#e8eaed" text-anchor="middle">three chunks out of one 1024-byte buffer, refilled - pack A never existed as one byte array</text>
+<rect x="16" y="380" width="948" height="180" rx="10" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="32" y="406" font-size="15" fill="#e8eaed" font-weight="700">Two loops per connection</text>
+<text x="190" y="428" font-size="12" fill="#9aa0a6">each event runs to completion before the next is taken</text>
+<text x="32" y="456.5" font-size="13" fill="#a06fd0" font-weight="700">receive loop</text>
+<rect x="196" y="439" width="74" height="26" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="233" y="456.3" font-size="12" fill="#e8eaed" text-anchor="middle">pack</text>
+<path d="M272 452 L284 452" fill="none" stroke="#a06fd0" stroke-width="1.4" stroke-linejoin="round"/><path d="M289 452 L283 455.2 L283 448.8 Z" fill="#a06fd0"/>
+<rect x="290" y="439" width="74" height="26" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="327" y="456.3" font-size="12" fill="#e8eaed" text-anchor="middle">pack</text>
+<path d="M366 452 L378 452" fill="none" stroke="#a06fd0" stroke-width="1.4" stroke-linejoin="round"/><path d="M383 452 L377 455.2 L377 448.8 Z" fill="#a06fd0"/>
+<rect x="384" y="439" width="74" height="26" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="421" y="456.3" font-size="12" fill="#e8eaed" text-anchor="middle">timeout</text>
+<path d="M460 452 L472 452" fill="none" stroke="#a06fd0" stroke-width="1.4" stroke-linejoin="round"/><path d="M477 452 L471 455.2 L471 448.8 Z" fill="#a06fd0"/>
+<rect x="478" y="439" width="74" height="26" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="515" y="456.3" font-size="12" fill="#e8eaed" text-anchor="middle">pack</text>
+<text x="32" y="510.5" font-size="13" fill="#4fb3ff" font-weight="700">transmit loop</text>
+<rect x="196" y="493" width="74" height="26" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="233" y="510.3" font-size="12" fill="#e8eaed" text-anchor="middle">pack</text>
+<path d="M272 506 L284 506" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M289 506 L283 509.2 L283 502.8 Z" fill="#4fb3ff"/>
+<rect x="290" y="493" width="74" height="26" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="327" y="510.3" font-size="12" fill="#e8eaed" text-anchor="middle">timeout</text>
+<path d="M366 506 L378 506" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M383 506 L377 509.2 L377 502.8 Z" fill="#4fb3ff"/>
+<rect x="384" y="493" width="74" height="26" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="421" y="510.3" font-size="12" fill="#e8eaed" text-anchor="middle">pack</text>
+<rect x="640" y="434" width="308" height="90" rx="8" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="794" y="475" font-size="13" fill="#e8eaed" text-anchor="middle">state touched by both loops -</text>
+<text x="794" y="493" font-size="13" fill="#e8833a" text-anchor="middle">the one place you coordinate</text>
+<path d="M552 452 C600 452 610 466 640 466" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/>
+<path d="M458 506 C560 506 590 492 640 492" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/>
+<text x="32" y="546" font-size="12" fill="#9aa0a6">handlers of one side never race: no locks · a handler that blocks stalls its loop · a full sink pauses socket reads - data waits in the network</text>
+</g>
+</svg>

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 460" width="980" height="460" role="img">
+<title>Two color-coded declarations. Top: [D(-100, 20, +50)] string?[][,,] a; arrows join -100 to the first bracket pair [], the outer array of exactly 100 elements; 20 to the second pair [,,], each inner list holding at most 20; +50 to string, at most 50 characters; and the ? marks strings that may be null. A small picture shows an outer box of 100 slots, each holding a list of a different length. Bottom: string?[]?[,,] d; with string?[]? boxed in purple as the element, a nullable constant-length array closed by the ?, and the [,,] after it bracketed in orange as the outer list</title>
+<rect width="980" height="460" rx="10" fill="#2b2b2b"/>
+<text x="56" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" textLength="32" lengthAdjust="spacing" xml:space="preserve">[D(</text>
+<text x="89" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8833a" textLength="43" lengthAdjust="spacing" xml:space="preserve">-100</text>
+<text x="133" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" xml:space="preserve">,</text>
+<text x="144" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" xml:space="preserve"> </text>
+<text x="155" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#4fb3ff" textLength="21" lengthAdjust="spacing" xml:space="preserve">20</text>
+<text x="177" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" xml:space="preserve">,</text>
+<text x="188" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" xml:space="preserve"> </text>
+<text x="199" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#f2c14e" textLength="32" lengthAdjust="spacing" xml:space="preserve">+50</text>
+<text x="232" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" textLength="21" lengthAdjust="spacing" xml:space="preserve">)]</text>
+<text x="254" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" xml:space="preserve"> </text>
+<text x="265" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#f2c14e" textLength="65" lengthAdjust="spacing" xml:space="preserve">string</text>
+<text x="331" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#a06fd0" xml:space="preserve">?</text>
+<text x="342" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8833a" textLength="21" lengthAdjust="spacing" xml:space="preserve">[]</text>
+<text x="364" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#4fb3ff" textLength="43" lengthAdjust="spacing" xml:space="preserve">[,,]</text>
+<text x="408" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" xml:space="preserve"> </text>
+<text x="419" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8eaed" textLength="21" lengthAdjust="spacing" xml:space="preserve">a;</text>
+<path d="M215.5 86 C215.5 56 298 56 298 78" fill="none" stroke="#f2c14e" stroke-width="1.8"/>
+<path d="M298 87 L293.5 79 L302.5 79 Z" fill="#f2c14e"/>
+<path d="M111 86 C111 30 353 30 353 78" fill="none" stroke="#e8833a" stroke-width="1.8"/>
+<path d="M353 87 L348.5 79 L357.5 79 Z" fill="#e8833a"/>
+<path d="M166 86 C166 4 386 4 386 78" fill="none" stroke="#4fb3ff" stroke-width="1.8"/>
+<path d="M386 87 L381.5 79 L390.5 79 Z" fill="#4fb3ff"/>
+<path d="M386 114 L386 138 L460 138" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<circle cx="386" cy="114" r="2.5" fill="#4fb3ff"/>
+<text x="470" y="143" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#4fb3ff">each inner list <tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[,,]</tspan>: at most 20 strings</text>
+<path d="M353 114 L353 164 L460 164" fill="none" stroke="#e8833a" stroke-width="1.4"/>
+<circle cx="353" cy="114" r="2.5" fill="#e8833a"/>
+<text x="470" y="169" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8833a">outer array <tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[]</tspan>: exactly 100 (the brackets give the form)</text>
+<path d="M336.5 114 L336.5 190 L460 190" fill="none" stroke="#a06fd0" stroke-width="1.4"/>
+<circle cx="336.5" cy="114" r="2.5" fill="#a06fd0"/>
+<text x="470" y="195" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#a06fd0"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">?</tspan> : the strings may be null</text>
+<path d="M298 114 L298 216 L460 216" fill="none" stroke="#f2c14e" stroke-width="1.4"/>
+<circle cx="298" cy="114" r="2.5" fill="#f2c14e"/>
+<text x="470" y="221" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#f2c14e">each string: at most 50 characters</text>
+<rect x="56" y="236" width="480" height="58" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<rect x="66" y="245" width="78" height="40" rx="3" fill="#2b2b2b" stroke="#7a5a3a" stroke-width="1"/>
+<rect x="71" y="253" width="34" height="24" rx="2" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.3"/>
+<rect x="74" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="84" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="94" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="152" y="245" width="78" height="40" rx="3" fill="#2b2b2b" stroke="#7a5a3a" stroke-width="1"/>
+<rect x="157" y="253" width="64" height="24" rx="2" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.3"/>
+<rect x="160" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="170" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="180" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="190" y="257" width="8" height="16" fill="none" stroke="#a06fd0" stroke-width="1" stroke-dasharray="2 1.5"/>
+<rect x="200" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="210" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="238" y="245" width="78" height="40" rx="3" fill="#2b2b2b" stroke="#7a5a3a" stroke-width="1"/>
+<rect x="243" y="253" width="14" height="24" rx="2" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.3"/>
+<rect x="246" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="324" y="245" width="78" height="40" rx="3" fill="#2b2b2b" stroke="#7a5a3a" stroke-width="1"/>
+<rect x="329" y="253" width="44" height="24" rx="2" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.3"/>
+<rect x="332" y="257" width="8" height="16" fill="none" stroke="#a06fd0" stroke-width="1" stroke-dasharray="2 1.5"/>
+<rect x="342" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="352" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="362" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="410" y="245" width="78" height="40" rx="3" fill="#2b2b2b" stroke="#7a5a3a" stroke-width="1"/>
+<rect x="415" y="253" width="24" height="24" rx="2" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.3"/>
+<rect x="418" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<rect x="428" y="257" width="8" height="16" fill="#f2c14e" opacity="0.85"/>
+<text x="504" y="271" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="18" fill="#e8833a">…</text>
+<text x="550" y="260" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a">a: 100 slots (the outer array)</text>
+<text x="550" y="278" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff">each slot: a list of its own length, at most 20</text>
+<rect x="550" y="287" width="8" height="10" fill="#f2c14e" opacity="0.85"/>
+<text x="564" y="296" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">string</text>
+<rect x="616" y="287" width="8" height="10" fill="none" stroke="#a06fd0" stroke-width="1" stroke-dasharray="2 1.5"/>
+<text x="630" y="296" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">null</text>
+<line x1="24" y1="316" x2="956" y2="316" stroke="#3a3a3a" stroke-width="1"/>
+<text x="56" y="372" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#f2c14e" textLength="65" lengthAdjust="spacing" xml:space="preserve">string</text>
+<text x="122" y="372" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#a06fd0" xml:space="preserve">?</text>
+<text x="133" y="372" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#a06fd0" textLength="21" lengthAdjust="spacing" xml:space="preserve">[]</text>
+<text x="155" y="372" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#a06fd0" xml:space="preserve">?</text>
+<text x="172" y="372" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8833a" textLength="43" lengthAdjust="spacing" xml:space="preserve">[,,]</text>
+<text x="216" y="372" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#9aa0a6" xml:space="preserve"> </text>
+<text x="227" y="372" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18" fill="#e8eaed" textLength="21" lengthAdjust="spacing" xml:space="preserve">d;</text>
+<rect x="50" y="351" width="118" height="30" rx="7" fill="none" stroke="#a06fd0" stroke-width="1.8"/>
+<path d="M173 386 L173 393 L215 393 L215 386" fill="none" stroke="#e8833a" stroke-width="1.8"/>
+<path d="M109 351 L109 338 L310 338" fill="none" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="320" y="343" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#a06fd0">element, closed by <tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">?</tspan>: <tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">string?[]?</tspan> is a nullable array of exactly 255 nullable strings</text>
+<path d="M194 393 L194 408 L310 408" fill="none" stroke="#e8833a" stroke-width="1.4"/>
+<text x="320" y="413" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8833a">outer list <tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[,,]</tspan>: the pair after the <tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">?</tspan>, up to 255 elements</text>
+<text x="24" y="440" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">Without ? between the pairs the left pair is outer (C# jagged arrays); a ? between the pairs makes the pair after it the outer array.</text>
+</svg>

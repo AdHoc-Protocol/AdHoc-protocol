@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 500" width="980" height="500" role="img" aria-labelledby="title desc">
+<title id="title">A gateway that never needs a schema update</title>
+<desc id="desc">Sensors reach the Cloud over virtual connections through a Gateway whose Relay forwards sealed tunnel frames without a schema or a key, at constant memory.</desc>
+<rect width="980" height="500" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="600">A gateway that never needs a schema update</text>
+<defs><pattern id="hb" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#1f3a52"/><line x1="0" y1="0" x2="0" y2="6" stroke="#4fb3ff" stroke-width="1.4"/></pattern></defs>
+<path d="M64 151 L58 151 Q52 151 52 145 L52 116 Q52 106 62 106 L862 106 Q872 106 872 116 L872 187" fill="none" stroke="#a06fd0" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<path d="M872 196 L868 188 L876 188 Z" fill="#a06fd0"/>
+<path d="M64 203 L54.5 203 Q45 203 45 193.5 L45 109 Q45 99 55 99 L883 99 Q893 99 893 109 L893 187" fill="none" stroke="#a06fd0" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<path d="M893 196 L889 188 L897 188 Z" fill="#a06fd0"/>
+<path d="M64 255 L48 255 Q38 255 38 245 L38 102 Q38 92 48 92 L904 92 Q914 92 914 102 L914 187" fill="none" stroke="#a06fd0" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<path d="M914 196 L910 188 L918 188 Z" fill="#a06fd0"/>
+<path d="M64 307 L41 307 Q31 307 31 297 L31 95 Q31 85 41 85 L925 85 Q935 85 935 95 L935 187" fill="none" stroke="#a06fd0" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<path d="M935 196 L931 188 L939 188 Z" fill="#a06fd0"/>
+<text x="470" y="66" font-size="12" fill="#a06fd0" text-anchor="middle" xml:space="preserve"><tspan fill="#a06fd0">SensorToCloud: </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">VirtuallyConnects&lt;Sensor, Cloud, Gateway&gt;</tspan><tspan >  ·  </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd(6), ChaCha20]</tspan><tspan > end to end</tspan></text>
+<g data-nocheck="1"><rect x="690" y="84" width="24" height="16" rx="2" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/><path d="M690 85 L702 93.6 L714 85" fill="none" stroke="#a06fd0" stroke-width="1.4"/></g>
+<rect x="686" y="81" width="32" height="26" fill="#2b2b2b" opacity="0"/>
+<text x="674" y="128" font-size="12" fill="#a06fd0">sealed chunks:</text>
+<text x="674" y="144" font-size="12" fill="#a06fd0">the gateway holds no key</text>
+<rect x="184" y="144" width="194" height="14" rx="7" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-opacity="0.55" stroke-width="1" data-nocheck="1"/>
+<path d="M176 151 L373 151" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M380 151 L372 155 L372 147 Z" fill="#4fb3ff"/>
+<rect x="184" y="196" width="194" height="14" rx="7" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-opacity="0.55" stroke-width="1" data-nocheck="1"/>
+<path d="M176 203 L373 203" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M380 203 L372 207 L372 199 Z" fill="#4fb3ff"/>
+<rect x="184" y="248" width="194" height="14" rx="7" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-opacity="0.55" stroke-width="1" data-nocheck="1"/>
+<line x1="176" y1="255" x2="212" y2="255" stroke="#4fb3ff" stroke-width="2"/>
+<path data-nocheck="1" d="M219.6 250.6 L228.4 259.4 M228.4 250.6 L219.6 259.4" stroke="#e06c6c" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="236" y1="255" x2="371" y2="255" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M380 255 L372 259 L372 251 Z" fill="#4fb3ff"/>
+<rect x="184" y="300" width="194" height="14" rx="7" fill="#4fb3ff" fill-opacity="0.10" stroke="#4fb3ff" stroke-opacity="0.55" stroke-width="1" data-nocheck="1"/>
+<path d="M176 307 L373 307" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M380 307 L372 311 L372 303 Z" fill="#4fb3ff"/>
+<g data-nocheck="1"><circle cx="194" cy="325" r="3.2" fill="none" stroke="#4fb3ff" stroke-width="1.4"/><path d="M197.2 325 H206.8 M203.6 325 V328.2 M206 325 V327.8" stroke="#4fb3ff" stroke-width="1.4" fill="none"/></g>
+<g data-nocheck="1"><circle cx="350" cy="325" r="3.2" fill="none" stroke="#4fb3ff" stroke-width="1.4"/><path d="M353.2 325 H362.8 M359.6 325 V328.2 M362 325 V327.8" stroke="#4fb3ff" stroke-width="1.4" fill="none"/></g>
+<text x="184" y="349" font-size="12" fill="#4fb3ff">optional hop chain per radio leg</text>
+<text x="184" y="365" font-size="12" fill="#4fb3ff">protects the link only</text>
+<rect x="64" y="132" width="112" height="38" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="76" y="148" font-size="13" fill="#e8eaed" font-weight="600">Sensor</text>
+<text x="76" y="163" font-size="12" fill="#9aa0a6">tunnel 1</text>
+<rect x="64" y="184" width="112" height="38" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="76" y="200" font-size="13" fill="#e8eaed" font-weight="600">Sensor</text>
+<text x="76" y="215" font-size="12" fill="#9aa0a6">tunnel 2</text>
+<rect x="64" y="236" width="112" height="38" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="76" y="252" font-size="13" fill="#e8eaed" font-weight="600">Sensor</text>
+<text x="76" y="267" font-size="12" fill="#9aa0a6">tunnel 3</text>
+<rect x="64" y="288" width="112" height="38" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="76" y="304" font-size="13" fill="#e8eaed" font-weight="600">Sensor</text>
+<text x="76" y="319" font-size="12" fill="#9aa0a6">tunnel 4</text>
+<text x="224" y="243" font-size="12" fill="#e06c6c" text-anchor="middle" font-weight="600">gone</text>
+<rect x="380" y="120" width="220" height="216" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="490" y="142" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Gateway</text>
+<path data-nocheck="1" d="M396 158 H420 L410.4 170.1 V180 L405.6 176.7 V170.1 Z" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="430" y="166" font-size="13" fill="#e8eaed" font-weight="600">Relay</text>
+<text x="430" y="182" font-size="12" fill="#9aa0a6">reads pack id + tunnel_id,</text>
+<text x="430" y="197" font-size="12" fill="#9aa0a6">forwards regions</text>
+<rect x="394" y="212" width="192" height="50" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="404" y="229" font-size="12" fill="#e8833a" font-weight="600">Tunneling (your code)</text>
+<line x1="394" y1="236" x2="586" y2="236" stroke="#e8833a" stroke-width="1"/>
+<text x="404" y="253" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">tunnel_id</text>
+<text x="471.4" y="253" font-size="12" fill="#9aa0a6">→</text>
+<text x="489.4" y="253" font-size="12" fill="#e8eaed">the uplink</text>
+<rect x="424.8" y="274" width="73.3" height="20" rx="4" fill="#333536" stroke="#8a8a8a" stroke-width="1.2"/><text x="461.4" y="288.3" font-size="12" fill="#9aa0a6" text-anchor="middle">no schema</text>
+<rect x="504" y="274" width="51.2" height="20" rx="4" fill="#333536" stroke="#8a8a8a" stroke-width="1.2"/><text x="529.6" y="288.3" font-size="12" fill="#9aa0a6" text-anchor="middle">no key</text>
+<rect x="423.1" y="300" width="133.9" height="20" rx="4" fill="#333536" stroke="#8a8a8a" stroke-width="1.2"/><text x="490" y="314.3" font-size="12" fill="#9aa0a6" text-anchor="middle">one region in memory</text>
+<rect x="600" y="223" width="256" height="30" rx="3" fill="#1b2b3b" stroke="#4fb3ff" stroke-width="2.5"/>
+<rect x="606" y="228" width="9" height="20" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.1"/><rect x="616" y="228" width="14" height="20" rx="2" fill="#32293e" stroke="#a06fd0" stroke-width="1.1"/><text x="623" y="242.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">1</text><rect x="631" y="228" width="9" height="20" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.1"/><rect x="641" y="228" width="20" height="20" rx="2" fill="url(#hb)" stroke="#4fb3ff" stroke-width="1.1"/><rect x="662" y="228" width="12" height="20" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.1"/><text x="668" y="242.3" font-size="12" fill="#e8eaed" text-anchor="middle">0</text>
+<rect x="679" y="228" width="9" height="20" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.1"/><rect x="689" y="228" width="14" height="20" rx="2" fill="#32293e" stroke="#a06fd0" stroke-width="1.1"/><text x="696" y="242.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">3</text><rect x="704" y="228" width="9" height="20" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.1"/><rect x="714" y="228" width="20" height="20" rx="2" fill="url(#hb)" stroke="#4fb3ff" stroke-width="1.1"/><rect x="735" y="228" width="44" height="20" rx="2" fill="#3a2324" stroke="#e06c6c" stroke-width="1.1"/><text x="757" y="242.3" font-size="12" fill="#e06c6c" text-anchor="middle" font-weight="700">ABORT</text>
+<rect x="784" y="228" width="9" height="20" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.1"/><rect x="794" y="228" width="14" height="20" rx="2" fill="#32293e" stroke="#a06fd0" stroke-width="1.1"/><text x="801" y="242.3" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">2</text>
+<text x="813" y="242.3" font-size="12" fill="#9aa0a6">…</text>
+<path d="M856 238 L848 242 L848 234 Z" fill="#4fb3ff"/>
+<text x="606" y="216" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#9aa0a6">frame = </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[id][</tspan><tspan fill="#a06fd0" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">tid</tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">][len][data]…[0]</tspan></text>
+<text x="606" y="272" font-size="12" fill="#9aa0a6">one uplink, all tunnels interleaved</text>
+<text x="606" y="292" font-size="12" fill="#e06c6c">ABORT ends only tunnel 3; the uplink</text>
+<text x="606" y="308" font-size="12" fill="#e06c6c">and the other tunnels go on</text>
+<rect x="856" y="196" width="100" height="84" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="906" y="233.5" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Cloud</text>
+<text x="906" y="250.5" font-size="12" fill="#9aa0a6" text-anchor="middle">endpoint</text>
+<rect x="386" y="350" width="300.6" height="26" rx="13" fill="#3a2c20" stroke="#e8833a" stroke-width="1.3"/>
+<text x="536.3" y="367.5" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="600">Sensor.Reading gains a field → gateway not rebuilt</text>
+<g opacity="0.6"><path d="M836 253 L836 398 Q836 408 826 408 L130 408 Q120 408 120 398 L120 335" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M120 328 L124 336 L116 336 Z" fill="#e8833a"/></g>
+<text x="460" y="432" font-size="12" fill="#e8833a" text-anchor="middle">uplink slow → relay stops reading → TCP window closes → the sender slows</text>
+<text x="460" y="450" font-size="12" fill="#9aa0a6" text-anchor="middle">end-to-end backpressure: no queue grows in the gateway</text>
+</g>
+</svg>

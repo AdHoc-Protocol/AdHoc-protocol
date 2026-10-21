@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="980" height="540" role="img" aria-labelledby="title desc">
+<title id="title">A serial line that recovers after a damaged byte</title>
+<desc id="desc">Top: one frame per pack - the mark FF, the pack id and fields as on any connection, an escaped 7F where a byte 0x7F or 0xFF occurred (the escape costs one bit: the top bit moves on), and a 2-byte CRC-16. Middle: on the line, frames Status, Command, Status and Alarm, each starting with FF; a lightning bolt damages a byte of Command: CRC_ERROR, dropped; the receiver skips to the next FF and the next Status arrives intact, CRC ok, dispatched. Bottom: receiving goes UART bytes, Receiver.Framing, the generated receiver, a CRC gate, OnReceived - unescaped in place, decoded field by field as the bytes come, handlers run only when the CRC matches; sending goes send(pack), the generated transmitter, Transmitter.Framing, UART bytes - FF, escaping and CRC written in place in the same buffer. C# and Java; the description, actors and packs are the same as on TCP.</desc>
+<rect width="980" height="540" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">A serial line that recovers after a damaged byte</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">Receiver.Framing and Transmitter.Framing between the generated connection and a UART, RS-485 or radio modem</text>
+<text x="24" y="84" font-size="12.5" fill="#e8eaed" font-weight="700">one frame per pack</text>
+<rect x="24" y="94" width="40" height="32" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="44" y="115" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<text x="44" y="144" font-size="12" fill="#9aa0a6" text-anchor="middle">mark</text>
+<rect x="67" y="94" width="40" height="32" rx="3" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="87" y="115" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">id</text>
+<rect x="110" y="94" width="200" height="32" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="210" y="115" font-size="12.5" fill="#e8eaed" text-anchor="middle">fields …</text>
+<text x="210" y="144" font-size="12" fill="#9aa0a6" text-anchor="middle">the pack, as on any connection</text>
+<rect x="313" y="94" width="40" height="32" rx="3" fill="#33261d" stroke="#e8833a" stroke-width="1.4"/>
+<text x="333" y="115" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">7F</text>
+<rect x="356" y="94" width="150" height="32" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="431" y="115" font-size="12.5" fill="#e8eaed" text-anchor="middle">fields …</text>
+<rect x="509" y="94" width="90" height="32" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="554" y="115" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">CRC-16</text>
+<text x="554" y="144" font-size="12" fill="#9aa0a6" text-anchor="middle">2 bytes</text>
+<text x="616" y="106" font-size="12" fill="#e8833a">a byte 0x7F or 0xFF inside: written as 7F,</text>
+<text x="616" y="124" font-size="12" fill="#e8833a">its top bit moves on - an escape costs 1 bit</text>
+<text x="24" y="182" font-size="12.5" fill="#e8eaed" font-weight="700">on the line</text>
+<path d="M24 254 L948 254" fill="none" stroke="#4a4a4a" stroke-width="1.4" stroke-linejoin="round"/><path d="M956 254 L947 258.6 L947 249.4 Z" fill="#4a4a4a"/>
+<text x="952" y="270" font-size="12" fill="#9aa0a6" text-anchor="end">time</text>
+<rect x="24" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="37" y="216" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="53" y="196" width="171" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="138.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Status</text>
+<text x="138.5" y="244" font-size="12" fill="#7cc47c" text-anchor="middle">CRC ok: dispatched</text>
+<rect x="236" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="249" y="216" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="265" y="196" width="201" height="30" rx="2" fill="#4a2626" stroke="#e06c6c" stroke-width="1.2"/>
+<text x="365.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Command</text>
+<path d="M356 186 l-8 16 h7 l-6 16 l16 -20 h-8 l6 -12 Z" fill="#e06c6c"/>
+<text x="365.5" y="244" font-size="12" fill="#e06c6c" text-anchor="middle">CRC_ERROR: dropped</text>
+<rect x="498" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="511" y="216" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="527" y="196" width="151" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="602.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Status</text>
+<text x="602.5" y="244" font-size="12" fill="#7cc47c" text-anchor="middle">CRC ok: dispatched</text>
+<rect x="710" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="723" y="216" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="739" y="196" width="191" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="834.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Alarm</text>
+<text x="834.5" y="244" font-size="12" fill="#7cc47c" text-anchor="middle">CRC ok: dispatched</text>
+<path d="M466 234 C 480 234, 486 234, 498 228" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="4 3" fill="none"/>
+<text x="478" y="286" font-size="12" fill="#9aa0a6" text-anchor="middle">skip to the next FF - the next pack arrives intact</text>
+<text x="24" y="320" font-size="12.5" fill="#e8eaed" font-weight="700">receiving</text>
+<rect x="24" y="332" width="120" height="34" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="84" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">UART bytes</text>
+<path d="M144 349 L158 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M166 349 L157 353.6 L157 344.4 Z" fill="#4fb3ff"/>
+<rect x="168" y="332" width="170" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="253" y="354" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">Receiver.Framing</text>
+<path d="M338 349 L352 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M360 349 L351 353.6 L351 344.4 Z" fill="#4fb3ff"/>
+<rect x="362" y="332" width="170" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="447" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">generated receiver</text>
+<path d="M532 349 L546 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M554 349 L545 353.6 L545 344.4 Z" fill="#4fb3ff"/>
+<rect x="556" y="332" width="100" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="606" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">CRC gate</text>
+<path d="M656 349 L670 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M678 349 L669 353.6 L669 344.4 Z" fill="#4fb3ff"/>
+<rect x="680" y="332" width="120" height="34" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/>
+<text x="740" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">OnReceived</text>
+<text x="24" y="386" font-size="12" fill="#9aa0a6">unescaped in place · decoded field by field as the bytes come · handlers run only when the CRC matches</text>
+<text x="24" y="420" font-size="12.5" fill="#e8eaed" font-weight="700">sending</text>
+<rect x="24" y="432" width="120" height="34" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/>
+<text x="84" y="454" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">send(pack)</text>
+<path d="M144 449 L158 449" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M166 449 L157 453.6 L157 444.4 Z" fill="#4fb3ff"/>
+<rect x="168" y="432" width="190" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="263" y="454" font-size="12.5" fill="#e8eaed" text-anchor="middle">generated transmitter</text>
+<path d="M358 449 L372 449" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M380 449 L371 453.6 L371 444.4 Z" fill="#4fb3ff"/>
+<rect x="382" y="432" width="180" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="472" y="454" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">Transmitter.Framing</text>
+<path d="M562 449 L576 449" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M584 449 L575 453.6 L575 444.4 Z" fill="#4fb3ff"/>
+<rect x="586" y="432" width="120" height="34" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="646" y="454" font-size="12.5" fill="#e8eaed" text-anchor="middle">UART bytes</text>
+<text x="24" y="486" font-size="12" fill="#9aa0a6">the frame mark, the escaping and the CRC are written in place, in the same buffer</text>
+<text x="24" y="520" font-size="12" fill="#9aa0a6">C# and Java · the description, the actors and the packs are the same as on TCP - only the bytes on the line change</text>
+</g>
+</svg>

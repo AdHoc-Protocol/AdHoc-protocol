@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 636" width="960" height="636" role="img" aria-labelledby="title desc">
+<title id="title">快速入门:从你的 UUID 到第一份部署代码的五个步骤</title>
+<desc id="desc">上排从左到右:步骤 2,AdHocAgent 后跟你的 UUID,把它作为 PersonalVolatileUUID 存入 AdHocAgent 旁边的 AdHocAgent.toml;步骤 4,无参数的 AdHocAgent 把模板 MyProtocolDescription.cs 写入当前文件夹,覆盖同名文件;步骤 5,你在 IDE 中编写协议:pack 及其字段、主机及其语言、连接、状态和分支。沿右侧向下到底排,从右到左:步骤 6,AdHocAgent .\MyProtocolDescription.cs 把编号表加入描述,填充收到的文件夹 MyProtocolDescription(含 .description、InCS、InJAVA 和 InTS 主机文件夹),写出 MyProtocolDescription.md 后停止;不带目录部分的裸文件名会被当作 UUID,不生成任何东西。步骤 7:在 .md 文件中添加路由和 ⛔ 标记后,AdHocAgent .\MyProtocolDescription.md 把 gen、lib 和 LICENSE-GRANT.md 复制到 D:\Projects\server\protocol。</desc>
+<rect width="960" height="636" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<circle cx="28" cy="31" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="28" y="35.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">2</text>
+<text x="48" y="36" font-size="14" fill="#e8eaed" font-weight="700">保存你的 UUID</text>
+<text x="18" y="61" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >一次,使用注册时获得的 UUID</tspan></text>
+<circle cx="340" cy="31" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="340" y="35.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">4</text>
+<text x="360" y="36" font-size="14" fill="#e8eaed" font-weight="700">获取模板</text>
+<text x="330" y="61" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >在描述项目的文件夹中</tspan></text>
+<circle cx="642" cy="31" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="642" y="35.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">5</text>
+<text x="662" y="36" font-size="14" fill="#e8eaed" font-weight="700">编写你的协议</text>
+<text x="632" y="61" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >模板只是起点:</tspan></text>
+<text x="632" y="77" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >把它变成你的协议</tspan></text>
+<rect x="16" y="100" width="280" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="156" y="127" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent &lt;your-uuid&gt;</text>
+<rect x="328" y="100" width="270" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="463" y="127" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent</text>
+<rect x="630" y="100" width="300" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="780" y="127" font-size="13" fill="#e8eaed" text-anchor="middle">在你的 IDE 中编辑</text>
+<path d="M296 122 L320 122" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M328 122 L319 126.6 L319 117.4 Z" fill="#4fb3ff"/>
+<path d="M598 122 L622 122" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M630 122 L621 126.6 L621 117.4 Z" fill="#4fb3ff"/>
+<path d="M37 144 L37 158" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M37 164 L32.4 157 L41.6 157 Z" fill="#4fb3ff"/>
+<path d="M349 144 L349 158" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M349 164 L344.4 157 L353.6 157 Z" fill="#4fb3ff"/>
+<path d="M651 144 L651 158" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M651 164 L646.4 157 L655.6 157 Z" fill="#4fb3ff"/>
+<path d="M24 168 L42 168 L50 176 L50 202 L24 202 Z" fill="#333536" stroke="#8c9198" stroke-width="1.6" stroke-linejoin="round"/><path d="M42 168 L42 176 L50 176" fill="none" stroke="#8c9198" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="60" y="182" font-size="12" fill="#e8eaed">AdHocAgent.toml</text>
+<text x="60" y="198" font-size="12" fill="#9aa0a6">放在 AdHocAgent 旁边</text>
+<rect x="18" y="214" width="250" height="26" rx="4" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1"/>
+<text x="28" y="231" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">PersonalVolatileUUID = "…"</text>
+<path d="M336 168 L354 168 L362 176 L362 202 L336 202 Z" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M354 168 L354 176 L362 176" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="372" y="182" font-size="12" fill="#e8eaed">MyProtocolDescription.cs</text>
+<text x="372" y="198" font-size="12" fill="#e8eaed">模板,位于当前文件夹</text>
+<text x="372" y="214" font-size="12" fill="#9aa0a6">会覆盖同名文件</text>
+<path d="M638 168 L656 168 L664 176 L664 202 L638 202 Z" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M656 168 L656 176 L664 176" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="674" y="182" font-size="12" fill="#e8eaed">MyProtocolDescription.cs</text>
+<text x="682" y="202" font-size="12" fill="#e8833a">+ pack 及其字段</text>
+<text x="682" y="218" font-size="12" fill="#e8833a">+ 主机及其语言</text>
+<text x="682" y="234" font-size="12" fill="#e8833a">+ 连接、状态、分支</text>
+<text x="674" y="256" font-size="12" fill="#9aa0a6">IDE 在你输入时检查 C#</text>
+<circle cx="518" cy="319" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="518" y="323.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">6</text>
+<text x="538" y="324" font-size="14" fill="#e8eaed" font-weight="700">生成</text>
+<text x="508" y="349" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >路径需要目录部分: </tspan><tspan fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">.\</tspan><tspan > 或 </tspan><tspan fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">./</tspan></text>
+<circle cx="28" cy="319" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="28" y="323.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">7</text>
+<text x="48" y="324" font-size="14" fill="#e8eaed" font-weight="700">部署</text>
+<text x="18" y="349" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >添加路由 </tspan><tspan fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">[](/D:/Projects/server/protocol/)</tspan></text>
+<text x="18" y="365" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan > 并为未使用的主机加上 ⛔ 后</tspan></text>
+<rect x="506" y="392" width="424" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="718" y="419" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent .\MyProtocolDescription.cs</text>
+<rect x="16" y="392" width="430" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="231" y="419" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent .\MyProtocolDescription.md</text>
+<path d="M930 122 L938 122 Q946 122 946 130 L946 410 Q946 414 942 414 L938 414" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M930 414 L939 409.4 L939 418.6 Z" fill="#4fb3ff"/>
+<path d="M506 414 L454 414" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M446 414 L455 409.4 L455 418.6 Z" fill="#4fb3ff"/>
+<path d="M527 436 L527 450" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M527 456 L522.4 449 L531.6 449 Z" fill="#4fb3ff"/>
+<path d="M37 436 L37 450" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M37 456 L32.4 449 L41.6 449 Z" fill="#4fb3ff"/>
+<path d="M514 460 L532 460 L540 468 L540 494 L514 494 Z" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M532 460 L532 468 L540 468" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="550" y="474" font-size="12" fill="#e8eaed">MyProtocolDescription.cs</text>
+<rect x="550" y="482" width="140" height="19" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="558" y="496" font-size="12" fill="#f2c14e">已添加编号表</text>
+<path d="M514 514 L532 514 L540 522 L540 548 L514 548 Z" fill="#333536" stroke="#8c9198" stroke-width="1.6" stroke-linejoin="round"/><path d="M532 514 L532 522 L540 522" fill="none" stroke="#8c9198" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="550" y="528" font-size="12" fill="#e8eaed">MyProtocolDescription.md</text>
+<text x="550" y="544" font-size="12" fill="#9aa0a6">写入 —— 本次运行停止</text>
+<path d="M728 464 L728 486 L760 486 L760 466 L743 466 L740 461 L730 461 Q728 461 728 464 Z" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/>
+<text x="768" y="476" font-size="12" fill="#e8eaed">MyProtocolDescription\</text>
+<text x="776" y="494" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">.description\</text>
+<text x="776" y="510" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InCS\Client\</text>
+<text x="776" y="526" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InCS\Server\</text>
+<text x="776" y="542" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InJAVA\…</text>
+<text x="776" y="558" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InTS\…</text>
+<rect x="506" y="572" width="424" height="46" rx="6" fill="#36301f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="518" y="590" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">AdHocAgent MyProtocolDescription.cs</tspan><tspan >  - 没有目录部分</tspan></text>
+<text x="518" y="607" font-size="12" fill="#e8eaed">裸文件名会被当作 UUID:不生成任何东西</text>
+<path d="M21 464 L21 486 L53 486 L53 466 L36 466 L33 461 L23 461 Q21 461 21 464 Z" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/>
+<text x="62" y="476" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">D:\Projects\server\protocol\</text>
+<text x="70" y="494" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">gen\</text>
+<text x="70" y="510" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">lib\</text>
+<text x="70" y="526" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">LICENSE-GRANT.md</text>
+<text x="62" y="548" font-size="12" fill="#9aa0a6">仅用于生成代码的文件夹</text>
+<rect x="24" y="573" width="13" height="13" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="44" y="584" font-size="12" fill="#9aa0a6">你的</text>
+<rect x="114" y="573" width="13" height="13" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="134" y="584" font-size="12" fill="#9aa0a6">生成的</text>
+<rect x="224" y="573" width="13" height="13" rx="3" fill="#333536" stroke="#8c9198" stroke-width="1.6"/>
+<text x="244" y="584" font-size="12" fill="#9aa0a6">由 AdHocAgent 写入</text>
+</g>
+</svg>

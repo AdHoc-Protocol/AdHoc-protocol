@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" width="960" height="340" role="img" aria-labelledby="title desc">
+<title id="title">三道关卡</title>
+<desc id="desc">A horizontal track from MyProtocol.cs to the generated code, through three gates. Gate 1, the C# compiler (Roslyn): the errors your IDE shows as you type - for example a misspelled host in Connects&lt;Sensor, Colector&gt; is an unknown type. Gate 2, the AdHoc rules, checked by AdHocAgent on your machine, where the first error stops: for example both sides leading one state, a state claiming a pack twice, MinMax(5, 5) as a range of a single value, A(1_000, 1_100) as a varint whose span fits one byte. A dashed boundary after gate 2: nothing leaves your machine until the description passes. Gate 3, tests on request: with ! after the file name (.cs!) the server also tests the code, as far as its resources allow; without ! the code is only generated; the result says how far testing went, so keep your own tests. Both ends of a connection come from one declaration, so a type mismatch between two hosts cannot be written.</desc>
+<rect width="960" height="340" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="24" y="88" width="120" height="44" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="84" y="114.7" font-size="13" fill="#e8eaed" text-anchor="middle">MyProtocol.cs</text>
+<rect x="170" y="70" width="180" height="80" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/>
+<circle cx="190" cy="92" r="10" fill="#8c9198"/><text data-ok="1" x="190" y="96.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">1</text>
+<text x="208" y="97" font-size="13" fill="#e8eaed" font-weight="700">C# 编译器</text>
+<text x="260" y="120" font-size="12" fill="#e8eaed" text-anchor="middle">Roslyn——你输入时</text>
+<text x="260" y="136" font-size="12" fill="#e8eaed" text-anchor="middle">IDE 就显示的错误</text>
+<rect x="370" y="70" width="190" height="80" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/>
+<circle cx="390" cy="92" r="10" fill="#8c9198"/><text data-ok="1" x="390" y="96.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">2</text>
+<text x="408" y="97" font-size="13" fill="#e8eaed" font-weight="700">AdHoc 规则</text>
+<text x="465" y="120" font-size="12" fill="#e8eaed" text-anchor="middle">AdHocAgent,在你的</text>
+<text x="465" y="136" font-size="12" fill="#e8eaed" text-anchor="middle">机器上;首个错误即停</text>
+<rect x="594" y="70" width="180" height="80" rx="6" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/>
+<circle cx="614" cy="92" r="10" fill="#a06fd0"/><text data-ok="1" x="614" y="96.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">3</text>
+<text x="632" y="97" font-size="13" fill="#e8eaed" font-weight="700">按需测试</text>
+<text x="684" y="120" font-size="12" fill="#e8eaed" text-anchor="middle">用 .cs!——在返回前,</text>
+<text x="684" y="136" font-size="12" fill="#e8eaed" text-anchor="middle">在资源允许时</text>
+<rect x="800" y="88" width="144" height="44" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="872" y="106.2" font-size="13" fill="#e8eaed" text-anchor="middle">生成的代码</text><text x="872" y="123.2" font-size="13" fill="#e8eaed" text-anchor="middle">覆盖每台主机</text>
+<path d="M145 110 L162 110" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M169 110 L161 114.2 L161 105.8 Z" fill="#4fb3ff"/>
+<path d="M351 110 L362 110" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M369 110 L361 114.2 L361 105.8 Z" fill="#4fb3ff"/>
+<path d="M561 110 L586 110" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M593 110 L585 114.2 L585 105.8 Z" fill="#4fb3ff"/>
+<path d="M775 110 L792 110" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M799 110 L791 114.2 L791 105.8 Z" fill="#4fb3ff"/>
+<line x1="576" y1="60" x2="576" y2="298" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="576" y="50" font-size="12" fill="#e8eaed" text-anchor="middle">描述通过之前,没有任何东西离开你的机器</text>
+<line x1="260" y1="151" x2="260" y2="169" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="3 3"/>
+<rect x="170" y="170" width="180" height="124" rx="6" fill="#2b2b2b" stroke="#e06c6c" stroke-width="1.4"/>
+<text x="182" y="190" font-size="12" fill="#9aa0a6">在这里被拦下,例如</text>
+<text x="182" y="212" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">Connects&lt;Sensor,</text>
+<text x="182" y="228" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">         Colector&gt;</text>
+<text x="182" y="252" font-size="12" fill="#e06c6c">→ 未知类型</text>
+<line x1="465" y1="151" x2="465" y2="169" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="3 3"/>
+<rect x="370" y="170" width="190" height="124" rx="6" fill="#2b2b2b" stroke="#e06c6c" stroke-width="1.4"/>
+<text x="382" y="190" font-size="12" fill="#9aa0a6">在这里被拦下,例如</text>
+<text x="382" y="212" font-size="12" fill="#e8eaed">双方都引导同一状态</text>
+<text x="382" y="229" font-size="12" fill="#e8eaed">一个状态重复占用同一 pack</text>
+<text x="382" y="246" font-size="12" fill="#e8eaed">MinMax(5, 5):只有一个值</text>
+<text x="382" y="263" font-size="12" fill="#e8eaed">A(1_000, 1_100):一个 varint</text>
+<text x="382" y="280" font-size="12" fill="#e8eaed" xml:space="preserve">  其跨度装进一个字节</text>
+<line x1="684" y1="151" x2="684" y2="169" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="3 3"/>
+<rect x="594" y="170" width="180" height="124" rx="6" fill="#2b2b2b" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="606" y="198" font-size="12" fill="#9aa0a6">不带 !——不测试;</text>
+<text x="606" y="216" font-size="12" fill="#9aa0a6">结果说明测试</text>
+<text x="606" y="234" font-size="12" fill="#9aa0a6">走了多远——请保留</text>
+<text x="606" y="252" font-size="12" fill="#9aa0a6">你自己的测试</text>
+<text x="24" y="322" font-size="12" fill="#e8eaed">连接两端来自同一份声明:两台主机之间的类型不匹配根本无法写出来</text>
+</g>
+</svg>

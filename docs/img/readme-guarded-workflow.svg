@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" width="980" height="560" role="img" aria-labelledby="title desc">
+<title id="title">Protocol-enforced workflow: the Motion state machine of Control, compiled into the Console and the Robot</title>
+<desc id="desc">Safe, led by the Console, goes to Arming on Console.Arm. Arming, led by the Robot and limited by Deadline(3), goes to Armed on Robot.ArmedAck or to End on Robot.Refused. Armed, led by the Console, stays on Console.Jog and Console.Heartbeat and on Robot.Pose, and ends on Console.Disarm; its Idle(1) lease is held by the Robot. Lower left: the Console's generated transmitters - one send method per pack the state allows: Arm in Safe, none in Arming, Jog, Heartbeat and Disarm in Armed; a dashed card shows that Safe has no method for Jog. Middle: a Jog sent anyway in Safe is refused before it leaves as DISCARDED_BYSTATE; a second Motion opened by the peer aborts the connection, a second local Acquire returns null; a late pack from a previous state is dropped by the epoch. Right: on the Robot, Jog and Heartbeat ticks, then one second of silence, and OnDeadline fires so your code makes a safe stop; the connection lives on; only received packs count.</desc>
+<rect width="980" height="560" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="600" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">interface Control : Connects&lt;Console, Robot&gt;</tspan><tspan fill="#9aa0a6">   -   actor </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Motion</tspan><tspan fill="#9aa0a6">,  </tspan><tspan fill="#9aa0a6" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">MaxActiveInstances =&gt; 1</tspan></text>
+<rect x="56" y="100" width="130" height="84" rx="8" fill="#353535" stroke="#7d858f" stroke-width="1.6"/>
+<text x="121" y="136" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Safe</text>
+<text x="121" y="155" font-size="13" fill="#e8833a" text-anchor="middle">Console leads</text>
+<rect x="280" y="100" width="166" height="84" rx="8" fill="#353535" stroke="#7d858f" stroke-width="1.6"/>
+<text x="363" y="124" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Arming</text>
+<text x="363" y="143" font-size="13" fill="#4fb3ff" text-anchor="middle">Robot leads</text>
+<circle cx="309" cy="157" r="6" fill="none" stroke="#9aa0a6" stroke-width="1.6"/><line x1="309" y1="157" x2="311.7" y2="153.7" stroke="#9aa0a6" stroke-width="1.6" stroke-linecap="round"/><line x1="309" y1="150" x2="309" y2="147" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/><line x1="306" y1="147" x2="312" y2="147" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/><text x="321" y="161" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Deadline(3)]</tspan><tspan >  3 s</tspan></text>
+<rect x="552" y="100" width="200" height="84" rx="8" fill="#353535" stroke="#7d858f" stroke-width="1.6"/>
+<text x="652" y="124" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Armed</text>
+<text x="652" y="143" font-size="13" fill="#e8833a" text-anchor="middle">Console leads</text>
+<path d="M572 157 L577.8 157 L579.5 153 L581.2 163 L582.8 150 L584.5 157 L592 157" fill="none" stroke="#9aa0a6" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><text x="598" y="161" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Idle(1)]</tspan><tspan >  a 1 s lease,</tspan></text>
+<text x="652" y="176" font-size="12" fill="#9aa0a6" text-anchor="middle">held by the Robot</text>
+<rect x="856" y="120" width="100" height="44" rx="22" fill="#2f3338" stroke="#c9ccd1" stroke-width="1.6"/>
+<rect x="860" y="124" width="92" height="36" rx="18" fill="none" stroke="#c9ccd1" stroke-width="1"/>
+<text x="906" y="147" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<circle cx="30" cy="142" r="6" fill="#e8eaed"/>
+<path d="M36 142 L48 142" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M56 142 L47 146.6 L47 137.4 Z" fill="#e8eaed"/>
+<path d="M186 142 L272 142" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M280 142 L271 146.6 L271 137.4 Z" fill="#e8833a"/>
+<text x="233" y="133" font-size="13" fill="#e8833a" text-anchor="middle">Console.Arm</text>
+<path d="M446 142 L544 142" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M552 142 L543 146.6 L543 137.4 Z" fill="#4fb3ff"/>
+<text x="499" y="133" font-size="13" fill="#4fb3ff" text-anchor="middle">Robot.ArmedAck</text>
+<path d="M752 142 L848 142" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M856 142 L847 146.6 L847 137.4 Z" fill="#e8833a"/>
+<text x="804" y="133" font-size="13" fill="#e8833a" text-anchor="middle">Console.Disarm</text>
+<path d="M400 100 C430 52 890 50 904.2 112.2" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M906 120 L899.5 112.3 L908.5 110.2 Z" fill="#4fb3ff"/>
+<text x="663" y="57" font-size="13" fill="#4fb3ff" text-anchor="middle">Robot.Refused</text>
+<path d="M616 184 L616 208 L578 208 L578 192" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M578 184 L582.6 193 L573.4 193 Z" fill="#e8833a"/>
+<text x="628" y="226" font-size="13" fill="#e8833a" text-anchor="end" xml:space="preserve">Console.Jog · Console.Heartbeat  (stay)</text>
+<path d="M688 184 L688 208 L726 208 L726 192" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M726 184 L730.6 193 L721.4 193 Z" fill="#4fb3ff"/>
+<text x="676" y="226" font-size="13" fill="#4fb3ff" xml:space="preserve">Robot.Pose  (stay)</text>
+<rect x="24" y="244" width="306" height="270" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="38" y="266" font-size="14" fill="#9aa0a6" font-weight="600">Console: generated transmitters</text>
+<text x="38" y="284" font-size="12" fill="#9aa0a6">one send method per pack the state allows</text>
+<rect x="38" y="296" width="278" height="36" rx="6" fill="#323232" stroke="#454545" stroke-width="1"/>
+<rect x="38" y="296" width="5" height="36" rx="2" fill="#f2c14e"/>
+<text x="54" y="319" font-size="13" fill="#e8eaed" font-weight="700">Safe</text>
+<rect x="118" y="304" width="34.6" height="20" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="124.5" y="318.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">Arm</text>
+<rect x="38" y="340" width="278" height="36" rx="6" fill="#323232" stroke="#454545" stroke-width="1"/>
+<rect x="38" y="340" width="5" height="36" rx="2" fill="#f2c14e"/>
+<text x="54" y="363" font-size="13" fill="#e8eaed" font-weight="700">Arming</text>
+<text x="118" y="363" font-size="12" fill="#9aa0a6" font-style="italic">none - the Robot leads</text>
+<rect x="38" y="384" width="278" height="36" rx="6" fill="#323232" stroke="#454545" stroke-width="1"/>
+<rect x="38" y="384" width="5" height="36" rx="2" fill="#f2c14e"/>
+<text x="54" y="407" font-size="13" fill="#e8eaed" font-weight="700">Armed</text>
+<rect x="118" y="392" width="34.6" height="20" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="124.5" y="406.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">Jog</text>
+<rect x="158.6" y="392" width="77.8" height="20" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="165.1" y="406.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">Heartbeat</text>
+<rect x="242.4" y="392" width="56.2" height="20" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.2"/>
+<text x="248.9" y="406.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">Disarm</text>
+<rect x="38" y="436" width="278" height="36" rx="6" fill="none" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="54" y="459" font-size="13" fill="#9aa0a6" font-weight="700">Safe</text>
+<rect x="118" y="444" width="34.6" height="20" rx="4" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="124.5" y="458.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">Jog</text>
+<g data-nocheck="1"><line x1="112" y1="454" x2="156.6" y2="454" stroke="#e06c6c" stroke-width="2"/></g>
+<text x="166.6" y="459" font-size="12" fill="#e06c6c">no such method</text>
+<text x="38" y="496" font-size="12" fill="#e06c6c">a Jog in Safe cannot even be written</text>
+<rect x="346" y="244" width="298" height="270" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="360" y="266" font-size="14" fill="#9aa0a6" font-weight="600">Refused by the generated code</text>
+<rect x="360" y="280" width="270" height="66" rx="6" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.3"/>
+<text x="372" y="300" font-size="12.5" fill="#e8eaed" xml:space="preserve"><tspan >a </tspan><tspan fill="#e8833a">Jog</tspan><tspan > sent anyway in </tspan><tspan font-weight="700">Safe</tspan></text>
+<text x="372" y="317" font-size="12.5" fill="#e8eaed">is refused before it leaves:</text>
+<text x="372" y="334" font-size="12.5" fill="#e8eaed" xml:space="preserve"><tspan fill="#e06c6c" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">DISCARDED_BYSTATE</tspan><tspan fill="#9aa0a6"> in the error handler</tspan></text>
+<rect x="360" y="358" width="270" height="66" rx="6" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.3"/>
+<text x="372" y="378" font-size="12.5" fill="#e8eaed" xml:space="preserve"><tspan >a second </tspan><tspan font-weight="700">Motion</tspan><tspan > opened by the peer</tspan></text>
+<text x="372" y="395" font-size="12.5" fill="#e8eaed" xml:space="preserve"><tspan fill="#e06c6c">→ the connection is aborted</tspan></text>
+<text x="372" y="412" font-size="12.5" fill="#e8eaed" xml:space="preserve"><tspan >a second local </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Acquire</tspan><tspan fill="#9aa0a6"> → </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">null</tspan></text>
+<rect x="360" y="436" width="270" height="50" rx="6" fill="#323232" stroke="#9aa0a6" stroke-width="1.3"/>
+<text x="372" y="456" font-size="12.5" fill="#9aa0a6">a late pack from a previous state</text>
+<text x="372" y="473" font-size="12.5" fill="#9aa0a6">→ dropped by the 4-bit epoch</text>
+<rect x="660" y="244" width="296" height="270" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="674" y="266" font-size="14" fill="#9aa0a6" font-weight="600">Robot in Armed: the dead-man lease</text>
+<text x="674" y="288" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Idle(1)]</tspan><tspan > holds on the side that does not</tspan></text>
+<text x="674" y="303" font-size="12" fill="#9aa0a6">lead Armed - here, the Robot</text>
+<line x1="680" y1="376" x2="868" y2="376" stroke="#9aa0a6" stroke-width="1.6"/>
+<line x1="688" y1="364" x2="688" y2="388" stroke="#e8833a" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="706" y1="364" x2="706" y2="388" stroke="#e8833a" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="724" y1="364" x2="724" y2="388" stroke="#e8833a" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="742" y1="364" x2="742" y2="388" stroke="#e8833a" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="760" y1="364" x2="760" y2="388" stroke="#e8833a" stroke-width="2.4" stroke-linecap="round"/>
+<text x="724" y="338" font-size="12" fill="#e8833a" text-anchor="middle">Jog / Heartbeat</text>
+<text x="724" y="352" font-size="12" fill="#e8833a" text-anchor="middle">received</text>
+<path d="M764 362 L764 356 L864 356 L864 362" fill="none" stroke="#e8eaed" stroke-width="1.3" stroke-linejoin="round"/>
+<text x="814" y="349" font-size="12" fill="#e8eaed" text-anchor="middle">1 s of silence</text>
+<line x1="868" y1="346" x2="868" y2="398" stroke="#e06c6c" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="871" y1="376" x2="930" y2="376" stroke="#7d858f" stroke-width="1.4"/>
+<path d="M936 376 L928 380 L928 372 Z" fill="#7d858f"/>
+<text x="878" y="354" font-size="12" fill="#9aa0a6">connection</text>
+<text x="878" y="367" font-size="12" fill="#9aa0a6">lives on</text>
+<text x="868" y="416" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#e06c6c" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">OnDeadline</tspan><tspan fill="#e06c6c"> fires</tspan></text>
+<text x="868" y="433" font-size="13" fill="#e06c6c" text-anchor="middle">→ your code: safe stop</text>
+<text x="674" y="470" font-size="12" fill="#9aa0a6">only received packs count -</text>
+<text x="674" y="485" font-size="12" fill="#9aa0a6">the Robot's own Pose renews nothing</text>
+<line x1="24" y1="534" x2="56" y2="534" stroke="#e8833a" stroke-width="2.5"/>
+<text x="64" y="538" font-size="13" fill="#9aa0a6">sent by the Console (Left host)</text>
+<line x1="284" y1="534" x2="316" y2="534" stroke="#4fb3ff" stroke-width="2.5"/>
+<text x="324" y="538" font-size="13" fill="#9aa0a6">sent by the Robot (Right host)</text>
+<line x1="544" y1="534" x2="576" y2="534" stroke="#e06c6c" stroke-width="2.5"/>
+<text x="584" y="538" font-size="13" fill="#9aa0a6">refused / timer fired</text>
+<rect x="774" y="527" width="5" height="14" rx="2" fill="#f2c14e"/>
+<text x="786" y="538" font-size="13" fill="#9aa0a6">generated code</text>
+</g>
+</svg>

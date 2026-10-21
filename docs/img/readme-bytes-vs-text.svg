@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" width="960" height="430" role="img" aria-labelledby="title desc">
+<title id="title">One Reading, sent two ways</title>
+<desc id="desc">The Reading pack drawn to scale, 5 px per byte. Top: a request/response exchange of 162 bytes - a 49-byte request line and headers, an 86-byte text body of which 56 bytes are field names with their quotes and colons, 23 bytes values and 7 bytes punctuation, and a 27-byte reply. Bottom: the same Reading as an AdHoc pack of 15 bytes, enlarged byte by byte: the pack id, sensor 513 in 2 bytes, celsius and alarm in one bit-field byte, the length bit of pressure in a second bit-field byte, the payload byte of pressure, a byte of null bits, label &quot;ok&quot; in 3 bytes and samples [1, 2] in 5 bytes. AdHoc sends no reply unless the protocol declares one.</desc>
+<rect width="960" height="430" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">One Reading, sent two ways - to scale, 5 px = 1 byte</text>
+<text x="24" y="112" font-size="12" fill="#e8eaed">request/response</text>
+<text x="24" y="128" font-size="12" fill="#9aa0a6">text body</text>
+<text x="805" y="70" font-size="12" fill="#e8eaed" text-anchor="end" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#9aa0a6">{</tspan><tspan fill="#e06c6c">&quot;label&quot;:</tspan><tspan fill="#4fb3ff">&quot;ok&quot;</tspan><tspan fill="#9aa0a6">,</tspan><tspan fill="#e06c6c">&quot;sensor&quot;:</tspan><tspan fill="#4fb3ff">513</tspan><tspan fill="#9aa0a6">,</tspan><tspan fill="#e06c6c">&quot;celsius&quot;:</tspan><tspan fill="#4fb3ff">20</tspan><tspan fill="#9aa0a6">,</tspan><tspan fill="#e06c6c">&quot;alarm&quot;:</tspan><tspan fill="#4fb3ff">true</tspan><tspan fill="#9aa0a6">,</tspan><tspan fill="#e06c6c">&quot;pressure&quot;:</tspan><tspan fill="#4fb3ff">20001</tspan><tspan fill="#9aa0a6">,</tspan><tspan fill="#e06c6c">&quot;samples&quot;:</tspan><tspan fill="#4fb3ff">[1,2]</tspan><tspan fill="#9aa0a6">}</tspan></text>
+<path d="M237.6 78 L805 78 M237.6 78 L375 99 M805 78 L805 99" fill="none" stroke="#6c7178" stroke-width="1" stroke-linejoin="round"/>
+<text x="590" y="93" font-size="12" fill="#9aa0a6" text-anchor="middle">text body 86 B</text>
+<text x="940" y="92" font-size="15" fill="#e8eaed" text-anchor="end" font-weight="700">= 162 B</text>
+<rect x="131" y="100" width="243" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="252.5" y="121" font-size="12" fill="#e8eaed" text-anchor="middle">request line + headers 49 B</text>
+<rect x="376" y="100" width="278" height="34" rx="3" fill="#4a2626" stroke="#e06c6c" stroke-width="1.4"/>
+<text x="515" y="121" font-size="12" fill="#e8eaed" text-anchor="middle">field names 56 B</text>
+<rect x="656" y="100" width="113" height="34" rx="3" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="712.5" y="121" font-size="12" fill="#e8eaed" text-anchor="middle">values 23 B</text>
+<rect x="771" y="100" width="33" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="787.5" y="121" font-size="12" fill="#e8eaed" text-anchor="middle">7 B</text>
+<rect x="806" y="100" width="133" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="872.5" y="121" font-size="12" fill="#e8eaed" text-anchor="middle">reply 27 B</text>
+<text x="130" y="152" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">POST /r HTTP/1.1  Host: h  Content-Length: 86</text>
+<text x="787.5" y="152" font-size="12" fill="#9aa0a6" text-anchor="middle">punctuation</text>
+<text x="940" y="170" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="end" xml:space="preserve">HTTP/1.1 204 No Content</text>
+<text x="24" y="226" font-size="12" fill="#e8eaed">AdHoc pack</text>
+<rect x="130" y="204" width="75" height="34" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="130.7" y="204.7" width="4.6" height="32.6" rx="0" fill="#4fb3ff"/>
+<line x1="140" y1="207" x2="140" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="145" y1="207" x2="145" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="150" y1="207" x2="150" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="155" y1="207" x2="155" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="160" y1="207" x2="160" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="165" y1="207" x2="165" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="170" y1="207" x2="170" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="175" y1="207" x2="175" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="180" y1="207" x2="180" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="185" y1="207" x2="185" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="190" y1="207" x2="190" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="195" y1="207" x2="195" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<line x1="200" y1="207" x2="200" y2="235" stroke="#7a6a3a" stroke-width="0.8"/>
+<text x="216" y="226" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="700">15 B</tspan><tspan fill="#9aa0a6"> - no reply unless the protocol declares one</tspan></text>
+<line x1="130" y1="238" x2="130" y2="272" stroke="#9aa0a6" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="205" y1="238" x2="940" y2="272" stroke="#9aa0a6" stroke-width="1" stroke-dasharray="3 3"/>
+<rect x="131.5" y="272" width="51" height="46" rx="4" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="157" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">id</text>
+<rect x="185.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="211" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">01</text>
+<rect x="239.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="265" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">02</text>
+<rect x="293.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="319" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">9F</text>
+<rect x="347.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="373" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">00</text>
+<rect x="401.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="427" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">02</text>
+<rect x="455.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="481" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">05</text>
+<rect x="509.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="535" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">02</text>
+<rect x="563.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="589" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">6F</text>
+<rect x="617.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="643" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">6B</text>
+<rect x="671.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="697" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">02</text>
+<rect x="725.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="751" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">01</text>
+<rect x="779.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="805" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">00</text>
+<rect x="833.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="859" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">02</text>
+<rect x="887.5" y="272" width="51" height="46" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="913" y="300" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve">00</text>
+<path d="M135 322 L135 326 L179 326 L179 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="157" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">pack id</text>
+<path d="M189 322 L189 326 L287 326 L287 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="238" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">sensor 513</text>
+<path d="M297 322 L297 326 L341 326 L341 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="319" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">celsius</text>
+<text x="319" y="357" font-size="12" fill="#e8eaed" text-anchor="middle">+ alarm</text>
+<path d="M351 322 L351 326 L395 326 L395 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="373" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">pressure</text>
+<text x="373" y="357" font-size="12" fill="#e8eaed" text-anchor="middle">length bit</text>
+<path d="M405 322 L405 326 L449 326 L449 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="427" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">pressure</text>
+<text x="427" y="357" font-size="12" fill="#e8eaed" text-anchor="middle">payload</text>
+<path d="M459 322 L459 326 L503 326 L503 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="481" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">null</text>
+<text x="481" y="357" font-size="12" fill="#e8eaed" text-anchor="middle">bits</text>
+<path d="M513 322 L513 326 L665 326 L665 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="589" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">label &quot;ok&quot;</text>
+<path d="M675 322 L675 326 L935 326 L935 322" fill="none" stroke="#7d828a" stroke-width="1" stroke-linejoin="round"/>
+<text x="805" y="342" font-size="12" fill="#e8eaed" text-anchor="middle">samples [1, 2]</text>
+<rect x="24" y="384" width="12" height="12" rx="2" fill="#4a2626" stroke="#e06c6c" stroke-width="1.2"/>
+<text x="42" y="394" font-size="12" fill="#e8eaed">field names: in every message</text>
+<rect x="238" y="384" width="12" height="12" rx="2" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.2"/>
+<text x="256" y="394" font-size="12" fill="#e8eaed">envelope and reply: on every request</text>
+<rect x="487" y="384" width="12" height="12" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="505" y="394" font-size="12" fill="#e8eaed">values</text>
+<rect x="24" y="402" width="12" height="12" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="42" y="412" font-size="12" fill="#e8eaed">AdHoc: values only, in the bits their declared ranges need</text>
+<text x="940" y="412" font-size="12" fill="#9aa0a6" text-anchor="end">sequence is absent in both forms</text>
+</g>
+</svg>

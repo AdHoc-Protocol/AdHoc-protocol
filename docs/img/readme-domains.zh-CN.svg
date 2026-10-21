@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 608" width="960" height="608" role="img" aria-labelledby="title desc">
+<title id="title">同一套 AdHoc 声明解决设备、后端和应用的日常问题</title>
+<desc id="desc">Three columns, each problem tagged with the number of its ready solution. Devices and the field (C, C++, Rust, Go, C# or Java on devices): R13 every byte costs airtime; R4 no event lost on a dropout; R5 sure commands, fresh samples; R2 generations, no version field; R10 OTA updates of any size; R14 moves only when armed; R19 video that yields to alerts; R22 serial links that resync. Backends and clusters (servers in any language but TypeScript): R3 one public port, many services; R16 cluster protocol, same port; R1 store bytes it cannot read; R11 compress once, fan out; R17 audit without the payload; R12 each role sees its own; R15 ingest into your structures; R20 one pack, many recipients; R21 store and broadcast at once. Apps and browsers (clients in every language): R7 live dashboards, push both ways; R8 jobs with progress, cancel and deadline; R9 subscriptions with leases; R18 rooms, presence, turn-taking; R6 private hosts via a gateway; R4 orders survive a flaky network; R19 video, commands never wait; R20 one tick to every player. Below, an orange bar - one description, one C# file - feeds a yellow bar - generated code in ten languages, one protocol, the same bytes - which feeds all three columns. Footnote: devices - firmware, gateways, industrial PCs, vehicle computers - in C, C++, Rust, Go, C# or Java; a TypeScript host always dials.</desc>
+<rect width="960" height="608" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="35" font-size="18" fill="#e8eaed" font-weight="700">同一套声明,三个世界</text>
+<rect x="24" y="52" width="296" height="388" rx="10" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="80" font-size="16" fill="#e8eaed" font-weight="700">设备与现场</text>
+<text x="40" y="98" font-size="13" fill="#9aa0a6">设备上用 C、C++、Rust、Go、C# 或 Java</text>
+<line x1="40" y1="110" x2="304" y2="110" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="40" y="119.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="134" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R13</text>
+<text x="88" y="134" font-size="13" fill="#e8eaed">每个字节都费空中时间</text>
+<rect x="40" y="155.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="170" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R4</text>
+<text x="88" y="170" font-size="13" fill="#e8eaed">断线也不丢事件</text>
+<rect x="40" y="191.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="206" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R5</text>
+<text x="88" y="206" font-size="13" fill="#e8eaed">命令必达,采样新鲜</text>
+<rect x="40" y="227.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="242" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R2</text>
+<text x="88" y="242" font-size="13" fill="#e8eaed">世代演进,无版本字段</text>
+<rect x="40" y="263.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="278" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R10</text>
+<text x="88" y="278" font-size="13" fill="#e8eaed">任意大小的 OTA 更新</text>
+<rect x="40" y="299.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="314" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R14</text>
+<text x="88" y="314" font-size="13" fill="#e8eaed">仅布防时才动作</text>
+<rect x="40" y="335.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="350" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R19</text>
+<text x="88" y="350" font-size="13" fill="#e8eaed">视频为警报让路</text>
+<rect x="40" y="371.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="60" y="386" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R22</text>
+<text x="88" y="386" font-size="13" fill="#e8eaed">能重新同步的串行链路</text>
+<rect x="332" y="52" width="296" height="388" rx="10" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="348" y="80" font-size="16" fill="#e8eaed" font-weight="700">后端与集群</text>
+<text x="348" y="98" font-size="13" fill="#9aa0a6">除 TypeScript 外任何语言的服务器</text>
+<line x1="348" y1="110" x2="612" y2="110" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="348" y="119.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="134" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R3</text>
+<text x="396" y="134" font-size="13" fill="#e8eaed">一个公开端口,众多服务</text>
+<rect x="348" y="155.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="170" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R16</text>
+<text x="396" y="170" font-size="13" fill="#e8eaed">集群协议,同一端口</text>
+<rect x="348" y="191.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="206" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R1</text>
+<text x="396" y="206" font-size="13" fill="#e8eaed">存储它读不了的字节</text>
+<rect x="348" y="227.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="242" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R11</text>
+<text x="396" y="242" font-size="13" fill="#e8eaed">压缩一次,扇出分发</text>
+<rect x="348" y="263.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="278" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R17</text>
+<text x="396" y="278" font-size="13" fill="#e8eaed">审计无需负载内容</text>
+<rect x="348" y="299.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="314" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R12</text>
+<text x="396" y="314" font-size="13" fill="#e8eaed">每个角色只见自己的</text>
+<rect x="348" y="335.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="350" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R15</text>
+<text x="396" y="350" font-size="13" fill="#e8eaed">直接接入你的结构</text>
+<rect x="348" y="371.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="386" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R20</text>
+<text x="396" y="386" font-size="13" fill="#e8eaed">一个 pack,众多接收者</text>
+<rect x="348" y="407.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="368" y="422" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R21</text>
+<text x="396" y="422" font-size="13" fill="#e8eaed">存储与广播同时完成</text>
+<rect x="640" y="52" width="296" height="388" rx="10" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="656" y="80" font-size="16" fill="#e8eaed" font-weight="700">应用与浏览器</text>
+<text x="656" y="98" font-size="13" fill="#9aa0a6">任何语言的客户端</text>
+<line x1="656" y1="110" x2="920" y2="110" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="656" y="119.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="134" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R7</text>
+<text x="704" y="134" font-size="13" fill="#e8eaed">实时仪表盘,双向推送</text>
+<rect x="656" y="155.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="170" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R8</text>
+<text x="704" y="170" font-size="13" fill="#e8eaed">任务:进度、取消、截止时间</text>
+<rect x="656" y="191.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="206" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R9</text>
+<text x="704" y="206" font-size="13" fill="#e8eaed">带租约的订阅</text>
+<rect x="656" y="227.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="242" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R18</text>
+<text x="704" y="242" font-size="13" fill="#e8eaed">房间、在线状态、轮流</text>
+<rect x="656" y="263.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="278" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R6</text>
+<text x="704" y="278" font-size="13" fill="#e8eaed">经网关接入私有主机</text>
+<rect x="656" y="299.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="314" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R4</text>
+<text x="704" y="314" font-size="13" fill="#e8eaed">订单挺过不稳定网络</text>
+<rect x="656" y="335.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="350" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R19</text>
+<text x="704" y="350" font-size="13" fill="#e8eaed">视频、命令从不等待</text>
+<rect x="656" y="371.5" width="40" height="20" rx="4" fill="#e8833a"/>
+<text data-ok="1" x="676" y="386" font-size="12" fill="#2b2b2b" text-anchor="middle" font-weight="700">R20</text>
+<text x="704" y="386" font-size="13" fill="#e8eaed">一个 tick 送达每个玩家</text>
+<rect x="24" y="462" width="912" height="36" rx="8" fill="#f2c14e" fill-opacity="0.08" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="480" y="485" font-size="14" fill="#e8eaed" text-anchor="middle">十种语言的生成代码——一个协议,相同的字节</text>
+<rect x="24" y="518" width="912" height="36" rx="8" fill="#e8833a" fill-opacity="0.1" stroke="#e8833a" stroke-width="1.5"/>
+<text x="480" y="541.5" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">一份描述——一个 C# 文件</text>
+<line x1="480" y1="518" x2="480" y2="506" stroke="#e8833a" stroke-width="1.5"/>
+<path d="M480 498 L485 507 L475 507 Z" fill="#e8833a"/>
+<line x1="172" y1="462" x2="172" y2="448" stroke="#f2c14e" stroke-width="1.5"/>
+<path d="M172 440 L177 449 L167 449 Z" fill="#f2c14e"/>
+<line x1="480" y1="462" x2="480" y2="448" stroke="#f2c14e" stroke-width="1.5"/>
+<path d="M480 440 L485 449 L475 449 Z" fill="#f2c14e"/>
+<line x1="788" y1="462" x2="788" y2="448" stroke="#f2c14e" stroke-width="1.5"/>
+<path d="M788 440 L793 449 L783 449 Z" fill="#f2c14e"/>
+<text x="24" y="582" font-size="12" fill="#9aa0a6">设备:固件、网关、工业 PC、车载电脑——用 C、C++、Rust、Go、C# 或 Java。TypeScript 主机总是主动拨出。R 编号:见下文的现成方案。</text>
+</g>
+</svg>

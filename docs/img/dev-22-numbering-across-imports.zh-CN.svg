@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="960" height="480" role="img" aria-labelledby="d22n-t d22n-d">
+<title id="d22n-t">跨导入项目的编号</title>
+<desc id="d22n-d">上方面板 Library:主机 Server uid 0 和 Client uid 1;packs Hello 线路 ID 0、Stamp id 1、Info id 2,以及没有线路 ID 的 Trace,因为它只在 Info 内部传输。下方面板 MyProject : Library:导入的主机 Server 0 和 Client 1 显示为灰色,保留各自的 uid,自身主机 Metrics 取 uid 2,在最大的导入 uid 之后继续;导入的 packs Hello 0、Stamp 1 和 Info 2 保留各自的 id,自身 pack Sample 取 id 3,高于最大的导入 id。如果 ServerToMetrics 发送 Trace,Trace 将从 MyProject 获得 id 4,并列在“导入的 pack,以本项目的 id 发送”一节中,记为 &lt;see cref='com.lib.Library.Trace'/&gt;4。底部是项目行 &lt;see cref='MyProject'/&gt;Ƌǅǥźč ō:自身编号,随后是 ō,即 Library 的槽位,并有箭头指向上方的 Library 面板。</desc>
+<rect width="960" height="480" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<!-- UPPER: Library -->
+<rect x="20" y="20" width="920" height="140" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="56" y="51" font-size="18" fill="#e8833a" font-weight="600">Library</text>
+<text x="134" y="50" font-size="13" fill="#9aa0a6" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">&lt;see cref='Library'/&gt;Ťǅǥźč</text>
+
+<text x="56" y="84" font-size="12.5" fill="#9aa0a6">主机——uid</text>
+<rect x="56" y="94" width="114" height="28" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.3"/>
+<text x="68" y="113" font-size="13.5" fill="#e8eaed">Server<tspan dx="10">uid 0</tspan></text>
+<rect x="180" y="94" width="110" height="28" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.3"/>
+<text x="192" y="113" font-size="13.5" fill="#e8eaed">Client<tspan dx="10">uid 1</tspan></text>
+
+<text x="380" y="84" font-size="12.5" fill="#9aa0a6">packs——线路 ID</text>
+<rect x="380" y="94" width="100" height="28" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.3"/>
+<text x="392" y="113" font-size="13.5" fill="#e8eaed">Hello<tspan dx="10">id 0</tspan></text>
+<rect x="490" y="94" width="104" height="28" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.3"/>
+<text x="502" y="113" font-size="13.5" fill="#e8eaed">Stamp<tspan dx="10">id 1</tspan></text>
+<rect x="604" y="94" width="88" height="28" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.3"/>
+<text x="616" y="113" font-size="13.5" fill="#e8eaed">Info<tspan dx="10">id 2</tspan></text>
+<rect x="702" y="94" width="200" height="28" rx="6" fill="none" stroke="#6b6f75" stroke-width="1.3" stroke-dasharray="4 3"/>
+<text x="714" y="113" font-size="13.5" fill="#e8eaed">Trace<tspan dx="10" fill="#9aa0a6" font-size="12.5">无 id——仅在 Info 内部</tspan></text>
+
+<!-- LOWER: MyProject : Library -->
+<rect x="20" y="180" width="920" height="280" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="56" y="211" font-size="18" fill="#e8833a" font-weight="600">MyProject : Library</text>
+
+<text x="56" y="244" font-size="12.5" fill="#9aa0a6">主机——uid</text>
+<rect x="56" y="254" width="80" height="28" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="68" y="273" font-size="13.5" fill="#9aa0a6">Server<tspan dx="8">0</tspan></text>
+<rect x="144" y="254" width="76" height="28" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="156" y="273" font-size="13.5" fill="#9aa0a6">Client<tspan dx="8">1</tspan></text>
+<rect x="228" y="254" width="122" height="28" rx="6" fill="#3b3424" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="240" y="273" font-size="13.5" fill="#f2c14e">Metrics<tspan dx="10">uid 2</tspan></text>
+<text x="289" y="302" font-size="12" fill="#9aa0a6" text-anchor="middle">在最大的</text>
+<text x="289" y="318" font-size="12" fill="#9aa0a6" text-anchor="middle">导入 uid 之后继续</text>
+
+<text x="380" y="244" font-size="12.5" fill="#9aa0a6">packs——线路 ID</text>
+<rect x="380" y="254" width="70" height="28" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="392" y="273" font-size="13.5" fill="#9aa0a6">Hello<tspan dx="8">0</tspan></text>
+<rect x="458" y="254" width="74" height="28" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="470" y="273" font-size="13.5" fill="#9aa0a6">Stamp<tspan dx="8">1</tspan></text>
+<rect x="540" y="254" width="60" height="28" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="552" y="273" font-size="13.5" fill="#9aa0a6">Info<tspan dx="8">2</tspan></text>
+<text x="490" y="302" font-size="12" fill="#9aa0a6" text-anchor="middle">保留各自的 id</text>
+
+<rect x="614" y="254" width="112" height="28" rx="6" fill="#3b3424" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="626" y="273" font-size="13.5" fill="#f2c14e">Sample<tspan dx="10">id 3</tspan></text>
+<text x="670" y="302" font-size="12" fill="#9aa0a6" text-anchor="middle">高于最大的</text>
+<text x="670" y="318" font-size="12" fill="#9aa0a6" text-anchor="middle">导入 id</text>
+
+<rect x="380" y="330" width="420" height="74" rx="6" fill="#2a2533" stroke="#a06fd0" stroke-width="1.2"/>
+<text x="394" y="350" font-size="12.5" fill="#a06fd0">导入的 pack,以本项目的 id 发送</text>
+<rect x="394" y="362" width="100" height="28" rx="6" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="406" y="381" font-size="13.5" fill="#a06fd0">Trace<tspan dx="10">id 4</tspan></text>
+<text x="508" y="374" font-size="12" fill="#9aa0a6">(若 ServerToMetrics 发送 Trace)</text>
+<text x="508" y="392" font-size="12" fill="#9aa0a6" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">&lt;see cref='com.lib.Library.Trace'/&gt;4</text>
+
+<!-- the project line and the slot -->
+<g font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="15">
+<text x="56" y="444" fill="#e8eaed">&lt;see cref='MyProject'/&gt;</text>
+<text x="247" y="444" fill="#e8eaed">Ƌǅǥźč</text>
+<rect x="292" y="428" width="17" height="21" rx="3" fill="#3b3424" stroke="#f2c14e" stroke-width="1.3"/>
+<text x="296" y="444" fill="#f2c14e">ō</text>
+</g>
+<text x="322" y="444" font-size="12.5" fill="#9aa0a6">自身编号,然后每个导入项目一个槽位:zig-zag(自身 − 导入)</text>
+
+<path d="M300 428 V416 H34 V46 H40" fill="none" stroke="#f2c14e" stroke-width="1.4"/>
+<path d="M48 46 L40 41.5 L40 50.5 Z" fill="#f2c14e"/>
+<text x="44" y="408" font-size="12.5" fill="#f2c14e">Library 的槽位</text>
+</g>
+</svg>

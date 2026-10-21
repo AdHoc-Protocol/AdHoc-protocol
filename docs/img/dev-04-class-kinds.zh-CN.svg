@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" role="img">
+<title>左侧是一个类声明，六支箭头指向它可能变成的实体。有实例字段的类成为可传输的 pack。没有实例字段的类：若某个分支会发送它，则成为空 pack（线上只传 id；作为字段时是 bool），否则成为没有线路 ID 的常量容器。唯一字段名为 TYPEDEF 的类成为类型别名；实现 DateTimeDef、TimeSpanDef 或 Duration 的类成为时间类型；两者都只能作字段类型。实现 FieldsInjectInto、HeaderFor 或 Modify 的类成为组合构造，从不发送，也从不作字段类型。可传输的结果为橙色，仅编译期的结果为灰色</title>
+<rect width="980" height="520" rx="10" fill="#2b2b2b"/>
+<text x="24" y="40" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" font-weight="600" fill="#e8eaed">描述中的类会变成什么</text>
+<rect x="700" y="27" width="14" height="14" rx="2" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="722" y="39" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">可传输</text>
+<rect x="826" y="27" width="14" height="14" rx="2" fill="#262626" stroke="#6a6e72" stroke-width="1.6"/>
+<text x="848" y="39" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">仅编译期</text>
+<rect x="24" y="231" width="156" height="60" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="102" y="267" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="16" fill="#e8eaed" text-anchor="middle">class X { ... }</text>
+<line x1="180" y1="261" x2="212" y2="261" stroke="#9aa0a6" stroke-width="1.6"/>
+<line x1="212" y1="96" x2="212" y2="426" stroke="#9aa0a6" stroke-width="1.6"/>
+<line x1="212" y1="96" x2="548" y2="96" stroke="#e8833a" stroke-width="1.6"/>
+<path d="M556 96 L547 91.5 L547 100.5 Z" fill="#e8833a"/>
+<text x="228" y="88" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">有实例字段</text>
+<rect x="556" y="71" width="400" height="50" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="572" y="92" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#e8eaed">pack</text>
+<text x="572" y="111" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">分支可发送它；也可作字段类型</text>
+<line x1="212" y1="162" x2="548" y2="162" stroke="#e8833a" stroke-width="1.6"/>
+<path d="M556 162 L547 157.5 L547 166.5 Z" fill="#e8833a"/>
+<text x="228" y="154" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">无实例字段，有分支发送它</text>
+<rect x="556" y="137" width="400" height="50" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="572" y="158" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#e8eaed">空 pack</text>
+<text x="572" y="177" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">单例：线上只传 id；作为字段：bool</text>
+<line x1="212" y1="228" x2="548" y2="228" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 228 L547 223.5 L547 232.5 Z" fill="#9aa0a6"/>
+<text x="228" y="220" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">无实例字段，无分支发送它</text>
+<rect x="556" y="203" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="224" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">常量容器</text>
+<text x="572" y="243" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">无线路 ID，不生成 pack</text>
+<line x1="212" y1="294" x2="548" y2="294" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 294 L547 289.5 L547 298.5 Z" fill="#9aa0a6"/>
+<text x="228" y="286" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">一个字段，名为 TYPEDEF</text>
+<rect x="556" y="269" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="290" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">类型别名（TYPEDEF）</text>
+<text x="572" y="309" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">仅作字段类型</text>
+<line x1="212" y1="360" x2="548" y2="360" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 360 L547 355.5 L547 364.5 Z" fill="#9aa0a6"/>
+<text x="228" y="352" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">: DateTimeDef / TimeSpanDef / Duration</text>
+<rect x="556" y="335" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="356" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">时间类型</text>
+<text x="572" y="375" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">仅作字段类型</text>
+<line x1="212" y1="426" x2="548" y2="426" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M556 426 L547 421.5 L547 430.5 Z" fill="#9aa0a6"/>
+<text x="228" y="418" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">: FieldsInjectInto / HeaderFor / Modify</text>
+<rect x="556" y="401" width="400" height="50" rx="4" fill="#262626" stroke="#6a6e72" stroke-width="1.4"/>
+<text x="572" y="422" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#9aa0a6">组合构造</text>
+<text x="572" y="441" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">从不发送，从不作字段类型</text>
+<text x="24" y="482" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">列出灰色种类的分支会让 AdHocAgent 停止。作用域选择（@Project、@Host、pack 作用域、Pack Set 过滤器）会跳过灰色种类。</text>
+<text x="24" y="502" font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">橙色 pack 只有在分支选择它时才获得线路 ID；仅作字段类型使用时，它随父 pack 一起传输。</text>
+</svg>

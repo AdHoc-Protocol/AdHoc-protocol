@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 404" width="960" height="404" role="img" aria-labelledby="title desc">
+<title id="title">What does the host in the middle do with the payload?</title>
+<desc id="desc">A decision card for the host in the middle, four rows. Relay: route bytes between connections and never read them; holds no schema, no keys, one region of memory; AdHoc gives VirtuallyConnects&lt;L, R, PATH&gt; and a generated Relay. Trim: keep a payload and replay it later; holds bytes at the depth you choose, no schema; ToStream, FromStream, Stream&lt;To, From&gt;. Smart middle: inspect, transform, filter, or fan one stream out; holds the schema, one mirror buffer, a slicer per subscriber; built by you from the stream API, not generated. Cascading RPC: answer a call by calling further on; a replier context and a caller instance per call; the same RPC method declared on both connections.</desc>
+<rect width="960" height="404" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="700">What does the host in the middle do with the payload?</text>
+<rect x="24" y="56" width="912" height="304" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="40" y="77" font-size="13" fill="#9aa0a6" font-weight="700">role</text>
+<text x="216" y="77" font-size="13" fill="#9aa0a6" font-weight="700">the middle host must…</text>
+<text x="486" y="77" font-size="13" fill="#9aa0a6" font-weight="700">what it holds</text>
+<text x="716" y="77" font-size="13" fill="#9aa0a6" font-weight="700">what AdHoc gives</text>
+<line x1="24" y1="88" x2="936" y2="88" stroke="#4a4a4a" stroke-width="1.4"/>
+<line x1="24" y1="156" x2="936" y2="156" stroke="#4a4a4a" stroke-width="1"/>
+<line x1="24" y1="224" x2="936" y2="224" stroke="#4a4a4a" stroke-width="1"/>
+<line x1="24" y1="292" x2="936" y2="292" stroke="#4a4a4a" stroke-width="1"/>
+<line x1="200" y1="62" x2="200" y2="354" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="470" y1="62" x2="470" y2="354" stroke="#3a3a3a" stroke-width="1"/>
+<line x1="700" y1="62" x2="700" y2="354" stroke="#3a3a3a" stroke-width="1"/>
+<rect x="47" y="114" width="10" height="16" rx="2" fill="#242424" stroke="#a06fd0" stroke-width="1.4"/><line x1="40" y1="122" x2="59" y2="122" stroke="#a06fd0" stroke-width="1.8"/><path d="M64 122 L58 125.4 L58 118.6 Z" fill="#a06fd0"/>
+<text x="76" y="127" font-size="15" fill="#a06fd0" font-weight="700">Relay</text>
+<text x="216" y="118" font-size="13" fill="#e8eaed">route bytes between connections</text>
+<text x="216" y="136" font-size="13" fill="#e8eaed">and never read them</text>
+<text x="486" y="118" font-size="13" fill="#e8eaed">no schema, no keys,</text>
+<text x="486" y="136" font-size="13" fill="#e8eaed">one region of memory</text>
+<text x="716" y="118" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">VirtuallyConnects&lt;L, R, PATH&gt;</text>
+<text x="716" y="136" font-size="13" fill="#e8eaed">a generated Relay</text>
+<rect x="40" y="186" width="24" height="9" rx="1.5" fill="#4a3322" stroke="#e8833a" stroke-width="1.2"/><line x1="46" y1="186" x2="46" y2="195" stroke="#e8833a" stroke-width="1"/><line x1="58" y1="186" x2="58" y2="195" stroke="#e8833a" stroke-width="1"/><line x1="52" y1="179" x2="52" y2="202" stroke="#e8eaed" stroke-width="1.6" stroke-dasharray="2.5 2"/><path d="M49 178 L55 178 L52 182 Z" fill="#e8eaed"/>
+<text x="76" y="195" font-size="15" fill="#e8833a" font-weight="700">Trim</text>
+<text x="216" y="195" font-size="13" fill="#e8eaed">keep a payload and replay it later</text>
+<text x="486" y="186" font-size="13" fill="#e8eaed">bytes, at the depth you choose;</text>
+<text x="486" y="204" font-size="13" fill="#e8eaed">no schema</text>
+<text x="716" y="186" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">[ToStream&lt;E&gt;] [FromStream&lt;E&gt;]</text>
+<text x="716" y="204" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">[Stream&lt;To, From&gt;]</text>
+<rect x="40" y="252" width="8" height="12" rx="1.5" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><path d="M48 258 L59 249" fill="none" stroke="#f2c14e" stroke-width="1.5" stroke-linejoin="round"/><path d="M63 246.5 L60.7 252.3 L56.9 247.7 Z" fill="#f2c14e"/><line x1="48" y1="258" x2="59" y2="258" stroke="#f2c14e" stroke-width="1.5"/><path d="M64 258 L58.5 261 L58.5 255 Z" fill="#f2c14e"/><path d="M48 258 L59 267" fill="none" stroke="#f2c14e" stroke-width="1.5" stroke-linejoin="round"/><path d="M63 269.5 L56.9 268.3 L60.7 263.7 Z" fill="#f2c14e"/>
+<text x="76" y="263" font-size="15" fill="#f2c14e" font-weight="700">Smart middle</text>
+<text x="216" y="254" font-size="13" fill="#e8eaed">inspect, transform, filter,</text>
+<text x="216" y="272" font-size="13" fill="#e8eaed">or fan one stream out</text>
+<text x="486" y="254" font-size="13" fill="#e8eaed">the schema; one mirror buffer;</text>
+<text x="486" y="272" font-size="13" fill="#e8eaed">a slicer per subscriber</text>
+<text x="716" y="254" font-size="13" fill="#9aa0a6" font-style="italic">built by you from the</text>
+<text x="716" y="272" font-size="13" fill="#9aa0a6" font-style="italic">stream API - not generated</text>
+<circle cx="42.5" cy="326" r="2.5" fill="#4fb3ff"/><circle cx="52" cy="326" r="2.5" fill="#4fb3ff"/><circle cx="61.5" cy="326" r="2.5" fill="#4fb3ff"/><path d="M43 323 Q47 316 50 321" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M51 323 L46.5 320.4 L51 317.8 Z" fill="#4fb3ff"/><path d="M52.5 323 Q56.5 316 59.5 321" fill="none" stroke="#4fb3ff" stroke-width="1.4" stroke-linejoin="round"/><path d="M60.5 323 L56 320.4 L60.5 317.8 Z" fill="#4fb3ff"/>
+<text x="76" y="331" font-size="15" fill="#4fb3ff" font-weight="700">Cascading RPC</text>
+<text x="216" y="331" font-size="13" fill="#e8eaed">answer a call by calling further on</text>
+<text x="486" y="322" font-size="13" fill="#e8eaed">a replier context +</text>
+<text x="486" y="340" font-size="13" fill="#e8eaed">a caller instance per call</text>
+<text x="716" y="322" font-size="13" fill="#e8eaed">the same RPC method</text>
+<text x="716" y="340" font-size="13" fill="#e8eaed">declared on both connections</text>
+<text x="480" y="386" font-size="13" fill="#9aa0a6" text-anchor="middle">A relay is right only when the middle is content-blind: it never materializes what it carries.</text>
+</g>
+</svg>

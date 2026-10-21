@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="640" viewBox="0 0 980 640" role="img" aria-labelledby="dev23map-t dev23map-d">
+<title id="dev23map-t">特性的挂载位置</title>
+<desc id="dev23map-d">A ladder of the description model, top to bottom: project, host, connection, actor, state, pack, field, ending in wire bytes. Beside each rung, what a description writes there. Project: the pack sets _ and X, Named Pack Sets with KeepName, SkipName, KeepDoc and SkipDoc, and Modify with ClearAttributes. Host: Host, the language markers InCS, InJAVA, InTS, and Modify of a host. Connection: Connects, VirtuallyConnects, SwapHosts; Resumable, UDP, UDP with an exclusion set, Zstd, ChaCha20 and your own stages and flows; Resumable of a host and packs and HeaderFor declared in its body; beside it a multiplexer, Multiplex, one port for several connections, which takes constants only. Actor: Actor with MaxActiveInstances, Idle, Grouped, and RPC methods. State: the five branch attributes, TransmitTimeout, ReceiveTimeout, Deadline, Idle, Resumable, and the targets End and Close. Pack: HeaderFor, FieldsInjectInto, Stream and File with S, stages and flows, the trims ToStream, FromStream and Stream. Field: MinMax, A, V, X, D, S, the Key and Val targets, stages, flows and trims, and ValueFor on a static field. An orange check on every rung from project to field marks where custom attributes become constants; a custom attribute never changes the wire bytes.</desc>
+<rect width="980" height="640" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="104" y="32" font-size="13" fill="#9aa0a6" text-anchor="middle">模型</text>
+<text x="232" y="32" font-size="13" fill="#9aa0a6">描述文件在其中写什么:Meta.cs 构造与内置特性</text>
+
+<!-- ladder connectors -->
+<g stroke="#6b6f74" stroke-width="1.4">
+<line x1="104" y1="100" x2="104" y2="110"/>
+<line x1="104" y1="164" x2="104" y2="174"/>
+<line x1="104" y1="246" x2="104" y2="256"/>
+<line x1="104" y1="310" x2="104" y2="320"/>
+<line x1="104" y1="374" x2="104" y2="384"/>
+<line x1="104" y1="438" x2="104" y2="448"/>
+</g>
+<line x1="104" y1="502" x2="104" y2="524" stroke="#4fb3ff" stroke-width="2"/>
+
+<!-- rungs -->
+<g fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.6">
+<rect x="36" y="46"  width="136" height="54" rx="8"/>
+<rect x="36" y="110" width="136" height="54" rx="8"/>
+<rect x="36" y="174" width="136" height="72" rx="8"/>
+<rect x="36" y="256" width="136" height="54" rx="8"/>
+<rect x="36" y="320" width="136" height="54" rx="8"/>
+<rect x="36" y="384" width="136" height="54" rx="8"/>
+<rect x="36" y="448" width="136" height="54" rx="8"/>
+</g>
+<rect x="36" y="524" width="136" height="30" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.4" stroke-dasharray="4 3"/>
+<g font-size="15" fill="#e8eaed" text-anchor="middle">
+<text x="104" y="78">项目</text>
+<text x="104" y="142">主机</text>
+<text x="104" y="215">连接</text>
+<text x="104" y="288">Actor</text>
+<text x="104" y="352">状态</text>
+<text x="104" y="416">pack</text>
+<text x="104" y="480">字段</text>
+</g>
+<text x="104" y="544" font-size="13" fill="#9aa0a6" text-anchor="middle">线上字节</text>
+
+<!-- custom attributes -> constants -->
+<g fill="none" stroke="#e8833a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+<path d="M187 73 L192 78 L201 67"/>
+<path d="M187 137 L192 142 L201 131"/>
+<path d="M187 210 L192 215 L201 204"/>
+<path d="M187 283 L192 288 L201 277"/>
+<path d="M187 347 L192 352 L201 341"/>
+<path d="M187 411 L192 416 L201 405"/>
+<path d="M187 475 L192 480 L201 469"/>
+</g>
+
+<!-- row panels -->
+<g fill="#323232">
+<rect x="216" y="46"  width="728" height="54" rx="6"/>
+<rect x="216" y="110" width="728" height="54" rx="6"/>
+<rect x="216" y="174" width="520" height="72" rx="6"/>
+<rect x="216" y="256" width="728" height="54" rx="6"/>
+<rect x="216" y="320" width="728" height="54" rx="6"/>
+<rect x="216" y="384" width="728" height="54" rx="6"/>
+<rect x="216" y="448" width="728" height="54" rx="6"/>
+</g>
+
+<g font-size="13" fill="#9aa0a6">
+<text x="232" y="68"><tspan fill="#e8eaed">_&lt;…&gt;   X&lt;…&gt;</tspan><tspan dx="9">Pack Set、排除项</tspan><tspan dx="18" fill="#e8eaed">具名 Pack Set</tspan><tspan dx="7">带有</tspan><tspan dx="7" fill="#f2c14e">[KeepName]  [SkipName]  [KeepDoc]  [SkipDoc]</tspan></text>
+<text x="232" y="87"><tspan fill="#e8eaed">Modify&lt;…&gt;</tspan><tspan dx="7">+</tspan><tspan dx="7" fill="#f2c14e">[ClearAttributes]</tspan><tspan dx="18">导入的 pack、主机、枚举、常量、连接的修饰符</tspan></text>
+<text x="232" y="132"><tspan fill="#e8eaed">Host</tspan><tspan dx="18">语言标记</tspan><tspan dx="7" fill="#e8eaed">InCS   InJAVA   InTS</tspan></text>
+<text x="232" y="151"><tspan fill="#e8eaed">Modify&lt;Host&gt;</tspan><tspan dx="18">配置一个导入的主机</tspan></text>
+<text x="232" y="196"><tspan fill="#e8eaed">Connects&lt;L, R&gt;</tspan><tspan dx="18" fill="#e8eaed">VirtuallyConnects&lt;L, R, PATH&gt;</tspan><tspan dx="18" fill="#e8eaed">SwapHosts&lt;C&gt;</tspan></text>
+<text x="232" y="215"><tspan fill="#f2c14e">[Resumable]  [UDP]  [UDP&lt;…&gt;]</tspan><tspan dx="18" fill="#f2c14e">[Zstd]  [ChaCha20]</tspan><tspan dx="7">+ 你的阶段 / 流</tspan></text>
+<text x="232" y="234"><tspan fill="#e8eaed">Resumable&lt;HOST, PACKS&gt;</tspan><tspan dx="18" fill="#e8eaed">HeaderFor&lt;…&gt;</tspan><tspan dx="9">在其体内声明</tspan></text>
+<text x="232" y="278"><tspan fill="#e8eaed">Actor</tspan><tspan dx="7">带有</tspan><tspan dx="7" fill="#e8eaed">MaxActiveInstances</tspan><tspan dx="7">/</tspan><tspan dx="7" fill="#e8eaed">UNLIMITED</tspan><tspan dx="28" fill="#f2c14e">[Idle]  [Grouped]</tspan></text>
+<text x="232" y="297"><tspan>连接体中的 RPC 方法:每个都成为一个 Actor</tspan></text>
+<text x="232" y="342"><tspan fill="#f2c14e">[l____________]  [L____________]  [____________r]  [____________R]  [_____lr_____]</tspan><tspan dx="9">分支特性</tspan></text>
+<text x="232" y="361"><tspan fill="#f2c14e">[TransmitTimeout]  [ReceiveTimeout]  [Deadline]  [Idle]  [Resumable]</tspan><tspan dx="28">目标</tspan><tspan dx="7" fill="#e8eaed">End   Close</tspan></text>
+<text x="232" y="406"><tspan fill="#e8eaed">HeaderFor&lt;…&gt;</tspan><tspan dx="18" fill="#e8eaed">FieldsInjectInto&lt;…&gt;</tspan><tspan dx="28">通道</tspan><tspan dx="7" fill="#e8eaed">Stream   File</tspan><tspan dx="7">+</tspan><tspan dx="7" fill="#f2c14e">[S]</tspan></text>
+<text x="232" y="425"><tspan fill="#f2c14e">[Zstd]  [ChaCha20]</tspan><tspan dx="9">阶段 / 流</tspan><tspan dx="28">trim</tspan><tspan dx="7" fill="#f2c14e">[ToStream&lt;E&gt;]  [FromStream&lt;E&gt;]  [Stream&lt;To, From&gt;]</tspan></text>
+<text x="232" y="470"><tspan fill="#f2c14e">[MinMax]  [A]  [V]  [X]  [D]  [S]</tspan><tspan dx="28">目标</tspan><tspan dx="7" fill="#f2c14e">[Key: …]  [Val: …]</tspan></text>
+<text x="232" y="489"><tspan fill="#f2c14e">[Zstd]  [ChaCha20]</tspan><tspan dx="9">阶段 / 流</tspan><tspan dx="28">trim</tspan><tspan dx="28">在静态字段上:</tspan><tspan dx="7" fill="#f2c14e">[ValueFor]</tspan></text>
+</g>
+
+<!-- multiplexer, beside the connection rung -->
+<rect x="748" y="174" width="196" height="72" rx="6" fill="#2e2a36" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="846" y="197" font-size="14" fill="#e8eaed" text-anchor="middle">Multiplex&lt;(…)&gt;</text>
+<text x="846" y="216" font-size="12.5" fill="#9aa0a6" text-anchor="middle">一个端口,多条连接</text>
+<text x="846" y="234" font-size="12.5" fill="#9aa0a6" text-anchor="middle">仅常量,无特性</text>
+
+<text x="216" y="544" font-size="13" fill="#9aa0a6">自定义特性永不改变这些字节</text>
+
+<!-- legend -->
+<path d="M40 597 L45 602 L54 591" fill="none" stroke="#e8833a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="601" font-size="13" fill="#9aa0a6">custom attributes become constants of this entity<tspan dx="36" fill="#f2c14e">黄色</tspan> = built-in attribute<tspan dx="36" fill="#e8eaed">白色</tspan> = Meta.cs interface or type<tspan dx="36">灰色 = 它是什么</tspan></text>
+</g>
+</svg>

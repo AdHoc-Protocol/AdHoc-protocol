@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" role="img" aria-labelledby="title desc">
+<title id="title">An endless video feed in Stream segments that stops for an urgent alert</title>
+<desc id="desc">Drone on the left, Operator on the right, one connection. Upper lane, Drone to Operator: VideoSegment packs, each a run of chunks closed by a zero terminator; send(Alert) is called during the second segment, its next Read returns 0, the segment ends early with its terminator, the Alert goes out within about one socket buffer, and the next VideoSegment continues the feed. Lower lane, Operator to Drone: Command packs and an urgent Land cross at any time, never waiting for the video, because the two directions run on separate loops. Notes: a segment is a named Stream pack capped by S(N), chunked and ending at any byte; the feed has no end and is cut where the decoder can resume; memory stays two socket buffers per connection.</desc>
+<rect width="960" height="520" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">One link: an endless video feed that stops for an urgent alert</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">time runs left to right · one connection · one session</text>
+<rect x="16" y="84" width="132" height="300" rx="8" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="82" y="108" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Drone</text>
+<text x="82" y="126" font-size="12" fill="#9aa0a6" text-anchor="middle">C#</text>
+<text x="82" y="168" font-size="12" fill="#e8eaed" text-anchor="middle">camera encoder</text>
+<text x="82" y="186" font-size="12" fill="#4fb3ff" text-anchor="middle">→ segment source</text>
+<text x="82" y="228" font-size="12" fill="#e8eaed" text-anchor="middle">battery monitor</text>
+<text x="82" y="246" font-size="12" fill="#e8833a" text-anchor="middle">→ send(Alert)</text>
+<text x="82" y="318" font-size="12" fill="#e8eaed" text-anchor="middle">flight control</text>
+<text x="82" y="336" font-size="12" fill="#e8833a" text-anchor="middle">← Command, Land</text>
+<rect x="812" y="84" width="132" height="300" rx="8" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="878" y="108" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="700">Operator</text>
+<text x="878" y="126" font-size="12" fill="#9aa0a6" text-anchor="middle">TypeScript</text>
+<text x="878" y="168" font-size="12" fill="#e8eaed" text-anchor="middle">video decoder</text>
+<text x="878" y="186" font-size="12" fill="#4fb3ff" text-anchor="middle">← segment sink</text>
+<text x="878" y="228" font-size="12" fill="#e8eaed" text-anchor="middle">alert panel</text>
+<text x="878" y="246" font-size="12" fill="#e8833a" text-anchor="middle">← Alert</text>
+<text x="878" y="318" font-size="12" fill="#e8eaed" text-anchor="middle">sticks, buttons</text>
+<text x="878" y="336" font-size="12" fill="#e8833a" text-anchor="middle">→ send(Land)</text>
+<text x="164" y="150" font-size="12" fill="#e8eaed" font-weight="700">Drone → Operator · one pack at a time</text>
+<path d="M164 232 L788 232" fill="none" stroke="#4a4a4a" stroke-width="1.4" stroke-linejoin="round"/><path d="M796 232 L787 236.6 L787 227.4 Z" fill="#4a4a4a"/>
+<text x="792" y="248" font-size="12" fill="#9aa0a6" text-anchor="end">time</text>
+<text x="164" y="170" font-size="12" fill="#4fb3ff">VideoSegment</text>
+<rect x="164" y="180" width="14" height="32" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="179" y="180" width="34" height="32" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="215" y="180" width="14" height="32" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="230" y="180" width="34" height="32" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="266" y="180" width="22" height="32" rx="2" fill="#1c1c1c" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="277" y="200" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">0</text>
+<text x="296" y="170" font-size="12" fill="#4fb3ff">VideoSegment - ended early</text>
+<rect x="296" y="180" width="14" height="32" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="311" y="180" width="34" height="32" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="347" y="180" width="14" height="32" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="362" y="180" width="34" height="32" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="398" y="180" width="14" height="32" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="413" y="180" width="34" height="32" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="449" y="180" width="22" height="32" rx="2" fill="#1c1c1c" stroke="#e8833a" stroke-width="1.8"/>
+<text x="460" y="200" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8833a" text-anchor="middle" xml:space="preserve">0</text>
+<rect x="479" y="180" width="64" height="32" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.8"/>
+<text x="511" y="201" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="700">Alert</text>
+<text x="551" y="170" font-size="12" fill="#4fb3ff">VideoSegment - the feed goes on</text>
+<rect x="551" y="180" width="14" height="32" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="566" y="180" width="34" height="32" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="602" y="180" width="14" height="32" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="617" y="180" width="34" height="32" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<rect x="653" y="180" width="22" height="32" rx="2" fill="#1c1c1c" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="664" y="200" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">0</text>
+<text x="685" y="201" font-size="15" fill="#4fb3ff">…</text>
+<line x1="392" y1="272" x2="392" y2="214" stroke="#e8833a" stroke-width="1.4" stroke-dasharray="4 3"/>
+<text x="386" y="286" font-size="12" fill="#e8833a" text-anchor="end">send(Alert) queued</text>
+<text x="386" y="302" font-size="12" fill="#9aa0a6" text-anchor="end">next Read() returns 0: the segment ends</text>
+<text x="386" y="318" font-size="12" fill="#e8833a" text-anchor="end">about one socket buffer later: the Alert</text>
+<line x1="392" y1="156" x2="479" y2="156" stroke="#e8833a" stroke-width="1.4"/>
+<line x1="392" y1="151" x2="392" y2="161" stroke="#e8833a" stroke-width="1.4"/>
+<line x1="479" y1="151" x2="479" y2="161" stroke="#e8833a" stroke-width="1.4"/>
+<text x="460" y="224" font-size="12" fill="#9aa0a6" text-anchor="middle">terminator</text>
+<text x="164" y="300" font-size="12" fill="#e8eaed"></text>
+<text x="796" y="318" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">Operator → Drone: its own loop - never waits for the video</text>
+<path d="M796 368 L172 368" fill="none" stroke="#4a4a4a" stroke-width="1.4" stroke-linejoin="round"/><path d="M164 368 L173 363.4 L173 372.6 Z" fill="#4a4a4a"/>
+<rect x="240" y="324" width="76" height="28" rx="4" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="278" y="343" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Command</text>
+<rect x="400" y="324" width="76" height="28" rx="4" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="438" y="343" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Command</text>
+<rect x="520" y="324" width="58" height="28" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.8"/>
+<text x="549" y="343" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="700">Land</text>
+<rect x="650" y="324" width="76" height="28" rx="4" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="688" y="343" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="400">Command</text>
+<text x="549" y="388" font-size="12" fill="#9aa0a6" text-anchor="middle">crosses while a segment is still going the other way</text>
+<rect x="16" y="410" width="300" height="74" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="30" y="434" font-size="12" fill="#4fb3ff" font-weight="700">segment</text>
+<text x="30" y="454" font-size="12" fill="#e8eaed">a named Stream pack, [S(64_000_000)]: chunked,</text>
+<text x="30" y="472" font-size="12" fill="#e8eaed">length unknown up front, ends at any byte</text>
+<rect x="328" y="410" width="300" height="74" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="342" y="434" font-size="12" fill="#4fb3ff" font-weight="700">feed</text>
+<text x="342" y="454" font-size="12" fill="#e8eaed">no end: segment follows segment; cut them</text>
+<text x="342" y="472" font-size="12" fill="#e8eaed">where the decoder can resume (frame, GOP)</text>
+<rect x="640" y="410" width="300" height="74" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="654" y="434" font-size="12" fill="#4fb3ff" font-weight="700">memory</text>
+<text x="654" y="454" font-size="12" fill="#e8eaed">two socket buffers per connection,</text>
+<text x="654" y="472" font-size="12" fill="#e8eaed">however long the flight</text>
+<rect x="16" y="496" width="13" height="13" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="36" y="507" font-size="12" fill="#9aa0a6">video bytes and ordinary packs</text>
+<rect x="250" y="496" width="13" height="13" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/>
+<text x="270" y="507" font-size="12" fill="#9aa0a6">urgent packs and the early end of a segment</text>
+</g>
+</svg>

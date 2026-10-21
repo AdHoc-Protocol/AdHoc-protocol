@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500" role="img" aria-labelledby="title desc">
+<title id="title">A Value Pack is a number, not an object</title>
+<desc id="desc">Left: an ordinary pack Point3 with three floats, 96 bits; an array of them holds a reference per item, each pointing to a separate object with a header and the fields x, y, z: allocation, a header and a pointer to chase per item. Right: a Value Pack Position with a float x, a byte layer and a byte flags, 48 bits; an array of them is an array of 64-bit numbers, each holding x, layer and flags in fixed slots with 16 bits unused: no object, no pointer, copied by value. Bottom: the same Value Pack in three languages with the same bytes on the wire, the pack id and 6 bytes: C# partial struct Position over a ulong Value with a property per field; Java @Position long with static get, set and New and no object ever; TypeScript type Position = number, a class only above 53 bits.</desc>
+<rect width="960" height="500" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">A Value Pack is a number, not an object</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">a pack whose fields fit in 64 bits - recognized by the generator, no marker to write</text>
+<rect x="16" y="76" width="452" height="270" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="32" y="100" font-size="12" fill="#e8eaed" font-weight="700">an ordinary pack - Point3 { float x, y, z } - 96 bits</text>
+<text x="32" y="120" font-size="12.5" fill="#9aa0a6">an array of them: a reference per item, an object per item</text>
+<rect x="32" y="140" width="60" height="36" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="62" y="163" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">ref</text>
+<path d="M92 158 L162 158" fill="none" stroke="#8c9198" stroke-width="1.4" stroke-linejoin="round"/><path d="M170 158 L161 162.6 L161 153.4 Z" fill="#8c9198"/>
+<rect x="170" y="140" width="230" height="36" rx="4" fill="#33363b" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="176" y="145" width="64" height="26" rx="2" fill="#3d3030" stroke="#5a5f66" stroke-width="1"/>
+<text x="208" y="163" font-size="12" fill="#e8eaed" text-anchor="middle">header</text>
+<rect x="244" y="145" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="267" y="163" font-size="12" fill="#e8eaed" text-anchor="middle">x</text>
+<rect x="294" y="145" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="317" y="163" font-size="12" fill="#e8eaed" text-anchor="middle">y</text>
+<rect x="344" y="145" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="367" y="163" font-size="12" fill="#e8eaed" text-anchor="middle">z</text>
+<rect x="32" y="188" width="60" height="36" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="62" y="211" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">ref</text>
+<path d="M92 206 L202 206" fill="none" stroke="#8c9198" stroke-width="1.4" stroke-linejoin="round"/><path d="M210 206 L201 210.6 L201 201.4 Z" fill="#8c9198"/>
+<rect x="210" y="188" width="230" height="36" rx="4" fill="#33363b" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="216" y="193" width="64" height="26" rx="2" fill="#3d3030" stroke="#5a5f66" stroke-width="1"/>
+<text x="248" y="211" font-size="12" fill="#e8eaed" text-anchor="middle">header</text>
+<rect x="284" y="193" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="307" y="211" font-size="12" fill="#e8eaed" text-anchor="middle">x</text>
+<rect x="334" y="193" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="357" y="211" font-size="12" fill="#e8eaed" text-anchor="middle">y</text>
+<rect x="384" y="193" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="407" y="211" font-size="12" fill="#e8eaed" text-anchor="middle">z</text>
+<rect x="32" y="236" width="60" height="36" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="62" y="259" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">ref</text>
+<path d="M92 254 L162 254" fill="none" stroke="#8c9198" stroke-width="1.4" stroke-linejoin="round"/><path d="M170 254 L161 258.6 L161 249.4 Z" fill="#8c9198"/>
+<rect x="170" y="236" width="230" height="36" rx="4" fill="#33363b" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="176" y="241" width="64" height="26" rx="2" fill="#3d3030" stroke="#5a5f66" stroke-width="1"/>
+<text x="208" y="259" font-size="12" fill="#e8eaed" text-anchor="middle">header</text>
+<rect x="244" y="241" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="267" y="259" font-size="12" fill="#e8eaed" text-anchor="middle">x</text>
+<rect x="294" y="241" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="317" y="259" font-size="12" fill="#e8eaed" text-anchor="middle">y</text>
+<rect x="344" y="241" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="367" y="259" font-size="12" fill="#e8eaed" text-anchor="middle">z</text>
+<rect x="32" y="284" width="60" height="36" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="62" y="307" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">ref</text>
+<path d="M92 302 L202 302" fill="none" stroke="#8c9198" stroke-width="1.4" stroke-linejoin="round"/><path d="M210 302 L201 306.6 L201 297.4 Z" fill="#8c9198"/>
+<rect x="210" y="284" width="230" height="36" rx="4" fill="#33363b" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="216" y="289" width="64" height="26" rx="2" fill="#3d3030" stroke="#5a5f66" stroke-width="1"/>
+<text x="248" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">header</text>
+<rect x="284" y="289" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="307" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">x</text>
+<rect x="334" y="289" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="357" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">y</text>
+<rect x="384" y="289" width="46" height="26" rx="2" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<text x="407" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">z</text>
+<text x="32" y="336" font-size="12.5" fill="#9aa0a6">allocation, a header and a pointer to chase - per item</text>
+<rect x="492" y="76" width="452" height="270" rx="8" fill="#2b2a23" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="508" y="100" font-size="12" fill="#e8eaed" font-weight="700">a Value Pack - Position { float x; byte layer; byte flags }</text>
+<text x="508" y="120" font-size="12.5" fill="#9aa0a6">48 bits: an array of them is an array of numbers</text>
+<rect x="508" y="140" width="160" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="588" y="163" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">x  (32 bits)</text>
+<rect x="668" y="140" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="700" y="163" font-size="12" fill="#e8eaed" text-anchor="middle">layer</text>
+<rect x="732" y="140" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="764" y="163" font-size="12" fill="#e8eaed" text-anchor="middle">flags</text>
+<rect x="796" y="140" width="120" height="36" rx="2" fill="#2b2b2b" stroke="#4a4a4a" stroke-width="1.1" stroke-dasharray="4 3"/>
+<text x="856" y="163" font-size="12" fill="#9aa0a6" text-anchor="middle">unused</text>
+<rect x="508" y="188" width="160" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="588" y="211" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">x  (32 bits)</text>
+<rect x="668" y="188" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="700" y="211" font-size="12" fill="#e8eaed" text-anchor="middle">layer</text>
+<rect x="732" y="188" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="764" y="211" font-size="12" fill="#e8eaed" text-anchor="middle">flags</text>
+<rect x="796" y="188" width="120" height="36" rx="2" fill="#2b2b2b" stroke="#4a4a4a" stroke-width="1.1" stroke-dasharray="4 3"/>
+<text x="856" y="211" font-size="12" fill="#9aa0a6" text-anchor="middle">unused</text>
+<rect x="508" y="236" width="160" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="588" y="259" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">x  (32 bits)</text>
+<rect x="668" y="236" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="700" y="259" font-size="12" fill="#e8eaed" text-anchor="middle">layer</text>
+<rect x="732" y="236" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="764" y="259" font-size="12" fill="#e8eaed" text-anchor="middle">flags</text>
+<rect x="796" y="236" width="120" height="36" rx="2" fill="#2b2b2b" stroke="#4a4a4a" stroke-width="1.1" stroke-dasharray="4 3"/>
+<text x="856" y="259" font-size="12" fill="#9aa0a6" text-anchor="middle">unused</text>
+<rect x="508" y="284" width="160" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="588" y="307" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">x  (32 bits)</text>
+<rect x="668" y="284" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="700" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">layer</text>
+<rect x="732" y="284" width="64" height="36" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.1"/>
+<text x="764" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">flags</text>
+<rect x="796" y="284" width="120" height="36" rx="2" fill="#2b2b2b" stroke="#4a4a4a" stroke-width="1.1" stroke-dasharray="4 3"/>
+<text x="856" y="307" font-size="12" fill="#9aa0a6" text-anchor="middle">unused</text>
+<text x="508" y="336" font-size="12.5" fill="#f2c14e">one 64-bit integer per item: no object, no pointer, copied by value</text>
+<text x="24" y="372" font-size="12" fill="#e8eaed" font-weight="700">the same Value Pack in three languages - the same bytes on the wire: the pack id and 6 bytes</text>
+<rect x="16" y="386" width="300" height="84" rx="8" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="30" y="410" font-size="12" fill="#f2c14e" font-weight="700">C#</text>
+<text x="30" y="432" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">partial struct Position</text>
+<text x="30" y="454" font-size="12.5" fill="#9aa0a6" xml:space="preserve">{ ulong Value; }  a property per field</text>
+<rect x="328" y="386" width="300" height="84" rx="8" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="342" y="410" font-size="12" fill="#f2c14e" font-weight="700">Java</text>
+<text x="342" y="432" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">@Position long pos</text>
+<text x="342" y="454" font-size="12.5" fill="#9aa0a6">no object ever: static get / set / New</text>
+<rect x="640" y="386" width="300" height="84" rx="8" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="654" y="410" font-size="12" fill="#f2c14e" font-weight="700">TypeScript</text>
+<text x="654" y="432" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">type Position = number</text>
+<text x="654" y="454" font-size="12.5" fill="#9aa0a6">a class only above 53 bits</text>
+</g>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" role="img" aria-labelledby="d20tl-t d20tl-d">
+<title id="d20tl-t">每个编号表中的一行</title>
+<desc id="d20tl-d">packs 表中的一行:&lt;see cref='Root'/&gt;ÿ,然后是单独一列的十进制 0,再是 common | base,分成四个带标注的部分:cref 指明是哪个 pack,IDE 重命名 pack 时会一并重命名它;base256 字符 ÿ 是该 pack 的编号,即其标识,永不改变;十进制 0 是线路 ID,仅在某个分支发送该 pack 时存在;common | base 是标签,归你所有,由 KeepDoc 和 SkipDoc 过滤器读取。下方是项目表中的一行:&lt;see cref='MyProject'/&gt;ǍŦƈŗč ū:ǍŦƈŗč 是该项目的自身编号,自 2024-10-14 08:42:55.710 UTC 起的毫秒数;ū 是每个导入项目占一个槽位,即自身编号减去导入编号的 zig-zag。插图解释了 base256:每个字符是一个字节加 U+00FF,最低有效字节在前,所以 ÿ 是 0,Ā 是 1,ā 是 2,Ă 是 3,ă 是 4,ĊĀ 是 11 + 1 × 256 = 267。</desc>
+<rect width="960" height="380" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="40" y="40" font-size="18" fill="#e8833a" font-weight="600">每个编号表中的一行</text>
+
+<!-- packs table line -->
+<text x="40" y="74" font-size="13" fill="#9aa0a6">packs 表</text>
+<g font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="18">
+<text x="40" y="104" fill="#e8eaed">&lt;see cref='Root'/&gt;</text>
+<text x="220" y="104" fill="#f2c14e">ÿ</text>
+<text x="630" y="104" fill="#4fb3ff">0</text>
+<text x="660" y="104" fill="#a06fd0">common | base</text>
+</g>
+
+<line x1="240" y1="99" x2="618" y2="99" stroke="#4a4a4a" stroke-width="1.4" stroke-dasharray="2 6"/>
+<g fill="none" stroke="#6b6f75" stroke-width="1.4">
+<path d="M40 114 V120 H217 V114"/>
+<path d="M219 114 V120 H231 V114"/>
+<path d="M628 114 V120 H642 V114"/>
+<path d="M660 114 V120 H789 V114"/>
+<path d="M225 120 V138"/>
+<path d="M635 120 V176"/>
+</g>
+
+<text x="40" y="144" font-size="13.5" fill="#e8eaed">哪个 pack</text>
+<text x="40" y="161" font-size="13" fill="#9aa0a6">IDE 会重命名它</text>
+<text x="40" y="178" font-size="13" fill="#9aa0a6">与 pack 一起</text>
+
+<text x="233" y="144" font-size="13.5" fill="#f2c14e">编号:标识</text>
+<text x="233" y="161" font-size="13" fill="#9aa0a6">永不改变</text>
+<text x="233" y="178" font-size="13" fill="#9aa0a6">base256,见下文</text>
+
+<text x="626" y="144" font-size="13.5" fill="#4fb3ff" text-anchor="end">线路 ID</text>
+<text x="626" y="161" font-size="13" fill="#9aa0a6" text-anchor="end">仅在某分支</text>
+<text x="626" y="178" font-size="13" fill="#9aa0a6" text-anchor="end">发送该 pack 时;紧凑</text>
+
+<text x="660" y="144" font-size="13.5" fill="#a06fd0">标签:归你所有</text>
+<text x="660" y="161" font-size="13" fill="#9aa0a6">KeepDoc 和 SkipDoc</text>
+<text x="660" y="178" font-size="13" fill="#9aa0a6">过滤器读取它们</text>
+
+<!-- project table line -->
+<text x="40" y="220" font-size="13" fill="#9aa0a6">项目表</text>
+<g font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="18">
+<text x="40" y="250" fill="#e8eaed">&lt;see cref='MyProject'/&gt;</text>
+<text x="269" y="250" fill="#f2c14e">ǍŦƈŗč</text>
+<text x="330" y="250" fill="#f2c14e">ū</text>
+</g>
+
+<g fill="none" stroke="#6b6f75" stroke-width="1.4">
+<path d="M268 260 V266 H320 V260"/>
+<path d="M294 266 V282"/>
+<path d="M343 244 H376"/>
+</g>
+
+<text x="302" y="290" font-size="13.5" fill="#f2c14e">自身编号<tspan fill="#9aa0a6" font-size="13">:毫秒,自</tspan></text>
+<text x="302" y="307" font-size="13" fill="#9aa0a6">2024-10-14 08:42:55.710 UTC</text>
+
+<text x="384" y="240" font-size="13.5" fill="#f2c14e">每个导入项目占一个槽位</text>
+<text x="384" y="257" font-size="13" fill="#9aa0a6">(自身编号 − 导入编号) 的 zig-zag</text>
+
+<!-- base256 inset -->
+<rect x="40" y="326" width="880" height="36" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="56" y="349" font-size="13" fill="#9aa0a6">base256:每个字符 = 一个字节 + U+00FF,低字节在前:<tspan dx="18" fill="#f2c14e">ÿ</tspan> = 0<tspan dx="18" fill="#f2c14e">Ā</tspan> = 1<tspan dx="18" fill="#f2c14e">ā</tspan> = 2<tspan dx="18" fill="#f2c14e">Ă</tspan> = 3<tspan dx="18" fill="#f2c14e">ă</tspan> = 4<tspan dx="18" fill="#f2c14e">ĊĀ</tspan> = 11 + 1 × 256 = 267</text>
+</g>
+</svg>

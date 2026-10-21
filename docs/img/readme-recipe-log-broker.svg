@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" width="960" height="460" role="img" aria-labelledby="title desc">
+<title id="title">A log broker that compresses once and fans out without recompressing</title>
+<desc id="desc">A producer holds a typed Event with at, topic and body, compresses it once with Zstd and seals it with ChaCha20 for its link, key A. The broker, an endpoint on both legs, runs only the inverse cipher with key A and appends the compressed blob to an append-only log of bricks marked z - Zstd blobs, never an Event; no schema, no compressor, no Event code. On the way out it replays the same bytes, never decoded, sealed with each consumer's own key; four consumers each with their own key run the inverse cipher, then Zstd inverse, and get a typed Event. Below: the chain Zstd, Stream of FromProducer and FromBroker, ChaCha20 drawn as leaf, Zstd, an orange cut marker, ChaCha20, wire - the broker runs only what stands right of the cut, and left of the cut is the stored form, a Zstd blob. A ledger: per event, compress 1 at the producer, recompress 0 in the broker, decompress N at the consumers.</desc>
+<rect width="960" height="460" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="600">Compress once, store the blob, fan out without recompressing</text>
+<rect x="24" y="70" width="206" height="230" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="40" y="94" font-size="14" fill="#e8eaed" font-weight="700">Producer</text>
+<rect x="40" y="108" width="174" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="127" y="129.5" font-size="12" fill="#e8eaed" text-anchor="middle">Event { at, topic, body }</text>
+<path d="M76 142 L76 182" fill="none" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/><path d="M76 190 L71.4 181 L80.6 181 Z" fill="#f2c14e"/>
+<rect x="40" y="190" width="72" height="36" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="76" y="213" font-size="13" fill="#f2c14e" text-anchor="middle" font-weight="600">Zstd</text>
+<path d="M112 208 L120 208" fill="none" stroke="#a06fd0" stroke-width="1.6" stroke-linejoin="round"/><path d="M126 208 L119 211.6 L119 204.4 Z" fill="#a06fd0"/>
+<rect x="126" y="190" width="88" height="36" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="170" y="213" font-size="13" fill="#a06fd0" text-anchor="middle" font-weight="600">ChaCha20</text>
+<line x1="214" y1="208" x2="223" y2="208" stroke="#4fb3ff" stroke-width="1.6"/>
+<rect x="223" y="198" width="14" height="20" rx="3" fill="#1e1e1e" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="40" y="246" width="112" height="24" rx="12" fill="none" stroke="#f2c14e" stroke-width="1.3"/>
+<text x="96" y="262.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">compress × 1</text>
+<path d="M237 208 L302 208" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M310 208 L301 212.6 L301 203.4 Z" fill="#4fb3ff"/>
+<text x="268" y="183" font-size="12" fill="#4fb3ff" text-anchor="middle">sealed with</text>
+<text x="268" y="198" font-size="12" fill="#4fb3ff" text-anchor="middle">link key A</text>
+<rect x="300" y="70" width="360" height="230" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="316" y="94" font-size="14" fill="#e8eaed" font-weight="700">Broker</text>
+<text x="644" y="94" font-size="12" fill="#9aa0a6" text-anchor="end">an endpoint on both legs</text>
+<text x="480" y="119" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#9aa0a6">log: </tspan><tspan fill="#f2c14e">Zstd</tspan><tspan > blobs - never an </tspan><tspan fill="#f2c14e">Event</tspan></text>
+<rect x="346" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="361" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="380" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="395" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="414" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="429" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="448" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="463" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="482" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="497" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="516" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="531" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="550" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="565" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="584" y="128" width="30" height="24" rx="3" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="599" y="144.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700" font-style="italic">z</text>
+<rect x="310" y="188" width="88" height="40" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="354" y="205" font-size="13" fill="#a06fd0" xml:space="preserve" text-anchor="middle" font-weight="600"><tspan >ChaCha20</tspan><tspan dy="-5" font-size="12">-1</tspan></text>
+<text x="354" y="221" font-size="12" fill="#9aa0a6" text-anchor="middle">key A</text>
+<rect x="532" y="188" width="118" height="40" rx="6" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="591" y="205" font-size="13" fill="#a06fd0" text-anchor="middle" font-weight="600">ChaCha20</text>
+<text x="591" y="221" font-size="12" fill="#9aa0a6" text-anchor="middle">each consumer's key</text>
+<path d="M354 188 L354 162" fill="none" stroke="#8c9198" stroke-width="1.8" stroke-linejoin="round"/><path d="M354 154 L358.6 163 L349.4 163 Z" fill="#8c9198"/>
+<text x="364" y="170" font-size="12" fill="#e8eaed">append ·</text>
+<text x="364" y="185" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">store(bytes)</text>
+<path d="M591 152 L591 178" fill="none" stroke="#8c9198" stroke-width="1.8" stroke-linejoin="round"/><path d="M591 186 L586.4 177 L595.6 177 Z" fill="#8c9198"/>
+<text x="583" y="177" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="end" xml:space="preserve">replay(bytes)</text>
+<text x="465" y="213" font-size="12" fill="#9aa0a6" text-anchor="middle">the same bytes,</text>
+<text x="465" y="228" font-size="12" fill="#9aa0a6" text-anchor="middle">never decoded</text>
+<text x="480" y="284" font-size="12" fill="#9aa0a6" text-anchor="middle">no schema · no compressor · no Event code</text>
+<line x1="650" y1="208" x2="660" y2="208" stroke="#4fb3ff" stroke-width="1.6"/>
+<rect x="653" y="198" width="14" height="20" rx="3" fill="#1e1e1e" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="730" y="70" width="206" height="50" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="742" y="90" font-size="13" fill="#e8eaed" font-weight="700">Consumer</text>
+<g data-nocheck="1"><path d="M876.5 84.1 L876.5 82.3 A3.5 3.5 0 0 1 883.5 82.3 L883.5 84.1" fill="none" stroke="#a06fd0" stroke-width="1.7"/><rect x="874.2" y="84.1" width="11.7" height="8.4" rx="1.3" fill="#a06fd0"/><circle cx="880" cy="87.9" r="1.1" fill="#2b2b2b"/></g>
+<text x="924" y="90" font-size="12" fill="#a06fd0" text-anchor="end">key 1</text>
+<text x="742" y="110" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan >ChaCha20</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → Zstd</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → </tspan><tspan fill="#f2c14e">Event</tspan></text>
+<path d="M667 208 C700 208 696 95 722 95" fill="none" stroke="#4fb3ff" stroke-width="1.7" stroke-linejoin="round"/><path d="M730 95 L721 99.6 L721 90.4 Z" fill="#4fb3ff"/>
+<rect x="730" y="130" width="206" height="50" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="742" y="150" font-size="13" fill="#e8eaed" font-weight="700">Consumer</text>
+<g data-nocheck="1"><path d="M876.5 144.1 L876.5 142.3 A3.5 3.5 0 0 1 883.5 142.3 L883.5 144.1" fill="none" stroke="#a06fd0" stroke-width="1.7"/><rect x="874.2" y="144.1" width="11.7" height="8.4" rx="1.3" fill="#a06fd0"/><circle cx="880" cy="147.9" r="1.1" fill="#2b2b2b"/></g>
+<text x="924" y="150" font-size="12" fill="#a06fd0" text-anchor="end">key 2</text>
+<text x="742" y="170" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan >ChaCha20</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → Zstd</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → </tspan><tspan fill="#f2c14e">Event</tspan></text>
+<path d="M667 208 C700 208 696 155 722 155" fill="none" stroke="#4fb3ff" stroke-width="1.7" stroke-linejoin="round"/><path d="M730 155 L721 159.6 L721 150.4 Z" fill="#4fb3ff"/>
+<rect x="730" y="190" width="206" height="50" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="742" y="210" font-size="13" fill="#e8eaed" font-weight="700">Consumer</text>
+<g data-nocheck="1"><path d="M876.5 204.1 L876.5 202.3 A3.5 3.5 0 0 1 883.5 202.3 L883.5 204.1" fill="none" stroke="#a06fd0" stroke-width="1.7"/><rect x="874.2" y="204.1" width="11.7" height="8.4" rx="1.3" fill="#a06fd0"/><circle cx="880" cy="207.9" r="1.1" fill="#2b2b2b"/></g>
+<text x="924" y="210" font-size="12" fill="#a06fd0" text-anchor="end">key 3</text>
+<text x="742" y="230" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan >ChaCha20</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → Zstd</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → </tspan><tspan fill="#f2c14e">Event</tspan></text>
+<path d="M667 208 C700 208 696 215 722 215" fill="none" stroke="#4fb3ff" stroke-width="1.7" stroke-linejoin="round"/><path d="M730 215 L721 219.6 L721 210.4 Z" fill="#4fb3ff"/>
+<rect x="730" y="250" width="206" height="50" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="742" y="270" font-size="13" fill="#e8eaed" font-weight="700">Consumer</text>
+<g data-nocheck="1"><path d="M876.5 264.1 L876.5 262.3 A3.5 3.5 0 0 1 883.5 262.3 L883.5 264.1" fill="none" stroke="#a06fd0" stroke-width="1.7"/><rect x="874.2" y="264.1" width="11.7" height="8.4" rx="1.3" fill="#a06fd0"/><circle cx="880" cy="267.9" r="1.1" fill="#2b2b2b"/></g>
+<text x="924" y="270" font-size="12" fill="#a06fd0" text-anchor="end">key 4</text>
+<text x="742" y="290" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan >ChaCha20</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → Zstd</tspan><tspan dy="-5" font-size="12">-1</tspan><tspan dy="5"> → </tspan><tspan fill="#f2c14e">Event</tspan></text>
+<path d="M667 208 C700 208 696 275 722 275" fill="none" stroke="#4fb3ff" stroke-width="1.7" stroke-linejoin="round"/><path d="M730 275 L721 279.6 L721 270.4 Z" fill="#4fb3ff"/>
+<text x="24" y="334" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">[Zstd, Stream&lt;FromProducer, FromBroker&gt;, ChaCha20]</text>
+<rect x="24" y="360" width="72" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="60" y="378.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">leaf</text>
+<rect x="100" y="360" width="72" height="28" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="136" y="378.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">Zstd</text>
+<rect x="200" y="360" width="92" height="28" rx="4" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="246" y="378.5" font-size="12" fill="#a06fd0" text-anchor="middle" font-weight="600">ChaCha20</text>
+<rect x="296" y="360" width="72" height="28" rx="4" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="332" y="378.5" font-size="12" fill="#4fb3ff" text-anchor="middle" font-weight="600">wire</text>
+<line x1="96" y1="374" x2="100" y2="374" stroke="#9aa0a6" stroke-width="1.4"/>
+<line x1="292" y1="374" x2="296" y2="374" stroke="#9aa0a6" stroke-width="1.4"/>
+<line x1="172" y1="374" x2="200" y2="374" stroke="#9aa0a6" stroke-width="1.4"/>
+<rect x="183.5" y="354" width="5" height="40" rx="2" fill="#e8833a"/>
+<path d="M179 347 L193 347 L186 355 Z" fill="#e8833a"/>
+<text x="196" y="355" font-size="12" fill="#e8833a" font-weight="700">cut</text>
+<path d="M201 394 L201 400 L367 400 L367 394" fill="none" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="200" y="415" font-size="12" fill="#a06fd0">the broker runs only what stands right of the cut</text>
+<text x="24" y="433" font-size="12" fill="#9aa0a6">left of the cut: the stored form - a Zstd blob</text>
+<rect x="560" y="334" width="376" height="102" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="576" y="358" font-size="13" fill="#e8eaed" font-weight="700">per event</text>
+<text x="576" y="382" font-size="12" fill="#e8eaed">compress</text>
+<text x="696" y="382" font-size="14" fill="#f2c14e" text-anchor="middle" font-weight="700">1</text>
+<text x="720" y="382" font-size="12" fill="#9aa0a6">at the producer</text>
+<text x="576" y="402" font-size="12" fill="#e8eaed">recompress</text>
+<text x="696" y="402" font-size="14" fill="#4fb3ff" text-anchor="middle" font-weight="700">0</text>
+<text x="720" y="402" font-size="12" fill="#9aa0a6">in the broker</text>
+<text x="576" y="422" font-size="12" fill="#e8eaed">decompress</text>
+<text x="696" y="422" font-size="14" fill="#f2c14e" text-anchor="middle" font-weight="700">N</text>
+<text x="720" y="422" font-size="12" fill="#9aa0a6">at the consumers</text>
+</g>
+</svg>

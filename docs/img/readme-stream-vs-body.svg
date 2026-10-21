@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 312" width="960" height="312" role="img" aria-labelledby="title desc">
+<title id="title">Stream versus whole body</title>
+<desc id="desc">Left: a 1 GiB file as a text body - the bar grows by a third, to about 1.33 GiB, when base64 re-encodes it, and the whole body sits in memory or spills into a temporary file; a live feed with no end does not fit a request at all. Right: the same file as an AdHoc Stream field - your source feeds one fixed-size socket buffer, and a train of chunks, each a 2-byte length and about one buffer of data, goes on to your sink and ends with the 0x0000 terminator; a size-cap gate, S(N), stands before the sink. Framing costs 2 bytes per chunk, about 0.2 percent with 1 KB buffers; the stream ends whenever its source ends, a relay or a store sees the end from the framing alone, and more than N bytes fails on both sides.</desc>
+<rect width="960" height="312" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="16" y="16" width="424" height="280" rx="8" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="32" y="44" font-size="14" fill="#e8eaed" font-weight="700">a whole body</text>
+<rect x="40" y="72" width="270" height="32" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="175" y="92.7" font-size="13" fill="#e8eaed" text-anchor="middle">1 GiB file</text>
+<rect x="310" y="72" width="90" height="32" rx="3" fill="#4a2626" stroke="#e06c6c" stroke-width="1.4"/><text x="355" y="92.7" font-size="13" fill="#e8eaed" text-anchor="middle">+33 %</text>
+<text x="40" y="124" font-size="12" fill="#9aa0a6">base64 inside a text body: ~1.33 GiB</text>
+<path d="M355 106 L355 136" fill="none" stroke="#e06c6c" stroke-width="1.6" stroke-linejoin="round"/><path d="M355 143 L351 135 L359 135 Z" fill="#e06c6c"/>
+<rect x="32" y="144" width="384" height="100" rx="6" fill="none" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="44" y="164" font-size="12" fill="#e8eaed">memory: held whole, or spilled to a temporary file</text>
+<rect x="44" y="190" width="270" height="28" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="179" y="208.7" font-size="13" fill="#e8eaed" text-anchor="middle">1 GiB file</text>
+<rect x="314" y="190" width="90" height="28" rx="3" fill="#4a2626" stroke="#e06c6c" stroke-width="1.4"/><text x="359" y="208.7" font-size="13" fill="#e8eaed" text-anchor="middle">+33 %</text>
+<text x="32" y="276" font-size="12" fill="#9aa0a6">a live feed with no end does not fit a request</text>
+<rect x="456" y="16" width="488" height="280" rx="8" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="472" y="44" font-size="14" fill="#e8eaed" font-weight="700">an AdHoc Stream field</text>
+<rect x="472" y="110" width="76" height="44" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="510" y="128.3" font-size="12" fill="#e8eaed" text-anchor="middle">your</text><text x="510" y="144.3" font-size="12" fill="#e8eaed" text-anchor="middle">source</text>
+<path d="M549 132 L557 132" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M563 132 L556 135.8 L556 128.2 Z" fill="#4fb3ff"/>
+<rect x="564" y="110" width="92" height="44" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/><text x="610" y="128.3" font-size="12" fill="#e8eaed" text-anchor="middle">socket buffer</text><text x="610" y="144.3" font-size="12" fill="#9aa0a6" text-anchor="middle">fixed size</text>
+<path d="M657 132 L856 132" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M863 132 L855 136.2 L855 127.8 Z" fill="#4fb3ff"/>
+<rect x="668" y="120" width="10" height="24" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="678" y="120" width="34" height="24" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<rect x="718" y="120" width="10" height="24" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="728" y="120" width="34" height="24" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<rect x="768" y="120" width="10" height="24" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="778" y="120" width="34" height="24" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<rect x="818" y="120" width="10" height="24" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<path d="M668 116 L668 112 L712 112 L712 116" fill="none" stroke="#9aa0a6" stroke-width="1" stroke-linejoin="round"/>
+<text x="690" y="104" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">[len][data]</text>
+<text x="823" y="166" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">0x0000</text>
+<rect x="849" y="102" width="6" height="60" rx="1" fill="#f2c14e"/>
+<rect x="846" y="98" width="12" height="6" rx="1.5" fill="#e06c6c"/>
+<text x="852" y="90" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">S(N)</text>
+<rect x="864" y="110" width="76" height="44" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="902" y="128.3" font-size="12" fill="#e8eaed" text-anchor="middle">your</text><text x="902" y="144.3" font-size="12" fill="#e8eaed" text-anchor="middle">sink</text>
+<circle cx="477" cy="192" r="2.5" fill="#9aa0a6" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="486" y="196" font-size="12" fill="#e8eaed">chunk = 2-byte length + about one buffer of data</text>
+<circle cx="477" cy="214" r="2.5" fill="#9aa0a6" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="486" y="218" font-size="12" fill="#e8eaed">framing: 2 bytes per chunk, ~0.2 % with 1 KB buffers</text>
+<circle cx="477" cy="236" r="2.5" fill="#9aa0a6" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="486" y="240" font-size="12" fill="#e8eaed">ends whenever the source ends; a relay or a store sees</text>
+<text x="486" y="256" font-size="12" fill="#e8eaed">the end from the framing alone</text>
+<circle cx="477" cy="274" r="2.5" fill="#9aa0a6" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="486" y="278" font-size="12" fill="#e8eaed">S(N): more than N bytes fails - checked on both sides</text>
+</g>
+</svg>

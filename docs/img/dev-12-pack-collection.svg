@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 470" width="980" height="470" role="img"><rect width="980" height="470" rx="10" fill="#2b2b2b"/><title>Branch pack collection: direct elements in tuple order, X&lt;&gt; subtracting from what precedes it; @ scopes filtered by KeepDoc, SkipDoc, KeepName, SkipName and added after the whole tuple</title>
+<text x="24" y="40" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="18" fill="#e8eaed" text-anchor="start" font-weight="600">How a branch collects its packs</text>
+<rect x="24" y="56" width="932" height="36" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="79" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan fill="#9aa0a6">[l____________&lt;(</tspan><tspan fill="#e8eaed">Ping</tspan><tspan fill="#9aa0a6">, </tspan><tspan fill="#e8eaed">Server</tspan><tspan fill="#9aa0a6">, </tspan><tspan fill="#f2c14e">X&lt;Server.Ack&gt;</tspan><tspan fill="#9aa0a6">, </tspan><tspan fill="#4fb3ff">@Telemetry</tspan><tspan fill="#9aa0a6">)&gt;(</tspan><tspan fill="#a06fd0">"</tspan><tspan font-family="Segoe UI Emoji,Apple Color Emoji,Noto Color Emoji,sans-serif">📈</tspan><tspan fill="#a06fd0">", "", "Gps"</tspan><tspan fill="#9aa0a6">)]</tspan></text>
+<rect x="168" y="106" width="598" height="106" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="24" y="152" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="start" font-weight="600">without @</text>
+<text x="24" y="170" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">direct, in tuple order</text>
+<rect x="184" y="142" width="60" height="56" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="214" y="175" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Ping</text>
+<path d="M244 170 L260 170" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M268 170 L259 174.5 L259 165.5 Z" fill="#c9ccd1"/>
+<rect x="268" y="142" width="130" height="56" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="333" y="166" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Server</text>
+<text x="333" y="184" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">(its own packs)</text>
+<path d="M398 170 L414 170" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M422 170 L413 174.5 L413 165.5 Z" fill="#c9ccd1"/>
+<rect x="422" y="142" width="200" height="56" rx="6" fill="#3b3424" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="522" y="161" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#f2c14e" text-anchor="middle" xml:space="preserve" style="white-space:pre">X&lt;Server.Ack&gt;</text>
+<text x="522" y="177" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle">removes from what this</text>
+<text x="522" y="192" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle">lane holds so far</text>
+<path d="M452 142 C 452 120, 372 118, 362 133" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-dasharray="4 3"/>
+<path d="M361 141 L358.3 132.5 L366.2 133.7 Z" fill="#f2c14e"/>
+<path d="M622 170 L792 170" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M800 170 L791 174.5 L791 165.5 Z" fill="#c9ccd1"/>
+<text x="168" y="232" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan >also direct: a Named Pack Set (its members), a filter template </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">F&lt;@Scope&gt;</tspan><tspan > (its filtered result), </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">_&lt;...&gt;</tspan></text>
+<rect x="168" y="244" width="598" height="116" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="24" y="296" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="start" font-weight="600">with @</text>
+<text x="24" y="314" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">a scope, filtered</text>
+<rect x="184" y="274" width="146" height="56" rx="6" fill="#25323f" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="257" y="293" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#4fb3ff" text-anchor="middle" xml:space="preserve" style="white-space:pre">@Telemetry</text>
+<text x="257" y="309" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle">every pack inside,</text>
+<text x="257" y="324" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle">any depth</text>
+<path d="M330 302 L338 302" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M346 302 L337 306.5 L337 297.5 Z" fill="#c9ccd1"/>
+<rect x="346" y="274" width="58" height="56" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="375" y="307" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle">buffer</text>
+<path d="M404 302 L412 302" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M420 302 L411 306.5 L411 297.5 Z" fill="#c9ccd1"/>
+<rect x="420" y="274" width="72" height="56" rx="6" fill="#2e2836" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="456" y="298" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle">KeepDoc</text>
+<text x="456" y="317" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#a06fd0" text-anchor="middle" xml:space="preserve" style="white-space:pre"><tspan >"</tspan><tspan font-family="Segoe UI Emoji,Apple Color Emoji,Noto Color Emoji,sans-serif">📈</tspan><tspan >"</tspan></text>
+<path d="M492 302 L500 302" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M506 302 L499 306 L499 298 Z" fill="#c9ccd1"/>
+<rect x="506" y="274" width="72" height="56" rx="6" fill="#2e2836" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="542" y="298" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle">SkipDoc</text>
+<text x="542" y="317" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve" style="white-space:pre">""</text>
+<path d="M578 302 L586 302" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M592 302 L585 306 L585 298 Z" fill="#c9ccd1"/>
+<rect x="592" y="274" width="72" height="56" rx="6" fill="#2e2836" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="628" y="298" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle">KeepName</text>
+<text x="628" y="317" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#a06fd0" text-anchor="middle" xml:space="preserve" style="white-space:pre">"Gps"</text>
+<path d="M664 302 L672 302" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M678 302 L671 306 L671 298 Z" fill="#c9ccd1"/>
+<rect x="678" y="274" width="72" height="56" rx="6" fill="#2e2836" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="714" y="298" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle">SkipName</text>
+<text x="714" y="317" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve" style="white-space:pre">""</text>
+<text x="549" y="350" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">in this order: each filter works on what the previous one left</text>
+<path d="M750 302 L792 302" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M800 302 L791 306.5 L791 297.5 Z" fill="#c9ccd1"/>
+<rect x="800" y="106" width="156" height="254" rx="6" fill="#383d44" stroke="#c9ccd1" stroke-width="1.6"/>
+<text x="878" y="132" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">branch packs</text>
+<text x="878" y="150" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">(no duplicates)</text>
+<text x="814" y="166" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start">1. direct packs,</text>
+<text x="814" y="183" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">as the tuple is read</text>
+<text x="814" y="281" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start">2. filtered @ packs,</text>
+<text x="814" y="298" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">added after the</text>
+<text x="814" y="313" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">whole tuple is read</text>
+<text x="24" y="392" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan >No </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">&lt;PACKS&gt;</tspan><tspan > and at least one filter: every transmittable pack of the project enters the buffer.</tspan></text>
+<text x="24" y="416" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#f2c14e" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">&lt;PACKS&gt;</tspan><tspan > without any </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">@</tspan><tspan >: the filters have nothing to work on - silently ignored.</tspan></text>
+<text x="24" y="440" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#f2c14e" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">X&lt;...&gt;</tspan><tspan > never removes packs that come from the </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">@</tspan><tspan > lane - to subtract from a scope, wrap it in a filter template or in a Named Pack Set used without </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">@</tspan><tspan >.</tspan></text>
+</svg>

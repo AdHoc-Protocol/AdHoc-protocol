@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 536" width="980" height="536" role="img"><title>A tunnel frame: the pack id (the wire id of the virtual connection), a tunnel_id of 0 to 4 bytes little-endian (absent when MaxTunnels is 1), chunks of a 2-byte length and up to 0xFFFE data bytes, then 0x0000. The frame that ends a tunnel has 0xFFFF ABORT in place of the terminator, or is just pack id, tunnel_id, ABORT. Inside a Relay the inbound body is cut into regions where socket reads ended, the source chunk headers are holes, and the outbound frame gets a fresh pack id and tunnel_id and one chunk per region without the holes</title><rect width="980" height="536" rx="10" fill="#2b2b2b"/><g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13"><text x="24" y="40" font-size="18" fill="#e8eaed" font-weight="600">A tunnel on the wire</text>
+<text x="24" y="78" font-size="14" fill="#e8eaed" font-weight="600">one burst = one frame</text>
+<rect x="24" y="90" width="130" height="40" rx="3" fill="#4a2e1a" stroke="#e8833a" stroke-width="1.5"/><text x="89" y="114.5" font-size="13" fill="#e8eaed" text-anchor="middle">pack-id</text>
+<rect x="158" y="90" width="160" height="40" rx="3" fill="#3f2d52" stroke="#a06fd0" stroke-width="1.5"/><text x="238" y="114.5" font-size="13" fill="#e8eaed" text-anchor="middle">tunnel_id</text>
+<rect x="322" y="90" width="64" height="40" rx="3" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.5"/><text x="354" y="107" font-size="13" fill="#e8eaed" text-anchor="middle">len</text><text x="354" y="123" font-size="12" fill="#9aa0a6" text-anchor="middle">2 B</text>
+<rect x="390" y="90" width="170" height="40" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><text x="475" y="107" font-size="13" fill="#e8eaed" text-anchor="middle">data</text><text x="475" y="123" font-size="12" fill="#9aa0a6" text-anchor="middle">≤ 0xFFFE B</text>
+<rect x="564" y="90" width="64" height="40" rx="3" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.5"/><text x="596" y="114.5" font-size="13" fill="#e8eaed" text-anchor="middle">len</text>
+<rect x="632" y="90" width="120" height="40" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><text x="692" y="114.5" font-size="13" fill="#e8eaed" text-anchor="middle">data</text>
+<text x="773" y="115" font-size="16" fill="#9aa0a6" text-anchor="middle">…</text>
+<rect x="794" y="90" width="84" height="40" rx="3" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.5"/><text x="836" y="114.5" font-size="13" fill="#f2c14e" text-anchor="middle">0x0000</text>
+<text x="89" y="148" font-size="12" fill="#9aa0a6" text-anchor="middle">wire id of the</text>
+<text x="89" y="164" font-size="12" fill="#9aa0a6" text-anchor="middle">virtual connection</text>
+<text x="238" y="148" font-size="12" fill="#9aa0a6" text-anchor="middle">0-4 B, little-endian;</text>
+<text x="238" y="164" font-size="12" fill="#9aa0a6" text-anchor="middle">absent if MaxTunnels = 1</text>
+<path d="M322 136 V141 H752 V136" fill="none" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="537" y="158" font-size="12" fill="#9aa0a6" text-anchor="middle">chunks: a 2-byte length, then the data</text>
+<text x="836" y="148" font-size="12" fill="#9aa0a6" text-anchor="middle">end of frame</text>
+<text x="24" y="206" font-size="14" fill="#e8eaed" font-weight="600">the frame that ends the tunnel</text>
+<rect x="24" y="218" width="130" height="40" rx="3" fill="#4a2e1a" stroke="#e8833a" stroke-width="1.5"/><text x="89" y="242.5" font-size="13" fill="#e8eaed" text-anchor="middle">pack-id</text>
+<rect x="158" y="218" width="160" height="40" rx="3" fill="#3f2d52" stroke="#a06fd0" stroke-width="1.5"/><text x="238" y="242.5" font-size="13" fill="#e8eaed" text-anchor="middle">tunnel_id</text>
+<rect x="322" y="218" width="64" height="40" rx="3" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.5"/><text x="354" y="242.5" font-size="13" fill="#e8eaed" text-anchor="middle">len</text>
+<rect x="390" y="218" width="120" height="40" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><text x="450" y="242.5" font-size="13" fill="#e8eaed" text-anchor="middle">data</text>
+<text x="531" y="243" font-size="16" fill="#9aa0a6" text-anchor="middle">…</text>
+<rect x="552" y="218" width="104" height="40" rx="3" fill="#5a3418" stroke="#e8833a" stroke-width="1.5"/><text x="604" y="235" font-size="13" fill="#e8833a" text-anchor="middle" font-weight="700">0xFFFF</text><text x="604" y="251" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="700">ABORT</text>
+<text x="680" y="243" font-size="13" fill="#9aa0a6" text-anchor="middle">or</text>
+<rect x="704" y="218" width="72" height="40" rx="3" fill="#4a2e1a" stroke="#e8833a" stroke-width="1.5"/><text x="740" y="242.5" font-size="13" fill="#e8eaed" text-anchor="middle">pack-id</text>
+<rect x="780" y="218" width="84" height="40" rx="3" fill="#3f2d52" stroke="#a06fd0" stroke-width="1.5"/><text x="822" y="242.5" font-size="13" fill="#e8eaed" text-anchor="middle">tunnel_id</text>
+<rect x="868" y="218" width="76" height="40" rx="3" fill="#5a3418" stroke="#e8833a" stroke-width="1.5"/><text x="906" y="235" font-size="13" fill="#e8833a" text-anchor="middle" font-weight="700">0xFFFF</text><text x="906" y="251" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="700">ABORT</text>
+<text x="24" y="300" font-size="14" fill="#e8eaed" font-weight="600">inside a Relay</text>
+<text x="24" y="343" font-size="13" fill="#9aa0a6">inbound</text>
+<rect x="104" y="320" width="64" height="36" rx="3" fill="#4a2e1a" stroke="#e8833a" stroke-width="1.5"/><text x="136" y="342.5" font-size="12" fill="#e8eaed" text-anchor="middle">pack-id</text>
+<rect x="172" y="320" width="70" height="36" rx="3" fill="#3f2d52" stroke="#a06fd0" stroke-width="1.5"/><text x="207" y="342.5" font-size="12" fill="#e8eaed" text-anchor="middle">tunnel_id</text>
+<rect x="246" y="320" width="614" height="36" rx="3" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.5"/>
+<rect x="246" y="320" width="16" height="36" fill="#3c3c3c" stroke="#5a5a5a" stroke-width="1.2"/><path d="M246.0 326.0 L252.0 320.0 M246.0 332.0 L258.0 320.0 M246.0 338.0 L262.0 322.0 M246.0 344.0 L262.0 328.0 M246.0 350.0 L262.0 334.0 M246.0 356.0 L262.0 340.0 M252.0 356.0 L262.0 346.0 M258.0 356.0 L262.0 352.0" stroke="#8a8a8a" stroke-width="1"/>
+<rect x="372" y="320" width="16" height="36" fill="#3c3c3c" stroke="#5a5a5a" stroke-width="1.2"/><path d="M372.0 326.0 L378.0 320.0 M372.0 332.0 L384.0 320.0 M372.0 338.0 L388.0 322.0 M372.0 344.0 L388.0 328.0 M372.0 350.0 L388.0 334.0 M372.0 356.0 L388.0 340.0 M378.0 356.0 L388.0 346.0 M384.0 356.0 L388.0 352.0" stroke="#8a8a8a" stroke-width="1"/>
+<rect x="556" y="320" width="16" height="36" fill="#3c3c3c" stroke="#5a5a5a" stroke-width="1.2"/><path d="M556.0 326.0 L562.0 320.0 M556.0 332.0 L568.0 320.0 M556.0 338.0 L572.0 322.0 M556.0 344.0 L572.0 328.0 M556.0 350.0 L572.0 334.0 M556.0 356.0 L572.0 340.0 M562.0 356.0 L572.0 346.0 M568.0 356.0 L572.0 352.0" stroke="#8a8a8a" stroke-width="1"/>
+<rect x="760" y="320" width="16" height="36" fill="#3c3c3c" stroke="#5a5a5a" stroke-width="1.2"/><path d="M760.0 326.0 L766.0 320.0 M760.0 332.0 L772.0 320.0 M760.0 338.0 L776.0 322.0 M760.0 344.0 L776.0 328.0 M760.0 350.0 L776.0 334.0 M760.0 356.0 L776.0 340.0 M766.0 356.0 L776.0 346.0 M772.0 356.0 L776.0 352.0" stroke="#8a8a8a" stroke-width="1"/>
+<rect x="844" y="320" width="16" height="36" fill="#3c3c3c" stroke="#5a5a5a" stroke-width="1.2"/><path d="M844.0 326.0 L850.0 320.0 M844.0 332.0 L856.0 320.0 M844.0 338.0 L860.0 322.0 M844.0 344.0 L860.0 328.0 M844.0 350.0 L860.0 334.0 M844.0 356.0 L860.0 340.0 M850.0 356.0 L860.0 346.0 M856.0 356.0 L860.0 352.0" stroke="#8a8a8a" stroke-width="1"/>
+<text x="317" y="343" font-size="12" fill="#e8eaed" text-anchor="middle">region 1</text>
+<text x="498" y="343" font-size="12" fill="#e8eaed" text-anchor="middle">region 2</text>
+<text x="710" y="343" font-size="12" fill="#e8eaed" text-anchor="middle">region 3</text>
+<line x1="440" y1="294" x2="440" y2="366" stroke="#e8eaed" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="660" y1="294" x2="660" y2="366" stroke="#e8eaed" stroke-width="1.4" stroke-dasharray="4 3"/>
+<text x="550" y="306" font-size="12" fill="#9aa0a6" text-anchor="middle">where socket reads ended</text>
+<line x1="478" y1="302" x2="448" y2="302" stroke="#9aa0a6" stroke-width="1.2"/><path d="M442 302 L449 298.5 L449 305.5 Z" fill="#9aa0a6"/>
+<line x1="622" y1="302" x2="652" y2="302" stroke="#9aa0a6" stroke-width="1.2"/><path d="M658 302 L651 298.5 L651 305.5 Z" fill="#9aa0a6"/>
+<line x1="380" y1="357" x2="380" y2="370" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="372" y="383" font-size="12" fill="#9aa0a6">hole = a source chunk header or the terminator</text>
+<line x1="720" y1="360" x2="720" y2="396" stroke="#e8eaed" stroke-width="2"/><path d="M720 404 L715 395 L725 395 Z" fill="#e8eaed"/>
+<text x="732" y="388" font-size="12" fill="#9aa0a6">each region becomes one chunk</text>
+<text x="24" y="429" font-size="13" fill="#9aa0a6">outbound</text>
+<rect x="104" y="406" width="64" height="36" rx="3" fill="#4a2e1a" stroke="#e8833a" stroke-width="1.5"/><text x="136" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">pack-id</text>
+<rect x="172" y="406" width="70" height="36" rx="3" fill="#3f2d52" stroke="#a06fd0" stroke-width="1.5"/><text x="207" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">tunnel_id</text>
+<rect x="246" y="406" width="30" height="36" rx="3" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.5"/><text x="261" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">len</text>
+<rect x="280" y="406" width="156" height="36" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><text x="358" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">region 1 without holes</text>
+<rect x="440" y="406" width="30" height="36" rx="3" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.5"/><text x="455" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">len</text>
+<rect x="474" y="406" width="196" height="36" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><text x="572" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">region 2 without holes</text>
+<rect x="674" y="406" width="30" height="36" rx="3" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.5"/><text x="689" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">len</text>
+<rect x="708" y="406" width="156" height="36" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/><text x="786" y="428.5" font-size="12" fill="#e8eaed" text-anchor="middle">region 3 without holes</text>
+<rect x="868" y="406" width="64" height="36" rx="3" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.5"/><text x="900" y="428.5" font-size="12" fill="#f2c14e" text-anchor="middle">0x0000</text>
+<path d="M104 447 V452 H242 V447" fill="none" stroke="#9aa0a6" stroke-width="1.2"/>
+<text x="104" y="468" font-size="12" fill="#9aa0a6">written afresh (tunnel_id may be re-keyed)</text>
+<text x="24" y="494" font-size="13" fill="#9aa0a6">+2 bytes per region; the payload is copied once; after every region the relay stands on a chunk boundary,</text>
+<text x="24" y="514" font-size="13" fill="#9aa0a6">so it can end the frame with ABORT when its source vanishes.</text></g></svg>

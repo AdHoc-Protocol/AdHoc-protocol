@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" role="img">
+<title>Three panels on how the compact time types use whole bytes. DateTimeDef: a timeline from min 2000-01-01 to the requested max 2050-01-01 drawn solid, continued dashed to the expanded max 2136-02-07; 31 bits are needed, so 4 bytes are used and the spare bit extends max, or with @precision refines the step. TimeSpanDef: a ring of one cycle, 16,777,216 steps of 6 ms, about 27.96 hours, with the receiver's now marked; the usable history ends at now and a 1-minute margin follows it; a value decodes into the one cycle that ends one minute after now; 3 bytes, the spare capacity refines the precision from 1 s to 6 ms. Duration: a line from 0 to the requested max of 30,000 steps drawn solid, continued dashed to the promoted max of 65,535 steps; 2 bytes; the precision never changes, so 19 ms steps reach about 20.75 minutes</title>
+<rect width="980" height="520" rx="10" fill="#2b2b2b"/>
+<rect x="16" y="16" width="948" height="154" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="16" y="182" width="948" height="154" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="16" y="348" width="948" height="154" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="32" y="44" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed"><tspan font-weight="600">DateTimeDef</tspan><tspan fill="#9aa0a6">: a moment in a declared range</tspan></text>
+<line x1="48" y1="86" x2="280.18221895664954" y2="86" stroke="#e8833a" stroke-width="5"/>
+<line x1="280.18221895664954" y1="86" x2="680" y2="86" stroke="#e8833a" stroke-width="5" stroke-dasharray="7 5" opacity="0.8"/>
+<line x1="48" y1="77" x2="48" y2="95" stroke="#e8eaed" stroke-width="1.6"/>
+<line x1="280.18221895664954" y1="77" x2="280.18221895664954" y2="95" stroke="#e8eaed" stroke-width="1.6"/>
+<line x1="680" y1="77" x2="680" y2="95" stroke="#e8eaed" stroke-width="1.6"/>
+<text x="164.09110947832477" y="72" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8833a" text-anchor="middle">requested: 50 years in 1 s steps</text>
+<text x="480.09110947832477" y="72" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8833a" text-anchor="middle">added by the spare bit: 2³² − 1 steps in all</text>
+<text x="48" y="112" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">min 2000-01-01</text>
+<text x="280.18221895664954" y="112" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle">requested max 2050-01-01</text>
+<text x="680" y="112" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="end">expanded max 2136-02-07</text>
+<text x="32" y="138" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">Default: the spare bits extend max; the step stays 1 s.</text>
+<text x="32" y="156" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">With @precision: the spare bits refine the step instead; the range stays close to the requested one.</text>
+<rect x="724" y="60" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="727" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="733" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="739" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="745" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="751" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="757" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="763" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="769" y="65" width="5" height="16" fill="#e8833a"/>
+<text x="750.5" y="102" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<rect x="783" y="60" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="786" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="792" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="798" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="804" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="810" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="816" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="822" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="828" y="65" width="5" height="16" fill="#e8833a"/>
+<text x="809.5" y="102" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<rect x="842" y="60" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="845" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="851" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="857" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="863" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="869" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="875" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="881" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="887" y="65" width="5" height="16" fill="#e8833a"/>
+<text x="868.5" y="102" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<rect x="901" y="60" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="904" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="910" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="916" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="922" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="928" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="934" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="940" y="65" width="5" height="16" fill="#e8833a"/>
+<rect x="946.5" y="65.5" width="4" height="15" fill="none" stroke="#e8833a" stroke-width="1" stroke-dasharray="2 1.5"/>
+<text x="927.5" y="102" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<text x="724" y="128" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">31 bits needed → 4 bytes</text>
+<text x="724" y="146" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">1 spare bit (dashed)</text>
+<text x="32" y="210" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed"><tspan font-weight="600">TimeSpanDef</tspan><tspan fill="#9aa0a6">: a recent moment</tspan></text>
+<path d="M129.8 250.4 A38 38 0 1 1 112.0 246.0" fill="none" stroke="#4fb3ff" stroke-width="7"/>
+<path d="M112.0 246.0 A38 38 0 0 1 129.8 250.4" fill="none" stroke="#f2c14e" stroke-width="7"/>
+<path d="M68.7 309.0 A50 50 0 0 1 62.8 275.3" fill="none" stroke="#9aa0a6" stroke-width="1.4"/>
+<path d="M63.5 271.4 L66.5 280.0 L57.6 278.5 Z" fill="#9aa0a6"/>
+<text x="54" y="302" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="end">time</text>
+<line x1="112" y1="236" x2="112" y2="256" stroke="#e8eaed" stroke-width="2"/>
+<text x="104" y="238" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="end">receiver now</text>
+<line x1="125.1" y1="259.3" x2="134.5" y2="241.6" stroke="#e8eaed" stroke-width="2"/>
+<text x="139.5" y="240.6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed">now + 1 min</text>
+<text x="250" y="240" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">ring = one cycle = capacity × precision = 16,777,216 × 6 ms ≈ 27.96 h</text>
+<rect x="250" y="253" width="18" height="6" fill="#4fb3ff"/>
+<text x="276" y="261" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff">usable history: from now − (cycle − 1 min) up to now</text>
+<rect x="250" y="275" width="18" height="6" fill="#f2c14e"/>
+<text x="276" y="283" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#f2c14e">1-minute margin after now: absorbs a sender clock that runs ahead</text>
+<text x="250" y="305" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">A value decodes into the one cycle that ends at now + 1 min.</text>
+<text x="250" y="323" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">Not to scale: the margin is 1 minute of the 27.96 h cycle.</text>
+<rect x="724" y="226" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="727" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="733" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="739" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="745" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="751" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="757" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="763" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="769" y="231" width="5" height="16" fill="#4fb3ff"/>
+<text x="750.5" y="268" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<rect x="783" y="226" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="786" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="792" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="798" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="804" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="810" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="816" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="822" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="828" y="231" width="5" height="16" fill="#4fb3ff"/>
+<text x="809.5" y="268" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<rect x="842" y="226" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="845" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="851" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="857" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="863" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="869" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="875" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="881" y="231" width="5" height="16" fill="#4fb3ff"/>
+<rect x="887" y="231" width="5" height="16" fill="#4fb3ff"/>
+<text x="868.5" y="268" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<text x="724" y="294" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">3 bytes, all bits used</text>
+<text x="724" y="312" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">spare capacity refines 1 s → 6 ms</text>
+<text x="32" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed"><tspan font-weight="600">Duration</tspan><tspan fill="#9aa0a6">: elapsed time</tspan></text>
+<line x1="48" y1="418" x2="337.31105516136415" y2="418" stroke="#a06fd0" stroke-width="5"/>
+<line x1="337.31105516136415" y1="418" x2="680" y2="418" stroke="#a06fd0" stroke-width="5" stroke-dasharray="7 5" opacity="0.85"/>
+<line x1="48" y1="409" x2="48" y2="427" stroke="#e8eaed" stroke-width="1.6"/>
+<line x1="337.31105516136415" y1="409" x2="337.31105516136415" y2="427" stroke="#e8eaed" stroke-width="1.6"/>
+<line x1="680" y1="409" x2="680" y2="427" stroke="#e8eaed" stroke-width="1.6"/>
+<text x="192.65552758068208" y="404" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#a06fd0" text-anchor="middle">requested: 30,000 steps of 19 ms ≈ 9.5 min</text>
+<text x="508.6555275806821" y="404" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#a06fd0" text-anchor="middle">free: the 2 bytes hold up to 65,535 steps</text>
+<text x="48" y="444" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">0</text>
+<text x="337.31105516136415" y="444" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="middle">requested max 30,000 steps</text>
+<text x="680" y="444" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="end">promoted max 65,535 steps</text>
+<text x="32" y="484" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">The precision never changes: 65,535 steps × 19 ms ≈ 20.75 min. No anchor, no wrap-around, no margin.</text>
+<rect x="724" y="392" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="727" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="733" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="739" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="745" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="751" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="757" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="763" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="769" y="397" width="5" height="16" fill="#a06fd0"/>
+<text x="750.5" y="434" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<rect x="783" y="392" width="53" height="26" rx="3" fill="#2b2b2b" stroke="#6a6e72" stroke-width="1.2"/>
+<rect x="786" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="792" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="798" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="804" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="810" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="816" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="822" y="397" width="5" height="16" fill="#a06fd0"/>
+<rect x="828.5" y="397.5" width="4" height="15" fill="none" stroke="#a06fd0" stroke-width="1" stroke-dasharray="2 1.5"/>
+<text x="809.5" y="434" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">byte</text>
+<text x="724" y="460" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed">15 bits needed → 2 bytes</text>
+<text x="724" y="478" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">1 spare bit raises max to 65,535</text>
+</svg>

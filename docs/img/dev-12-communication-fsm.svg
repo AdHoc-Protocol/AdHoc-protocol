@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 404" width="1000" height="404" role="img"><rect width="1000" height="404" rx="10" fill="#2b2b2b"/><title>Actor0 of AdHoc's own Communication connection: Start, VersionMatching, Login, LoginResponse, TodoJobRequest, Project, Close; leadership alternates between the Agent and the Server</title>
+<text x="24" y="36" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="16" fill="#e8eaed" text-anchor="start" font-weight="600" xml:space="preserve" style="white-space:pre"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">interface Communication : Connects&lt;Agent, Server&gt;</tspan><tspan fill="#9aa0a6">  -  Actor0</tspan></text>
+<rect x="75" y="62" width="170" height="66" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="160" y="84" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">Start</text>
+<text x="160" y="102" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle">Agent leads</text>
+<text x="160" y="119" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">TransmitTimeout 12 s</text>
+<rect x="415" y="62" width="170" height="66" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="500" y="84" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">VersionMatching</text>
+<text x="500" y="102" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server leads</text>
+<text x="500" y="119" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">TransmitTimeout 1 s</text>
+<rect x="755" y="62" width="170" height="66" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="840" y="90" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">Login</text>
+<text x="840" y="109" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle">Agent leads</text>
+<rect x="755" y="246" width="170" height="66" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="840" y="268" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">LoginResponse</text>
+<text x="840" y="286" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server leads</text>
+<text x="840" y="303" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">TransmitTimeout 12 s</text>
+<rect x="415" y="246" width="170" height="66" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="500" y="268" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">TodoJobRequest</text>
+<text x="500" y="286" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle">Agent leads</text>
+<text x="500" y="303" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">TransmitTimeout 2 s</text>
+<rect x="75" y="246" width="170" height="66" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="160" y="268" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">Project</text>
+<text x="160" y="286" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server leads</text>
+<text x="160" y="303" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">ReceiveTimeout 120 s</text>
+<circle cx="34" cy="95" r="6" fill="#e8eaed"/>
+<path d="M40 95 L67 95" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M75 95 L66 99.5 L66 90.5 Z" fill="#e8eaed"/>
+<path d="M245 95 L407 95" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M415 95 L406 99.5 L406 90.5 Z" fill="#e8833a"/>
+<text x="330" y="86" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle">Agent.Version</text>
+<path d="M585 95 L747 95" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M755 95 L746 99.5 L746 90.5 Z" fill="#4fb3ff"/>
+<text x="670" y="86" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server.Invitation</text>
+<path d="M870 128 L870 238" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M870 246 L865.5 237 L874.5 237 Z" fill="#e8833a"/>
+<text x="880" y="192" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="start">Agent.Login</text>
+<path d="M755 279 L593 279" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M585 279 L594 274.5 L594 283.5 Z" fill="#4fb3ff"/>
+<text x="670" y="300" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server.Invitation |</text>
+<text x="670" y="317" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server.InvitationUpdate</text>
+<path d="M415 279 L253 279" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M245 279 L254 274.5 L254 283.5 Z" fill="#e8833a"/>
+<text x="330" y="300" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle">Agent.Project</text>
+<rect x="425" y="166" width="150" height="40" rx="20" fill="#2f3338" stroke="#c9ccd1" stroke-width="1.6"/><rect x="429" y="170" width="142" height="32" rx="16" fill="none" stroke="#c9ccd1" stroke-width="1"/><text x="500" y="191" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="middle" font-weight="600">Close</text>
+<text x="500" y="224" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">queued packs sent, then the connection closes</text>
+<path d="M500 128 L500 158" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M500 166 L495.5 157 L504.5 157 Z" fill="#4fb3ff"/>
+<text x="510" y="152" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="start">Server.Info</text>
+<path d="M795 246 L795 186 L583 186" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M575 186 L584 181.5 L584 190.5 Z" fill="#4fb3ff"/>
+<text x="685" y="177" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server.Info</text>
+<path d="M205 246 L205 186 L417 186" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M425 186 L416 190.5 L416 181.5 Z" fill="#4fb3ff"/>
+<text x="315" y="160" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Info_Result:</text>
+<text x="315" y="177" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle">Server.Info | Server.Result</text>
+<path d="M165 312 L165 336 L115 336 L115 320" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M115 312 L119.5 321 L110.5 321 Z" fill="#4fb3ff"/>
+<text x="177" y="334" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="start">Server.Progress (stay, repeated)</text>
+<line x1="24" y1="376" x2="56" y2="376" stroke="#e8833a" stroke-width="2.5"/>
+<text x="64" y="380" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">sent by the Agent (Left host)</text>
+<line x1="284" y1="376" x2="316" y2="376" stroke="#4fb3ff" stroke-width="2.5"/>
+<text x="324" y="380" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">sent by the Server (Right host)</text>
+</svg>

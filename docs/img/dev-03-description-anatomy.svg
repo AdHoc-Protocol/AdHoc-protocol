@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" width="960" height="660" role="img" aria-labelledby="title desc">
+<title id="title">The anatomy of one description file: which C# construct is which AdHoc entity</title>
+<desc id="desc">MyProtocol.cs starts with using org.unirail.Meta and holds a required namespace com.my.company. In the namespace, a dashed strip marks the numbers tables that AdHocAgent writes. The project interface MyProject contains packs (class Order with the nested pack class Line), hosts (struct Browser : Host and struct Store : Host with its language marker and its pack class Receipt), a constants container struct Limits and enum Payment, and the connection interface Session : Connects&lt;Browser, Store&gt; with the states Open and Paying and the actor interface Checkout : Actor with a state of its own. Dashed arrows show that the branch of Open selects Order and the branch of Paying selects Store.Receipt. Labels in the right margin name the chapter of each region.</desc>
+<rect width="960" height="660" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="16" y="16" width="784" height="628" rx="10" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="32" y="40" font-size="14" fill="#e8833a" font-weight="700">MyProtocol.cs</text>
+<text x="32" y="64" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">using org.unirail.Meta;</text>
+<rect x="28" y="78" width="764" height="554" rx="8" fill="#2a2a2a" stroke="#4a4a4a" stroke-width="1.3"/>
+<text x="44" y="100" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">namespace com.my.company</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">   (required)</tspan></text>
+<rect x="44" y="112" width="732" height="26" rx="4" fill="#2f2b20" stroke="#f2c14e" stroke-width="1.3" stroke-dasharray="5 4"/>
+<text x="56" y="130" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">/** packs … */   /** project … */</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">     numbers tables - written by AdHocAgent</tspan></text>
+<rect x="40" y="150" width="744" height="470" rx="8" fill="#2d2823" stroke="#e8833a" stroke-width="1.8"/>
+<text x="56" y="172" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">interface MyProject</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - project</tspan></text>
+<rect x="120" y="186" width="350" height="70" rx="5" fill="#1e2c38" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="132" y="205" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">class Order</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - pack</tspan></text>
+<rect x="132" y="214" width="326" height="32" rx="4" fill="#1e2c38" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="144" y="235" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">class Line</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - pack inside a pack</tspan></text>
+<rect x="120" y="268" width="186" height="88" rx="5" fill="#26384d" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="132" y="288" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">struct Browser : Host</tspan></text>
+<text x="132" y="306" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">/// &lt;see cref=&quot;InTS&quot;/&gt;</text>
+<rect x="318" y="268" width="386" height="88" rx="5" fill="#26384d" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="330" y="288" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">struct Store : Host</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - host</tspan></text>
+<text x="330" y="306" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#9aa0a6" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">/// &lt;see cref=&quot;InJAVA&quot;/&gt;</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">  languages</tspan></text>
+<rect x="452" y="316" width="240" height="30" rx="4" fill="#1e2c38" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="464" y="336" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">class Receipt</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - the host's pack</tspan></text>
+<rect x="120" y="368" width="318" height="34" rx="5" fill="#313233" stroke="#8c9198" stroke-width="1.3"/>
+<text x="132" y="390" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">struct Limits { const … }</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - constants container</tspan></text>
+<rect x="450" y="368" width="150" height="34" rx="5" fill="#313233" stroke="#8c9198" stroke-width="1.3"/>
+<text x="462" y="390" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">enum Payment</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - enum</tspan></text>
+<rect x="104" y="414" width="616" height="194" rx="6" fill="#2c2634" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="118" y="434" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">interface Session : Connects&lt;Browser, Store&gt;</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - connection</tspan></text>
+<rect x="120" y="446" width="264" height="48" rx="4" fill="#262130" stroke="#8f78ad" stroke-width="1.2"/><text x="130" y="466" font-size="12" fill="#9aa0a6">branch</text><text x="130" y="485" font-size="12" fill="#9aa0a6">state</text><text x="178" y="466" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">[L____________&lt;Paying, Order&gt;]</text><text x="178" y="485" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">struct Open { }</text>
+<rect x="396" y="446" width="308" height="48" rx="4" fill="#262130" stroke="#8f78ad" stroke-width="1.2"/><text x="406" y="466" font-size="12" fill="#9aa0a6">branch</text><text x="406" y="485" font-size="12" fill="#9aa0a6">state</text><text x="454" y="466" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">[____________R&lt;Open, Store.Receipt&gt;]</text><text x="454" y="485" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">struct Paying { }</text>
+<rect x="120" y="506" width="352" height="90" rx="5" fill="#2c2634" stroke="#a06fd0" stroke-width="1.3"/>
+<text x="132" y="526" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">interface Checkout : Actor</tspan><tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif"> - actor</tspan></text>
+<rect x="132" y="538" width="328" height="48" rx="4" fill="#262130" stroke="#8f78ad" stroke-width="1.2"/><text x="142" y="558" font-size="12" fill="#9aa0a6">branch</text><text x="142" y="577" font-size="12" fill="#9aa0a6">state</text><text x="190" y="558" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">[L____________&lt;…&gt;]</text><text x="190" y="577" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">struct Start { }</text>
+<text x="488" y="548" font-size="12" fill="#9aa0a6">Open and Paying, written directly in</text>
+<text x="488" y="564" font-size="12" fill="#9aa0a6">the connection, are the states of the</text>
+<text x="488" y="580" font-size="12" fill="#9aa0a6">connection's own actor, Actor0.</text>
+<path d="M120 466 L74 466 Q64 466 64 456 L64 210 Q64 200 74 200 L112 200" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-dasharray="6 4" stroke-linejoin="round"/><path d="M120 200 L111 204.6 L111 195.4 Z" fill="#4fb3ff"/>
+<text x="72" y="193" font-size="12" fill="#4fb3ff">selects</text>
+<path d="M704 466 L748 466 Q758 466 758 456 L758 341 Q758 331 748 331 L700 331" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-dasharray="6 4" stroke-linejoin="round"/><path d="M692 331 L701 326.4 L701 335.6 Z" fill="#4fb3ff"/>
+<text x="710" y="324" font-size="12" fill="#4fb3ff">selects</text>
+<path d="M808 112 L814 112 L814 138 L808 138" fill="none" stroke="#6a6a6a" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="826" y="129" font-size="12" fill="#9aa0a6">Numbers tables</text>
+<path d="M808 186 L814 186 L814 256 L808 256" fill="none" stroke="#6a6a6a" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="826" y="225" font-size="12" fill="#9aa0a6">Packs</text>
+<path d="M808 268 L814 268 L814 356 L808 356" fill="none" stroke="#6a6a6a" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="826" y="308" font-size="12" fill="#9aa0a6">Hosts, languages,</text>
+<text x="826" y="324" font-size="12" fill="#9aa0a6">generated code</text>
+<path d="M808 368 L814 368 L814 402 L808 402" fill="none" stroke="#6a6a6a" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="826" y="389" font-size="12" fill="#9aa0a6">Constants and enums</text>
+<path d="M808 414 L814 414 L814 608 L808 608" fill="none" stroke="#6a6a6a" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="826" y="499" font-size="12" fill="#9aa0a6">Connections ·</text>
+<text x="826" y="515" font-size="12" fill="#9aa0a6">Actors, states,</text>
+<text x="826" y="531" font-size="12" fill="#9aa0a6">branches</text>
+</g>
+</svg>

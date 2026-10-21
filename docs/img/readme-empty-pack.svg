@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="title desc">
+<title id="title">An empty pack: the message is its id</title>
+<desc id="desc">Three panels. You declare public class Shipped { } with no fields, and a branch [____________R&lt;Start, Server.Shipped&gt;] on the state Waiting: a transition with no data. On the wire an ordinary pack is an id followed by its fields; an empty pack is only the id, one byte while the connection ids fit in it. The generated receiver is Shipped.Handler.ONE, the only instance, with nothing to read; the pack moves the state machine from Waiting to Start; no allocation per message. Facts below: a million Shipped packs cost a million ids and no objects; as a field type an empty pack becomes a bool; an empty class no branch sends is a constants container, not a pack.</desc>
+<rect width="960" height="420" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">An empty pack: the message is its id</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">events, commands, acknowledgements, state transitions - &quot;it happened&quot; is the whole message</text>
+<rect x="16" y="76" width="300" height="196" rx="8" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="32" y="100" font-size="12" fill="#e8833a" font-weight="700">you declare</text>
+<text x="32" y="132" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">public class Shipped { }</text>
+<text x="32" y="152" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#9aa0a6" xml:space="preserve">// no fields</text>
+<text x="32" y="196" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">[____________R&lt;Start,</text>
+<text x="32" y="214" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">              Server.Shipped&gt;]</text>
+<text x="32" y="236" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">struct Waiting { }</text>
+<text x="32" y="258" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#9aa0a6" xml:space="preserve">// a transition with no data</text>
+<rect x="340" y="76" width="290" height="196" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="356" y="100" font-size="12" fill="#4fb3ff" font-weight="700">on the wire</text>
+<text x="356" y="128" font-size="12" fill="#9aa0a6">an ordinary pack</text>
+<rect x="356" y="138" width="30" height="30" rx="3" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="371" y="158" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">id</text>
+<rect x="390" y="138" width="56" height="30" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="418" y="158" font-size="12" fill="#e8eaed" text-anchor="middle">field</text>
+<rect x="450" y="138" width="56" height="30" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="478" y="158" font-size="12" fill="#e8eaed" text-anchor="middle">field</text>
+<rect x="510" y="138" width="56" height="30" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="538" y="158" font-size="12" fill="#e8eaed" text-anchor="middle">field</text>
+<rect x="570" y="138" width="28" height="30" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="584" y="158" font-size="12" fill="#e8eaed" text-anchor="middle">…</text>
+<text x="356" y="200" font-size="12" fill="#9aa0a6">an empty pack</text>
+<rect x="356" y="210" width="30" height="30" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.8"/>
+<text x="371" y="230" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">id</text>
+<text x="398" y="224" font-size="12.5" fill="#e8eaed">only the id - one byte while</text>
+<text x="398" y="241" font-size="12.5" fill="#e8eaed">the connection's ids fit in it</text>
+<rect x="654" y="76" width="290" height="196" rx="8" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="670" y="100" font-size="12" fill="#f2c14e" font-weight="700">the receiver (generated)</text>
+<rect x="670" y="114" width="258" height="50" rx="6" fill="#2b2b2b" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="682" y="134" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">Shipped.Handler.ONE</text>
+<text x="682" y="154" font-size="12" fill="#9aa0a6">the only instance - nothing to read</text>
+<rect x="674" y="196" width="82" height="30" rx="6" fill="#363a40" stroke="#8c9198" stroke-width="1.2"/>
+<text x="715" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Waiting</text>
+<rect x="844" y="196" width="74" height="30" rx="6" fill="#363a40" stroke="#8c9198" stroke-width="1.2"/>
+<text x="881" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Start</text>
+<path d="M756 211 L836 211" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M844 211 L835 215.6 L835 206.4 Z" fill="#e8833a"/>
+<text x="800" y="203" font-size="12" fill="#e8833a" text-anchor="middle">Shipped</text>
+<text x="670" y="254" font-size="12.5" fill="#e8eaed">no allocation per message</text>
+<path d="M316 174 L332 174" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M340 174 L331 178.6 L331 169.4 Z" fill="#9aa0a6"/>
+<path d="M630 174 L646 174" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M654 174 L645 178.6 L645 169.4 Z" fill="#9aa0a6"/>
+<rect x="16" y="292" width="300" height="64" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="30" y="316" font-size="12" fill="#e8eaed" font-weight="700">a million Shipped packs</text>
+<text x="30" y="338" font-size="12.5" fill="#9aa0a6">a million ids on the wire, no objects</text>
+<rect x="328" y="292" width="300" height="64" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="342" y="316" font-size="12" fill="#e8eaed" font-weight="700">as a field type</text>
+<text x="342" y="338" font-size="12.5" fill="#9aa0a6">the agent makes it a bool: present or absent</text>
+<rect x="640" y="292" width="300" height="64" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="654" y="316" font-size="12" fill="#e8eaed" font-weight="700">an empty class no branch sends</text>
+<text x="654" y="338" font-size="12.5" fill="#9aa0a6">is a container for constants, not a pack</text>
+<text x="24" y="392" font-size="12" fill="#9aa0a6">colors: orange - your declaration and the empty pack · blue - bytes on the wire · yellow - generated code</text>
+</g>
+</svg>

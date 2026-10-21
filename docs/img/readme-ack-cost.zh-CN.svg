@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" width="960" height="280" role="img" aria-labelledby="title desc">
+<title id="title">确认的代价</title>
+<desc id="desc">The cost of confirming 64 KiB of guaranteed 15-byte packs, 4 369 packs, as two bars on one scale of 1 px per 160 bytes. Request/response: 4 369 replies of at least 27 bytes each, 117 963 bytes in all. AdHoc: one Confirm_ service pack, the pack id alone, 1 byte with a one-byte id, about 0.002 percent - too thin to see at this scale. The service packs are generated for the project; nothing is declared for them. The packs themselves carry nothing for the guarantee, and a connection without Resumable carries nothing of it; the sender keeps a journal, the newest bytes in memory and the rest in 4 MB files, up to resumable_megabytes, 100 MB by default.</desc>
+<rect width="960" height="280" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">确认 64 KiB 保证送达的 15 字节 pack(共 4 369 个 pack)</text>
+<text x="24" y="92" font-size="13" fill="#e8eaed">请求/响应</text>
+<text x="24" y="108" font-size="12" fill="#9aa0a6">每个请求都要回复</text>
+<rect x="180" y="76" width="737" height="36" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<line x1="348.75" y1="79" x2="348.75" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="517.5" y1="79" x2="517.5" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="686.25" y1="79" x2="686.25" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="855" y1="79" x2="855" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<text x="548.5" y="99" font-size="13" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#3a3a3a" stroke-width="4" stroke-linejoin="round">4 369 个回复 × 27 B(最小)= 117 963 B</text>
+<text x="917" y="128" font-size="12" fill="#9aa0a6" text-anchor="end">1 px = 160 字节 · 一个刻度 = 1 000 个回复</text>
+<text x="24" y="162" font-size="13" fill="#e8eaed">AdHoc</text>
+<text x="24" y="178" font-size="12" fill="#9aa0a6">每 64 KiB 一个 Confirm_</text>
+<rect x="180" y="146" width="1.2" height="36" rx="0" fill="#f2c14e"/>
+<text x="192" y="169" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed">1 个服务 pack Confirm_:只有 pack id = </tspan><tspan fill="#f2c14e" font-weight="700">1 B</tspan><tspan fill="#9aa0a6">(约 0.002 %,在此比一个像素还细)</tspan></text>
+<text x="24" y="206" font-size="12" fill="#9aa0a6">Confirm_ 和其他服务 pack 是为项目生成的:你一个都不用声明。</text>
+<text x="24" y="226" font-size="12" fill="#9aa0a6">pack 本身不为保证送达多携带任何字节;不带 Resumable 的连接完全不携带它。</text>
+<text x="24" y="246" font-size="12" fill="#9aa0a6">发送方维护一份送达日志:最新的字节在内存中,其余写入 4 MB 文件,上限为 resumable_megabytes(默认 100 MB)。</text>
+</g>
+</svg>

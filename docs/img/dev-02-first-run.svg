@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 636" width="960" height="636" role="img" aria-labelledby="title desc">
+<title id="title">Getting started: five steps from your UUID to the first deployed code</title>
+<desc id="desc">Top row, left to right: step 2, AdHocAgent followed by your UUID stores it as PersonalVolatileUUID in AdHocAgent.toml beside AdHocAgent; step 4, AdHocAgent with no arguments writes the template MyProtocolDescription.cs into the current folder, overwriting a file of that name; step 5, you compose your protocol in your IDE: packs and their fields, hosts and their languages, connections, states and branches. Down the right side to the bottom row, right to left: step 6, AdHocAgent .\MyProtocolDescription.cs adds the numbers tables to the description, fills the received folder MyProtocolDescription with .description, InCS, InJAVA and InTS host folders, writes MyProtocolDescription.md and stops; a bare file name without a directory part is taken for a UUID and nothing is generated. Step 7: after a route and ⛔ marks are added to the .md file, AdHocAgent .\MyProtocolDescription.md copies gen, lib and LICENSE-GRANT.md into D:\Projects\server\protocol.</desc>
+<rect width="960" height="636" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<circle cx="28" cy="31" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="28" y="35.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">2</text>
+<text x="48" y="36" font-size="14" fill="#e8eaed" font-weight="700">Store your UUID</text>
+<text x="18" y="61" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >once, with the UUID from your sign-up</tspan></text>
+<circle cx="340" cy="31" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="340" y="35.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">4</text>
+<text x="360" y="36" font-size="14" fill="#e8eaed" font-weight="700">Get the template</text>
+<text x="330" y="61" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >in the folder of your description project</tspan></text>
+<circle cx="642" cy="31" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="642" y="35.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">5</text>
+<text x="662" y="36" font-size="14" fill="#e8eaed" font-weight="700">Compose your protocol</text>
+<text x="632" y="61" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >the template is a start:</tspan></text>
+<text x="632" y="77" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >make it your protocol</tspan></text>
+<rect x="16" y="100" width="280" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="156" y="127" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent &lt;your-uuid&gt;</text>
+<rect x="328" y="100" width="270" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="463" y="127" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent</text>
+<rect x="630" y="100" width="300" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="780" y="127" font-size="13" fill="#e8eaed" text-anchor="middle">edit it in your IDE</text>
+<path d="M296 122 L320 122" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M328 122 L319 126.6 L319 117.4 Z" fill="#4fb3ff"/>
+<path d="M598 122 L622 122" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M630 122 L621 126.6 L621 117.4 Z" fill="#4fb3ff"/>
+<path d="M37 144 L37 158" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M37 164 L32.4 157 L41.6 157 Z" fill="#4fb3ff"/>
+<path d="M349 144 L349 158" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M349 164 L344.4 157 L353.6 157 Z" fill="#4fb3ff"/>
+<path d="M651 144 L651 158" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M651 164 L646.4 157 L655.6 157 Z" fill="#4fb3ff"/>
+<path d="M24 168 L42 168 L50 176 L50 202 L24 202 Z" fill="#333536" stroke="#8c9198" stroke-width="1.6" stroke-linejoin="round"/><path d="M42 168 L42 176 L50 176" fill="none" stroke="#8c9198" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="60" y="182" font-size="12" fill="#e8eaed">AdHocAgent.toml</text>
+<text x="60" y="198" font-size="12" fill="#9aa0a6">beside AdHocAgent</text>
+<rect x="18" y="214" width="250" height="26" rx="4" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1"/>
+<text x="28" y="231" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">PersonalVolatileUUID = &quot;…&quot;</text>
+<path d="M336 168 L354 168 L362 176 L362 202 L336 202 Z" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M354 168 L354 176 L362 176" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="372" y="182" font-size="12" fill="#e8eaed">MyProtocolDescription.cs</text>
+<text x="372" y="198" font-size="12" fill="#e8eaed">template, in the current folder</text>
+<text x="372" y="214" font-size="12" fill="#9aa0a6">overwrites a file of that name</text>
+<path d="M638 168 L656 168 L664 176 L664 202 L638 202 Z" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M656 168 L656 176 L664 176" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="674" y="182" font-size="12" fill="#e8eaed">MyProtocolDescription.cs</text>
+<text x="682" y="202" font-size="12" fill="#e8833a">+ packs and their fields</text>
+<text x="682" y="218" font-size="12" fill="#e8833a">+ hosts and their languages</text>
+<text x="682" y="234" font-size="12" fill="#e8833a">+ connections, states, branches</text>
+<text x="674" y="256" font-size="12" fill="#9aa0a6">the IDE checks the C# as you type</text>
+<circle cx="518" cy="319" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="518" y="323.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">6</text>
+<text x="538" y="324" font-size="14" fill="#e8eaed" font-weight="700">Generate</text>
+<text x="508" y="349" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >the path needs a directory part: </tspan><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">.\</tspan><tspan > or </tspan><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">./</tspan></text>
+<circle cx="28" cy="319" r="12" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="28" y="323.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">7</text>
+<text x="48" y="324" font-size="14" fill="#e8eaed" font-weight="700">Deploy</text>
+<text x="18" y="349" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >after adding a route </tspan><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[](/D:/Projects/server/protocol/)</tspan></text>
+<text x="18" y="365" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >and ⛔ for unused hosts</tspan></text>
+<rect x="506" y="392" width="424" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="718" y="419" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent .\MyProtocolDescription.cs</text>
+<rect x="16" y="392" width="430" height="44" rx="10" fill="#1c1c1c" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="231" y="419" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve">AdHocAgent .\MyProtocolDescription.md</text>
+<path d="M930 122 L938 122 Q946 122 946 130 L946 410 Q946 414 942 414 L938 414" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M930 414 L939 409.4 L939 418.6 Z" fill="#4fb3ff"/>
+<path d="M506 414 L454 414" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M446 414 L455 409.4 L455 418.6 Z" fill="#4fb3ff"/>
+<path d="M527 436 L527 450" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M527 456 L522.4 449 L531.6 449 Z" fill="#4fb3ff"/>
+<path d="M37 436 L37 450" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M37 456 L32.4 449 L41.6 449 Z" fill="#4fb3ff"/>
+<path d="M514 460 L532 460 L540 468 L540 494 L514 494 Z" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M532 460 L532 468 L540 468" fill="none" stroke="#e8833a" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="550" y="474" font-size="12" fill="#e8eaed">MyProtocolDescription.cs</text>
+<rect x="550" y="482" width="140" height="19" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="558" y="496" font-size="12" fill="#f2c14e">numbers tables added</text>
+<path d="M514 514 L532 514 L540 522 L540 548 L514 548 Z" fill="#333536" stroke="#8c9198" stroke-width="1.6" stroke-linejoin="round"/><path d="M532 514 L532 522 L540 522" fill="none" stroke="#8c9198" stroke-width="1.2" stroke-linejoin="round"/>
+<text x="550" y="528" font-size="12" fill="#e8eaed">MyProtocolDescription.md</text>
+<text x="550" y="544" font-size="12" fill="#9aa0a6">written - the run stops</text>
+<path d="M728 464 L728 486 L760 486 L760 466 L743 466 L740 461 L730 461 Q728 461 728 464 Z" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/>
+<text x="768" y="476" font-size="12" fill="#e8eaed">MyProtocolDescription\</text>
+<text x="776" y="494" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">.description\</text>
+<text x="776" y="510" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InCS\Client\</text>
+<text x="776" y="526" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InCS\Server\</text>
+<text x="776" y="542" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InJAVA\…</text>
+<text x="776" y="558" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">InTS\…</text>
+<rect x="506" y="572" width="424" height="46" rx="6" fill="#36301f" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="518" y="590" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">AdHocAgent MyProtocolDescription.cs</tspan><tspan >  - no directory part</tspan></text>
+<text x="518" y="607" font-size="12" fill="#e8eaed">a bare file name is taken for a UUID: nothing is generated</text>
+<path d="M21 464 L21 486 L53 486 L53 466 L36 466 L33 461 L23 461 Q21 461 21 464 Z" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/>
+<text x="62" y="476" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">D:\Projects\server\protocol\</text>
+<text x="70" y="494" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">gen\</text>
+<text x="70" y="510" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">lib\</text>
+<text x="70" y="526" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" xml:space="preserve">LICENSE-GRANT.md</text>
+<text x="62" y="548" font-size="12" fill="#9aa0a6">a folder for generated code only</text>
+<rect x="24" y="573" width="13" height="13" rx="3" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="44" y="584" font-size="12" fill="#9aa0a6">yours</text>
+<rect x="114" y="573" width="13" height="13" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="134" y="584" font-size="12" fill="#9aa0a6">generated</text>
+<rect x="224" y="573" width="13" height="13" rx="3" fill="#333536" stroke="#8c9198" stroke-width="1.6"/>
+<text x="244" y="584" font-size="12" fill="#9aa0a6">written by AdHocAgent</text>
+</g>
+</svg>

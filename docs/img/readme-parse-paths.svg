@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" role="img" aria-labelledby="title desc">
+<title id="title">Receiving one message</title>
+<desc id="desc">Two receive paths, left to right. The text body: socket, the whole body buffered, tokenize, match keys by name, digits to numbers and unescape, a generic tree, a typed object and validation - every pass touches every byte again, and a red dot marks each stage that allocates or copies. AdHoc: socket, one reused receive buffer of bufferSize, the pack id choosing the generated handler, each field read at its declared place, then your object or your own setters. A value cut off by the end of the buffer waits in a small parser state; with an abstract pack there is no generated object at all.</desc>
+<rect width="960" height="330" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="700">Receiving one message</text>
+<text x="24" y="78" font-size="13" fill="#c9ccd1" font-weight="700">text body</text>
+<rect x="24" y="92" width="112" height="48" rx="6" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="80" y="120.3" font-size="12" fill="#e8eaed" text-anchor="middle">socket</text>
+<path d="M137 116 L147 116" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M153 116 L146 119.8 L146 112.2 Z" fill="#8a8a8a"/>
+<rect x="154" y="92" width="112" height="48" rx="6" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="210" y="112.3" font-size="12" fill="#e8eaed" text-anchor="middle">whole body</text><text x="210" y="128.3" font-size="12" fill="#e8eaed" text-anchor="middle">buffered</text>
+<path d="M267 116 L277 116" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M283 116 L276 119.8 L276 112.2 Z" fill="#8a8a8a"/>
+<rect x="284" y="92" width="112" height="48" rx="6" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="340" y="120.3" font-size="12" fill="#e8eaed" text-anchor="middle">tokenize</text>
+<path d="M397 116 L407 116" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M413 116 L406 119.8 L406 112.2 Z" fill="#8a8a8a"/>
+<rect x="414" y="92" width="112" height="48" rx="6" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="470" y="112.3" font-size="12" fill="#e8eaed" text-anchor="middle">match keys</text><text x="470" y="128.3" font-size="12" fill="#e8eaed" text-anchor="middle">by name</text>
+<path d="M527 116 L537 116" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M543 116 L536 119.8 L536 112.2 Z" fill="#8a8a8a"/>
+<rect x="544" y="92" width="112" height="48" rx="6" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="600" y="112.3" font-size="12" fill="#e8eaed" text-anchor="middle">digits to numbers,</text><text x="600" y="128.3" font-size="12" fill="#e8eaed" text-anchor="middle">unescape</text>
+<path d="M657 116 L667 116" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M673 116 L666 119.8 L666 112.2 Z" fill="#8a8a8a"/>
+<rect x="674" y="92" width="112" height="48" rx="6" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="730" y="120.3" font-size="12" fill="#e8eaed" text-anchor="middle">generic tree</text>
+<path d="M787 116 L797 116" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M803 116 L796 119.8 L796 112.2 Z" fill="#8a8a8a"/>
+<rect x="804" y="92" width="112" height="48" rx="6" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="860" y="112.3" font-size="12" fill="#e8eaed" text-anchor="middle">typed object,</text><text x="860" y="128.3" font-size="12" fill="#e8eaed" text-anchor="middle">validate</text>
+<circle cx="265" cy="93" r="6" fill="#e06c6c" stroke="#2b2b2b" stroke-width="1.5"/>
+<circle cx="395" cy="93" r="6" fill="#e06c6c" stroke="#2b2b2b" stroke-width="1.5"/>
+<circle cx="655" cy="93" r="6" fill="#e06c6c" stroke="#2b2b2b" stroke-width="1.5"/>
+<circle cx="785" cy="93" r="6" fill="#e06c6c" stroke="#2b2b2b" stroke-width="1.5"/>
+<circle cx="915" cy="93" r="6" fill="#e06c6c" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="24" y="166" font-size="12" fill="#9aa0a6">every pass touches every byte again</text>
+<circle cx="254" cy="162" r="5" fill="#e06c6c" stroke="#2b2b2b" stroke-width="1.5"/>
+<text x="266" y="166" font-size="12" fill="#9aa0a6">the stage allocates or copies</text>
+<text x="24" y="206" font-size="13" fill="#f2c14e" font-weight="700">AdHoc</text>
+<rect x="24" y="220" width="160" height="48" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/><text x="104" y="248.3" font-size="12" fill="#e8eaed" text-anchor="middle">socket</text>
+<path d="M185 244 L203 244" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M210 244 L202 248.2 L202 239.8 Z" fill="#4fb3ff"/>
+<rect x="211" y="220" width="160" height="48" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/><text x="291" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">receive buffer</text><text x="291" y="256.3" font-size="12" fill="#e8eaed" text-anchor="middle">bufferSize, reused</text>
+<path d="M372 244 L390 244" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M397 244 L389 248.2 L389 239.8 Z" fill="#4fb3ff"/>
+<rect x="398" y="220" width="160" height="48" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="478" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">pack id →</text><text x="478" y="256.3" font-size="12" fill="#e8eaed" text-anchor="middle">generated handler</text>
+<path d="M559 244 L577 244" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M584 244 L576 248.2 L576 239.8 Z" fill="#4fb3ff"/>
+<rect x="585" y="220" width="160" height="48" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="665" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">each field read</text><text x="665" y="256.3" font-size="12" fill="#e8eaed" text-anchor="middle">at its declared place</text>
+<path d="M746 244 L764 244" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M771 244 L763 248.2 L763 239.8 Z" fill="#4fb3ff"/>
+<rect x="772" y="220" width="160" height="48" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="852" y="240.3" font-size="12" fill="#e8eaed" text-anchor="middle">your object,</text><text x="852" y="256.3" font-size="12" fill="#e8eaed" text-anchor="middle">or your setters</text>
+<text x="24" y="294" font-size="12" fill="#9aa0a6">a value cut off by the end of the buffer waits in a small parser state - decoding never waits for the whole pack</text>
+<text x="24" y="312" font-size="12" fill="#9aa0a6">abstract pack: no generated object - the parser hands each field to your own structure</text>
+</g>
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="title desc">
+<title id="title">Who writes what</title>
+<desc id="desc">One host program as a stacked block. A thin orange slice on top: your code around the generated code - creating transports, connecting, sending, your data structures. A large yellow block, the generated code: packs with serializers and parsers, the connection with transmitter and receiver, actors with states and dispatch, state guards, epochs and timeouts, sessions and guaranteed delivery, constants such as MIN, MAX and STR_LEN_MAX; small orange notches on three of them are the injection points, where your code says what a pack means, what a state starts and what a timeout does. A grey block at the bottom: the runtime library with TCP, WebSocket and UDP transports, buffers, collections, Zstd and ChaCha20. To the right, in orange outlines, what is written by hand without a generator: an encoder and a decoder per message and language, a dispatch switch per connection, a state machine on each side kept in step, reconnect, replay and acknowledgments, length and size checks, constants copied into every host - and a yellow arrow from that list into the generated block: all of this becomes declarations.</desc>
+<rect width="960" height="420" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="24" y="40" width="456" height="46" rx="6" fill="#2d2823" stroke="#e8833a" stroke-width="1.4"/>
+<text x="36" y="58" font-size="13" fill="#e8833a" font-weight="700">your code around it</text>
+<text x="36" y="76" font-size="12" fill="#e8eaed">creating transports · connecting · sending · your data structures</text>
+<rect x="24" y="98" width="456" height="214" rx="6" fill="#2b2a23" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="468" y="116" font-size="13" fill="#f2c14e" text-anchor="end" font-weight="700">generated (gen)</text>
+<rect x="36" y="126" width="210" height="40" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="141" y="150.3" font-size="12" fill="#e8eaed" text-anchor="middle">packs: serializers, parsers</text>
+<rect x="123" y="160" width="36" height="10" rx="2" fill="#e8833a"/>
+<rect x="258" y="126" width="210" height="40" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="363" y="150.3" font-size="12" fill="#e8eaed" text-anchor="middle">connection: transmitter, receiver</text>
+<rect x="36" y="174" width="210" height="40" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="141" y="198.3" font-size="12" fill="#e8eaed" text-anchor="middle">actors: states, dispatch</text>
+<rect x="123" y="208" width="36" height="10" rx="2" fill="#e8833a"/>
+<rect x="258" y="174" width="210" height="40" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="363" y="198.3" font-size="12" fill="#e8eaed" text-anchor="middle">state guards, epochs, timeouts</text>
+<rect x="345" y="208" width="36" height="10" rx="2" fill="#e8833a"/>
+<rect x="36" y="222" width="210" height="40" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="141" y="246.3" font-size="12" fill="#e8eaed" text-anchor="middle">sessions, guaranteed delivery</text>
+<rect x="258" y="222" width="210" height="40" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="363" y="238.8" font-size="12" fill="#e8eaed" text-anchor="middle">constants</text><text x="363" y="253.8" font-size="12" fill="#e8eaed" text-anchor="middle">MIN, MAX, STR_LEN_MAX</text>
+<rect x="36" y="280" width="24" height="8" rx="2" fill="#e8833a"/>
+<text x="68" y="288" font-size="12" fill="#e8833a">injection point: your code inside generated files -</text>
+<text x="68" y="304" font-size="12" fill="#e8833a">what a pack means, what a state starts, what a timeout does</text>
+<rect x="24" y="324" width="456" height="58" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="468" y="344" font-size="13" fill="#8c9198" text-anchor="end" font-weight="700">runtime library (lib)</text>
+<text x="36" y="346" font-size="12" fill="#e8eaed">transports: TCP · WebSocket · UDP</text>
+<text x="36" y="366" font-size="12" fill="#e8eaed">buffers · collections · Zstd · ChaCha20</text>
+<text x="24" y="402" font-size="12" fill="#9aa0a6">gen is replaced by every generation; your code in injection points is carried over by smart merge</text>
+<text x="540" y="58" font-size="13" fill="#e8833a" font-weight="700">written by hand without a generator</text>
+<rect x="540" y="74" width="404" height="32" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="556" y="95" font-size="13" fill="#e8eaed">an encoder and a decoder per message, per language</text>
+<rect x="540" y="118" width="404" height="32" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="556" y="139" font-size="13" fill="#e8eaed">a dispatch switch per connection</text>
+<rect x="540" y="162" width="404" height="32" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="556" y="183" font-size="13" fill="#e8eaed">a state machine on each side, kept in step</text>
+<rect x="540" y="206" width="404" height="32" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="556" y="227" font-size="13" fill="#e8eaed">reconnect, replay, acknowledgments</text>
+<rect x="540" y="250" width="404" height="32" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="556" y="271" font-size="13" fill="#e8eaed">length and size checks</text>
+<rect x="540" y="294" width="404" height="32" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="556" y="315" font-size="13" fill="#e8eaed">constants copied into every host</text>
+<path d="M536 200 L495 200" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-linejoin="round"/><path d="M486 200 L496 194.6 L496 205.4 Z" fill="#f2c14e"/>
+<text x="540" y="348" font-size="13" fill="#f2c14e" font-weight="700">all of this becomes declarations</text>
+</g>
+</svg>

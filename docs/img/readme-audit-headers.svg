@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500" role="img" aria-labelledby="title desc">
+<title id="title">Read the metadata, keep the bytes: AuditRecord on ServiceToAuditor</title>
+<desc id="desc">One AuditRecord on the wire: the pack id, the AuditMeta header - trace_id 64 bits, tenant 32 bits, severity 3 bits, 99 bits rounded up to 13 bytes - the 4-byte timestamp at, a null-bits byte, and the payment as hatched opaque bytes in length-prefixed chunks ending with a zero length. A dashed line after the header marks where OnReceiving runs, before the payload is parsed. Below: the Service holds a typed Payment card and sends AuditRecord; the Auditor, with no Payment type and no parser, lets your code pick a shelf by tenant (tenant 7 to shelf C) and keeps the exact bytes there; the same bytes travel as Evidence (FromStream) to the Investigator, whose generated parser turns them back into a typed Payment card. A bracket joins the two cards: the same bytes, the same Payment, byte-faithful evidence. Footer: header fields are single, non-nullable, fixed-size primitives with MinMax allowed; they live on the connection, not in the pack; send takes their values before the connection argument.</desc>
+<rect width="960" height="500" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<defs><pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#34383f"/><line x1="0" y1="0" x2="0" y2="7" stroke="#6a717d" stroke-width="2.4"/></pattern></defs>
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="600" xml:space="preserve"><tspan >Read the metadata, keep the bytes: </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">AuditRecord</tspan><tspan > on </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">ServiceToAuditor</tspan></text>
+<rect x="24" y="70" width="68" height="38" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="58" y="94" font-size="12" fill="#e8eaed" text-anchor="middle">pack id</text>
+<rect x="96" y="70" width="190" height="38" rx="3" fill="#3d3520" stroke="#8a7a3a" stroke-width="1"/>
+<text x="191" y="94" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">trace_id</tspan><tspan fill="#9aa0a6">  64 bits</tspan></text>
+<rect x="286" y="70" width="100" height="38" rx="3" fill="#3d3520" stroke="#8a7a3a" stroke-width="1"/>
+<text x="336" y="94" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">tenant</tspan><tspan fill="#9aa0a6">  32</tspan></text>
+<rect x="386" y="70" width="40" height="38" rx="3" fill="#3d3520" stroke="#8a7a3a" stroke-width="1"/>
+<text x="406" y="94" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">sev</tspan><tspan fill="#9aa0a6"> 3</tspan></text>
+<rect x="94" y="68" width="334" height="42" rx="4" fill="none" stroke="#f2c14e" stroke-width="2"/>
+<text x="261" y="61" font-size="12" fill="#f2c14e" text-anchor="middle" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">AuditMeta</tspan><tspan >  -  99 bits → 13 bytes</tspan></text>
+<rect x="432" y="70" width="84" height="38" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="474" y="94" font-size="12" fill="#e8eaed" text-anchor="middle">at · 4 bytes</text>
+<rect x="520" y="70" width="58" height="38" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="549" y="94" font-size="12" fill="#e8eaed" text-anchor="middle">null bits</text>
+<rect x="582" y="70" width="354" height="38" rx="3" fill="url(#hatch)" stroke="#8a919c" stroke-width="1.3"/>
+<rect x="590" y="78" width="30" height="22" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="605" y="93.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">len</text>
+<rect x="720" y="78" width="30" height="22" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="735" y="93.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">len</text>
+<text x="862" y="94" font-size="13" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#34383f" stroke-width="4" stroke-linejoin="round">…</text>
+<rect x="886" y="78" width="30" height="22" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="901" y="93.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">0</text>
+<text x="759" y="61" font-size="12" fill="#9aa0a6" text-anchor="middle">payment - opaque, chunk-framed</text>
+<line x1="429" y1="52" x2="429" y2="126" stroke="#a06fd0" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="437" y="138" font-size="13" fill="#a06fd0" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">OnReceiving</tspan><tspan > runs here - before the payload is parsed</tspan></text>
+<rect x="24" y="166" width="200" height="190" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="38" y="190" font-size="15" fill="#e8eaed" font-weight="700">Service</text>
+<text x="38" y="209" font-size="12" fill="#c9d6e6">sends a typed Payment</text>
+<rect x="48" y="236" width="150" height="74" rx="6" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="60" y="256" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#f2c14e" font-weight="700" xml:space="preserve">Payment</text>
+<line x1="56" y1="264" x2="190" y2="264" stroke="#8a7a3a" stroke-width="1"/>
+<text x="60" y="282" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">account · cents</text>
+<text x="60" y="299" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">memo</text>
+<rect x="304" y="166" width="306" height="190" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="318" y="190" font-size="15" fill="#e8eaed" font-weight="700">Auditor</text>
+<text x="318" y="209" font-size="12" fill="#c9d6e6">no Payment type, no parser -</text>
+<text x="318" y="224" font-size="12" fill="#c9d6e6">it keeps the exact bytes</text>
+<rect x="318" y="238" width="172" height="44" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.5"/>
+<path d="M330 260 L343 260 L354 249 M343 260 L354 260 M343 260 L354 271" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="364" y="256" font-size="12" fill="#e8833a">your code:</text>
+<text x="364" y="273" font-size="13" fill="#e8eaed">tenant 7 → shelf C</text>
+<path d="M330 302 L330 328 A31 6 0 0 0 392 328 L392 302" fill="#353535" stroke="#9aa0a6" stroke-width="1.4"/><ellipse cx="361" cy="302" rx="31" ry="6" fill="#353535" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="361" y="350" font-size="12" fill="#c9d6e6" text-anchor="middle">shelf A</text>
+<path d="M414 302 L414 328 A31 6 0 0 0 476 328 L476 302" fill="#353535" stroke="#9aa0a6" stroke-width="1.4"/><ellipse cx="445" cy="302" rx="31" ry="6" fill="#353535" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="445" y="350" font-size="12" fill="#c9d6e6" text-anchor="middle">shelf B</text>
+<path d="M498 302 L498 328 A31 6 0 0 0 560 328 L560 302" fill="#353535" stroke="#9aa0a6" stroke-width="1.4"/><ellipse cx="529" cy="302" rx="31" ry="6" fill="#353535" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="529" y="350" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">shelf C</text>
+<rect x="506" y="246" width="46" height="24" rx="6" fill="url(#hatch)" stroke="#9aa0a6" stroke-width="1.4"/>
+<line x1="490" y1="258" x2="504" y2="258" stroke="#e8833a" stroke-width="1.4" stroke-dasharray="2 2"/>
+<path d="M529 270 L529 286" fill="none" stroke="#9aa0a6" stroke-width="1.6" stroke-linejoin="round"/><path d="M529 294 L524.4 285 L533.6 285 Z" fill="#9aa0a6"/>
+<path d="M224 272 L296 272" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M304 272 L295 276.6 L295 267.4 Z" fill="#4fb3ff"/>
+<text x="264" y="262" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">AuditRecord</text>
+<rect x="716" y="166" width="220" height="190" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="730" y="190" font-size="15" fill="#e8eaed" font-weight="700">Investigator</text>
+<text x="730" y="209" font-size="12" fill="#c9d6e6">rehydrates a typed Payment</text>
+<rect x="736" y="224" width="46" height="24" rx="6" fill="url(#hatch)" stroke="#9aa0a6" stroke-width="1.4"/>
+<path d="M759 250 L759 264" fill="none" stroke="#f2c14e" stroke-width="2.2" stroke-linejoin="round"/><path d="M759 272 L754.4 263 L763.6 263 Z" fill="#f2c14e"/>
+<text x="792" y="240" font-size="12" fill="#f2c14e">generated parser</text>
+<rect x="746" y="274" width="150" height="74" rx="6" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="758" y="294" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#f2c14e" font-weight="700" xml:space="preserve">Payment</text>
+<line x1="754" y1="302" x2="888" y2="302" stroke="#8a7a3a" stroke-width="1"/>
+<text x="758" y="320" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">account · cents</text>
+<text x="758" y="337" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">memo</text>
+<path d="M562 316 L644 316 Q652 316 652 308 L652 244 Q652 236 660 236 L728 236" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M736 236 L727 240.6 L727 231.4 Z" fill="#4fb3ff"/>
+<rect x="636" y="266" width="32" height="18" rx="6" fill="url(#hatch)" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="663" y="200" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">Evidence</text>
+<text x="663" y="215" font-size="12" fill="#4fb3ff" text-anchor="middle">(FromStream)</text>
+<path d="M123 348 L123 372 L821 372 L821 348" fill="none" stroke="#a06fd0" stroke-width="1.8" stroke-linejoin="round"/>
+<circle cx="123" cy="348" r="3" fill="#a06fd0"/><circle cx="821" cy="348" r="3" fill="#a06fd0"/>
+<text x="472" y="392" font-size="13" fill="#a06fd0" text-anchor="middle" font-weight="600">the same bytes, the same Payment: byte-faithful evidence</text>
+<line x1="123" y1="310" x2="123" y2="348" stroke="#a06fd0" stroke-width="1.2" stroke-dasharray="2 3"/>
+<line x1="821" y1="348" x2="821" y2="348" stroke="#a06fd0" stroke-width="1.2" stroke-dasharray="2 3"/>
+<text x="24" y="452" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >header fields: single, non-nullable, fixed-size primitives (</tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[MinMax]</tspan><tspan > allowed) · they live on the connection, not in the pack</tspan></text>
+<text x="24" y="469" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">send</tspan><tspan > takes their values before the connection argument: one pack object can go out with any header values</tspan></text>
+</g>
+</svg>

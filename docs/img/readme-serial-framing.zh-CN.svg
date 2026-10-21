@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="980" height="540" role="img" aria-labelledby="title desc">
+<title id="title">能在损坏字节后自行恢复的串行线路</title>
+<desc id="desc">Top: one frame per pack - the mark FF, the pack id and fields as on any connection, an escaped 7F where a byte 0x7F or 0xFF occurred (the escape costs one bit: the top bit moves on), and a 2-byte CRC-16. Middle: on the line, frames Status, Command, Status and Alarm, each starting with FF; a lightning bolt damages a byte of Command: CRC_ERROR, dropped; the receiver skips to the next FF and the next Status arrives intact, CRC ok, dispatched. Bottom: receiving goes UART bytes, Receiver.Framing, the generated receiver, a CRC gate, OnReceived - unescaped in place, decoded field by field as the bytes come, handlers run only when the CRC matches; sending goes send(pack), the generated transmitter, Transmitter.Framing, UART bytes - FF, escaping and CRC written in place in the same buffer. C# and Java; the description, actors and packs are the same as on TCP.</desc>
+<rect width="980" height="540" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">能在损坏字节后自行恢复的串行线路</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">生成的连接与 UART、RS-485 或无线电调制解调器之间的 Receiver.Framing 和 Transmitter.Framing</text>
+<text x="24" y="84" font-size="12.5" fill="#e8eaed" font-weight="700">每个 pack 一帧</text>
+<rect x="24" y="94" width="40" height="32" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="44" y="115" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<text x="44" y="144" font-size="12" fill="#9aa0a6" text-anchor="middle">帧标记</text>
+<rect x="67" y="94" width="40" height="32" rx="3" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="87" y="115" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">id</text>
+<rect x="110" y="94" width="200" height="32" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="210" y="115" font-size="12.5" fill="#e8eaed" text-anchor="middle">字段 …</text>
+<text x="210" y="144" font-size="12" fill="#9aa0a6" text-anchor="middle">pack 本体，与任何连接相同</text>
+<rect x="313" y="94" width="40" height="32" rx="3" fill="#33261d" stroke="#e8833a" stroke-width="1.4"/>
+<text x="333" y="115" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">7F</text>
+<rect x="356" y="94" width="150" height="32" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="431" y="115" font-size="12.5" fill="#e8eaed" text-anchor="middle">字段 …</text>
+<rect x="509" y="94" width="90" height="32" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="554" y="115" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">CRC-16</text>
+<text x="554" y="144" font-size="12" fill="#9aa0a6" text-anchor="middle">2 字节</text>
+<text x="616" y="106" font-size="12" fill="#e8833a">内部出现 0x7F 或 0xFF 字节时：写作 7F，</text>
+<text x="616" y="124" font-size="12" fill="#e8833a">其最高位顺延——一次转义只耗 1 位</text>
+<text x="24" y="182" font-size="12.5" fill="#e8eaed" font-weight="700">在线路上</text>
+<path d="M24 254 L948 254" fill="none" stroke="#4a4a4a" stroke-width="1.4" stroke-linejoin="round"/><path d="M956 254 L947 258.6 L947 249.4 Z" fill="#4a4a4a"/>
+<text x="952" y="270" font-size="12" fill="#9aa0a6" text-anchor="end">时间</text>
+<rect x="24" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="37" y="216" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="53" y="196" width="171" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="138.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Status</text>
+<text x="138.5" y="244" font-size="12" fill="#7cc47c" text-anchor="middle">CRC 通过：已分发</text>
+<rect x="236" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="249" y="216" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="265" y="196" width="201" height="30" rx="2" fill="#4a2626" stroke="#e06c6c" stroke-width="1.2"/>
+<text x="365.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Command</text>
+<path d="M356 186 l-8 16 h7 l-6 16 l16 -20 h-8 l6 -12 Z" fill="#e06c6c"/>
+<text x="365.5" y="244" font-size="12" fill="#e06c6c" text-anchor="middle">CRC_ERROR：已丢弃</text>
+<rect x="498" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="511" y="216" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="527" y="196" width="151" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="602.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Status</text>
+<text x="602.5" y="244" font-size="12" fill="#7cc47c" text-anchor="middle">CRC 通过：已分发</text>
+<rect x="710" y="196" width="26" height="30" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="723" y="216" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">FF</text>
+<rect x="739" y="196" width="191" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="834.5" y="216" font-size="12.5" fill="#e8eaed" text-anchor="middle">Alarm</text>
+<text x="834.5" y="244" font-size="12" fill="#7cc47c" text-anchor="middle">CRC 通过：已分发</text>
+<path d="M466 234 C 480 234, 486 234, 498 228" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="4 3" fill="none"/>
+<text x="478" y="286" font-size="12" fill="#9aa0a6" text-anchor="middle">跳到下一个 FF——下一个 pack 完整到达</text>
+<text x="24" y="320" font-size="12.5" fill="#e8eaed" font-weight="700">接收</text>
+<rect x="24" y="332" width="120" height="34" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="84" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">UART 字节</text>
+<path d="M144 349 L158 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M166 349 L157 353.6 L157 344.4 Z" fill="#4fb3ff"/>
+<rect x="168" y="332" width="170" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="253" y="354" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">Receiver.Framing</text>
+<path d="M338 349 L352 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M360 349 L351 353.6 L351 344.4 Z" fill="#4fb3ff"/>
+<rect x="362" y="332" width="170" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="447" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">生成的接收器</text>
+<path d="M532 349 L546 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M554 349 L545 353.6 L545 344.4 Z" fill="#4fb3ff"/>
+<rect x="556" y="332" width="100" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="606" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">CRC 闸门</text>
+<path d="M656 349 L670 349" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M678 349 L669 353.6 L669 344.4 Z" fill="#4fb3ff"/>
+<rect x="680" y="332" width="120" height="34" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/>
+<text x="740" y="354" font-size="12.5" fill="#e8eaed" text-anchor="middle">OnReceived</text>
+<text x="24" y="386" font-size="12" fill="#9aa0a6">就地反转义 · 字节到达即逐字段解码 · 仅当 CRC 匹配时才运行处理器</text>
+<text x="24" y="420" font-size="12.5" fill="#e8eaed" font-weight="700">发送</text>
+<rect x="24" y="432" width="120" height="34" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/>
+<text x="84" y="454" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">send(pack)</text>
+<path d="M144 449 L158 449" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M166 449 L157 453.6 L157 444.4 Z" fill="#4fb3ff"/>
+<rect x="168" y="432" width="190" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="263" y="454" font-size="12.5" fill="#e8eaed" text-anchor="middle">生成的发送器</text>
+<path d="M358 449 L372 449" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M380 449 L371 453.6 L371 444.4 Z" fill="#4fb3ff"/>
+<rect x="382" y="432" width="180" height="34" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="472" y="454" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">Transmitter.Framing</text>
+<path d="M562 449 L576 449" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M584 449 L575 453.6 L575 444.4 Z" fill="#4fb3ff"/>
+<rect x="586" y="432" width="120" height="34" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="646" y="454" font-size="12.5" fill="#e8eaed" text-anchor="middle">UART 字节</text>
+<text x="24" y="486" font-size="12" fill="#9aa0a6">帧标记、转义和 CRC 都就地写入同一缓冲区</text>
+<text x="24" y="520" font-size="12" fill="#9aa0a6">C# 与 Java · 描述、Actor 和 pack 与 TCP 上相同——只有线路上的字节不同</text>
+</g>
+</svg>

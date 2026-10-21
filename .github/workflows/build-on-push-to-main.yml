@@ -1,0 +1,92 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'   # semantic version tags, e.g. v1.2.3
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  DOTNET_VERSION: '10.0.x'
+  PROJECT: 'AdHocAgent.csproj'
+  NAME: 'AdHocAgent'
+
+jobs:
+  build:
+    name: Publish ${{ matrix.rid }}н
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Framework-dependent apphosts cross-publish fine, so every target is built on one
+        # cheap runner instead of a 3-OS matrix. (AdHocAgent hosts Roslyn → no trim/AOT; its
+        # users are .NET devs who already have the runtime, so framework-dependent is right.)
+        rid: [ linux-x64, linux-arm64, win-x64, win-arm64, osx-x64, osx-arm64 ]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Per-RID native launcher (AdHocAgent / AdHocAgent.exe) + portable DLLs.
+      - name: Publish
+        run: >
+          dotnet publish ${{ env.PROJECT }}
+          -c Release
+          -r ${{ matrix.rid }}
+          --self-contained false
+          -p:UseAppHost=true
+          -o publish
+
+      - name: Package
+        run: cd publish && zip -r "../${{ env.NAME }}-${{ matrix.rid }}.zip" .
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ env.NAME }}-${{ matrix.rid }}
+          path: ${{ env.NAME }}-${{ matrix.rid }}.zip
+          retention-days: 7
+
+  release:
+    name: Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # only this job may create the release
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          path: artifacts
+
+      - name: Collect zips + checksums
+        run: |
+          mkdir -p dist
+          find artifacts -name '*.zip' -exec cp {} dist/ \;
+          ( cd dist && sha256sum *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt )
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/*.zip
+            dist/SHA256SUMS.txt

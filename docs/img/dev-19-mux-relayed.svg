@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" role="img" aria-labelledby="dev19relay-t dev19relay-d">
+<title id="dev19relay-t">A relayed connection in a multiplexer</title>
+<desc id="dev19relay-d">Browser, Admin and Mobile dial port 443 of the host Edge, each socket opening with the dialing host's uid. The multiplexer EdgePort reads that first byte: Browser.uid goes to Console and Admin.uid to AdminLink, which Edge serves itself; Mobile.uid goes to Query, a connection between Mobile and Backend that Edge is not a party of, so Edge relays it. Query's bytes travel in a tunnel, with a wire id from the packs' pool, inside EdgeBackend, the one physical connection between Edge and Backend - the carrier. A crossed-out dashed second link between Edge and Mobile shows the error case: if both ends of Query had a physical connection with Edge, it would not be clear which side dials.</desc>
+<rect width="960" height="500" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<!-- dialing hosts -->
+<rect x="28" y="52" width="152" height="52" rx="4" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="104" y="74" font-size="14" fill="#e8eaed" text-anchor="middle">Browser</text>
+<text x="104" y="92" font-size="12" fill="#9aa0a6" text-anchor="middle">dials for Console</text>
+<rect x="28" y="150" width="152" height="52" rx="4" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="104" y="172" font-size="14" fill="#e8eaed" text-anchor="middle">Admin</text>
+<text x="104" y="190" font-size="12" fill="#9aa0a6" text-anchor="middle">dials for AdminLink</text>
+<rect x="28" y="248" width="152" height="52" rx="4" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="104" y="270" font-size="14" fill="#e8eaed" text-anchor="middle">Mobile</text>
+<text x="104" y="288" font-size="12" fill="#9aa0a6" text-anchor="middle">dials for Query</text>
+
+<!-- wires to the port, labelled with the first byte -->
+<path d="M180 78 H248 L280 162 H295" fill="none" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M302 162 L295 157.8 L295 166.2 Z" fill="#4fb3ff"/>
+<line x1="180" y1="176" x2="295" y2="176" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M302 176 L295 171.8 L295 180.2 Z" fill="#4fb3ff"/>
+<path d="M180 274 H248 L280 190 H295" fill="none" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M302 190 L295 185.8 L295 194.2 Z" fill="#4fb3ff"/>
+<text x="217" y="70" font-size="12.5" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#2b2b2b" stroke-width="3.5" stroke-linejoin="round">Browser.uid</text>
+<text x="230" y="168" font-size="12.5" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#2b2b2b" stroke-width="3.5" stroke-linejoin="round">Admin.uid</text>
+<text x="217" y="266" font-size="12.5" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#2b2b2b" stroke-width="3.5" stroke-linejoin="round">Mobile.uid</text>
+
+<!-- Edge -->
+<rect x="320" y="36" width="276" height="294" rx="4" fill="#3a5a80" stroke="#e8833a" stroke-width="2"/>
+<text x="458" y="60" font-size="15" fill="#e8eaed" text-anchor="middle">Edge</text>
+<text x="458" y="78" font-size="12" fill="#9aa0a6" text-anchor="middle">a party of Console and AdminLink</text>
+
+<!-- port tab -->
+<rect x="302" y="150" width="92" height="52" rx="4" fill="#243447" stroke="#e8833a" stroke-width="1.8"/>
+<text x="348" y="172" font-size="14" fill="#e8eaed" text-anchor="middle">:443</text>
+<text x="348" y="191" font-size="12" fill="#9aa0a6" text-anchor="middle">TCP/WS server</text>
+<line x1="394" y1="176" x2="401" y2="176" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M408 176 L401 171.8 L401 180.2 Z" fill="#4fb3ff"/>
+
+<!-- EdgePort -->
+<rect x="408" y="96" width="174" height="220" rx="4" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.8"/>
+<text x="495" y="118" font-size="14" fill="#e8eaed" text-anchor="middle">EdgePort</text>
+<text x="495" y="135" font-size="12" fill="#9aa0a6" text-anchor="middle">reads the 1st byte</text>
+<rect x="418" y="148" width="154" height="44" rx="3" fill="#2b2b2b" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="495" y="166" font-size="12.5" fill="#e8eaed" text-anchor="middle">Browser.uid → Console</text>
+<text x="495" y="184" font-size="12" fill="#9aa0a6" text-anchor="middle">served here</text>
+<rect x="418" y="202" width="154" height="44" rx="3" fill="#2b2b2b" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="495" y="220" font-size="12.5" fill="#e8eaed" text-anchor="middle">Admin.uid → AdminLink</text>
+<text x="495" y="238" font-size="12" fill="#9aa0a6" text-anchor="middle">served here</text>
+<rect x="418" y="256" width="154" height="44" rx="3" fill="#2b2b2b" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="495" y="274" font-size="12.5" fill="#e8eaed" text-anchor="middle">Mobile.uid → Query</text>
+<text x="495" y="292" font-size="12.5" fill="#f2c14e" text-anchor="middle">relayed</text>
+
+<!-- the carrier band and the tunnel inside it -->
+<text x="683" y="222" font-size="13.5" fill="#f2c14e" text-anchor="middle">EdgeBackend</text>
+<text x="683" y="240" font-size="12.5" fill="#e8eaed" text-anchor="middle">the carrier</text>
+<text x="683" y="254" font-size="12" fill="#9aa0a6" text-anchor="middle">(physical Connects)</text>
+<rect x="596" y="263" width="174" height="30" fill="#4a4a4a"/>
+<line x1="579" y1="278" x2="779" y2="278" stroke="#a06fd0" stroke-width="2.2" stroke-dasharray="7 4"/>
+<path d="M572 278 L579 273.8 L579 282.2 Z" fill="#a06fd0"/>
+<path d="M786 278 L779 273.8 L779 282.2 Z" fill="#a06fd0"/>
+<text x="683" y="312" font-size="12" fill="#a06fd0" text-anchor="middle">Query bytes in a tunnel,</text>
+<text x="683" y="328" font-size="12" fill="#a06fd0" text-anchor="middle">wire id from the packs' pool</text>
+
+<!-- Backend -->
+<rect x="770" y="196" width="160" height="134" rx="4" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="850" y="218" font-size="14" fill="#e8eaed" text-anchor="middle">Backend</text>
+<text x="850" y="236" font-size="12" fill="#9aa0a6" text-anchor="middle">reachable only from Edge</text>
+<rect x="786" y="254" width="128" height="48" rx="3" fill="#26384d" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="850" y="274" font-size="13" fill="#f2c14e" text-anchor="middle">Query</text>
+<text x="850" y="291" font-size="12" fill="#9aa0a6" text-anchor="middle">the other end</text>
+
+<!-- the error case: a second carrier -->
+<path d="M104 300 V368 H458 V330" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.6"/>
+<path d="M273 360 L289 376 M289 360 L273 376" stroke="#9aa0a6" stroke-width="2.6" stroke-linecap="round"/>
+<text x="281" y="394" font-size="12.5" fill="#9aa0a6" text-anchor="middle">a second physical link Edge - Mobile:</text>
+<text x="281" y="411" font-size="12.5" fill="#9aa0a6" text-anchor="middle">error - it is not clear which side dials</text>
+
+<!-- caption -->
+<text x="480" y="452" font-size="13" fill="#9aa0a6" text-anchor="middle">Edge is a party of Console and AdminLink, so it owns the port. Query (Mobile - Backend) is relayed over the one carrier EdgeBackend;</text>
+<text x="480" y="472" font-size="13" fill="#9aa0a6" text-anchor="middle">Mobile, the end without a carrier, dials the port with Mobile.uid.</text>
+</g>
+</svg>

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" width="960" height="620" role="img" aria-labelledby="title desc">
 <title id="title">手写:每条消息、每一端、每种语言各一遍 —— 或在 AdHoc 描述中声明一次</title>
-<desc id="desc">Left: a grey stack of eleven layers of hand-written network plumbing, with two offset copies behind it tabbed C#, Java and TypeScript: encoder and decoder for every message; a dispatch switch and &quot;may this arrive now?&quot; flags; correlation ids and a map of pending calls; reconnect, session restore and a resend queue; sequence numbers, acks and a retransmit window; chunking and temp files for big payloads; compression and cipher wrappers; a store that decrypts, decodes and re-encodes; a proxy that parses and holds the keys; a router in front or a port per service; a version field with if (version &gt;= 3) branches. Under it: times both sides of every connection, kept in step by hand. Right: an orange card, declared once, one line in the description per layer, each joined to its layer by an arrow: class Order with [MinMax(1, 100)] byte quantity; [L____________&lt;Shopping, Login&gt;] struct Start; (L____________, Pong) ping(Ping req); [Resumable(30 * 60)] plus Resumable&lt;Client, Order&gt;; [UDP&lt;Samples&gt;(10 * 60)]; [S(200_000)] Stream feed; [Zstd, ChaCha20]; [ToStream&lt;FromCamera&gt;] Snapshot snapshot; VirtuallyConnects&lt;Operator, Fleet, Edge&gt;; Multiplex&lt;(Telemetry, TelemetryV2, Console)&gt;; struct VehicleV2 : Host, a new generation. An arrow from the card to a yellow band: generated for every host, in each of its languages - the same bytes on the wire; your code says what a pack means and what a state starts, in injection points kept by smart merge.</desc>
+<desc id="desc">Left: a grey stack of eleven layers of hand-written network plumbing, with two offset copies behind it and a tab per language - C++, Rust, C#, Java, Go, TypeScript, Swift, C, Dart, Python: encoder and decoder for every message; a dispatch switch and &quot;may this arrive now?&quot; flags; correlation ids and a map of pending calls; reconnect, session restore and a resend queue; sequence numbers, acks and a retransmit window; chunking and temp files for big payloads; compression and cipher wrappers; a store that decrypts, decodes and re-encodes; a proxy that parses and holds the keys; a router in front or a port per service; a version field with if (version &gt;= 3) branches. Under it: times both sides of every connection, kept in step by hand. Right: an orange card, declared once, one line in the description per layer, each joined to its layer by an arrow: class Order with [MinMax(1, 100)] byte quantity; [L____________&lt;Shopping, Login&gt;] struct Start; (L____________, Pong) ping(Ping req); [Resumable(30 * 60)] plus Resumable&lt;Client, Order&gt;; [UDP&lt;Samples&gt;(10 * 60)];[S(200_000)] Stream feed; [Zstd, ChaCha20]; [ToStream&lt;FromCamera&gt;] Snapshot snapshot; VirtuallyConnects&lt;Operator, Fleet, Edge&gt;; Multiplex&lt;(Telemetry, TelemetryV2, Console)&gt;; struct VehicleV2 : Host, a new generation. An arrow from the card to a yellow band: generated for every host, in each of its languages - the same bytes on the wire; your code says what a pack means and what a state starts, in injection points kept by smart merge.</desc>
 <rect width="960" height="620" rx="10" fill="#2b2b2b"/>
 <g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
 <text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="700">手写</text>
@@ -12,12 +12,26 @@
 <rect x="32" y="84" width="440" height="390" rx="8" fill="#333333" stroke="#4a4a4a" stroke-width="1.2"/>
 </g>
 <rect x="24" y="76" width="440" height="390" rx="8" fill="#2b2b2b"/>
-<path d="M270 76 L270 62 Q270 58 274 58 L312 58 Q316 58 316 62 L316 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
-<text x="293" y="72" font-size="12" fill="#9aa0a6" text-anchor="middle">C#</text>
-<path d="M320 76 L320 62 Q320 58 324 58 L374 58 Q378 58 378 62 L378 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
-<text x="349" y="72" font-size="12" fill="#9aa0a6" text-anchor="middle">Java</text>
-<path d="M382 76 L382 62 Q382 58 386 58 L460 58 Q464 58 464 62 L464 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
-<text x="423" y="72" font-size="12" fill="#9aa0a6" text-anchor="middle">TypeScript</text>
+<path d="M45 76 L45 62 Q45 58 49 58 L75 58 Q79 58 79 62 L79 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="62" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">C++</text>
+<path d="M82 76 L82 62 Q82 58 86 58 L116 58 Q120 58 120 62 L120 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="101" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">Rust</text>
+<path d="M123 76 L123 62 Q123 58 127 58 L149 58 Q153 58 153 62 L153 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="138" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">C#</text>
+<path d="M156 76 L156 62 Q156 58 160 58 L190 58 Q194 58 194 62 L194 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="175" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">Java</text>
+<path d="M197 76 L197 62 Q197 58 201 58 L223 58 Q227 58 227 62 L227 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="212" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">Go</text>
+<path d="M230 76 L230 62 Q230 58 234 58 L298 58 Q302 58 302 62 L302 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="266" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">TypeScript</text>
+<path d="M305 76 L305 62 Q305 58 309 58 L341 58 Q345 58 345 62 L345 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="325" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">Swift</text>
+<path d="M348 76 L348 62 Q348 58 352 58 L368 58 Q372 58 372 62 L372 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="360" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">C</text>
+<path d="M375 76 L375 62 Q375 58 379 58 L409 58 Q413 58 413 62 L413 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="394" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">Dart</text>
+<path d="M416 76 L416 62 Q416 58 420 58 L460 58 Q464 58 464 62 L464 76" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="440" y="71.5" font-size="11" fill="#9aa0a6" text-anchor="middle">Python</text>
 <rect x="560" y="66" width="392" height="414" rx="8" fill="#e8833a" fill-opacity="0.08" stroke="#e8833a" stroke-width="1.5"/>
 <rect x="24" y="76" width="440" height="30" rx="6" fill="#3a3a3a" stroke="#4a4a4a" stroke-width="1.2"/>
 <text x="38" y="95.5" font-size="13" fill="#e8eaed">每条消息的编码器 + 解码器</text>

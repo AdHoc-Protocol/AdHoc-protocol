@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 356" width="960" height="356" role="img" aria-labelledby="title desc">
 <title id="title">一行特性,整条编解码链</title>
-<desc id="desc">The field [Zstd(6), ChaCha20] Order secured; explained: Zstd(6) is the compression, written left, nearer the data; ChaCha20 the cipher, written right, nearer the wire. Send row: the typed Order is serialized, compressed by Zstd(6), encrypted by ChaCha20 and framed as chunks, length then data, closed by 0, onto the wire. Receive row, right to left: de-framing, inverse ChaCha20, inverse Zstd, parsing, and the typed Order again. Badges C#, Java and TypeScript: the same chain is generated for each, no codec code to write. Notes: Zstd is lossless, level 1 to 22, default 3; ChaCha20 hides the bytes but does not detect tampering; a pack that cannot exceed 1024 bytes loses Zstd automatically, while a chain on a field stays as written.</desc>
+<desc id="desc">The field [Zstd(6), ChaCha20] Order secured; explained: Zstd(6) is the compression, written left, nearer the data; ChaCha20 the cipher, written right, nearer the wire. Send row: the typed Order is serialized, compressed by Zstd(6), encrypted by ChaCha20 and framed as chunks, length then data, closed by 0, onto the wire. Receive row, right to left: de-framing, inverse ChaCha20, inverse Zstd, parsing, and the typed Order again. A badge for every language - C++, Rust, C#, Java, Go, Swift, C, Dart, Python, TypeScript: the same chain is generated for each, no codec code to write. Notes: Zstd is lossless, level 1 to 22, default 3; ChaCha20 hides the bytes but does not detect tampering; a pack that cannot exceed 1024 bytes loses Zstd automatically, while a chain on a field stays as written.</desc>
 <rect width="960" height="356" rx="10" fill="#2b2b2b"/>
 <g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
 <rect x="314.4" y="18" width="331.2" height="32" rx="6" fill="#242424" stroke="#4a4a4a" stroke-width="1.3"/>
-<text x="330.4" y="40" font-size="16" fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#f2c14e">[Zstd(6)</tspan><tspan fill="#a06fd0">, ChaCha20]</tspan><tspan fill="#e8eaed"> 顺序固定;</tspan></text>
+<text x="330.4" y="40" font-size="16" fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#f2c14e">[Zstd(6)</tspan><tspan fill="#a06fd0">, ChaCha20]</tspan><tspan fill="#e8eaed"> Order secured;</tspan></text>
 <line x1="365.6" y1="52" x2="365.6" y2="66" stroke="#f2c14e" stroke-width="1.2"/>
 <text x="377.6" y="80" font-size="12" fill="#9aa0a6" text-anchor="end">压缩——写在左边,更靠近数据</text>
 <line x1="453.6" y1="52" x2="453.6" y2="66" stroke="#a06fd0" stroke-width="1.2"/>
@@ -12,7 +12,7 @@
 <text x="24" y="132" font-size="13" fill="#9aa0a6" font-weight="700">发送</text>
 <text x="24" y="224" font-size="13" fill="#9aa0a6" font-weight="700">接收</text>
 <rect x="84" y="104" width="92" height="46" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.5"/>
-<text x="130" y="124.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">顺序</text>
+<text x="130" y="124.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Order</text>
 <text x="130" y="139.9" font-size="12" fill="#9aa0a6" text-anchor="middle">有类型</text>
 <rect x="200" y="104" width="92" height="46" rx="6" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.5"/>
 <text x="246" y="132" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">序列化</text>
@@ -24,7 +24,7 @@
 <text x="613" y="124.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">分块</text>
 <text x="613" y="139.9" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">[len][data]…[0]</text>
 <rect x="84" y="196" width="92" height="46" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.5"/>
-<text x="130" y="216.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">顺序</text>
+<text x="130" y="216.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Order</text>
 <text x="130" y="231.9" font-size="12" fill="#9aa0a6" text-anchor="middle">重新有类型</text>
 <rect x="200" y="196" width="92" height="46" rx="6" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.5"/>
 <text x="246" y="224" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">解析</text>
@@ -48,17 +48,31 @@
 <path d="M548 219 L531 219" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M524 219 L532 215 L532 223 Z" fill="#e8eaed"/>
 <path d="M678 127 L695 127" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M702 127 L694 131 L694 123 Z" fill="#e8eaed"/>
 <path d="M702 219 L685 219" fill="none" stroke="#e8eaed" stroke-width="1.8" stroke-linejoin="round"/><path d="M678 219 L686 215 L686 223 Z" fill="#e8eaed"/>
-<line x1="790" y1="96" x2="790" y2="276" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
-<rect x="818" y="104" width="110" height="26" rx="5" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.3"/>
-<text x="873" y="121.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">C#</text>
-<rect x="818" y="136" width="110" height="26" rx="5" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.3"/>
-<text x="873" y="153.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Java</text>
-<rect x="818" y="168" width="110" height="26" rx="5" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.3"/>
-<text x="873" y="185.7" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">TypeScript</text>
-<text x="818" y="216" font-size="12" fill="#9aa0a6">同一条链,</text>
-<text x="818" y="231" font-size="12" fill="#9aa0a6">生成而来——</text>
-<text x="818" y="246" font-size="12" fill="#9aa0a6">无需手写</text>
-<text x="818" y="261" font-size="12" fill="#9aa0a6">编解码代码</text>
+<line x1="790" y1="96" x2="790" y2="300" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<rect x="818" y="104" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="844.5" y="117.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">C++</text>
+<rect x="875" y="104" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="901.5" y="117.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">Rust</text>
+<rect x="818" y="126" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="844.5" y="139.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">C#</text>
+<rect x="875" y="126" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="901.5" y="139.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">Java</text>
+<rect x="818" y="148" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="844.5" y="161.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">Go</text>
+<rect x="875" y="148" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="901.5" y="161.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">Swift</text>
+<rect x="818" y="170" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="844.5" y="183.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">C</text>
+<rect x="875" y="170" width="53" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="901.5" y="183.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">Dart</text>
+<rect x="818" y="192" width="110" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="873" y="205.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">Python</text>
+<rect x="818" y="214" width="110" height="19" rx="4" fill="#2e2e2e" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="873" y="227.5" font-size="11" fill="#e8eaed" text-anchor="middle" font-weight="600">TypeScript</text>
+<text x="818" y="246" font-size="12" fill="#9aa0a6">同一条链,</text>
+<text x="818" y="261" font-size="12" fill="#9aa0a6">生成而来——</text>
+<text x="818" y="276" font-size="12" fill="#9aa0a6">无需手写</text>
+<text x="818" y="291" font-size="12" fill="#9aa0a6">编解码代码</text>
 <rect x="169" y="284" width="236" height="24" rx="12" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
 <text x="287" y="300.5" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#f2c14e" font-weight="700">Zstd</tspan><tspan >:无损,级别 1-22,默认 3</tspan></text>
 <rect x="419" y="284" width="372" height="24" rx="12" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>

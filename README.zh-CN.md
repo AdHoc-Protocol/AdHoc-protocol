@@ -32,7 +32,7 @@ FlatBuffers、ASN.1、FIX、ROS 2、MAVLink、DSDL、CRSF/MSP、CAN DBC、Matter
 
 联网系统中的大部分代码不是业务逻辑。它搬运数据。每种语言里有序列化器和解析器,每条连接上有分发 switch,有"消息此刻可否到达"的检查。还有重连与重放、有损链路上的重传、端口前的路由器、版本分支、解析再重新编码的代理,以及对大到放不进内存的负载的分块。所有这些都要手写,每一侧、每种语言各写一份,只靠纪律保持同步。在 AdHoc 中,你声明需要什么,生成器就为每一侧、每种语言写出这些代码。
 
-![手写管线代码与 AdHoc 声明的对比。左侧,标题"手写——每条消息、每一侧、每种语言各一份"之下,一摞十一个灰色方块,后面还有两个偏移的副本,共三份,分别标注 C#、Java 和 TypeScript。方块自上而下:每条消息的编码器和解码器;分发 switch 和"此刻可以到达吗?"标志;关联 ID 和待处理调用表;重连、会话恢复和重发队列;序列号、确认和重传窗口;大负载的分块和临时文件;压缩与加密包装器;解密、解码再重新编码的存储;解析并持有密钥的代理;前置路由器,或每个服务一个端口;版本字段加 if (version >= 3) 分支。方块下的注释:乘以每条连接的两侧,靠手工保持同步。右侧,一张标题为"声明一次——描述中的一行"的橙色卡片,每个方块对应一行,方块与其行之间用箭头连接:class Order { [MinMax(1, 100)] byte quantity; };[L____________<Shopping, Login>] struct Start { };(L____________, Pong) ping(Ping req);[Resumable(30 * 60)] 加 Resumable<Client, Order>;[UDP<Samples>(10 * 60)];[S(200_000)] Stream feed;[Zstd, ChaCha20];[ToStream<FromCamera>] Snapshot snapshot;VirtuallyConnects<Operator, Fleet, Edge>;Multiplex<(Telemetry, TelemetryV2, Console)>;struct VehicleV2 : Host,新一代。从卡片指向底部黄色条带的箭头:为每台主机生成,以其每种语言——线上字节相同;你的代码说明一个 pack 意味着什么、一个状态启动什么,位于智能合并保留的注入点中。](docs/img/readme-hand-vs-declared.zh-CN.svg)
+![手写管线代码与 AdHoc 声明的对比。左侧,标题"手写——每条消息、每一侧、每种语言各一份"之下,一摞十一个灰色方块,后面还有两个偏移的副本,每种语言一个标签:C++、Rust、C#、Java、Go、TypeScript、Swift、C、Dart 和 Python。方块自上而下:每条消息的编码器和解码器;分发 switch 和"此刻可以到达吗?"标志;关联 ID 和待处理调用表;重连、会话恢复和重发队列;序列号、确认和重传窗口;大负载的分块和临时文件;压缩与加密包装器;解密、解码再重新编码的存储;解析并持有密钥的代理;前置路由器,或每个服务一个端口;版本字段加 if (version >= 3) 分支。方块下的注释:乘以每条连接的两侧,靠手工保持同步。右侧,一张标题为"声明一次——描述中的一行"的橙色卡片,每个方块对应一行,方块与其行之间用箭头连接:class Order { [MinMax(1, 100)] byte quantity; };[L____________<Shopping, Login>] struct Start { };(L____________, Pong) ping(Ping req);[Resumable(30 * 60)] 加 Resumable<Client, Order>;[UDP<Samples>(10 * 60)];[S(200_000)] Stream feed;[Zstd, ChaCha20];[ToStream<FromCamera>] Snapshot snapshot;VirtuallyConnects<Operator, Fleet, Edge>;Multiplex<(Telemetry, TelemetryV2, Console)>;struct VehicleV2 : Host,新一代。从卡片指向底部黄色条带的箭头:为每台主机生成,以其每种语言——线上字节相同;你的代码说明一个 pack 意味着什么、一个状态启动什么,位于智能合并保留的注入点中。](docs/img/readme-hand-vs-declared.zh-CN.svg)
 
 <a id="the-code-you-no-longer-write"></a>
 ### 你不再需要手写的代码
@@ -2928,7 +2928,7 @@ public class Result
 
 链是一列写成特性的字节到字节阶段,按数据流顺序书写:左边是数据,右边是线路。`[Zstd, ChaCha20]` 在发送端先压缩再加密,接收端按相反顺序运行逆阶段。目标保持它的类型——链包裹它的序列化字节,而不是替换它们。
 
-![一行特性 [Zstd(6), ChaCha20] Order secured; 的解读:Zstd(6) 是压缩,更靠近数据;ChaCha20 是密码,更靠近线路。发送行:类型化的 Order,序列化,经过 Zstd(6),然后 ChaCha20,然后分块成帧,上线路。接收行,从右到左:解帧、逆 ChaCha20、逆 Zstd、解析,再次得到类型化的 Order。C#、Java、TypeScript 徽标:为每种语言生成同一条链,无需编写编解码器代码。脚注:Zstd 是无损的;ChaCha20 隐藏字节但不检测篡改;挂在不可能超过 1024 字节的 pack 上的链会自动去掉它的 Zstd 阶段,挂在字段上的链保持原样。](docs/img/readme-chain-line.zh-CN.svg)
+![一行特性 [Zstd(6), ChaCha20] Order secured; 的解读:Zstd(6) 是压缩,更靠近数据;ChaCha20 是密码,更靠近线路。发送行:类型化的 Order,序列化,经过 Zstd(6),然后 ChaCha20,然后分块成帧,上线路。接收行,从右到左:解帧、逆 ChaCha20、逆 Zstd、解析,再次得到类型化的 Order。每种语言一个徽标——C++、Rust、C#、Java、Go、Swift、C、Dart、Python、TypeScript:为每种语言生成同一条链,无需编写编解码器代码。脚注:Zstd 是无损的;ChaCha20 隐藏字节但不检测篡改;挂在不可能超过 1024 字节的 pack 上的链会自动去掉它的 Zstd 阶段,挂在字段上的链保持原样。](docs/img/readme-chain-line.zh-CN.svg)
 
 ```csharp
 [Zstd(6), ChaCha20]

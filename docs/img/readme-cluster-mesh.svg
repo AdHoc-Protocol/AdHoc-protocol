@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" role="img" aria-labelledby="title desc">
+<title id="title">A host connected to itself, clients on the same port: Connects&lt;Node, Node&gt;</title>
+<desc id="desc">Three processes A, B and C, each the same generated module of host Node, joined pairwise by InterNode sockets. On every socket the dialing end is Left and the accepting end Right: A dialed B, so Append flows from A to B and Ack back; C dialed A and B, so A is Left on one socket and Right on another. Under the A-B socket the actor-instance id space is split into A's half and B's half, once, when the socket connects, nothing per pack. On the left, A's one port NodePort reads the first byte: a TypeScript Client arrives with Client.uid and lands on ClientNode, another Node arrives with Node.uid and lands on InterNode. At C a RoomEvent from a client fans out to the local room group ([Grouped]) and your code forwards it over InterNode to A and B, which fan it out to their own groups. Footer: ReceiveTimeout(30) notices a silent peer, OnReceiveTimeout may send a heartbeat and keep waiting; one host type for every node.</desc>
+<rect width="960" height="520" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="600" xml:space="preserve"><tspan >A host connected to itself, clients on the same port: </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Connects&lt;Node, Node&gt;</tspan></text>
+<rect x="130" y="66" width="210" height="100" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="142" y="86" font-size="13" fill="#6f9fd8" font-weight="700">A</text>
+<text x="235" y="100" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan >process - host </tspan><tspan font-weight="700">Node</tspan></text>
+<text x="235" y="118" font-size="13" fill="#c9d6e6" text-anchor="middle">the same generated module</text>
+<text x="169" y="148" font-size="12" fill="#c9d6e6">room group</text>
+<rect x="255" y="138" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="261" cy="144" r="2.6" fill="#e8833a"/>
+<rect x="272" y="138" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="278" cy="144" r="2.6" fill="#e8833a"/>
+<rect x="289" y="138" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="295" cy="144" r="2.6" fill="#e8833a"/>
+<rect x="668" y="66" width="210" height="100" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="680" y="86" font-size="13" fill="#6f9fd8" font-weight="700">B</text>
+<text x="773" y="100" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan >process - host </tspan><tspan font-weight="700">Node</tspan></text>
+<text x="773" y="118" font-size="13" fill="#c9d6e6" text-anchor="middle">the same generated module</text>
+<text x="707" y="148" font-size="12" fill="#c9d6e6">room group</text>
+<rect x="793" y="138" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="799" cy="144" r="2.6" fill="#e8833a"/>
+<rect x="810" y="138" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="816" cy="144" r="2.6" fill="#e8833a"/>
+<rect x="827" y="138" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="833" cy="144" r="2.6" fill="#e8833a"/>
+<rect x="399" y="326" width="210" height="100" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.6"/>
+<text x="411" y="346" font-size="13" fill="#6f9fd8" font-weight="700">C</text>
+<text x="504" y="360" font-size="14" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan >process - host </tspan><tspan font-weight="700">Node</tspan></text>
+<text x="504" y="378" font-size="13" fill="#c9d6e6" text-anchor="middle">the same generated module</text>
+<text x="429.5" y="408" font-size="12" fill="#c9d6e6">room group</text>
+<rect x="515.5" y="398" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="521.5" cy="404" r="2.6" fill="#e8833a"/>
+<rect x="532.5" y="398" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="538.5" cy="404" r="2.6" fill="#e8833a"/>
+<rect x="549.5" y="398" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="555.5" cy="404" r="2.6" fill="#e8833a"/>
+<rect x="566.5" y="398" width="12" height="12" rx="2" fill="#4a4a4a" stroke="#8a8f96" stroke-width="1"/>
+<circle cx="572.5" cy="404" r="2.6" fill="#e8833a"/>
+<g data-nocheck="1"><line x1="340" y1="104" x2="668" y2="104" stroke="#7d858f" stroke-width="6" stroke-linecap="butt"/></g>
+<g data-nocheck="1"><line x1="270" y1="166" x2="454" y2="326" stroke="#7d858f" stroke-width="6" stroke-linecap="butt"/></g>
+<g data-nocheck="1"><line x1="738" y1="166" x2="554" y2="326" stroke="#7d858f" stroke-width="6" stroke-linecap="butt"/></g>
+<rect x="344" y="94" width="76" height="20" rx="10" fill="#2b2f35" stroke="#e8833a" stroke-width="1.5"/>
+<text x="382" y="108.5" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="700">L · dialed</text>
+<rect x="572" y="94" width="92" height="20" rx="10" fill="#2b2f35" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="618" y="108.5" font-size="12" fill="#4fb3ff" text-anchor="middle" font-weight="700">R · accepted</text>
+<path d="M428 86 L558 86" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M566 86 L557 90.6 L557 81.4 Z" fill="#e8833a"/>
+<text x="497" y="78" font-size="13" fill="#e8833a" text-anchor="middle" font-weight="700">Append</text>
+<path d="M566 122 L436 122" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M428 122 L437 117.4 L437 126.6 Z" fill="#4fb3ff"/>
+<text x="497" y="140" font-size="13" fill="#4fb3ff" text-anchor="middle" font-weight="700">Ack</text>
+<rect x="390.3" y="293.7" width="76" height="20" rx="10" fill="#2b2f35" stroke="#e8833a" stroke-width="1.5"/>
+<text x="428.3" y="308.2" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="700">L · dialed</text>
+<rect x="248.1" y="177" width="92" height="20" rx="10" fill="#2b2f35" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="294.1" y="191.5" font-size="12" fill="#4fb3ff" text-anchor="middle" font-weight="700">R · accepted</text>
+<rect x="541.7" y="293.7" width="76" height="20" rx="10" fill="#2b2f35" stroke="#e8833a" stroke-width="1.5"/>
+<text x="579.7" y="308.2" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="700">L · dialed</text>
+<rect x="667.9" y="177" width="92" height="20" rx="10" fill="#2b2f35" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="713.9" y="191.5" font-size="12" fill="#4fb3ff" text-anchor="middle" font-weight="700">R · accepted</text>
+<text x="130" y="58" font-size="12" fill="#9aa0a6">A is Left on the socket it dialed and Right on the one it accepted</text>
+<text x="504" y="174" font-size="12" fill="#9aa0a6" text-anchor="middle">actor-instance ids on the A-B socket</text>
+<rect x="404" y="182" width="100" height="20" rx="0" fill="rgba(232,131,58,0.35)" stroke="#e8833a" stroke-width="1.4"/>
+<rect x="504" y="182" width="100" height="20" rx="0" fill="rgba(79,179,255,0.25)" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="454" y="196.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">A's ids</text>
+<text x="554" y="196.5" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">B's ids</text>
+<text x="504" y="220" font-size="12" fill="#9aa0a6" text-anchor="middle">split once, when the socket connects -</text>
+<text x="504" y="234" font-size="12" fill="#9aa0a6" text-anchor="middle">nothing is added per pack</text>
+<path d="M400.5 259.6 L356.7 221.5" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-dasharray="5 4" stroke-linejoin="round"/><path d="M350.7 216.3 L360.5 218.7 L354.4 225.6 Z" fill="#e8833a"/>
+<path d="M607.5 259.6 L651.3 221.5" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-dasharray="5 4" stroke-linejoin="round"/><path d="M657.3 216.3 L653.6 225.6 L647.5 218.7 Z" fill="#e8833a"/>
+<text x="504" y="274" font-size="12" fill="#9aa0a6" text-anchor="middle" font-style="italic">forwarded over InterNode</text>
+<text x="504" y="289" font-size="12" fill="#9aa0a6" text-anchor="middle" font-style="italic">by your code</text>
+<rect x="770" y="352" width="86" height="32" rx="6" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="813" y="372.5" font-size="12" fill="#e8eaed" text-anchor="middle">a client</text>
+<path d="M770 368 L617 368" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M609 368 L618 363.4 L618 372.6 Z" fill="#e8833a"/>
+<rect x="680" y="360" width="24" height="16" rx="2" fill="#3a2c20" stroke="#e8833a" stroke-width="1.5"/><path d="M681 361.5 L692 369.3 L703 361.5" fill="none" stroke="#e8833a" stroke-width="1.3" stroke-linejoin="round"/>
+<text x="692" y="352" font-size="12" fill="#e8833a" text-anchor="middle" font-weight="600">RoomEvent</text>
+<text x="504" y="446" font-size="13" fill="#e8eaed" text-anchor="middle">room group ([Grouped]): local fan-out</text>
+<text x="77" y="70" font-size="12" fill="#9aa0a6" text-anchor="middle">one port</text>
+<line x1="122" y1="116" x2="130" y2="116" stroke="#6f9fd8" stroke-width="3"/>
+<rect x="32" y="76" width="90" height="80" rx="6" fill="#243447" stroke="#6f9fd8" stroke-width="1.4"/>
+<rect x="40" y="94" width="74" height="44" rx="5" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="77" y="112" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#f2c14e" text-anchor="middle" xml:space="preserve">NodePort</text>
+<text x="77" y="128" font-size="12" fill="#e8eaed" text-anchor="middle">first byte</text>
+<rect x="24" y="196" width="82" height="36" rx="6" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="65" y="211" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Client</text>
+<text x="65" y="226" font-size="12" fill="#c9d6e6" text-anchor="middle">(TypeScript)</text>
+<path d="M52 196 L52 164" fill="none" stroke="#e8833a" stroke-width="1.8" stroke-linejoin="round"/><path d="M52 156 L56.6 165 L47.4 165 Z" fill="#e8833a"/>
+<rect x="124" y="203" width="172" height="22" rx="11" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="210" y="218.5" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Client.uid</tspan><tspan fill="#9aa0a6"> → </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">ClientNode</tspan></text>
+<rect x="24" y="252" width="82" height="36" rx="6" fill="none" stroke="#6f9fd8" stroke-width="1.4" stroke-dasharray="4 3"/>
+<text x="65" y="267" font-size="12" fill="#e8eaed" text-anchor="middle">another</text>
+<text x="65" y="282" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Node</text>
+<path d="M106 270 L114 270 L114 164" fill="none" stroke="#e8833a" stroke-width="1.8" stroke-dasharray="5 4" stroke-linejoin="round"/><path d="M114 156 L118.6 165 L109.4 165 Z" fill="#e8833a"/>
+<rect x="124" y="259" width="160" height="22" rx="11" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="204" y="274.5" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Node.uid</tspan><tspan fill="#9aa0a6"> → </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">InterNode</tspan></text>
+<text x="24" y="312" font-size="12" fill="#9aa0a6">every socket on the port</text>
+<text x="24" y="327" font-size="12" fill="#9aa0a6">opens with the dialing</text>
+<text x="24" y="342" font-size="12" fill="#9aa0a6">host's uid - once per</text>
+<text x="24" y="357" font-size="12" fill="#9aa0a6">socket, never per pack</text>
+<text x="24" y="486" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[ReceiveTimeout(30)]</tspan><tspan >: a silent peer is noticed - </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">OnReceiveTimeout</tspan><tspan > may send a heartbeat and keep waiting</tspan></text>
+<text x="24" y="502" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >one host type for every node: no second &quot;peer&quot; host type, and only a physical </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Connects&lt;&gt;</tspan><tspan > joins a host to itself</tspan></text>
+</g>
+</svg>

@@ -1,0 +1,32 @@
+﻿using org.unirail.Meta; // Importing attributes required for AdHoc protocol generation
+
+namespace com.my.company // The namespace for your company's project. Required!
+{
+    public interface MyProject // Declares an AdHoc protocol description project
+    {
+        class CommonPacket{ } // Represents a common empty packet used across different hosts
+
+        /// <see cref="InTS"/>-  Generates an abstract code in   TypeScript
+        /// <see cref="InCS"/>   Generates implementated code in C#
+        /// <see cref="InJAVA"/> Generates implementated code in Java
+        struct Server : Host // Defines the server-side host and generates platform-specific code
+        {
+            public class PacketToClient{ } // Represents an empty packet to be sent from the server to the client
+        }
+
+        /// <see cref="InTS"/>   Generates implementated code in TypeScript
+        /// <see cref="InCS"/>-  Generates an abstract code in   C#
+        /// <see cref="InJAVA"/> Generates implementated code in Java
+        struct Client : Host // Defines the client-side host and generates platform-specific code
+        {
+            public class PacketToServer{ } // Represents an empty packet to be sent from the client to the server
+        }
+
+        // Defines a communication connection for exchanging data between the client and server
+        interface Connection : Connects<Client, Server>{
+            [l____________<(CommonPacket, Client.PacketToServer)>]
+            [____________r<(CommonPacket, Server.PacketToClient)>]
+            struct Start { }
+        }
+    }
+}

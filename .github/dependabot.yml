@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Keep the SHA-pinned GitHub Actions current: Dependabot bumps the pinned commit when a new
+  # release ships and annotates the PR with the version, so pins stay immutable yet maintained.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions:
+        patterns: [ "*" ]

@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" width="920" height="440" role="img" aria-labelledby="d20iv-t d20iv-d">
+<title id="d20iv-t">实体靠编号区分，字段靠位置区分</title>
+<desc id="d20iv-d">左侧面板，编号 — 身份：project、host、connection、actor、state、branch 和 pack，各带一个以 base256 字符表示编号的小徽章。箭头从 pack 的徽章指向 pack 的 wire id，从 host 的徽章指向 host 的 uid 字节，从整个栈指向按编号键控的自定义代码区域。重命名、移动或重排这些声明不会改变任何东西。右侧面板，位置 — 顺序：pack PositionV2 的字段 float lat 和 float lon 以 id、lat（4 字节）、lon（4 字节）传输；交换两个字段后以 id、lon、lat 传输 — 线上就是另一个 pack。字段没有编号：它们的顺序就是线路格式。</desc>
+<rect width="920" height="440" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<line x1="460" y1="24" x2="460" y2="416" stroke="#4a4a4a" stroke-width="1"/>
+
+<!-- LEFT: numbered - identity -->
+<text x="32" y="46" font-size="18" fill="#e8833a" font-weight="600">编号 — 身份</text>
+
+<rect x="32" y="66" width="170" height="30" rx="5" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="44" y="86" font-size="14" fill="#e8eaed">项目</text>
+<rect x="132" y="71" width="64" height="20" rx="10" fill="#3b3424" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="164" y="86" font-size="13.5" fill="#f2c14e" text-anchor="middle">ǍŦƈŗč</text>
+
+<rect x="32" y="104" width="170" height="30" rx="5" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="44" y="124" font-size="14" fill="#e8eaed">主机</text>
+<rect x="170" y="109" width="26" height="20" rx="10" fill="#3b3424" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="183" y="124" font-size="13.5" fill="#f2c14e" text-anchor="middle">Ā</text>
+
+<rect x="32" y="142" width="170" height="30" rx="5" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="44" y="162" font-size="14" fill="#e8eaed">连接</text>
+<rect x="170" y="147" width="26" height="20" rx="10" fill="#3b3424" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="183" y="162" font-size="13.5" fill="#f2c14e" text-anchor="middle">ÿ</text>
+
+<rect x="32" y="180" width="170" height="30" rx="5" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="44" y="200" font-size="14" fill="#e8eaed">Actor</text>
+<rect x="170" y="185" width="26" height="20" rx="10" fill="#3b3424" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="183" y="200" font-size="13.5" fill="#f2c14e" text-anchor="middle">Ā</text>
+
+<rect x="32" y="218" width="170" height="30" rx="5" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="44" y="238" font-size="14" fill="#e8eaed">状态</text>
+<rect x="170" y="223" width="26" height="20" rx="10" fill="#3b3424" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="183" y="238" font-size="13.5" fill="#f2c14e" text-anchor="middle">ÿ</text>
+
+<rect x="32" y="256" width="170" height="30" rx="5" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="44" y="276" font-size="14" fill="#e8eaed">分支</text>
+<rect x="170" y="261" width="26" height="20" rx="10" fill="#3b3424" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="183" y="276" font-size="13.5" fill="#f2c14e" text-anchor="middle">Ā</text>
+
+<rect x="32" y="294" width="170" height="30" rx="5" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="44" y="314" font-size="14" fill="#e8eaed">pack</text>
+<rect x="170" y="299" width="26" height="20" rx="10" fill="#3b3424" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="183" y="314" font-size="13.5" fill="#f2c14e" text-anchor="middle">ă</text>
+
+<!-- bracket over the whole stack -> custom code regions -->
+<path d="M208 67 H218 V323 H208" fill="none" stroke="#f2c14e" stroke-width="1.6"/>
+<line x1="218" y1="200" x2="244" y2="200" stroke="#f2c14e" stroke-width="1.8"/>
+<path d="M252 200 L244 195.5 L244 204.5 Z" fill="#f2c14e"/>
+
+<!-- host badge -> uid byte (halo so it passes over the bracket) -->
+<line x1="198" y1="119" x2="244" y2="119" stroke="#2b2b2b" stroke-width="6"/>
+<line x1="198" y1="119" x2="244" y2="119" stroke="#f2c14e" stroke-width="1.8"/>
+<path d="M252 119 L244 114.5 L244 123.5 Z" fill="#f2c14e"/>
+
+<!-- pack badge -> wire id -->
+<line x1="198" y1="309" x2="244" y2="309" stroke="#2b2b2b" stroke-width="6"/>
+<line x1="198" y1="309" x2="244" y2="309" stroke="#f2c14e" stroke-width="1.8"/>
+<path d="M252 309 L244 304.5 L244 313.5 Z" fill="#f2c14e"/>
+
+<!-- targets -->
+<rect x="252" y="88" width="192" height="60" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="264" y="108" font-size="13.5" fill="#e8eaed">主机的 uid 字节</text>
+<text x="264" y="125" font-size="12" fill="#9aa0a6">对端发送的第一个字节</text>
+<text x="264" y="140" font-size="12" fill="#9aa0a6">在多路复用端口上</text>
+
+<rect x="252" y="170" width="192" height="60" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="264" y="190" font-size="13.5" fill="#e8eaed">自定义代码区域</text>
+<text x="264" y="207" font-size="12" fill="#9aa0a6">你的代码在生成的</text>
+<text x="264" y="222" font-size="12" fill="#9aa0a6">文件中，按编号键控</text>
+
+<rect x="252" y="279" width="192" height="60" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="264" y="299" font-size="13.5" fill="#e8eaed">pack 的 wire id</text>
+<text x="264" y="316" font-size="12" fill="#9aa0a6">十进制，packs 表中</text>
+<text x="264" y="331" font-size="12" fill="#9aa0a6">该 pack 所在的行</text>
+
+<text x="32" y="364" font-size="13" fill="#9aa0a6">重命名、移动、重排声明：什么都不变</text>
+<text x="32" y="382" font-size="13" fill="#9aa0a6">编号跟随实体，不跟随名称或位置</text>
+<text x="32" y="410" font-size="12" fill="#9aa0a6">徽章：base256 字符表示的编号 — <tspan fill="#f2c14e">ÿ</tspan> = 0, <tspan fill="#f2c14e">Ā</tspan> = 1, <tspan fill="#f2c14e">ă</tspan> = 4</text>
+
+<!-- RIGHT: positional - order -->
+<text x="492" y="46" font-size="18" fill="#a06fd0" font-weight="600">位置 — 顺序</text>
+
+<!-- declared order -->
+<rect x="492" y="64" width="160" height="100" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="504" y="84" font-size="13" fill="#9aa0a6" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">class PositionV2</text>
+<rect x="504" y="94" width="136" height="26" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="514" y="112" font-size="14" fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">float lat;</text>
+<rect x="504" y="126" width="136" height="26" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="514" y="144" font-size="14" fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">float lon;</text>
+
+<line x1="654" y1="123" x2="686" y2="123" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M694 123 L686 118.5 L686 127.5 Z" fill="#4fb3ff"/>
+<text x="694" y="98" font-size="12" fill="#9aa0a6">PositionV2 在线上</text>
+<rect x="694" y="106" width="36" height="34" fill="#2d4665" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="712" y="128" font-size="13" fill="#e8eaed" text-anchor="middle">id</text>
+<rect x="730" y="106" width="87" height="34" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="773.5" y="128" font-size="12.5" fill="#e8eaed" text-anchor="middle">lat：4 字节</text>
+<rect x="817" y="106" width="87" height="34" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="860.5" y="128" font-size="12.5" fill="#e8eaed" text-anchor="middle">lon：4 字节</text>
+
+<!-- swap -->
+<line x1="510" y1="176" x2="510" y2="196" stroke="#e8833a" stroke-width="1.8"/>
+<path d="M510 169 L505.5 177 L514.5 177 Z" fill="#e8833a"/>
+<path d="M510 203 L505.5 195 L514.5 195 Z" fill="#e8833a"/>
+<text x="524" y="191" font-size="13" fill="#e8833a">交换两个字段</text>
+
+<!-- swapped order -->
+<rect x="492" y="208" width="160" height="100" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="504" y="228" font-size="13" fill="#9aa0a6" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">class PositionV2</text>
+<rect x="504" y="238" width="136" height="26" rx="4" fill="#45301f" stroke="#e8833a" stroke-width="1.2"/>
+<text x="514" y="256" font-size="14" fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">float lon;</text>
+<rect x="504" y="270" width="136" height="26" rx="4" fill="#45301f" stroke="#e8833a" stroke-width="1.2"/>
+<text x="514" y="288" font-size="14" fill="#e8eaed" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">float lat;</text>
+
+<line x1="654" y1="267" x2="686" y2="267" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M694 267 L686 262.5 L686 271.5 Z" fill="#4fb3ff"/>
+<text x="694" y="242" font-size="12" fill="#9aa0a6">同一个 pack，字段已交换</text>
+<rect x="694" y="250" width="36" height="34" fill="#2d4665" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="712" y="272" font-size="13" fill="#e8eaed" text-anchor="middle">id</text>
+<rect x="730" y="250" width="87" height="34" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="773.5" y="272" font-size="12.5" fill="#e8eaed" text-anchor="middle">lon：4 字节</text>
+<rect x="817" y="250" width="87" height="34" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="860.5" y="272" font-size="12.5" fill="#e8eaed" text-anchor="middle">lat：4 字节</text>
+<text x="799" y="306" font-size="14" fill="#e8833a" text-anchor="middle">线上就是另一个 pack</text>
+
+<text x="690" y="364" font-size="13.5" fill="#e8eaed" text-anchor="middle">字段没有编号：其顺序就是线路格式</text>
+<text x="690" y="382" font-size="12.5" fill="#9aa0a6" text-anchor="middle">按旧顺序构建的对端会把 lon 读成 lat</text>
+</g>
+</svg>

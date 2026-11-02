@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>14</LangVersion>
+        <!-- Same favicon the Observer serves. -->
+        <ApplicationIcon>Observer\favicon.ico</ApplicationIcon>
+	<PlatformTarget Condition=" '$(RuntimeIdentifier)' == '' ">x64</PlatformTarget>
+
+	<DebugType>Full</DebugType>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget Condition=" '$(RuntimeIdentifier)' == '' ">x64</PlatformTarget>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="5.9.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+        <PackageReference Include="Tommy" Version="3.1.2" />
+        <PackageReference Include="ZstdSharp.Port" Version="0.8.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Templates\AdHocAgent.toml" />
+      <EmbeddedResource Include="Templates\AdHocAgent.toml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <Compile Remove="Templates\ProtocolDescription.cs" />
+      <EmbeddedResource Include="Templates\ProtocolDescription.cs" />
+      <Compile Remove="AdHocProtocol.cs" />
+      <Compile Remove="bench\**\*.cs" />
+      <None Remove="bench\**" />
+      <!-- the license goes with every copy of the agent: beside the executable in a build, a publish and a release archive -->
+      <None Include="LICENSE.md;NOTICE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="Observer\observer.js.LICENSE.txt" Link="observer.js.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_DeploymentManifestIconFile Remove="Observer\favicon.ico" />
+    </ItemGroup>
+
+    <!--
+      The Observer's built assets, carried inside the assembly.
+
+      The Observer folder holds the result of a production build of the page, so the agent builds
+      from this repository alone and runs with no asset folder at all. ADHOC_OBSERVER_DIR points
+      a running agent at another build of the page: see observer_asset in ChannelToObserver.cs.
+
+      `*.js` picks up observer.js together with every code-split chunk (the lazily imported
+      zstd codec is one), and does not match observer.js.LICENSE.txt.
+      That chunk is not optional: the Observer awaits its codec before opening the WebSocket.
+
+      An explicit LogicalName keeps the resource names stable — MSBuild's default naming
+      derives them from the item path and would mangle the hyphens in a chunk file name.
+    -->
+    <PropertyGroup>
+      <ObserverBuild>Observer\</ObserverBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ObserverAsset Include="$(ObserverBuild)index.html" />
+      <ObserverAsset Include="$(ObserverBuild)favicon.ico" />
+      <ObserverAsset Include="$(ObserverBuild)*.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="@(ObserverAsset)" LogicalName="AdHocAgent.Observer.%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="docs\img\dev-src\CN_originals\" />
+      <Folder Include="protocol\gen\" />
+      <Folder Include="protocol\lib\" />
+    </ItemGroup>
+
+</Project>

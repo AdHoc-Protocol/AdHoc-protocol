@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" role="img" aria-labelledby="title desc">
+<title id="title">Routing once per socket</title>
+<desc id="desc">Top, request/response: a row of requests, each opening with the same grey routing block - method, a path with a version segment, host - before its body; a handler serving v1 and v2 branches on the version. Bottom, AdHoc: a multiplexed port, Port : Multiplex&lt;(Link, LinkV1)&gt; on :443, reads one uid byte per socket and hands the socket to its connection - Device.uid to Link, DeviceV1.uid to the frozen LinkV1 - after which the socket carries packs only: Reading, Note, Job, Progress, Alert, Done on one, Reading after Reading on the other. A new generation is a new host and connection, with no version field and no version branch in any handler.</desc>
+<rect width="960" height="330" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="700">Routing: on every request, or once per socket</text>
+<text x="24" y="86" font-size="13" fill="#e8eaed">request/response</text>
+<rect x="181" y="64" width="79" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="220.5" y="85" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">POST /v2/r</text>
+<rect x="261" y="64" width="36" height="34" rx="3" fill="#2f2f2f" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="279" y="85" font-size="12" fill="#9aa0a6" text-anchor="middle">body</text>
+<rect x="309" y="64" width="79" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="348.5" y="85" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">POST /v2/r</text>
+<rect x="389" y="64" width="36" height="34" rx="3" fill="#2f2f2f" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="407" y="85" font-size="12" fill="#9aa0a6" text-anchor="middle">body</text>
+<rect x="437" y="64" width="79" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="476.5" y="85" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">POST /v2/r</text>
+<rect x="517" y="64" width="36" height="34" rx="3" fill="#2f2f2f" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="535" y="85" font-size="12" fill="#9aa0a6" text-anchor="middle">body</text>
+<rect x="565" y="64" width="79" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="604.5" y="85" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">POST /v2/r</text>
+<rect x="645" y="64" width="36" height="34" rx="3" fill="#2f2f2f" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="663" y="85" font-size="12" fill="#9aa0a6" text-anchor="middle">body</text>
+<rect x="693" y="64" width="79" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="732.5" y="85" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">POST /v2/r</text>
+<rect x="773" y="64" width="36" height="34" rx="3" fill="#2f2f2f" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="791" y="85" font-size="12" fill="#9aa0a6" text-anchor="middle">body</text>
+<rect x="821" y="64" width="79" height="34" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<text x="860.5" y="85" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">POST /v2/r</text>
+<rect x="901" y="64" width="36" height="34" rx="3" fill="#2f2f2f" stroke="#5a5a5a" stroke-width="1.2"/>
+<text x="919" y="85" font-size="12" fill="#9aa0a6" text-anchor="middle">body</text>
+<text x="180" y="118" font-size="12" fill="#9aa0a6">method, path with a version, host - on every request; a handler serving v1 and v2 branches on the version</text>
+<text x="24" y="156" font-size="13" fill="#e8eaed">AdHoc</text>
+<rect x="24" y="168" width="140" height="86" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="94" y="192" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="700">:443</text>
+<text x="94" y="214" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">Port : Multiplex&lt;</text>
+<text x="94" y="232" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">(Link, LinkV1)&gt;</text>
+<path d="M165 197 L252.1 179.4" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M259 178 L252 183.7 L250.3 175.5 Z" fill="#4fb3ff"/>
+<text x="204" y="176" font-size="12" fill="#4fb3ff" text-anchor="middle">Device.uid</text>
+<path d="M165 225 L252.1 242.6" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M259 244 L250.3 246.5 L252 238.3 Z" fill="#4fb3ff"/>
+<text x="206" y="260" font-size="12" fill="#4fb3ff" text-anchor="middle">DeviceV1.uid</text>
+<rect x="260" y="162" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="300" y="181.7" font-size="13" fill="#e8eaed" text-anchor="middle">Link</text>
+<rect x="260" y="230" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="292" y="250" font-size="13" fill="#e8eaed" text-anchor="middle">LinkV1</text>
+<path d="M321 244 V241.5 a3 3 0 0 1 6 0 V244" fill="none" stroke="#9aa0a6" stroke-width="1.6"/><rect x="318" y="244" width="12" height="8" rx="1.5" fill="#9aa0a6"/>
+<text x="300" y="275" font-size="12" fill="#9aa0a6" text-anchor="middle">frozen</text>
+<text x="356" y="154" font-size="12" fill="#4fb3ff">1 byte, once per socket</text>
+<line x1="341" y1="177" x2="355" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<line x1="391" y1="177" x2="399" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="356" y="162" width="34" height="30" rx="6" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.4"/><text x="373" y="181.3" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">uid</text>
+<rect x="400" y="162" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="440" y="181.3" font-size="12" fill="#e8eaed" text-anchor="middle">Reading</text>
+<line x1="481" y1="177" x2="485" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="486" y="162" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="526" y="181.3" font-size="12" fill="#e8eaed" text-anchor="middle">Note</text>
+<line x1="567" y1="177" x2="571" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="572" y="162" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="612" y="181.3" font-size="12" fill="#e8eaed" text-anchor="middle">Job</text>
+<line x1="653" y1="177" x2="657" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="658" y="162" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="698" y="181.3" font-size="12" fill="#e8eaed" text-anchor="middle">Progress</text>
+<line x1="739" y1="177" x2="743" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="744" y="162" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="784" y="181.3" font-size="12" fill="#e8eaed" text-anchor="middle">Alert</text>
+<line x1="825" y1="177" x2="829" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="830" y="162" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="870" y="181.3" font-size="12" fill="#e8eaed" text-anchor="middle">Done</text>
+<line x1="911" y1="177" x2="915" y2="177" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="926" y="182" font-size="14" fill="#9aa0a6">…</text>
+<line x1="341" y1="245" x2="355" y2="245" stroke="#4fb3ff" stroke-width="1.4"/>
+<line x1="391" y1="245" x2="399" y2="245" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="356" y="230" width="34" height="30" rx="6" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.4"/><text x="373" y="249.3" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#4fb3ff" text-anchor="middle" xml:space="preserve">uid</text>
+<rect x="400" y="230" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="440" y="249.3" font-size="12" fill="#e8eaed" text-anchor="middle">Reading</text>
+<line x1="481" y1="245" x2="485" y2="245" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="486" y="230" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="526" y="249.3" font-size="12" fill="#e8eaed" text-anchor="middle">Reading</text>
+<line x1="567" y1="245" x2="571" y2="245" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="572" y="230" width="80" height="30" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="612" y="249.3" font-size="12" fill="#e8eaed" text-anchor="middle">Reading</text>
+<line x1="653" y1="245" x2="657" y2="245" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="668" y="250" font-size="14" fill="#9aa0a6">…</text>
+<text x="24" y="296" font-size="12" fill="#9aa0a6">after the first byte the socket is an ordinary link of its connection;</text>
+<text x="24" y="312" font-size="12" fill="#9aa0a6">a new generation is a new host and connection - no version field, no version branch in any handler</text>
+</g>
+</svg>

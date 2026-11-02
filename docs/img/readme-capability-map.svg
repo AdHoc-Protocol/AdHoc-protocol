@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 640" width="980" height="640" role="img" aria-labelledby="title desc">
+<title id="title">Where each capability acts</title>
+<desc id="desc">A ladder of levels - pipeline, project, host, connection, actor-state-branch, pack, field, wire bytes, runtime - with the numbered capability sections of the README placed beside the level each one acts on, coloured by group: describe and generate, data and bytes, conversation and transfer, runtime.</desc>
+<rect width="980" height="640" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="700">Where each capability acts</text>
+<text x="956" y="34" font-size="12" fill="#9aa0a6" text-anchor="end">numbers as in the capability table</text>
+<line x1="114" y1="166" x2="114" y2="176" stroke="#4a4a4a" stroke-width="2"/>
+<line x1="114" y1="226" x2="114" y2="236" stroke="#4a4a4a" stroke-width="2"/>
+<line x1="114" y1="286" x2="114" y2="296" stroke="#4a4a4a" stroke-width="2"/>
+<line x1="114" y1="346" x2="114" y2="356" stroke="#4a4a4a" stroke-width="2"/>
+<line x1="114" y1="406" x2="114" y2="416" stroke="#4a4a4a" stroke-width="2"/>
+<line x1="114" y1="466" x2="114" y2="476" stroke="#4a4a4a" stroke-width="2"/>
+<line x1="24" y1="111" x2="956" y2="111" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="24" y1="531" x2="956" y2="531" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="4 4"/>
+<rect x="220" y="56" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="56" width="180" height="50" rx="8" fill="#333436" stroke="#9aa0a6" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="114" y="86" font-size="14" fill="#e8eaed" text-anchor="middle">pipeline</text>
+<rect x="220" y="116" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="116" width="180" height="50" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.5"/>
+<text x="114" y="146" font-size="14" fill="#e8eaed" text-anchor="middle">project</text>
+<rect x="220" y="176" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="176" width="180" height="50" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.5"/>
+<text x="114" y="206" font-size="14" fill="#e8eaed" text-anchor="middle">host</text>
+<rect x="220" y="236" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="236" width="180" height="50" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.5"/>
+<text x="114" y="266" font-size="14" fill="#e8eaed" text-anchor="middle">connection</text>
+<rect x="220" y="296" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="296" width="180" height="50" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.5"/>
+<text x="114" y="326" font-size="14" fill="#e8eaed" text-anchor="middle">actor · state · branch</text>
+<rect x="220" y="356" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="356" width="180" height="50" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.5"/>
+<text x="114" y="386" font-size="14" fill="#e8eaed" text-anchor="middle">pack</text>
+<rect x="220" y="416" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="416" width="180" height="50" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.5"/>
+<text x="114" y="446" font-size="14" fill="#e8eaed" text-anchor="middle">field</text>
+<rect x="220" y="476" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="476" width="180" height="50" rx="8" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="114" y="506" font-size="14" fill="#e8eaed" text-anchor="middle">wire bytes</text>
+<rect x="220" y="536" width="736" height="50" rx="8" fill="#303133"/>
+<rect x="24" y="536" width="180" height="50" rx="8" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="114" y="558" font-size="14" fill="#e8eaed" text-anchor="middle">runtime</text>
+<text x="114" y="575" font-size="12" fill="#9aa0a6" text-anchor="middle">2 buffers per connection</text>
+<rect x="232" y="61" width="136" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="251" cy="75" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="251" y="79.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">1</text>
+<text x="267" y="79.5" font-size="13" fill="#e8eaed">One description</text>
+<text x="241" y="94.5" font-size="12" fill="#9aa0a6">C# in, code out</text>
+<rect x="378" y="61" width="136" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="397" cy="75" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="397" y="79.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">18</text>
+<text x="413" y="79.5" font-size="13" fill="#e8eaed">Impact report</text>
+<text x="387" y="94.5" font-size="12" fill="#9aa0a6">what an edit reaches</text>
+<rect x="524" y="61" width="136" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="543" cy="75" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="543" y="79.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">20</text>
+<text x="559" y="79.5" font-size="13" fill="#e8eaed">AdHocAgent</text>
+<text x="533" y="94.5" font-size="12" fill="#9aa0a6">one tool, every task</text>
+<rect x="670" y="61" width="136" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="689" cy="75" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="689" y="79.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">21</text>
+<text x="705" y="79.5" font-size="13" fill="#e8eaed">Deployment</text>
+<text x="679" y="94.5" font-size="12" fill="#9aa0a6">merge, backups</text>
+<rect x="816" y="61" width="136" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="835" cy="75" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="835" y="79.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">22</text>
+<text x="851" y="79.5" font-size="13" fill="#e8eaed">AdHoc Observer</text>
+<text x="825" y="94.5" font-size="12" fill="#9aa0a6">live diagrams</text>
+<rect x="232" y="121" width="170" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="251" cy="135" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="251" y="139.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">16</text>
+<text x="267" y="139.5" font-size="13" fill="#e8eaed">Identity</text>
+<text x="241" y="154.5" font-size="12" fill="#9aa0a6">numbers tables</text>
+<rect x="414" y="121" width="170" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="433" cy="135" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="433" y="139.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">19</text>
+<text x="449" y="139.5" font-size="13" fill="#e8eaed">Reuse</text>
+<text x="423" y="154.5" font-size="12" fill="#9aa0a6">extend, import, Modify&lt;&gt;</text>
+<rect x="596" y="121" width="170" height="40" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<circle cx="615" cy="135" r="10" fill="#f2c14e"/>
+<text data-ok="1" x="615" y="139.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">5</text>
+<text x="631" y="139.5" font-size="13" fill="#e8eaed">Composing · Pack Sets</text>
+<text x="605" y="154.5" font-size="12" fill="#9aa0a6">also: branch, pack</text>
+<rect x="232" y="181" width="170" height="40" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<circle cx="251" cy="195" r="10" fill="#f2c14e"/>
+<text data-ok="1" x="251" y="199.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">6</text>
+<text x="267" y="199.5" font-size="13" fill="#e8eaed">Hosts</text>
+<text x="241" y="214.5" font-size="12" fill="#9aa0a6">generated or your own</text>
+<rect x="414" y="181" width="170" height="40" rx="7" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<circle cx="433" cy="195" r="10" fill="#9aa0a6"/>
+<text data-ok="1" x="433" y="199.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">17</text>
+<text x="449" y="199.5" font-size="13" fill="#e8eaed">Evolution</text>
+<text x="423" y="214.5" font-size="12" fill="#9aa0a6">a generation = a host</text>
+<rect x="596" y="181" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="615" cy="195" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="615" y="199.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">15</text>
+<text x="631" y="199.5" font-size="13" fill="#e8eaed">Multiplexing</text>
+<text x="605" y="214.5" font-size="12" fill="#9aa0a6">one port, many peers</text>
+<rect x="232" y="241" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="251" cy="255" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="251" y="259.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">8</text>
+<text x="267" y="259.5" font-size="13" fill="#e8eaed">Sessions · UDP</text>
+<text x="241" y="274.5" font-size="12" fill="#9aa0a6">outlive the socket</text>
+<rect x="414" y="241" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="433" cy="255" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="433" y="259.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">14</text>
+<text x="449" y="259.5" font-size="13" fill="#e8eaed">Virtual connections</text>
+<text x="423" y="274.5" font-size="12" fill="#9aa0a6">relays cannot read</text>
+<rect x="596" y="241" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="615" cy="255" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="615" y="259.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">12</text>
+<text x="631" y="259.5" font-size="13" fill="#e8eaed">Transform chains</text>
+<text x="605" y="274.5" font-size="12" fill="#9aa0a6">also: field, pack, tunnel</text>
+<rect x="232" y="301" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="251" cy="315" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="251" y="319.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">7</text>
+<text x="267" y="319.5" font-size="13" fill="#e8eaed">Conversations</text>
+<text x="241" y="334.5" font-size="12" fill="#9aa0a6">actors, states, RPC</text>
+<rect x="232" y="361" width="170" height="40" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<circle cx="251" cy="375" r="10" fill="#f2c14e"/>
+<text data-ok="1" x="251" y="379.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">3</text>
+<text x="267" y="379.5" font-size="13" fill="#e8eaed">Data</text>
+<text x="241" y="394.5" font-size="12" fill="#9aa0a6">also: field, constants</text>
+<rect x="414" y="361" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="433" cy="375" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="433" y="379.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">13</text>
+<text x="449" y="379.5" font-size="13" fill="#e8eaed">Trims</text>
+<text x="423" y="394.5" font-size="12" fill="#9aa0a6">a leg holds bytes</text>
+<rect x="232" y="421" width="170" height="40" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<circle cx="251" cy="435" r="10" fill="#f2c14e"/>
+<text data-ok="1" x="251" y="439.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">4</text>
+<text x="267" y="439.5" font-size="13" fill="#e8eaed">Designed bytes</text>
+<text x="241" y="454.5" font-size="12" fill="#9aa0a6">field → wire bits</text>
+<rect x="414" y="421" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="433" cy="435" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="433" y="439.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">11</text>
+<text x="449" y="439.5" font-size="13" fill="#e8eaed">Streams</text>
+<text x="423" y="454.5" font-size="12" fill="#9aa0a6">any size; also: runtime</text>
+<rect x="232" y="481" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="251" cy="495" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="251" y="499.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">10</text>
+<text x="267" y="499.5" font-size="13" fill="#e8eaed">Serial links</text>
+<text x="241" y="514.5" font-size="12" fill="#9aa0a6">frame, CRC; also: connection</text>
+<rect x="232" y="541" width="170" height="40" rx="7" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<circle cx="251" cy="555" r="10" fill="#4fb3ff"/>
+<text data-ok="1" x="251" y="559.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">2</text>
+<text x="267" y="559.5" font-size="13" fill="#e8eaed">Runtime engine</text>
+<text x="241" y="574.5" font-size="12" fill="#9aa0a6">bytes pulled, two loops</text>
+<rect x="414" y="541" width="170" height="40" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<circle cx="433" cy="555" r="10" fill="#a06fd0"/>
+<text data-ok="1" x="433" y="559.3" font-size="12" fill="#1e1e1e" text-anchor="middle" font-weight="700">9</text>
+<text x="449" y="559.5" font-size="13" fill="#e8eaed">Fan-out · broadcast</text>
+<text x="423" y="574.5" font-size="12" fill="#9aa0a6">one pack, many connections</text>
+<text x="420" y="506" font-size="13" fill="#9aa0a6" font-style="italic">every declaration above ends here: a pack id, then fields known by position</text>
+<rect x="24" y="603" width="14" height="14" rx="3" fill="#37393c" stroke="#9aa0a6" stroke-width="1.5"/>
+<text x="46" y="614.5" font-size="12" fill="#9aa0a6">describe and generate</text>
+<rect x="210.4" y="603" width="14" height="14" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="232.4" y="614.5" font-size="12" fill="#9aa0a6">data and bytes</text>
+<rect x="352" y="603" width="14" height="14" rx="3" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="374" y="614.5" font-size="12" fill="#9aa0a6">conversation and transfer</text>
+<rect x="564" y="603" width="14" height="14" rx="3" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="586" y="614.5" font-size="12" fill="#9aa0a6">runtime</text>
+<text x="956" y="614.5" font-size="12" fill="#9aa0a6" text-anchor="end">dashed rung: not a layer of the model</text>
+</g>
+</svg>

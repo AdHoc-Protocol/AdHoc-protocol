@@ -130,7 +130,7 @@ jobs:
         user: ${{ fromJson(needs.discover.outputs.users_json) }}
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
         with:
           sparse-checkout: .github
 

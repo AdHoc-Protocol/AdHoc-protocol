@@ -130,6 +130,10 @@ jobs:
         user: ${{ fromJson(needs.discover.outputs.users_json) }}
 
     steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github
+
       - name: Register ${{ matrix.user.login }}
         env:
           GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
@@ -180,8 +184,8 @@ jobs:
                   const hex  = answer.subarray( 1, 17 ).toString( "hex" );
                   const uuid = [ hex.slice( 0, 8 ), hex.slice( 8, 12 ), hex.slice( 12, 16 ), hex.slice( 16, 20 ), hex.slice( 20 ) ].join( "-" );
                   console.log( "::add-mask::" + uuid );
-                  fs.writeFileSync( env.RUNNER_TEMP + "/reply", "Your personal UUID:\n\n```\n" + uuid + "\n```\n\nApply it with `AdHocAgent " + uuid + "`.\n" );
-              } else fs.writeFileSync( env.RUNNER_TEMP + "/reply", "Access is suspended\n\n" + answer.subarray( 1 ).toString( "utf8" ) + "\n" );
+                  fs.writeFileSync( env.RUNNER_TEMP + "/reply", fs.readFileSync( ".github/sign-up-readme.md", "utf8" ).split( "{{UUID}}" ).join( uuid ) );
+              } else fs.writeFileSync( env.RUNNER_TEMP + "/reply", "# Access is suspended\n\n" + answer.subarray( 1 ).toString( "utf8" ) + "\n" );
               process.exit( 0 );
           } );
           JS
@@ -189,25 +193,33 @@ jobs:
 
           # 2. The user's private repository, named by the id: a login can change, the id cannot.
           REPO="u$USER_ID"
+          RETURNING=1
           if ! gh api "repos/$ORG/$REPO" >/dev/null 2>&1; then
-            gh api "orgs/$ORG/repos" -f name="$REPO" -f description="$USER_LOGIN" -F private=true -F auto_init=true >/dev/null
+            gh api "orgs/$ORG/repos" -f name="$REPO" -f description="$USER_LOGIN" -F private=true >/dev/null
+            RETURNING=0
             echo "✓ Created $REPO."
           fi
 
-          # 3. Issue 1 holds the server's last answer: it is created before the invitation, so nobody else can take the number.
-          #    An edit sends no mail, so a comment without the UUID announces it.
-          if ! gh api "repos/$ORG/$REPO/issues/1" >/dev/null 2>&1; then
-            jq -n --rawfile body "$REPLY_FILE" '{ title: "UUID", body: $body }' | gh api "repos/$ORG/$REPO/issues" --input - >/dev/null
-          else
-            jq -n --rawfile body "$REPLY_FILE" '{ body: $body }' | gh api -X PATCH "repos/$ORG/$REPO/issues/1" --input - >/dev/null
-            gh api "repos/$ORG/$REPO/issues/1/comments" -f body="@$USER_LOGIN, the server has answered your request: see the top of this issue." >/dev/null
-          fi
+          # 3. The README holds the server's last answer: the repository opens on it. A new repository gets it as its first commit.
+          if ! SHA=$(gh api "repos/$ORG/$REPO/contents/README.md" --jq .sha 2>/dev/null); then SHA=""; fi
+          jq -n --rawfile body "$REPLY_FILE" --arg sha "$SHA" '{ message: "The sign-up answer", content: ($body | @base64) } + (if $sha == "" then {} else { sha: $sha } end)' \
+            | gh api -X PUT "repos/$ORG/$REPO/contents/README.md" --input - >/dev/null
           echo "✓ The answer is in $REPO."
 
-          # 4. Only a warning: failing here would keep the post, and every next run would replace the UUID again.
+          # 4. A commit sends no mail, so somebody who comes back is told in issue 1, without the UUID. The invitation tells a new user.
+          if [[ "$RETURNING" -eq 1 ]]; then
+            NOTE="@$USER_LOGIN, the server has answered your request: see the README of this repository."
+            if ! gh api "repos/$ORG/$REPO/issues/1" >/dev/null 2>&1; then
+              gh api "repos/$ORG/$REPO/issues" -f title="Sign-up answers" -f body="$NOTE" >/dev/null
+            else
+              gh api "repos/$ORG/$REPO/issues/1/comments" -f body="$NOTE" >/dev/null
+            fi
+          fi
+
+          # 5. Only a warning: failing here would keep the post, and every next run would replace the UUID again.
           gh api -X PUT "repos/$ORG/$REPO/collaborators/$USER_LOGIN" -f permission=triage >/dev/null || echo "::warning::Could not invite $USER_LOGIN to $REPO."
 
-          # 5. This user is done: delete THEIR sign-up post(s) right here. A leg that fails above never gets here, and that
+          # 6. This user is done: delete THEIR sign-up post(s) right here. A leg that fails above never gets here, and that
           #    user's post waits for the next run. A post left behind makes the next run replace the UUID again, so retry.
           DISCUSSION_IDS=$(gh api graphql -f query='
             query($owner: String!, $name: String!, $categoryId: ID!) {

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 610" width="980" height="610" role="img" aria-labelledby="dev28choose-t dev28choose-d">
+<title id="dev28choose-t">选择开启什么</title>
+<desc id="dev28choose-d">A flow of questions on the left. Is the other side an AdHoc runtime of yours? No: TLS alone, wss:// or connectTls. Yes: does it stay inside a network you trust? Yes: plain TCP, no key, nothing paid. No: must the server know the client by its key? No: Noise NK, host.key and the server key on connect. Yes: does the client know the server's key beforehand? No: Noise XX with onPeer on both sides. Yes: does the server know the client's key beforehand? Yes: Noise KK, both pinned. No: Noise IK with onPeer on the server. On the right, what to add for the path: a browser or networks that pass only the web: wss:// outside, Noise inside; Cloudflare or another terminator in front: chooseChain by address; datagrams: the key of the UDP host; relays between the two ends must not read: Noise in the tunnel with Tunnel.chain; a message that is stored or carried with no session: Chain.Pack.</desc>
+<rect width="980" height="610" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">选择开启什么</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">回答左侧的问题得到模式，再按右侧加上路径所需的部分</text>
+<rect x="30" y="80" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="104" font-size="12" fill="#e8eaed" text-anchor="middle">对端是否是</text>
+<text xml:space="preserve" x="180" y="119" font-size="12" fill="#e8eaed" text-anchor="middle">你自己的 AdHoc 运行时？</text>
+<rect x="390" y="80" width="220" height="56" rx="8" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="105" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">仅 TLS</text>
+<text xml:space="preserve" x="500" y="122" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">wss://, connectTls( … )</text>
+<rect x="30" y="164" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="188" font-size="12" fill="#e8eaed" text-anchor="middle">是否只在你信任的</text>
+<text xml:space="preserve" x="180" y="203" font-size="12" fill="#e8eaed" text-anchor="middle">网络内部？</text>
+<rect x="390" y="164" width="220" height="56" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="189" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">纯 TCP</text>
+<text xml:space="preserve" x="500" y="206" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">无密钥，零开销</text>
+<rect x="30" y="248" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="272" font-size="12" fill="#e8eaed" text-anchor="middle">服务器是否必须</text>
+<text xml:space="preserve" x="180" y="287" font-size="12" fill="#e8eaed" text-anchor="middle">凭密钥认出客户端？</text>
+<rect x="390" y="248" width="220" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="273" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise NK</text>
+<text xml:space="preserve" x="500" y="290" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">host.key + 服务器密钥</text>
+<rect x="30" y="332" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="356" font-size="12" fill="#e8eaed" text-anchor="middle">客户端是否事先</text>
+<text xml:space="preserve" x="180" y="371" font-size="12" fill="#e8eaed" text-anchor="middle">知道服务器的密钥？</text>
+<rect x="390" y="332" width="220" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="357" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise XX</text>
+<text xml:space="preserve" x="500" y="374" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">两端都用 onPeer</text>
+<rect x="30" y="416" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">服务器是否事先</text>
+<text xml:space="preserve" x="180" y="455" font-size="12" fill="#e8eaed" text-anchor="middle">知道客户端的密钥？</text>
+<rect x="390" y="416" width="220" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="441" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise KK</text>
+<text xml:space="preserve" x="500" y="458" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">双方密钥都已固定</text>
+<rect x="30" y="500" width="300" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="525" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise IK</text>
+<text xml:space="preserve" x="180" y="542" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">服务器端用 onPeer</text>
+<line x1="330.0" y1="108.0" x2="382.0" y2="108.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,108.0 380.0,102.5 380.0,113.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="101" font-size="12" fill="#f2b8b5" text-anchor="middle">否</text>
+<line x1="180.0" y1="136.0" x2="180.0" y2="156.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,164.0 185.5,154.0 174.5,154.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="154" font-size="12" fill="#b7e0bf">是</text>
+<line x1="330.0" y1="192.0" x2="382.0" y2="192.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,192.0 380.0,186.5 380.0,197.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="185" font-size="12" fill="#b7e0bf" text-anchor="middle">是</text>
+<line x1="180.0" y1="220.0" x2="180.0" y2="240.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,248.0 185.5,238.0 174.5,238.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="238" font-size="12" fill="#f2b8b5">否</text>
+<line x1="330.0" y1="276.0" x2="382.0" y2="276.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,276.0 380.0,270.5 380.0,281.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="269" font-size="12" fill="#f2b8b5" text-anchor="middle">否</text>
+<line x1="180.0" y1="304.0" x2="180.0" y2="324.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,332.0 185.5,322.0 174.5,322.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="322" font-size="12" fill="#b7e0bf">是</text>
+<line x1="330.0" y1="360.0" x2="382.0" y2="360.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,360.0 380.0,354.5 380.0,365.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="353" font-size="12" fill="#f2b8b5" text-anchor="middle">否</text>
+<line x1="180.0" y1="388.0" x2="180.0" y2="408.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,416.0 185.5,406.0 174.5,406.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="406" font-size="12" fill="#b7e0bf">是</text>
+<line x1="330.0" y1="444.0" x2="382.0" y2="444.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,444.0 380.0,438.5 380.0,449.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="437" font-size="12" fill="#b7e0bf" text-anchor="middle">是</text>
+<line x1="180.0" y1="472.0" x2="180.0" y2="492.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,500.0 185.5,490.0 174.5,490.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="490" font-size="12" fill="#f2b8b5">否</text>
+<rect x="650" y="70" width="306" height="496" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="668" y="96" font-size="13" fill="#e8eaed" font-weight="700">再加上路径所需的部分</text>
+<rect x="666" y="112" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="134" font-size="12" fill="#e8eaed">浏览器，或只放行</text>
+<text xml:space="preserve" x="680" y="150" font-size="12" fill="#e8eaed">网页流量的网络</text>
+<text xml:space="preserve" x="680" y="174" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ 外层 wss://，内层 Noise</text>
+<rect x="666" y="200" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="222" font-size="12" fill="#e8eaed">前面有 Cloudflare</text>
+<text xml:space="preserve" x="680" y="238" font-size="12" fill="#e8eaed">或其他终结器</text>
+<text xml:space="preserve" x="680" y="262" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ chooseChain( address )</text>
+<rect x="666" y="288" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="310" font-size="12" fill="#e8eaed">数据报</text>
+<text xml:space="preserve" x="680" y="350" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ UDP 主机的密钥</text>
+<rect x="666" y="376" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="398" font-size="12" fill="#e8eaed">两端之间的中继</text>
+<text xml:space="preserve" x="680" y="414" font-size="12" fill="#e8eaed">不得读取</text>
+<text xml:space="preserve" x="680" y="438" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ Tunnel.chain</text>
+<rect x="666" y="464" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="486" font-size="12" fill="#e8eaed">被存储的消息，或在</text>
+<text xml:space="preserve" x="680" y="502" font-size="12" fill="#e8eaed">没有会话时被携带</text>
+<text xml:space="preserve" x="680" y="526" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ Chain.Pack</text>
+<text xml:space="preserve" x="24" y="590" font-size="12" fill="#9aa0a6">两端选择同一种模式；模式不同或密钥错误都会使握手失败并关闭连接。</text>
+</g>
+</svg>

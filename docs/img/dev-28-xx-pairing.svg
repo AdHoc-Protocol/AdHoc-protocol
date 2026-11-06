@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 410" width="980" height="410" role="img" aria-labelledby="dev28xxpairing-t dev28xxpairing-d">
+<title id="dev28xxpairing-t">Two peers that have never met: Noise XX</title>
+<desc id="dev28xxpairing-d">Left, the handshake: peers A and B exchange three messages of Noise XX, and each proves its key. onPeer answers at once: a known key comes in; an unknown key in pairing mode comes in and waits for the user; anything else is closed. Right, after the connection is up: both screens show a short fingerprint of the other's key, the same on both; yes adds the key to the approved keys, no closes the connection.</desc>
+<rect width="980" height="410" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Two peers that have never met: Noise XX</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">onPeer answers at once from what is known; a person decides only after the connection is up</text>
+<rect x="20" y="72" width="450" height="300" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="36" y="96" font-size="13" fill="#e8eaed" font-weight="700">1. The handshake</text>
+<rect x="40" y="112" width="110" height="40" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="95" y="136.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Peer A</text>
+<rect x="340" y="112" width="110" height="40" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="395" y="136.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Peer B</text>
+<line x1="150.0" y1="166.0" x2="332.0" y2="166.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="340.0,166.0 330.0,160.5 330.0,171.5" fill="#8c9198"/>
+<text xml:space="preserve" x="245" y="160" font-size="11.5" fill="#e8eaed" text-anchor="middle">1  one-time key</text>
+<line x1="340.0" y1="192.0" x2="158.0" y2="192.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="150.0,192.0 160.0,197.5 160.0,186.5" fill="#8c9198"/>
+<text xml:space="preserve" x="245" y="186" font-size="11.5" fill="#e8eaed" text-anchor="middle">2  one-time key + B's key</text>
+<line x1="150.0" y1="218.0" x2="332.0" y2="218.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="340.0,218.0 330.0,212.5 330.0,223.5" fill="#8c9198"/>
+<text xml:space="preserve" x="245" y="212" font-size="11.5" fill="#e8eaed" text-anchor="middle">3  A's key, sealed</text>
+<text xml:space="preserve" x="40" y="250" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">onPeer( key ), on each side:</text>
+<rect x="40" y="262" width="410" height="28" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="52" y="280" font-size="12" fill="#e8eaed">a known key</text>
+<text xml:space="preserve" x="440" y="280" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">in</text>
+<rect x="40" y="296" width="410" height="28" rx="4" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.2"/>
+<text xml:space="preserve" x="52" y="314" font-size="12" fill="#e8eaed">an unknown key, pairing on</text>
+<text xml:space="preserve" x="440" y="314" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">in, waits for the user</text>
+<rect x="40" y="330" width="410" height="28" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="52" y="348" font-size="12" fill="#e8eaed">an unknown key otherwise</text>
+<text xml:space="preserve" x="440" y="348" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">closed</text>
+<rect x="490" y="72" width="470" height="300" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="506" y="96" font-size="13" fill="#e8eaed" font-weight="700">2. After the connection is up</text>
+<rect x="510" y="112" width="200" height="120" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="610" y="134" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">A's screen</text>
+<text xml:space="preserve" x="524" y="162" font-size="11.5" fill="#9aa0a6">the far key</text>
+<text xml:space="preserve" x="696" y="162" font-size="14" fill="#f2c14e" text-anchor="end" font-family="Consolas,DejaVu Sans Mono,monospace">3fa2 9c01</text>
+<text xml:space="preserve" x="524" y="190" font-size="11.5" fill="#9aa0a6">my own key</text>
+<text xml:space="preserve" x="696" y="190" font-size="14" fill="#b58cf0" text-anchor="end" font-family="Consolas,DejaVu Sans Mono,monospace">7e5b 04d1</text>
+<text xml:space="preserve" x="610" y="218" font-size="11" fill="#9aa0a6" text-anchor="middle">from peerKey and my public key</text>
+<rect x="740" y="112" width="200" height="120" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="840" y="134" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">B's screen</text>
+<text xml:space="preserve" x="754" y="162" font-size="11.5" fill="#9aa0a6">the far key</text>
+<text xml:space="preserve" x="926" y="162" font-size="14" fill="#b58cf0" text-anchor="end" font-family="Consolas,DejaVu Sans Mono,monospace">7e5b 04d1</text>
+<text xml:space="preserve" x="754" y="190" font-size="11.5" fill="#9aa0a6">my own key</text>
+<text xml:space="preserve" x="926" y="190" font-size="14" fill="#f2c14e" text-anchor="end" font-family="Consolas,DejaVu Sans Mono,monospace">3fa2 9c01</text>
+<text xml:space="preserve" x="840" y="218" font-size="11" fill="#9aa0a6" text-anchor="middle">from peerKey and my public key</text>
+<rect x="510" y="256" width="210" height="44" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="615" y="281.5" font-size="11.5" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">yes → approved.add( key )</text>
+<rect x="740" y="256" width="200" height="44" rx="8" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.6"/>
+<text xml:space="preserve" x="840" y="281.5" font-size="11.5" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">no → close</text>
+<text xml:space="preserve" x="510" y="330" font-size="12" fill="#9aa0a6">The far key on one screen must be the own key on the other:</text>
+<text xml:space="preserve" x="510" y="348" font-size="12" fill="#9aa0a6">the same colour, the same digits. The text is for people only.</text>
+<text xml:space="preserve" x="24" y="396" font-size="12" fill="#f2b8b5">✗ A question to the user inside onPeer: it runs in the middle of the handshake, on the connection's thread.</text>
+</g>
+</svg>

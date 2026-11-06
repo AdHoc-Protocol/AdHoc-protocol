@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 706" width="980" height="706" role="img" aria-labelledby="dev28noisepatterns-t dev28noisepatterns-d">
+<title id="dev28noisepatterns-t">Noise 的四种模式</title>
+<desc id="dev28noisepatterns-d">Four sequence diagrams between a client and a server. NK: the client pins the server's key; message 1, the client's one-time key sealed to the server's key; message 2, the server's one-time key; the server is proved and the client stays anonymous. IK: the client pins the server's key and has a key pair of its own; message 1 carries its one-time key and its own key, sealed, and the server's onPeer hears the client's key; message 2, the server's one-time key. XX: neither knows the other; message 1, a one-time key; message 2, the server's one-time key and its key, and the client's onPeer hears it; message 3, the client's key, and the server's onPeer hears it. KK: both have pinned each other's key; two messages of one-time keys. After every handshake the connection is sealed both ways.</desc>
+<rect width="980" height="706" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Noise 的四种模式</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">每种模式都在两端生成一次性密钥。onPeer 收到对方已证明的密钥，并可以拒绝它</text>
+<rect x="24" y="70" width="456" height="300" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="40" y="96" font-size="15" fill="#b58cf0" font-weight="700">NK</text>
+<text xml:space="preserve" x="76" y="96" font-size="13" fill="#e8eaed" font-weight="700">客户端知道服务器的密钥</text>
+<rect x="54" y="112" width="110" height="36" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="109" y="134.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">客户端</text>
+<rect x="340" y="112" width="110" height="36" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="395" y="134.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">服务器</text>
+<text xml:space="preserve" x="109" y="166" font-size="11.5" fill="#9aa0a6" text-anchor="middle">固定服务器的密钥</text>
+<text xml:space="preserve" x="395" y="166" font-size="11.5" fill="#9aa0a6" text-anchor="middle">自己的密钥对</text>
+<line x1="109.0" y1="174.0" x2="109.0" y2="320.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="395.0" y1="174.0" x2="395.0" y2="320.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="109.0" y1="200.0" x2="387.0" y2="200.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="395.0,200.0 385.0,194.5 385.0,205.5" fill="#8c9198"/>
+<text xml:space="preserve" x="252" y="193" font-size="12" fill="#e8eaed" text-anchor="middle">1   一次性密钥，按服务器密钥密封</text>
+<line x1="395.0" y1="246.0" x2="117.0" y2="246.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="109.0,246.0 119.0,251.5 119.0,240.5" fill="#8c9198"/>
+<text xml:space="preserve" x="252" y="239" font-size="12" fill="#e8eaed" text-anchor="middle">2   一次性密钥</text>
+<rect x="109" y="322" width="286" height="14" rx="3" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="252" y="333" font-size="11" fill="#e8eaed" text-anchor="middle">双向密封</text>
+<text xml:space="preserve" x="40" y="358" font-size="12" fill="#9aa0a6">服务器得到证明；客户端保持匿名。2 条消息。</text>
+<rect x="500" y="70" width="456" height="300" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="516" y="96" font-size="15" fill="#b58cf0" font-weight="700">IK</text>
+<text xml:space="preserve" x="552" y="96" font-size="13" fill="#e8eaed" font-weight="700">并且客户端证明自己的密钥</text>
+<rect x="530" y="112" width="110" height="36" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="585" y="134.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">客户端</text>
+<rect x="816" y="112" width="110" height="36" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="871" y="134.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">服务器</text>
+<text xml:space="preserve" x="585" y="166" font-size="11.5" fill="#9aa0a6" text-anchor="middle">固定 S 的密钥；有密钥对</text>
+<text xml:space="preserve" x="871" y="166" font-size="11.5" fill="#9aa0a6" text-anchor="middle">自己的密钥对</text>
+<line x1="585.0" y1="174.0" x2="585.0" y2="320.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="871.0" y1="174.0" x2="871.0" y2="320.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="585.0" y1="200.0" x2="863.0" y2="200.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="871.0,200.0 861.0,194.5 861.0,205.5" fill="#8c9198"/>
+<text xml:space="preserve" x="728" y="193" font-size="12" fill="#e8eaed" text-anchor="middle">1   一次性密钥 + 客户端的密钥，密封</text>
+<text xml:space="preserve" x="865" y="219" font-size="11.5" fill="#f2c14e" text-anchor="end" font-family="Consolas,DejaVu Sans Mono,monospace">onPeer( 客户端的密钥 )</text>
+<line x1="871.0" y1="246.0" x2="593.0" y2="246.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="585.0,246.0 595.0,251.5 595.0,240.5" fill="#8c9198"/>
+<text xml:space="preserve" x="728" y="239" font-size="12" fill="#e8eaed" text-anchor="middle">2   一次性密钥</text>
+<rect x="585" y="322" width="286" height="14" rx="3" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="728" y="333" font-size="11" fill="#e8eaed" text-anchor="middle">双向密封</text>
+<text xml:space="preserve" x="516" y="358" font-size="12" fill="#9aa0a6">服务器在第一次回答之前就认出客户端。2 条消息。</text>
+<rect x="24" y="386" width="456" height="300" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="40" y="412" font-size="15" fill="#b58cf0" font-weight="700">XX</text>
+<text xml:space="preserve" x="76" y="412" font-size="13" fill="#e8eaed" font-weight="700">双方事先都不认识对方</text>
+<rect x="54" y="428" width="110" height="36" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="109" y="450.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">客户端</text>
+<rect x="340" y="428" width="110" height="36" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="395" y="450.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">服务器</text>
+<text xml:space="preserve" x="109" y="482" font-size="11.5" fill="#9aa0a6" text-anchor="middle">自己的密钥对</text>
+<text xml:space="preserve" x="395" y="482" font-size="11.5" fill="#9aa0a6" text-anchor="middle">自己的密钥对</text>
+<line x1="109.0" y1="490.0" x2="109.0" y2="636.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="395.0" y1="490.0" x2="395.0" y2="636.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="109.0" y1="516.0" x2="387.0" y2="516.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="395.0,516.0 385.0,510.5 385.0,521.5" fill="#8c9198"/>
+<text xml:space="preserve" x="252" y="509" font-size="12" fill="#e8eaed" text-anchor="middle">1   一次性密钥</text>
+<line x1="395.0" y1="562.0" x2="117.0" y2="562.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="109.0,562.0 119.0,567.5 119.0,556.5" fill="#8c9198"/>
+<text xml:space="preserve" x="252" y="555" font-size="12" fill="#e8eaed" text-anchor="middle">2   一次性密钥 + 服务器的密钥</text>
+<text xml:space="preserve" x="115" y="581" font-size="11.5" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">onPeer( 服务器的密钥 )</text>
+<line x1="109.0" y1="608.0" x2="387.0" y2="608.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="395.0,608.0 385.0,602.5 385.0,613.5" fill="#8c9198"/>
+<text xml:space="preserve" x="252" y="601" font-size="12" fill="#e8eaed" text-anchor="middle">3   客户端的密钥，密封</text>
+<text xml:space="preserve" x="389" y="627" font-size="11.5" fill="#f2c14e" text-anchor="end" font-family="Consolas,DejaVu Sans Mono,monospace">onPeer( 客户端的密钥 )</text>
+<rect x="109" y="638" width="286" height="14" rx="3" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="252" y="649" font-size="11" fill="#e8eaed" text-anchor="middle">双向密封</text>
+<text xml:space="preserve" x="40" y="674" font-size="12" fill="#9aa0a6">双方各自证明密钥；由两端的 onPeer 决定。3 条消息。</text>
+<rect x="500" y="386" width="456" height="300" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="516" y="412" font-size="15" fill="#b58cf0" font-weight="700">KK</text>
+<text xml:space="preserve" x="552" y="412" font-size="13" fill="#e8eaed" font-weight="700">双方事先互相认识</text>
+<rect x="530" y="428" width="110" height="36" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="585" y="450.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">客户端</text>
+<rect x="816" y="428" width="110" height="36" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="871" y="450.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">服务器</text>
+<text xml:space="preserve" x="585" y="482" font-size="11.5" fill="#9aa0a6" text-anchor="middle">有密钥对；固定 S 的密钥</text>
+<text xml:space="preserve" x="871" y="482" font-size="11.5" fill="#9aa0a6" text-anchor="middle">有密钥对；固定 C 的密钥</text>
+<line x1="585.0" y1="490.0" x2="585.0" y2="636.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="871.0" y1="490.0" x2="871.0" y2="636.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="585.0" y1="516.0" x2="863.0" y2="516.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="871.0,516.0 861.0,510.5 861.0,521.5" fill="#8c9198"/>
+<text xml:space="preserve" x="728" y="509" font-size="12" fill="#e8eaed" text-anchor="middle">1   一次性密钥</text>
+<line x1="871.0" y1="562.0" x2="593.0" y2="562.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="585.0,562.0 595.0,567.5 595.0,556.5" fill="#8c9198"/>
+<text xml:space="preserve" x="728" y="555" font-size="12" fill="#e8eaed" text-anchor="middle">2   一次性密钥</text>
+<rect x="585" y="638" width="286" height="14" rx="3" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="728" y="649" font-size="11" fill="#e8eaed" text-anchor="middle">双向密封</text>
+<text xml:space="preserve" x="516" y="674" font-size="12" fill="#9aa0a6">双方都由事先固定的密钥证明。2 条消息。</text>
+</g>
+</svg>

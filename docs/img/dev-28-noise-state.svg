@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 420" width="980" height="420" role="img" aria-labelledby="dev28noisestate-t dev28noisestate-d">
+<title id="dev28noisestate-t">The state of a Noise handshake</title>
+<desc id="dev28noisestate-d">Four steps from left to right. Start: the hash h and the chaining key ck are set to the protocol name, the prologue is mixed into h, and so are the static keys known beforehand. Each token: e mixes the one-time key into h; a DH token mixes its result into ck by HKDF and gives the key k; s and the payload are sealed with k, with h as the associated data, and mixed into h; a wrong tag fails the handshake. After the last message: Split derives k1 for client to server and k2 for server to client; AdHoc also derives the key and nonce of the session's packs from ck with the label &quot;AdHoc packs&quot;, the id from the first 4 bytes of h. Then the records are sealed with k1 and k2, the nonce is the record's number, and ck, k and the one-time secrets are wiped.</desc>
+<rect width="980" height="420" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">The state of a Noise handshake</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Two values follow every byte of the handshake; when it ends they give one key for each direction, and AdHoc one more for the packs</text>
+<rect x="20" y="80" width="220" height="230" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="130" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1. Start</text>
+<text xml:space="preserve" x="34" y="132" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">h = ck = protocol name</text>
+<text xml:space="preserve" x="34" y="152" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  &quot;Noise_XX_25519_</text>
+<text xml:space="preserve" x="34" y="172" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">    ChaChaPoly_SHA256&quot;</text>
+<text xml:space="preserve" x="34" y="192" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">MixHash( prologue )</text>
+<text xml:space="preserve" x="34" y="212" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">MixHash( keys known</text>
+<text xml:space="preserve" x="34" y="232" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  beforehand: &lt;- s )</text>
+<rect x="260" y="80" width="220" height="230" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="370" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">2. Each token</text>
+<text xml:space="preserve" x="274" y="132" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">e   → MixHash( e )</text>
+<text xml:space="preserve" x="274" y="152" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">DH  → ck, k =</text>
+<text xml:space="preserve" x="274" y="172" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">      HKDF( ck, DH )</text>
+<text xml:space="preserve" x="274" y="192" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">s, payload → seal with k,</text>
+<text xml:space="preserve" x="274" y="212" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  AD = h; MixHash</text>
+<text xml:space="preserve" x="274" y="232" font-size="11.5" fill="#f2b8b5">a wrong tag: the handshake</text>
+<text xml:space="preserve" x="274" y="252" font-size="11.5" fill="#f2b8b5">fails at once</text>
+<rect x="500" y="80" width="220" height="230" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="610" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">3. After the last message</text>
+<text xml:space="preserve" x="514" y="132" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">Split: HKDF( ck ) →</text>
+<text xml:space="preserve" x="514" y="152" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  k1  client → server</text>
+<text xml:space="preserve" x="514" y="172" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  k2  server → client</text>
+<text xml:space="preserve" x="514" y="192" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">HKDF( ck, &quot;AdHoc packs&quot; )</text>
+<text xml:space="preserve" x="514" y="212" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  → key, nonce of packs</text>
+<text xml:space="preserve" x="514" y="232" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  id = h[0..4]</text>
+<rect x="740" y="80" width="220" height="230" rx="8" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text xml:space="preserve" x="850" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">4. The transport</text>
+<text xml:space="preserve" x="754" y="132" font-size="11.5" fill="#e8eaed">records sealed with k1 / k2,</text>
+<text xml:space="preserve" x="754" y="152" font-size="11.5" fill="#e8eaed">nonce = record number</text>
+<text xml:space="preserve" x="754" y="172" font-size="11.5" fill="#e8eaed">ck, k, one-time secrets:</text>
+<text xml:space="preserve" x="754" y="192" font-size="11.5" fill="#e8eaed">wiped</text>
+<text xml:space="preserve" x="754" y="212" font-size="11.5" fill="#e8eaed">pack key → the session's</text>
+<text xml:space="preserve" x="754" y="232" font-size="11.5" fill="#e8eaed">keyring (Keys of a cipher)</text>
+<line x1="240.0" y1="195.0" x2="252.0" y2="195.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="260.0,195.0 250.0,189.5 250.0,200.5" fill="#8c9198"/>
+<line x1="480.0" y1="195.0" x2="492.0" y2="195.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="500.0,195.0 490.0,189.5 490.0,200.5" fill="#8c9198"/>
+<line x1="720.0" y1="195.0" x2="732.0" y2="195.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="740.0,195.0 730.0,189.5 730.0,200.5" fill="#8c9198"/>
+<text xml:space="preserve" x="24" y="346" font-size="12" fill="#9aa0a6">h - the hash of every byte sent and received: both sides must agree on all of it, or the next tag fails</text>
+<text xml:space="preserve" x="24" y="364" font-size="12" fill="#9aa0a6">ck - the chaining key: every DH is mixed into it        k - the key that seals the rest of the handshake</text>
+<text xml:space="preserve" x="24" y="400" font-size="12" fill="#9aa0a6">Steps 1 to 3 follow the Noise specification, sections 5.2 and 5.3; the key of the packs in step 3 is AdHoc's own.</text>
+</g>
+</svg>

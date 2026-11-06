@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 610" width="980" height="610" role="img" aria-labelledby="dev28choose-t dev28choose-d">
+<title id="dev28choose-t">Choosing what to switch on</title>
+<desc id="dev28choose-d">A flow of questions on the left. Is the other side an AdHoc runtime of yours? No: TLS alone, wss:// or connectTls. Yes: does it stay inside a network you trust? Yes: plain TCP, no key, nothing paid. No: must the server know the client by its key? No: Noise NK, host.key and the server key on connect. Yes: does the client know the server's key beforehand? No: Noise XX with onPeer on both sides. Yes: does the server know the client's key beforehand? Yes: Noise KK, both pinned. No: Noise IK with onPeer on the server. On the right, what to add for the path: a browser or networks that pass only the web: wss:// outside, Noise inside; Cloudflare or another terminator in front: chooseChain by address; datagrams: the key of the UDP host; relays between the two ends must not read: Noise in the tunnel with Tunnel.chain; a message that is stored or carried with no session: Chain.Pack.</desc>
+<rect width="980" height="610" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Choosing what to switch on</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Answer the questions on the left for the pattern, then add on the right what the path asks for</text>
+<rect x="30" y="80" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="104" font-size="12" fill="#e8eaed" text-anchor="middle">Is the other side</text>
+<text xml:space="preserve" x="180" y="119" font-size="12" fill="#e8eaed" text-anchor="middle">an AdHoc runtime of yours?</text>
+<rect x="390" y="80" width="220" height="56" rx="8" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="105" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">TLS alone</text>
+<text xml:space="preserve" x="500" y="122" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">wss://, connectTls( … )</text>
+<rect x="30" y="164" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="188" font-size="12" fill="#e8eaed" text-anchor="middle">Does it stay inside</text>
+<text xml:space="preserve" x="180" y="203" font-size="12" fill="#e8eaed" text-anchor="middle">a network you trust?</text>
+<rect x="390" y="164" width="220" height="56" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="189" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Plain TCP</text>
+<text xml:space="preserve" x="500" y="206" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">no key, nothing paid</text>
+<rect x="30" y="248" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="272" font-size="12" fill="#e8eaed" text-anchor="middle">Must the server know</text>
+<text xml:space="preserve" x="180" y="287" font-size="12" fill="#e8eaed" text-anchor="middle">the client by its key?</text>
+<rect x="390" y="248" width="220" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="273" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise NK</text>
+<text xml:space="preserve" x="500" y="290" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">host.key + server key</text>
+<rect x="30" y="332" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="356" font-size="12" fill="#e8eaed" text-anchor="middle">Does the client know</text>
+<text xml:space="preserve" x="180" y="371" font-size="12" fill="#e8eaed" text-anchor="middle">the server's key beforehand?</text>
+<rect x="390" y="332" width="220" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="357" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise XX</text>
+<text xml:space="preserve" x="500" y="374" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">onPeer on both sides</text>
+<rect x="30" y="416" width="300" height="56" rx="26" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="440" font-size="12" fill="#e8eaed" text-anchor="middle">Does the server know</text>
+<text xml:space="preserve" x="180" y="455" font-size="12" fill="#e8eaed" text-anchor="middle">the client's key beforehand?</text>
+<rect x="390" y="416" width="220" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="500" y="441" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise KK</text>
+<text xml:space="preserve" x="500" y="458" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">both keys pinned</text>
+<rect x="30" y="500" width="300" height="56" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="180" y="525" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise IK</text>
+<text xml:space="preserve" x="180" y="542" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">onPeer on the server</text>
+<line x1="330.0" y1="108.0" x2="382.0" y2="108.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,108.0 380.0,102.5 380.0,113.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="101" font-size="12" fill="#f2b8b5" text-anchor="middle">no</text>
+<line x1="180.0" y1="136.0" x2="180.0" y2="156.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,164.0 185.5,154.0 174.5,154.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="154" font-size="12" fill="#b7e0bf">yes</text>
+<line x1="330.0" y1="192.0" x2="382.0" y2="192.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,192.0 380.0,186.5 380.0,197.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="185" font-size="12" fill="#b7e0bf" text-anchor="middle">yes</text>
+<line x1="180.0" y1="220.0" x2="180.0" y2="240.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,248.0 185.5,238.0 174.5,238.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="238" font-size="12" fill="#f2b8b5">no</text>
+<line x1="330.0" y1="276.0" x2="382.0" y2="276.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,276.0 380.0,270.5 380.0,281.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="269" font-size="12" fill="#f2b8b5" text-anchor="middle">no</text>
+<line x1="180.0" y1="304.0" x2="180.0" y2="324.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,332.0 185.5,322.0 174.5,322.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="322" font-size="12" fill="#b7e0bf">yes</text>
+<line x1="330.0" y1="360.0" x2="382.0" y2="360.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,360.0 380.0,354.5 380.0,365.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="353" font-size="12" fill="#f2b8b5" text-anchor="middle">no</text>
+<line x1="180.0" y1="388.0" x2="180.0" y2="408.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,416.0 185.5,406.0 174.5,406.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="406" font-size="12" fill="#b7e0bf">yes</text>
+<line x1="330.0" y1="444.0" x2="382.0" y2="444.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="390.0,444.0 380.0,438.5 380.0,449.5" fill="#8c9198"/>
+<text xml:space="preserve" x="360" y="437" font-size="12" fill="#b7e0bf" text-anchor="middle">yes</text>
+<line x1="180.0" y1="472.0" x2="180.0" y2="492.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="180.0,500.0 185.5,490.0 174.5,490.0" fill="#8c9198"/>
+<text xml:space="preserve" x="190" y="490" font-size="12" fill="#f2b8b5">no</text>
+<rect x="650" y="70" width="306" height="496" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="668" y="96" font-size="13" fill="#e8eaed" font-weight="700">Then add what the path asks for</text>
+<rect x="666" y="112" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="134" font-size="12" fill="#e8eaed">A browser, or networks that</text>
+<text xml:space="preserve" x="680" y="150" font-size="12" fill="#e8eaed">pass only the web</text>
+<text xml:space="preserve" x="680" y="174" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ wss:// outside, Noise inside</text>
+<rect x="666" y="200" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="222" font-size="12" fill="#e8eaed">Cloudflare or another</text>
+<text xml:space="preserve" x="680" y="238" font-size="12" fill="#e8eaed">terminator in front</text>
+<text xml:space="preserve" x="680" y="262" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ chooseChain( address )</text>
+<rect x="666" y="288" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="310" font-size="12" fill="#e8eaed">Datagrams</text>
+<text xml:space="preserve" x="680" y="350" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ key of the UDP host</text>
+<rect x="666" y="376" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="398" font-size="12" fill="#e8eaed">Relays between the two ends</text>
+<text xml:space="preserve" x="680" y="414" font-size="12" fill="#e8eaed">must not read</text>
+<text xml:space="preserve" x="680" y="438" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ Tunnel.chain</text>
+<rect x="666" y="464" width="274" height="76" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="486" font-size="12" fill="#e8eaed">A message stored, or carried</text>
+<text xml:space="preserve" x="680" y="502" font-size="12" fill="#e8eaed">with no session</text>
+<text xml:space="preserve" x="680" y="526" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">→ Chain.Pack</text>
+<text xml:space="preserve" x="24" y="590" font-size="12" fill="#9aa0a6">Both ends choose the same pattern; a different pattern or a wrong key fails the handshake and closes the connection.</text>
+</g>
+</svg>

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" width="1000" height="520" role="img"><rect width="1000" height="520" rx="10" fill="#2b2b2b"/><title>One connection between a Left and a Right host: each host holds the same actors, each actor with its own states and its own current state, and the packs of all actors share one socket</title>
+<text x="24" y="40" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="18" fill="#e8eaed" text-anchor="start" font-weight="600">Inside one connection: its actors, and the current state of each</text>
+<rect x="24" y="60" width="400" height="340" rx="6" fill="none" stroke="#e8833a" stroke-width="1.4"/>
+<text x="32" y="76" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="start" font-weight="600">L host · Client</text>
+<rect x="38" y="86" width="372" height="302" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="46" y="100" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">connection Link</text>
+<rect x="52" y="114" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="62" y="138" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Actor0</text>
+<text x="62" y="155" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">per connection</text>
+<rect x="152" y="129" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="183" y="147" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Start</text>
+<rect x="228" y="129" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="259" y="147" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Greeting</text>
+<path d="M214 142 L220 142" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M228 142 L219 146.5 L219 137.5 Z" fill="#c9ccd1"/>
+<rect x="304" y="129" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="335" y="147" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Ready</text>
+<path d="M290 142 L296 142" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M304 142 L295 146.5 L295 137.5 Z" fill="#c9ccd1"/>
+<rect x="52" y="182" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="62" y="206" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Notify</text>
+<text x="62" y="223" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">function group</text>
+<rect x="152" y="197" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="183" y="215" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Messages</text>
+<rect x="228" y="197" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="259" y="215" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Flags</text>
+<rect x="52" y="250" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="62" y="274" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Upload #1</text>
+<text x="62" y="291" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">instance 1</text>
+<rect x="152" y="265" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="183" y="283" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Start</text>
+<rect x="228" y="265" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="259" y="283" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Waiting</text>
+<path d="M214 278 L220 278" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M228 278 L219 282.5 L219 273.5 Z" fill="#c9ccd1"/>
+<rect x="52" y="318" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="62" y="342" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Upload #2</text>
+<text x="62" y="359" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">instance 2</text>
+<rect x="152" y="333" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="183" y="351" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Start</text>
+<rect x="228" y="333" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="259" y="351" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Waiting</text>
+<path d="M214 346 L220 346" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M228 346 L219 350.5 L219 341.5 Z" fill="#c9ccd1"/>
+<rect x="576" y="60" width="400" height="340" rx="6" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="584" y="76" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="start" font-weight="600">R host · Server</text>
+<rect x="590" y="86" width="372" height="302" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="598" y="100" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">connection Link</text>
+<rect x="604" y="114" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="614" y="138" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Actor0</text>
+<text x="614" y="155" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">per connection</text>
+<rect x="704" y="129" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="735" y="147" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Start</text>
+<rect x="780" y="129" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="811" y="147" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Greeting</text>
+<path d="M766 142 L772 142" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M780 142 L771 146.5 L771 137.5 Z" fill="#c9ccd1"/>
+<rect x="856" y="129" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="887" y="147" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Ready</text>
+<path d="M842 142 L848 142" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M856 142 L847 146.5 L847 137.5 Z" fill="#c9ccd1"/>
+<rect x="604" y="182" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="614" y="206" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Notify</text>
+<text x="614" y="223" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">function group</text>
+<rect x="704" y="197" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="735" y="215" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Messages</text>
+<rect x="780" y="197" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="811" y="215" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Flags</text>
+<rect x="604" y="250" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="614" y="274" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Upload #1</text>
+<text x="614" y="291" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">instance 1</text>
+<rect x="704" y="265" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="735" y="283" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Start</text>
+<rect x="780" y="265" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="811" y="283" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Waiting</text>
+<path d="M766 278 L772 278" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M780 278 L771 282.5 L771 273.5 Z" fill="#c9ccd1"/>
+<rect x="604" y="318" width="344" height="56" rx="5" fill="#232323" stroke="#5f6670" stroke-width="1.2"/>
+<text x="614" y="342" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8eaed" text-anchor="start" font-weight="600">Upload #2</text>
+<text x="614" y="359" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">instance 2</text>
+<rect x="704" y="333" width="62" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="735" y="351" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">Start</text>
+<rect x="780" y="333" width="62" height="26" rx="6" fill="#2b2e33" stroke="#5f6670" stroke-width="1.6"/><text x="811" y="351" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Waiting</text>
+<path d="M766 346 L772 346" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M780 346 L771 350.5 L771 341.5 Z" fill="#c9ccd1"/>
+<text x="500" y="78" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">one socket</text>
+<path d="M396 142 L596 142" fill="none" stroke="#a06fd0" stroke-width="2" stroke-linejoin="round"/><path d="M604 142 L595 146.5 L595 137.5 Z" fill="#a06fd0"/>
+<path d="M396 142 L405 137.5 L405 146.5 Z" fill="#a06fd0"/>
+<text x="500" y="134" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#a06fd0" text-anchor="middle">Beat</text>
+<text x="500" y="158" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="middle">actor Actor0</text>
+<path d="M604 210 L404 210" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M396 210 L405 205.5 L405 214.5 Z" fill="#4fb3ff"/>
+<text x="500" y="202" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#4fb3ff" text-anchor="middle">Note</text>
+<text x="500" y="226" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="middle">actor Notify</text>
+<path d="M604 278 L404 278" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M396 278 L405 273.5 L405 282.5 Z" fill="#4fb3ff"/>
+<text x="500" y="270" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#4fb3ff" text-anchor="middle">BlobAck</text>
+<text x="500" y="294" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="middle">actor Upload, instance 1</text>
+<path d="M396 346 L596 346" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M604 346 L595 350.5 L595 341.5 Z" fill="#e8833a"/>
+<text x="500" y="338" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8833a" text-anchor="middle">Blob</text>
+<text x="500" y="362" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="middle">actor Upload, instance 2</text>
+<rect x="24" y="414" width="952" height="92" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="40" y="426" width="62" height="22" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="71" y="442" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">State</text>
+<text x="112" y="442" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">the current state of the actor; a function group is in all of its states at once</text>
+<text x="40" y="470" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">Both hosts hold the same current state of every actor: each side runs a replica of the same state machine.</text>
+<text x="40" y="492" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">All actors share one socket: every pack names its actor and, for an actor with instances, the instance.</text>
+</svg>

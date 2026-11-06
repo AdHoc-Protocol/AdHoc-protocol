@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 470" width="980" height="470" role="img" aria-labelledby="dev28noisetokens-t dev28noisetokens-d">
+<title id="dev28noisetokens-t">Tokens: what every pattern is made of</title>
+<desc id="dev28noisetokens-d">Left, the tokens that send a key: e sends this side's one-time public key, new for every handshake, 32 bytes in clear, mixed into the hash; s sends this side's static public key, 32 bytes, sealed with a 16-byte tag once a key exists. Right, a grid of the four Diffie-Hellman tokens: ee, the client's one-time key with the server's one-time key, fresh on both sides, gives forward secrecy; es, the client's one-time key with the server's static key, can be computed only by the holder of the server's secret, so the server is proved and what follows is sealed to it; se, the client's static key with the server's one-time key, proves the client; ss, static with static, is known before any one-time key and gives no forward secrecy on its own. Below, the tokens of each pattern: NK es ee; IK es ss ee se; XX ee es se; KK es ss ee se. Every result goes through HKDF into the chaining key.</desc>
+<rect width="980" height="470" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Tokens: what every pattern is made of</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Two tokens send a key; four tokens agree on a secret by Diffie-Hellman between one key of each side</text>
+<rect x="20" y="72" width="290" height="300" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="36" y="96" font-size="13" fill="#e8eaed" font-weight="700">Tokens that send a key</text>
+<rect x="36" y="113" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="47" y="128" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">e</text>
+<text xml:space="preserve" x="72" y="126" font-size="11.5" fill="#9aa0a6">this side's one-time public key,</text>
+<text xml:space="preserve" x="72" y="141" font-size="11.5" fill="#9aa0a6">new for every handshake:</text>
+<text xml:space="preserve" x="72" y="156" font-size="11.5" fill="#9aa0a6">32 bytes, in clear; mixed into</text>
+<text xml:space="preserve" x="72" y="171" font-size="11.5" fill="#9aa0a6">the hash</text>
+<rect x="36" y="199" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="47" y="214" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">s</text>
+<text xml:space="preserve" x="72" y="212" font-size="11.5" fill="#9aa0a6">this side's static public key:</text>
+<text xml:space="preserve" x="72" y="227" font-size="11.5" fill="#9aa0a6">32 bytes, sealed with a tag</text>
+<text xml:space="preserve" x="72" y="242" font-size="11.5" fill="#9aa0a6">of 16 once a key exists</text>
+<text xml:space="preserve" x="36" y="300" font-size="11.5" fill="#9aa0a6">In a DH token the first letter</text>
+<text xml:space="preserve" x="36" y="315" font-size="11.5" fill="#9aa0a6">is the client's key (the</text>
+<text xml:space="preserve" x="36" y="330" font-size="11.5" fill="#9aa0a6">initiator), the second the</text>
+<text xml:space="preserve" x="36" y="345" font-size="11.5" fill="#9aa0a6">server's (the responder)</text>
+<text xml:space="preserve" x="572" y="96" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">the server's one-time key  e</text>
+<text xml:space="preserve" x="829" y="96" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">the server's static key  s</text>
+<text xml:space="preserve" x="328" y="160" font-size="12" fill="#e8eaed" font-weight="700">the client's</text>
+<text xml:space="preserve" x="328" y="175" font-size="12" fill="#e8eaed" font-weight="700">one-time</text>
+<text xml:space="preserve" x="328" y="190" font-size="12" fill="#e8eaed" font-weight="700">key  e</text>
+<text xml:space="preserve" x="328" y="290" font-size="12" fill="#e8eaed" font-weight="700">the client's</text>
+<text xml:space="preserve" x="328" y="305" font-size="12" fill="#e8eaed" font-weight="700">static</text>
+<text xml:space="preserve" x="328" y="320" font-size="12" fill="#e8eaed" font-weight="700">key  s</text>
+<rect x="450" y="108" width="245" height="120" rx="8" fill="#232323" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="464" y="136" font-size="20" fill="#6fbf7f" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<text xml:space="preserve" x="464" y="160" font-size="11.5" fill="#e8eaed">fresh keys on both sides:</text>
+<text xml:space="preserve" x="464" y="175" font-size="11.5" fill="#e8eaed">forward secrecy - a secret stolen</text>
+<text xml:space="preserve" x="464" y="190" font-size="11.5" fill="#e8eaed">later opens nothing recorded</text>
+<rect x="707" y="108" width="245" height="120" rx="8" fill="#232323" stroke="#6f9fd8" stroke-width="1.6"/>
+<text xml:space="preserve" x="721" y="136" font-size="20" fill="#6f9fd8" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<text xml:space="preserve" x="721" y="160" font-size="11.5" fill="#e8eaed">only the holder of the server's</text>
+<text xml:space="preserve" x="721" y="175" font-size="11.5" fill="#e8eaed">secret computes it: the server is</text>
+<text xml:space="preserve" x="721" y="190" font-size="11.5" fill="#e8eaed">proved, what follows is sealed</text>
+<text xml:space="preserve" x="721" y="205" font-size="11.5" fill="#e8eaed">to it</text>
+<rect x="450" y="238" width="245" height="120" rx="8" fill="#232323" stroke="#f2a44e" stroke-width="1.6"/>
+<text xml:space="preserve" x="464" y="266" font-size="20" fill="#f2a44e" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">se</text>
+<text xml:space="preserve" x="464" y="290" font-size="11.5" fill="#e8eaed">only the holder of the client's</text>
+<text xml:space="preserve" x="464" y="305" font-size="11.5" fill="#e8eaed">secret computes it: the client</text>
+<text xml:space="preserve" x="464" y="320" font-size="11.5" fill="#e8eaed">is proved</text>
+<rect x="707" y="238" width="245" height="120" rx="8" fill="#232323" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="721" y="266" font-size="20" fill="#8c9198" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">ss</text>
+<text xml:space="preserve" x="721" y="290" font-size="11.5" fill="#e8eaed">static with static: known before</text>
+<text xml:space="preserve" x="721" y="305" font-size="11.5" fill="#e8eaed">any one-time key; gives no</text>
+<text xml:space="preserve" x="721" y="320" font-size="11.5" fill="#e8eaed">forward secrecy on its own</text>
+<text xml:space="preserve" x="24" y="400" font-size="12" fill="#e8eaed" font-weight="700">In each pattern:</text>
+<text xml:space="preserve" x="140" y="400" font-size="13" fill="#b58cf0" font-weight="700">NK</text>
+<rect x="168" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="183" y="400" font-size="13" fill="#6f9fd8" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<rect x="202" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="217" y="400" font-size="13" fill="#6fbf7f" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<text xml:space="preserve" x="266" y="400" font-size="13" fill="#b58cf0" font-weight="700">IK</text>
+<rect x="294" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="309" y="400" font-size="13" fill="#6f9fd8" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<rect x="328" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#8c9198" stroke-width="1.4"/>
+<text xml:space="preserve" x="343" y="400" font-size="13" fill="#8c9198" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ss</text>
+<rect x="362" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="377" y="400" font-size="13" fill="#6fbf7f" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<rect x="396" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#f2a44e" stroke-width="1.4"/>
+<text xml:space="preserve" x="411" y="400" font-size="13" fill="#f2a44e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">se</text>
+<text xml:space="preserve" x="460" y="400" font-size="13" fill="#b58cf0" font-weight="700">XX</text>
+<rect x="488" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="503" y="400" font-size="13" fill="#6fbf7f" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<rect x="522" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="537" y="400" font-size="13" fill="#6f9fd8" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<rect x="556" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#f2a44e" stroke-width="1.4"/>
+<text xml:space="preserve" x="571" y="400" font-size="13" fill="#f2a44e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">se</text>
+<text xml:space="preserve" x="620" y="400" font-size="13" fill="#b58cf0" font-weight="700">KK</text>
+<rect x="648" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="663" y="400" font-size="13" fill="#6f9fd8" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<rect x="682" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#8c9198" stroke-width="1.4"/>
+<text xml:space="preserve" x="697" y="400" font-size="13" fill="#8c9198" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ss</text>
+<rect x="716" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="731" y="400" font-size="13" fill="#6fbf7f" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<rect x="750" y="385" width="30" height="21" rx="4" fill="#232323" stroke="#f2a44e" stroke-width="1.4"/>
+<text xml:space="preserve" x="765" y="400" font-size="13" fill="#f2a44e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">se</text>
+<text xml:space="preserve" x="24" y="444" font-size="12" fill="#9aa0a6">Every DH result goes through HKDF into the chaining key: the keys of the session depend on every DH of the pattern.</text>
+</g>
+</svg>

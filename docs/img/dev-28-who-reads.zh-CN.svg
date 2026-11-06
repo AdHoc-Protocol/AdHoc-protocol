@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" role="img" aria-labelledby="dev28whoreads-t dev28whoreads-d">
+<title id="dev28whoreads-t">途中谁能读到什么</title>
+<desc id="dev28whoreads-d">Five parties from left to right: the client, the line (Wi-Fi, a provider), a TLS terminator such as Cloudflare or nginx, a relay host of a virtual connection, and the far host, the other end. Under them three spans: TLS runs from the client to the terminator and is proved by a certificate; Noise runs from the client past the terminator to the relay, and again from the relay to the far host, proved by key; Noise in the tunnel runs from the client to the far host, and the relay forwards its records without a key. A grid below shows, for plain TCP, TLS, Noise, TLS plus Noise, and Noise also in the tunnel, whether the line, the terminator and the relay read everything or see sealed bytes: plain TCP is read by all; TLS is sealed on the line only; Noise is sealed on the line and at the terminator but read by the relay; Noise in the tunnel is sealed everywhere between the ends. No layer hides addresses, ports, timing or rough sizes; every handshake makes one-time keys, so a secret stolen later opens nothing recorded before.</desc>
+<rect width="980" height="520" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">途中谁能读到什么</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">每一层在不同的参与方之间密封。下方表格列出每种配置给两端之间的参与方留下了什么</text>
+<line x1="160.0" y1="103.0" x2="790.0" y2="103.0" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="30" y="76" width="130" height="54" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="95" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">客户端</text>
+<text xml:space="preserve" x="95" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">你的主机</text>
+<rect x="205" y="76" width="150" height="54" rx="8" fill="none" stroke="#8c9198" stroke-width="1.6" stroke-dasharray="5 4"/>
+<text xml:space="preserve" x="280" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">线路</text>
+<text xml:space="preserve" x="280" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">Wi-Fi、运营商</text>
+<rect x="400" y="76" width="150" height="54" rx="8" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.6"/>
+<text xml:space="preserve" x="475" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">终结器</text>
+<text xml:space="preserve" x="475" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">Cloudflare、nginx</text>
+<rect x="595" y="76" width="150" height="54" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="670" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">中继主机</text>
+<text xml:space="preserve" x="670" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">在路径上</text>
+<rect x="790" y="76" width="160" height="54" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="870" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">远端主机</text>
+<text xml:space="preserve" x="870" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">另一端</text>
+<rect x="95" y="150" width="380" height="24" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="105" y="166" font-size="12" fill="#e8eaed">TLS：到终结它的一方为止，由证书证明</text>
+<rect x="95" y="186" width="575" height="24" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="105" y="202" font-size="12" fill="#e8eaed">Noise：穿过终结器，由中继主机的密钥证明</text>
+<rect x="670" y="186" width="200" height="24" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="202" font-size="12" fill="#e8eaed">Noise，下一跳</text>
+<rect x="95" y="222" width="775" height="24" fill="none" stroke="#b58cf0" stroke-width="2" stroke-dasharray="7 5"/>
+<text xml:space="preserve" x="105" y="238" font-size="12" fill="#e8eaed">隧道内的 Noise：端到端；中继不持有密钥，只转发它的记录</text>
+<line x1="95.0" y1="130.0" x2="95.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="280.0" y1="130.0" x2="280.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="475.0" y1="130.0" x2="475.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="670.0" y1="130.0" x2="670.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="870.0" y1="130.0" x2="870.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<text xml:space="preserve" x="24" y="284" font-size="13" fill="#e8eaed" font-weight="700">每种配置给两端之间的参与方留下什么</text>
+<text xml:space="preserve" x="30" y="317" font-size="12" fill="#e8eaed">纯 TCP</text>
+<rect x="210" y="300" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="316" font-size="12" fill="#f2b8b5" text-anchor="middle">全部可读</text>
+<rect x="405" y="300" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="316" font-size="12" fill="#f2b8b5" text-anchor="middle">全部可读</text>
+<rect x="600" y="300" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="316" font-size="12" fill="#f2b8b5" text-anchor="middle">全部可读</text>
+<rect x="800" y="300" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="316" font-size="12" fill="#9aa0a6" text-anchor="middle">可读：它就是终点</text>
+<text xml:space="preserve" x="30" y="349" font-size="12" fill="#e8eaed">TLS</text>
+<rect x="210" y="332" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="348" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="405" y="332" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="348" font-size="12" fill="#f2b8b5" text-anchor="middle">全部可读</text>
+<rect x="600" y="332" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="348" font-size="12" fill="#f2b8b5" text-anchor="middle">全部可读</text>
+<rect x="800" y="332" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="348" font-size="12" fill="#9aa0a6" text-anchor="middle">可读：它就是终点</text>
+<text xml:space="preserve" x="30" y="381" font-size="12" fill="#e8eaed">Noise</text>
+<rect x="210" y="364" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="380" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="405" y="364" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="380" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="600" y="364" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="380" font-size="12" fill="#f2b8b5" text-anchor="middle">全部可读</text>
+<rect x="800" y="364" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="380" font-size="12" fill="#9aa0a6" text-anchor="middle">可读：它就是终点</text>
+<text xml:space="preserve" x="30" y="413" font-size="12" fill="#e8eaed">TLS + Noise</text>
+<rect x="210" y="396" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="412" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="405" y="396" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="412" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="600" y="396" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="412" font-size="12" fill="#f2b8b5" text-anchor="middle">全部可读</text>
+<rect x="800" y="396" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="412" font-size="12" fill="#9aa0a6" text-anchor="middle">可读：它就是终点</text>
+<text xml:space="preserve" x="30" y="445" font-size="12" fill="#e8eaed">Noise，隧道内也有</text>
+<rect x="210" y="428" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="444" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="405" y="428" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="444" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="600" y="428" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="444" font-size="12" fill="#b7e0bf" text-anchor="middle">已密封</text>
+<rect x="800" y="428" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="444" font-size="12" fill="#9aa0a6" text-anchor="middle">可读：它就是终点</text>
+<text xml:space="preserve" x="24" y="480" font-size="12" fill="#9aa0a6">没有哪一层能隐藏地址、端口、时间和大致的长度；在 TLS 下，证书中的名称以明文传输。</text>
+<text xml:space="preserve" x="24" y="498" font-size="12" fill="#9aa0a6">每次握手都生成一次性密钥：事后被盗的私钥打不开此前录下的任何内容。</text>
+</g>
+</svg>

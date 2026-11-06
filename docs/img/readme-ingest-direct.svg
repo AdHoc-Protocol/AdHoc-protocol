@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" role="img" aria-labelledby="title desc">
+<title id="title">Abstract host: the generated parser writes straight into your own structures</title>
+<desc id="desc">Top, dim: the pattern to avoid - a socket buffer goes through a parser into a message object on the heap (copy 1), then through a mapper into your structures (copy 2), with a buffer the size of the whole message. Bottom: on an abstract host, a Block streams through a 1 KB receive buffer; one fill holds the sequence and window 1 of the samples, the next fill brings window 2. The generated parser calls your setters and the data lands in your ring buffer and your columns; a generated Block object is never created. Right: Capture.raw, a Stream of length-prefixed chunks ending with a zero length, flows into your sink; its length is unknown at the start and the S cap is checked on both sides. Footer: resident memory is a 1 KB send and a 1 KB receive buffer per connection plus a small parser state, whatever the pack size; a full sink stops socket reads so unread data waits in the network; 64 states of 3 bits take 24 bytes.</desc>
+<rect width="960" height="520" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="600">Abstract host: the parser writes into your structures</text>
+<text x="24" y="66" font-size="13" fill="#9aa0a6">parse, then copy (the pattern to avoid)</text>
+<rect x="24" y="88" width="126" height="22" rx="3" fill="none" stroke="#6a6f75" stroke-width="1.3"/>
+<line x1="42" y1="88" x2="42" y2="110" stroke="#6a6f75" stroke-width="1"/>
+<line x1="60" y1="88" x2="60" y2="110" stroke="#6a6f75" stroke-width="1"/>
+<line x1="78" y1="88" x2="78" y2="110" stroke="#6a6f75" stroke-width="1"/>
+<line x1="96" y1="88" x2="96" y2="110" stroke="#6a6f75" stroke-width="1"/>
+<line x1="114" y1="88" x2="114" y2="110" stroke="#6a6f75" stroke-width="1"/>
+<line x1="132" y1="88" x2="132" y2="110" stroke="#6a6f75" stroke-width="1"/>
+<text x="87" y="128" font-size="12" fill="#9aa0a6" text-anchor="middle">socket buffer</text>
+<rect x="174" y="80" width="80" height="38" rx="6" fill="#2f2f2f" stroke="#6a6f75" stroke-width="1.3"/>
+<text x="214" y="103.5" font-size="13" fill="#9aa0a6" text-anchor="middle">parser</text>
+<rect x="298" y="80" width="168" height="38" rx="6" fill="#2f2f2f" stroke="#6a6f75" stroke-width="1.3"/>
+<text x="382" y="103.5" font-size="13" fill="#9aa0a6" text-anchor="middle">message object (heap)</text>
+<rect x="490" y="80" width="80" height="38" rx="6" fill="#2f2f2f" stroke="#6a6f75" stroke-width="1.3"/>
+<text x="530" y="103.5" font-size="13" fill="#9aa0a6" text-anchor="middle">mapper</text>
+<rect x="614" y="80" width="132" height="38" rx="6" fill="#2f2f2f" stroke="#6a6f75" stroke-width="1.3"/>
+<text x="680" y="103.5" font-size="13" fill="#9aa0a6" text-anchor="middle">your structures</text>
+<path d="M150 99 L166 99" fill="none" stroke="#6a6f75" stroke-width="1.6" stroke-linejoin="round"/><path d="M174 99 L165 103.6 L165 94.4 Z" fill="#6a6f75"/>
+<path d="M254 99 L290 99" fill="none" stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M298 99 L289 103.6 L289 94.4 Z" fill="#9aa0a6"/>
+<text x="276" y="76" font-size="12" fill="#9aa0a6" text-anchor="middle">copy 1</text>
+<path d="M466 99 L482 99" fill="none" stroke="#6a6f75" stroke-width="1.6" stroke-linejoin="round"/><path d="M490 99 L481 103.6 L481 94.4 Z" fill="#6a6f75"/>
+<path d="M570 99 L606 99" fill="none" stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M614 99 L605 103.6 L605 94.4 Z" fill="#9aa0a6"/>
+<text x="592" y="76" font-size="12" fill="#9aa0a6" text-anchor="middle">copy 2</text>
+<text x="382" y="134" font-size="12" fill="#9aa0a6" text-anchor="middle">one object per message, then a second model to keep in sync</text>
+<rect x="902" y="66" width="30" height="88" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.4"/>
+<rect x="906" y="70" width="22" height="11" rx="2" fill="#e06c6c" opacity="0.75"/>
+<rect x="906" y="84" width="22" height="11" rx="2" fill="#e06c6c" opacity="0.75"/>
+<rect x="906" y="98" width="22" height="11" rx="2" fill="#e06c6c" opacity="0.75"/>
+<rect x="906" y="112" width="22" height="11" rx="2" fill="#e06c6c" opacity="0.75"/>
+<rect x="906" y="126" width="22" height="11" rx="2" fill="#e06c6c" opacity="0.75"/>
+<rect x="906" y="140" width="22" height="11" rx="2" fill="#e06c6c" opacity="0.75"/>
+<text x="890" y="106" font-size="12" fill="#e06c6c" text-anchor="end">a buffer the size</text>
+<text x="890" y="121" font-size="12" fill="#e06c6c" text-anchor="end">of the whole message</text>
+<line x1="24" y1="172" x2="936" y2="172" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<text x="24" y="198" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8833a" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">/// &lt;see cref='InJAVA'/&gt;--</tspan><tspan fill="#9aa0a6">   on the host: every pack is an interface over your objects</tspan></text>
+<rect x="24" y="238" width="396" height="28" rx="3" fill="#1f2a33" stroke="#4fb3ff" stroke-width="1.2"/>
+<line x1="54" y1="245" x2="54" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="60" y1="245" x2="60" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="66" y1="245" x2="66" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="72" y1="245" x2="72" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="78" y1="245" x2="78" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="84" y1="245" x2="84" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="90" y1="245" x2="90" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="96" y1="245" x2="96" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="102" y1="245" x2="102" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="108" y1="245" x2="108" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="114" y1="245" x2="114" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="120" y1="245" x2="120" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="126" y1="245" x2="126" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="132" y1="245" x2="132" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="138" y1="245" x2="138" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="144" y1="245" x2="144" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="150" y1="245" x2="150" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="156" y1="245" x2="156" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="162" y1="245" x2="162" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="168" y1="245" x2="168" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="174" y1="245" x2="174" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="180" y1="245" x2="180" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="186" y1="245" x2="186" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="192" y1="245" x2="192" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="198" y1="245" x2="198" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="204" y1="245" x2="204" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="210" y1="245" x2="210" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="216" y1="245" x2="216" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="222" y1="245" x2="222" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="228" y1="245" x2="228" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="234" y1="245" x2="234" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="240" y1="245" x2="240" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="246" y1="245" x2="246" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="252" y1="245" x2="252" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="258" y1="245" x2="258" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="264" y1="245" x2="264" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="270" y1="245" x2="270" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="276" y1="245" x2="276" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="282" y1="245" x2="282" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="288" y1="245" x2="288" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="294" y1="245" x2="294" y2="259" stroke="#4fb3ff" stroke-width="0.8" opacity="0.35"/>
+<line x1="50" y1="238" x2="50" y2="266" stroke="#4fb3ff" stroke-width="1.2"/>
+<line x1="300" y1="238" x2="300" y2="266" stroke="#4fb3ff" stroke-width="1.2"/>
+<line x1="340" y1="238" x2="340" y2="266" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="37" y="256.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle">seq</text>
+<text x="420" y="224" font-size="12" fill="#9aa0a6" text-anchor="end">samples: 4096 × short = 8 KB</text>
+<text x="320" y="256.5" font-size="12" fill="#9aa0a6" text-anchor="middle">…</text>
+<text x="380" y="256.5" font-size="12" fill="#e8eaed" text-anchor="middle">states</text>
+<rect x="20" y="230" width="136" height="44" rx="5" fill="none" stroke="#a06fd0" stroke-width="2"/>
+<rect x="160" y="230" width="112" height="44" rx="5" fill="none" stroke="#a06fd0" stroke-width="1.6" stroke-dasharray="5 4"/>
+<text x="20" y="224" font-size="13" fill="#a06fd0" font-weight="600">receive buffer · 1 KB</text>
+<text x="166" y="224" font-size="12" fill="#a06fd0">next fill</text>
+<path d="M54 278 Q54 282.5 63 282.5 L94 282.5 Q103 282.5 103 287 Q103 282.5 112 282.5 L143 282.5 Q152 282.5 152 278" fill="none" stroke="#a06fd0" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M164 278 Q164 282.5 173 282.5 L207 282.5 Q216 282.5 216 287 Q216 282.5 225 282.5 L259 282.5 Q268 282.5 268 278" fill="none" stroke="#a06fd0" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="103" y="302" font-size="12" fill="#a06fd0" text-anchor="middle">window 1</text>
+<text x="216" y="302" font-size="12" fill="#a06fd0" text-anchor="middle">window 2</text>
+<rect x="120" y="318" width="176" height="40" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="208" y="335" font-size="13" fill="#f2c14e" text-anchor="middle" font-weight="600">generated parser</text>
+<text x="208" y="351" font-size="12" fill="#e8eaed" text-anchor="middle">calls your setters</text>
+<path d="M36 274 L36 330 Q36 338 44 338 L112 338" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M120 338 L111 342.6 L111 333.4 Z" fill="#4fb3ff"/>
+<rect x="318" y="288" width="148" height="40" rx="6" fill="none" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="392" y="304" font-size="12" fill="#9aa0a6" text-anchor="middle">generated Block object</text>
+<g data-nocheck="1"><line x1="330" y1="300" x2="454" y2="300" stroke="#e06c6c" stroke-width="1.4"/></g>
+<text x="392" y="320" font-size="12" fill="#e06c6c" text-anchor="middle">never created</text>
+<text x="540" y="262" font-size="13" fill="#e8833a" text-anchor="middle">your ring buffer</text>
+<path d="M541.1 274 A42 42 0 0 1 560 279.1 L551.5 294.9 A24 24 0 0 0 540.6 292 Z" fill="rgba(232,131,58,0.55)" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M561.9 280.2 A42 42 0 0 1 575.8 294.1 L560.5 303.5 A24 24 0 0 0 552.5 295.5 Z" fill="rgba(232,131,58,0.55)" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M576.9 296 A42 42 0 0 1 582 314.9 L564 315.4 A24 24 0 0 0 561.1 304.5 Z" fill="rgba(232,131,58,0.55)" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M582 317.1 A42 42 0 0 1 576.9 336 L561.1 327.5 A24 24 0 0 0 564 316.6 Z" fill="rgba(232,131,58,0.55)" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M575.8 337.9 A42 42 0 0 1 561.9 351.8 L552.5 336.5 A24 24 0 0 0 560.5 328.5 Z" fill="rgba(232,131,58,0.55)" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M560 352.9 A42 42 0 0 1 541.1 358 L540.6 340 A24 24 0 0 0 551.5 337.1 Z" fill="rgba(232,131,58,0.55)" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M538.9 358 A42 42 0 0 1 520 352.9 L528.5 337.1 A24 24 0 0 0 539.4 340 Z" fill="rgba(232,131,58,0.55)" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M518.1 351.8 A42 42 0 0 1 504.2 337.9 L519.5 328.5 A24 24 0 0 0 527.5 336.5 Z" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M503.1 336 A42 42 0 0 1 498 317.1 L516 316.6 A24 24 0 0 0 518.9 327.5 Z" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M498 314.9 A42 42 0 0 1 503.1 296 L518.9 304.5 A24 24 0 0 0 516 315.4 Z" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M504.2 294.1 A42 42 0 0 1 518.1 280.2 L527.5 295.5 A24 24 0 0 0 519.5 303.5 Z" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M520 279.1 A42 42 0 0 1 538.9 274 L539.4 292 A24 24 0 0 0 528.5 294.9 Z" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M540 316 L535.5 323.8" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M533 328.1 L533 321.2 L539 324.7 Z" fill="#e8833a"/>
+<text x="662" y="262" font-size="13" fill="#e8833a" text-anchor="middle">your columns</text>
+<rect x="622" y="274" width="20" height="84" rx="3" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.3"/>
+<rect x="624" y="296" width="16" height="60" rx="2" fill="#e8833a" opacity="0.55"/>
+<rect x="652" y="274" width="20" height="84" rx="3" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.3"/>
+<rect x="654" y="312" width="16" height="44" rx="2" fill="#e8833a" opacity="0.55"/>
+<rect x="682" y="274" width="20" height="84" rx="3" fill="#2f2f2f" stroke="#e8833a" stroke-width="1.3"/>
+<rect x="684" y="304" width="16" height="52" rx="2" fill="#e8833a" opacity="0.55"/>
+<path d="M296 334 L488 334" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M496 334 L487 338.6 L487 329.4 Z" fill="#e8833a"/>
+<path d="M296 350 L306.2 369 Q310 376 318 376 L657.5 376 Q662 376 662 371.5 L662 367" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M662 359 L666.6 368 L657.4 368 Z" fill="#e8833a"/>
+<text x="480" y="393" font-size="12" fill="#9aa0a6" text-anchor="middle">array data handed over as windows of the buffer</text>
+<text x="732" y="216" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Capture.raw</tspan><tspan > - a Stream</tspan></text>
+<rect x="732" y="230" width="28" height="18" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="746" y="243" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">len</text>
+<rect x="763" y="230" width="52" height="18" rx="3" fill="#1f2a33" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="789" y="243" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">data</text>
+<rect x="732" y="254" width="28" height="18" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="746" y="267" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">len</text>
+<rect x="763" y="254" width="52" height="18" rx="3" fill="#1f2a33" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="789" y="267" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">data</text>
+<rect x="732" y="278" width="28" height="18" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="746" y="291" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">len</text>
+<rect x="763" y="278" width="52" height="18" rx="3" fill="#1f2a33" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="789" y="291" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" text-anchor="middle" xml:space="preserve">data</text>
+<text x="774" y="310" font-size="13" fill="#9aa0a6" text-anchor="middle">…</text>
+<rect x="732" y="318" width="28" height="18" rx="3" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="746" y="331" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">0</text>
+<text x="768" y="331" font-size="12" fill="#9aa0a6">end</text>
+<path d="M746 336 L746 344" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M746 352 L741.4 343 L750.6 343 Z" fill="#4fb3ff"/>
+<path d="M734 354 L751.3 354 L760 362.7 L760 384 L734 384 Z" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6" stroke-linejoin="round"/><path d="M751.3 354 L751.3 362.7 L760 362.7" fill="none" stroke="#e8833a" stroke-width="1.3" stroke-linejoin="round"/>
+<text x="770" y="374" font-size="13" fill="#e8833a">your sink</text>
+<text x="830" y="248" font-size="12" fill="#9aa0a6">length unknown</text>
+<text x="830" y="262" font-size="12" fill="#9aa0a6">at the start</text>
+<text x="830" y="290" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">[S(500_000_000)]</text>
+<text x="830" y="305" font-size="12" fill="#9aa0a6">checked on</text>
+<text x="830" y="319" font-size="12" fill="#9aa0a6">both sides</text>
+<rect x="24" y="404" width="912" height="100" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="40" y="420" width="78" height="24" rx="4" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="79" y="436.5" font-size="12" fill="#e8eaed" text-anchor="middle">send 1 KB</text>
+<rect x="126" y="420" width="78" height="24" rx="4" fill="#32293e" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="165" y="436.5" font-size="12" fill="#e8eaed" text-anchor="middle">recv 1 KB</text>
+<text x="214" y="436.5" font-size="12" fill="#9aa0a6">× each connection</text>
+<text x="40" y="468" font-size="13" fill="#e8eaed">resident memory: two buffers + a small parser state -</text>
+<text x="40" y="486" font-size="13" fill="#e8eaed">a 500 MB capture costs the same as a 64-byte pack</text>
+<line x1="470" y1="418" x2="470" y2="490" stroke="#4a4a4a" stroke-width="1"/>
+<path d="M498 448 L522 464 L522 448 L498 464 Z" fill="none" stroke="#e8833a" stroke-width="1.8" stroke-linejoin="round"/><line x1="510" y1="456" x2="510" y2="443" stroke="#e8833a" stroke-width="1.8"/><line x1="504" y1="443" x2="516" y2="443" stroke="#e8833a" stroke-width="2.2" stroke-linecap="round"/>
+<text x="540" y="448" font-size="13" fill="#e8eaed">full sink → socket reads stop:</text>
+<text x="540" y="466" font-size="13" fill="#e8eaed">unread data waits in the network,</text>
+<text x="540" y="484" font-size="13" fill="#e8eaed">not in memory</text>
+<line x1="772" y1="418" x2="772" y2="490" stroke="#4a4a4a" stroke-width="1"/>
+<rect x="790" y="426" width="21" height="14" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="797" y1="431" x2="797" y2="435" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="804" y1="431" x2="804" y2="435" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><rect x="814" y="426" width="21" height="14" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="821" y1="431" x2="821" y2="435" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="828" y1="431" x2="828" y2="435" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><rect x="838" y="426" width="21" height="14" rx="2" fill="#203d56" stroke="#4fb3ff" stroke-width="1.4"/><line x1="845" y1="431" x2="845" y2="435" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/><line x1="852" y1="431" x2="852" y2="435" stroke="#4fb3ff" stroke-width="0.8" opacity="0.45"/>
+<text x="864" y="438" font-size="13" fill="#9aa0a6">…</text>
+<text x="790" y="466" font-size="12" fill="#9aa0a6">64 states × 3 bits</text>
+<text x="790" y="482" font-size="12" fill="#9aa0a6">= 24 bytes, not 64</text>
+</g>
+</svg>

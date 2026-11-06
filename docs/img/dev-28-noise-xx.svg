@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 490" width="980" height="490" role="img" aria-labelledby="dev28noisexx-t dev28noisexx-d">
+<title id="dev28noisexx-t">Noise XX: neither knows the other beforehand</title>
+<desc id="dev28noisexx-d">Noise XX, neither knows the other beforehand. Official notation: -&gt; e    &lt;- e, ee, s, es    -&gt; s, se. Message 1, client to server: tokens e; 32 bytes: e, in clear; nothing is sealed yet. Message 2, server to client: tokens e, ee, s, es; 96 bytes: e 32 + s 32+16 + tag 16; the client checks the server's key in onPeer. Message 3, client to server: tokens s, se; 64 bytes: s 32+16 + tag 16; the server checks the client's key in onPeer. After the handshake: Server: proved by its key; Client: proved by its key; Forward secrecy: yes, for every pack; Keys sent: both, sealed; the server's reaches whoever dials it, the client's only the proved server; onPeer: on both sides: neither key was known beforehand; Also used by: libp2p.</desc>
+<rect width="980" height="490" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Noise XX: neither knows the other beforehand</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Official notation:   -&gt; e    &lt;- e, ee, s, es    -&gt; s, se</text>
+<rect x="60" y="76" width="150" height="40" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="135" y="100.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<rect x="430" y="76" width="150" height="40" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="505" y="100.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server</text>
+<text xml:space="preserve" x="135" y="134" font-size="11.5" fill="#9aa0a6" text-anchor="middle">static s; one-time e</text>
+<text xml:space="preserve" x="505" y="134" font-size="11.5" fill="#9aa0a6" text-anchor="middle">static s; one-time e</text>
+<line x1="135.0" y1="142.0" x2="135.0" y2="448.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="505.0" y1="142.0" x2="505.0" y2="448.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="135.0" y1="236.0" x2="497.0" y2="236.0" stroke="#e8eaed" stroke-width="1.8"/>
+<polygon points="505.0,236.0 495.0,230.5 495.0,241.5" fill="#e8eaed"/>
+<text xml:space="preserve" x="125" y="240" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">1</text>
+<rect x="309" y="211" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="320" y="226" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">e</text>
+<text xml:space="preserve" x="320" y="253" font-size="11.5" fill="#9aa0a6" text-anchor="middle">32 bytes: e, in clear</text>
+<text xml:space="preserve" x="320" y="269" font-size="11.5" fill="#f2c14e" text-anchor="middle">nothing is sealed yet</text>
+<line x1="505.0" y1="312.0" x2="143.0" y2="312.0" stroke="#e8eaed" stroke-width="1.8"/>
+<polygon points="135.0,312.0 145.0,317.5 145.0,306.5" fill="#e8eaed"/>
+<text xml:space="preserve" x="515" y="316" font-size="12" fill="#e8eaed" text-anchor="start" font-weight="700">2</text>
+<rect x="259" y="287" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="270" y="302" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">e</text>
+<rect x="287" y="287" width="30" height="21" rx="4" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="302" y="302" font-size="13" fill="#6fbf7f" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<rect x="323" y="287" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="334" y="302" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">s</text>
+<rect x="351" y="287" width="30" height="21" rx="4" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="366" y="302" font-size="13" fill="#6f9fd8" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<text xml:space="preserve" x="320" y="329" font-size="11.5" fill="#9aa0a6" text-anchor="middle">96 bytes: e 32 + s 32+16 + tag 16</text>
+<text xml:space="preserve" x="320" y="345" font-size="11.5" fill="#f2c14e" text-anchor="middle">the client checks the server's key in onPeer</text>
+<line x1="135.0" y1="388.0" x2="497.0" y2="388.0" stroke="#e8eaed" stroke-width="1.8"/>
+<polygon points="505.0,388.0 495.0,382.5 495.0,393.5" fill="#e8eaed"/>
+<text xml:space="preserve" x="125" y="392" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">3</text>
+<rect x="291" y="363" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="302" y="378" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">s</text>
+<rect x="319" y="363" width="30" height="21" rx="4" fill="#232323" stroke="#f2a44e" stroke-width="1.4"/>
+<text xml:space="preserve" x="334" y="378" font-size="13" fill="#f2a44e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">se</text>
+<text xml:space="preserve" x="320" y="405" font-size="11.5" fill="#9aa0a6" text-anchor="middle">64 bytes: s 32+16 + tag 16</text>
+<text xml:space="preserve" x="320" y="421" font-size="11.5" fill="#f2c14e" text-anchor="middle">the server checks the client's key in onPeer</text>
+<rect x="610" y="72" width="350" height="376" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="626" y="96" font-size="13" fill="#e8eaed" font-weight="700">After the handshake</text>
+<text xml:space="preserve" x="626" y="122" font-size="11.5" fill="#e8eaed" font-weight="700">Server</text>
+<text xml:space="preserve" x="786" y="122" font-size="11.5" fill="#9aa0a6">proved by its key</text>
+<text xml:space="preserve" x="626" y="147" font-size="11.5" fill="#e8eaed" font-weight="700">Client</text>
+<text xml:space="preserve" x="786" y="147" font-size="11.5" fill="#9aa0a6">proved by its key</text>
+<text xml:space="preserve" x="626" y="172" font-size="11.5" fill="#e8eaed" font-weight="700">Forward secrecy</text>
+<text xml:space="preserve" x="786" y="172" font-size="11.5" fill="#9aa0a6">yes, for every pack</text>
+<text xml:space="preserve" x="626" y="197" font-size="11.5" fill="#e8eaed" font-weight="700">Keys sent</text>
+<text xml:space="preserve" x="786" y="197" font-size="11.5" fill="#9aa0a6">both, sealed; the server's</text>
+<text xml:space="preserve" x="786" y="212" font-size="11.5" fill="#9aa0a6">reaches whoever dials it, the</text>
+<text xml:space="preserve" x="786" y="227" font-size="11.5" fill="#9aa0a6">client's only the proved server</text>
+<text xml:space="preserve" x="626" y="252" font-size="11.5" fill="#e8eaed" font-weight="700">onPeer</text>
+<text xml:space="preserve" x="786" y="252" font-size="11.5" fill="#9aa0a6">on both sides: neither key</text>
+<text xml:space="preserve" x="786" y="267" font-size="11.5" fill="#9aa0a6">was known beforehand</text>
+<text xml:space="preserve" x="626" y="292" font-size="11.5" fill="#e8eaed" font-weight="700">Also used by</text>
+<text xml:space="preserve" x="786" y="292" font-size="11.5" fill="#9aa0a6">libp2p</text>
+<text xml:space="preserve" x="24" y="474" font-size="11.5" fill="#9aa0a6">AdHoc sends no data inside the handshake: every pack goes after it, under keys that include ee. On a stream each message is [length 1][message].</text>
+</g>
+</svg>

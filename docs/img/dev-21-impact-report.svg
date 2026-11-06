@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="d21ir-t d21ir-d">
+<title id="d21ir-t">The .cs~ impact report</title>
+<desc id="d21ir-d">Two inputs - the current description FleetProtocol.cs with its imports, and the previous version: a file or a folder named on the command line, or by default the .description folder of the newest deployment backup that differs - enter AdHocAgent .cs~, which reads both with the parser of the .cs task, locally: nothing is uploaded, neither file is written, no UUID is needed. Two outputs: the console lists the hosts by verdict, here "have to be updated (3): Fleet, Vehicle, VehicleLegacy", and names the page; the page FleetProtocol.changes.html shows a tile per host with the verdict update, new, removed or not reached, then folded sections: how it is decided, the details, comments edited. A hidden element at the bottom of the page, script id adhoc-impact, holds the same answer as one line of JSON; a CI script reads it with jq or ConvertFrom-Json and fails when a frozen host is in update or removed.</desc>
+<rect width="960" height="420" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">The .cs~ impact report</text>
+
+<!-- inputs -->
+<rect x="24" y="92" width="240" height="70" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="38" y="112" font-size="12" fill="#9aa0a6">current</text>
+<text x="38" y="133" font-size="14" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">FleetProtocol.cs</text>
+<text x="38" y="151" font-size="12.5" fill="#9aa0a6">+ its imports (.cs, .csproj)</text>
+
+<rect x="24" y="182" width="240" height="98" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="38" y="202" font-size="12" fill="#9aa0a6">previous</text>
+<text x="38" y="222" font-size="12.5" fill="#e8eaed">a file or a folder named with ~,</text>
+<text x="38" y="239" font-size="12.5" fill="#e8eaed">or, when none is named, the</text>
+<text x="38" y="256" font-size="12.5" fill="#e8eaed">.description folder of the newest</text>
+<text x="38" y="273" font-size="12.5" fill="#e8eaed">differing deployment backup</text>
+
+<path d="M264 127 H282 V186 H292" fill="none" stroke="#9aa0a6" stroke-width="1.8"/>
+<path d="M300 186 L292 181.5 L292 190.5 Z" fill="#9aa0a6"/>
+<path d="M264 231 H282 V228 H292" fill="none" stroke="#9aa0a6" stroke-width="1.8"/>
+<path d="M300 228 L292 223.5 L292 232.5 Z" fill="#9aa0a6"/>
+
+<!-- the task -->
+<rect x="300" y="150" width="176" height="116" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.8"/>
+<text x="388" y="176" font-size="15" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">AdHocAgent .cs~</text>
+<text x="388" y="199" font-size="12.5" fill="#e8eaed" text-anchor="middle">the .cs task's parser</text>
+<text x="388" y="217" font-size="12.5" fill="#9aa0a6" text-anchor="middle">local, nothing uploaded</text>
+<text x="388" y="235" font-size="12.5" fill="#9aa0a6" text-anchor="middle">neither file is written</text>
+<text x="388" y="253" font-size="12.5" fill="#9aa0a6" text-anchor="middle">no UUID needed</text>
+
+<!-- output 1: console -->
+<path d="M476 176 H496 V99 H508" fill="none" stroke="#9aa0a6" stroke-width="1.8"/>
+<path d="M516 99 L508 94.5 L508 103.5 Z" fill="#9aa0a6"/>
+<text x="516" y="62" font-size="12" fill="#9aa0a6">console</text>
+<rect x="516" y="70" width="428" height="58" rx="5" fill="#1d1d1d" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="530" y="94" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">have to be updated (3): Fleet, Vehicle, VehicleLegacy</text>
+<text x="530" y="116" font-size="12" fill="#9aa0a6" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[INF] The report is in ./FleetProtocol.changes.html</text>
+
+<!-- output 2: the page -->
+<line x1="476" y1="230" x2="508" y2="230" stroke="#9aa0a6" stroke-width="1.8"/>
+<path d="M516 230 L508 225.5 L508 234.5 Z" fill="#9aa0a6"/>
+<rect x="516" y="146" width="428" height="194" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<path d="M516 172 V152 a6 6 0 0 1 6 -6 H938 a6 6 0 0 1 6 6 V172 Z" fill="#363636"/>
+<line x1="516" y1="172" x2="944" y2="172" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="530" y="164" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">FleetProtocol.changes.html</text>
+
+<text x="530" y="192" font-size="12" fill="#9aa0a6">one tile per host, by verdict</text>
+<rect x="530" y="200" width="91" height="32" rx="5" fill="#45301f" stroke="#e8833a" stroke-width="1.4"/>
+<text x="575.5" y="221" font-size="13" fill="#e8833a" text-anchor="middle">update</text>
+<rect x="633" y="200" width="91" height="32" rx="5" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.4"/>
+<text x="678.5" y="221" font-size="13" fill="#4cc38a" text-anchor="middle">new</text>
+<rect x="736" y="200" width="91" height="32" rx="5" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/>
+<text x="781.5" y="221" font-size="13" fill="#a06fd0" text-anchor="middle">removed</text>
+<rect x="839" y="200" width="91" height="32" rx="5" fill="#303236" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="884.5" y="221" font-size="13" fill="#9aa0a6" text-anchor="middle">not reached</text>
+
+<path d="M532 245 L539 249.5 L532 254 Z" fill="#9aa0a6"/>
+<text x="546" y="254" font-size="12.5" fill="#e8eaed">How it is decided</text>
+<path d="M532 265 L539 269.5 L532 274 Z" fill="#9aa0a6"/>
+<text x="546" y="274" font-size="12.5" fill="#e8eaed">The details<tspan fill="#9aa0a6">: what changed, and why each host is reached</tspan></text>
+<path d="M532 285 L539 289.5 L532 294 Z" fill="#9aa0a6"/>
+<text x="546" y="294" font-size="12.5" fill="#e8eaed">Comments edited<tspan fill="#9aa0a6">: reach no host</tspan></text>
+
+<rect x="530" y="306" width="400" height="24" rx="3" fill="#1f2a36" stroke="#4fb3ff" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="542" y="322" font-size="12" fill="#4fb3ff" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">&lt;script id="adhoc-impact"&gt;<tspan fill="#9aa0a6" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12.5"> one line of JSON, not shown</tspan></text>
+
+<!-- pipeline -->
+<path d="M560 330 V378 H592" fill="none" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M600 378 L592 373.5 L592 382.5 Z" fill="#4fb3ff"/>
+<text x="550" y="382" font-size="12" fill="#9aa0a6" text-anchor="end">one grep, no HTML parser</text>
+<rect x="600" y="352" width="344" height="52" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="616" y="374" font-size="13.5" fill="#e8eaed">CI script: jq / ConvertFrom-Json</text>
+<text x="616" y="393" font-size="12" fill="#9aa0a6">fail when a frozen host is in update or removed</text>
+</g>
+</svg>

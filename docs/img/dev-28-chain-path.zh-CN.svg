@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 490" width="980" height="490" role="img" aria-labelledby="dev28chainpath-t dev28chainpath-d">
+<title id="dev28chainpath-t">经由链发送与接收</title>
+<desc id="dev28chainpath-d">Sending: the generated code serializes packs into the buffer past the room left for headers; each layer notes its step - Noise seals records, WebSocket writes the frame header and on a client masks, TLS seals the record; one native call runs the steps in order, in place; one write sends the buffer as it is. Receiving: one read fills the receive buffer; one native call opens the TLS records, cuts the frames, unmasks and opens the Noise records in place; a table says where the pieces of plaintext lie, with no copy to join them; the generated code reads the packs from the pieces. Control frames go to the WebSocket decoder; a record longer than the buffer takes a whole-record buffer of the loop's pool while it lasts; the only bytes moved are those of a Noise record cut by the edge of a frame or a TLS record.</desc>
+<rect width="980" height="490" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">经由链发送与接收</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">各层在你的语言中选择；对字节的处理是每个方向、每个缓冲区一次原生调用</text>
+<text xml:space="preserve" x="24" y="86" font-size="13" fill="#e8eaed" font-weight="700">发送</text>
+<rect x="24" y="96" width="210" height="118" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.6"/>
+<text xml:space="preserve" x="129" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1. 序列化</text>
+<text xml:space="preserve" x="38" y="144" font-size="11.5" fill="#e8eaed">生成的代码把 pack 写入</text>
+<text xml:space="preserve" x="38" y="159" font-size="11.5" fill="#e8eaed">缓冲区，位于为头部</text>
+<text xml:space="preserve" x="38" y="174" font-size="11.5" fill="#e8eaed">预留的空间之后</text>
+<line x1="234.0" y1="155.0" x2="256.0" y2="155.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="264.0,155.0 254.0,149.5 254.0,160.5" fill="#8c9198"/>
+<rect x="264" y="96" width="210" height="118" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="369" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">2. 记下步骤</text>
+<text xml:space="preserve" x="278" y="144" font-size="11.5" fill="#e8eaed">Noise：密封记录</text>
+<text xml:space="preserve" x="278" y="159" font-size="11.5" fill="#e8eaed">WebSocket：帧头，</text>
+<text xml:space="preserve" x="278" y="174" font-size="11.5" fill="#e8eaed">  客户端上加掩码</text>
+<text xml:space="preserve" x="278" y="189" font-size="11.5" fill="#e8eaed">TLS：密封记录</text>
+<line x1="474.0" y1="155.0" x2="496.0" y2="155.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="504.0,155.0 494.0,149.5 494.0,160.5" fill="#8c9198"/>
+<rect x="504" y="96" width="210" height="118" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="609" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">3. 一次原生调用</text>
+<text xml:space="preserve" x="518" y="144" font-size="11.5" fill="#e8eaed">按顺序执行这些步骤，</text>
+<text xml:space="preserve" x="518" y="159" font-size="11.5" fill="#e8eaed">在缓冲区中就地完成</text>
+<line x1="714.0" y1="155.0" x2="736.0" y2="155.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="744.0,155.0 734.0,149.5 734.0,160.5" fill="#8c9198"/>
+<rect x="744" y="96" width="210" height="118" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="849" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">4. 一次写出</text>
+<text xml:space="preserve" x="758" y="144" font-size="11.5" fill="#e8eaed">缓冲区原样</text>
+<text xml:space="preserve" x="758" y="159" font-size="11.5" fill="#e8eaed">交给套接字</text>
+<text xml:space="preserve" x="24" y="260" font-size="13" fill="#e8eaed" font-weight="700">接收</text>
+<rect x="24" y="270" width="210" height="118" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="129" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1. 一次读取</text>
+<text xml:space="preserve" x="38" y="318" font-size="11.5" fill="#e8eaed">套接字填满</text>
+<text xml:space="preserve" x="38" y="333" font-size="11.5" fill="#e8eaed">接收缓冲区</text>
+<line x1="234.0" y1="329.0" x2="256.0" y2="329.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="264.0,329.0 254.0,323.5 254.0,334.5" fill="#8c9198"/>
+<rect x="264" y="270" width="210" height="118" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="369" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">2. 一次原生调用</text>
+<text xml:space="preserve" x="278" y="318" font-size="11.5" fill="#e8eaed">打开 TLS 记录，切分</text>
+<text xml:space="preserve" x="278" y="333" font-size="11.5" fill="#e8eaed">帧并去掩码，打开</text>
+<text xml:space="preserve" x="278" y="348" font-size="11.5" fill="#e8eaed">Noise 记录：就地完成</text>
+<line x1="474.0" y1="329.0" x2="496.0" y2="329.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="504.0,329.0 494.0,323.5 494.0,334.5" fill="#8c9198"/>
+<rect x="504" y="270" width="210" height="118" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="609" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">3. 片段</text>
+<text xml:space="preserve" x="518" y="318" font-size="11.5" fill="#e8eaed">一张表记录明文</text>
+<text xml:space="preserve" x="518" y="333" font-size="11.5" fill="#e8eaed">所在位置：不为拼接</text>
+<text xml:space="preserve" x="518" y="348" font-size="11.5" fill="#e8eaed">片段做任何复制</text>
+<line x1="714.0" y1="329.0" x2="736.0" y2="329.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="744.0,329.0 734.0,323.5 734.0,334.5" fill="#8c9198"/>
+<rect x="744" y="270" width="210" height="118" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.6"/>
+<text xml:space="preserve" x="849" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">4. 解析</text>
+<text xml:space="preserve" x="758" y="318" font-size="11.5" fill="#e8eaed">生成的代码从片段中</text>
+<text xml:space="preserve" x="758" y="333" font-size="11.5" fill="#e8eaed">读出 pack</text>
+<text xml:space="preserve" x="24" y="414" font-size="12" fill="#9aa0a6">· 控制帧——ping、close——交给 WebSocket 解码器</text>
+<text xml:space="preserve" x="24" y="431" font-size="12" fill="#9aa0a6">· 比缓冲区长的记录在持续期间从循环的池中借用一个整记录缓冲区</text>
+<text xml:space="preserve" x="24" y="448" font-size="12" fill="#9aa0a6">· 唯一被移动的字节：被帧或 TLS 记录边界切开的 Noise 记录</text>
+<text xml:space="preserve" x="24" y="474" font-size="11.5" fill="#9aa0a6">Java、C#、Rust、C、C++、Swift、Python、Dart：adhoc-crypto（BoringSSL）。 Go：crypto/tls，每条记录多复制一次。 TypeScript：平台的 TLS，Noise 在 WebAssembly 中。</text>
+</g>
+</svg>

@@ -1,0 +1,88 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>14</LangVersion>
+        <!-- only the English messages of Roslyn: the folders of its other languages are not shipped -->
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+        <!-- Same favicon the Observer serves. -->
+        <ApplicationIcon>Observer\favicon.ico</ApplicationIcon>
+	<PlatformTarget Condition=" '$(RuntimeIdentifier)' == '' ">x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget Condition=" '$(RuntimeIdentifier)' == '' ">x64</PlatformTarget>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <!-- a release carries only what runs: no debug symbols ( AdHocAgent.pdb ), no dependency list ( AdHocAgent.deps.json ) -
+           the runtime loads the libraries lying beside AdHocAgent.dll without it -->
+      <DebugType>none</DebugType>
+      <GenerateDependencyFile>false</GenerateDependencyFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="5.9.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+        <PackageReference Include="ZstdSharp.Port" Version="0.8.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Templates\ProtocolDescription.cs" />
+      <EmbeddedResource Include="Templates\ProtocolDescription.cs" />
+      <!-- what AdHocAgent.toml starts from, when the first volatile UUID is stored -->
+      <EmbeddedResource Include="Templates\AdHocAgent.toml" />
+      <Compile Remove="AdHocProtocol.cs" />
+      <Compile Remove="bench\**\*.cs" />
+      <None Remove="bench\**" />
+      <!-- the license goes with every copy of the agent: beside the executable in a build, a publish and a release archive -->
+      <None Include="LICENSE.md;NOTICE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_DeploymentManifestIconFile Remove="Observer\favicon.ico" />
+    </ItemGroup>
+
+    <!--
+      The Observer's built assets, carried inside the assembly.
+
+      The Observer folder holds the result of a production build of the page, so the agent builds
+      from this repository alone and runs with no asset folder at all. ADHOC_OBSERVER_DIR points
+      a running agent at another build of the page: see observer_asset in ChannelToObserver.cs.
+
+      `*.js` picks up observer.js together with every code-split chunk (the lazily imported
+      zstd codec is one), and does not match observer.js.LICENSE.txt.
+      That chunk is not optional: the Observer awaits its codec before opening the WebSocket.
+
+      observer.js.LICENSE.txt - the licenses of the libraries bundled into observer.js - goes inside too,
+      beside the observer.js whose first line names it, and the page serves it as it serves observer.js.
+
+      An explicit LogicalName keeps the resource names stable — MSBuild's default naming
+      derives them from the item path and would mangle the hyphens in a chunk file name.
+    -->
+    <PropertyGroup>
+      <ObserverBuild>Observer\</ObserverBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ObserverAsset Include="$(ObserverBuild)index.html" />
+      <ObserverAsset Include="$(ObserverBuild)favicon.ico" />
+      <ObserverAsset Include="$(ObserverBuild)*.js" />
+      <ObserverAsset Include="$(ObserverBuild)observer.js.LICENSE.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="@(ObserverAsset)" LogicalName="AdHocAgent.Observer.%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="docs\img\dev-src\CN_originals\" />
+      <Folder Include="protocol\gen\" />
+      <Folder Include="protocol\lib\" />
+    </ItemGroup>
+
+</Project>

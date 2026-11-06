@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 390" width="980" height="390" role="img" aria-labelledby="dev28udp-t dev28udp-d">
+<title id="dev28udp-t">Datagrams: the key of the UDP host</title>
+<desc id="dev28udp-d">A client and a UDP host with a key. The INITIAL carries the client's one-time key sealed to the server's key, the ACCEPT the server's one-time key. Then every datagram is sealed and ends with a 16-byte tag. Someone on the line who forges a datagram, or replays a copy of one, gets it dropped by the server, and the connection goes on. Lost datagrams come again from the journal.</desc>
+<rect width="980" height="390" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Datagrams: the key of the UDP host</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">A Noise NK handshake in the first two datagrams, then each datagram sealed on its own</text>
+<rect x="30" y="80" width="150" height="60" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="105" y="107" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<text xml:space="preserve" x="105" y="124" font-size="12" fill="#9aa0a6" text-anchor="middle">pins the server's key</text>
+<rect x="800" y="80" width="150" height="60" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="875" y="107" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">UDP host</text>
+<text xml:space="preserve" x="875" y="124" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">key</text>
+<line x1="105.0" y1="140.0" x2="105.0" y2="330.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="875.0" y1="140.0" x2="875.0" y2="330.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="105.0" y1="170.0" x2="867.0" y2="170.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="875.0,170.0 865.0,164.5 865.0,175.5" fill="#8c9198"/>
+<text xml:space="preserve" x="490" y="163" font-size="12" fill="#e8eaed" text-anchor="middle">INITIAL: one-time key, sealed to the server's key</text>
+<line x1="875.0" y1="204.0" x2="113.0" y2="204.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="105.0,204.0 115.0,209.5 115.0,198.5" fill="#8c9198"/>
+<text xml:space="preserve" x="490" y="197" font-size="12" fill="#e8eaed" text-anchor="middle">ACCEPT: one-time key</text>
+<line x1="105.0" y1="246.0" x2="867.0" y2="246.0" stroke="#b58cf0" stroke-width="1.8"/>
+<polygon points="875.0,246.0 865.0,240.5 865.0,251.5" fill="#b58cf0"/>
+<rect x="260" y="238" width="72" height="16" rx="2" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<rect x="318" y="238" width="14" height="16" fill="#b58cf0"/>
+<rect x="420" y="238" width="72" height="16" rx="2" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<rect x="478" y="238" width="14" height="16" fill="#b58cf0"/>
+<rect x="580" y="238" width="72" height="16" rx="2" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<rect x="638" y="238" width="14" height="16" fill="#b58cf0"/>
+<text xml:space="preserve" x="490" y="274" font-size="12" fill="#9aa0a6" text-anchor="middle">every datagram sealed, a tag of 16 bytes at its end</text>
+<rect x="330" y="300" width="200" height="50" rx="8" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.6"/>
+<text xml:space="preserve" x="430" y="322" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">On the line</text>
+<text xml:space="preserve" x="430" y="339" font-size="12" fill="#9aa0a6" text-anchor="middle">forges, or replays a copy</text>
+<line x1="530.0" y1="316.0" x2="862.0" y2="316.0" stroke="#e06c6c" stroke-width="1.6" stroke-dasharray="5 4"/>
+<polygon points="870.0,316.0 860.0,310.5 860.0,321.5" fill="#e06c6c"/>
+<text xml:space="preserve" x="700" y="308" font-size="12" fill="#f2b8b5" text-anchor="middle">dropped; the connection goes on</text>
+<text xml:space="preserve" x="24" y="374" font-size="12" fill="#9aa0a6">A lost datagram comes again from the journal; a forged, damaged or replayed one never reaches your code.</text>
+</g>
+</svg>

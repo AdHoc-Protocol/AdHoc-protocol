@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 430" width="980" height="430" role="img" aria-labelledby="dev28chainbuild-t dev28chainbuild-d">
+<title id="dev28chainbuild-t">How a chain is built</title>
+<desc id="dev28chainbuild-d">Your code chooses the layers: new Chain() with tls, a Noise pattern such as noiseIK and onPeer. The Chain is made once and shared: the TLS certificate context is made once for all its connections, and it holds the Noise pattern, the keys and onPeer. Each socket takes the state of its layers, a Link, from the pool of its loop, about 3.7 KB of native state, and gives it back when it closes. On a server: server.key gives Noise NK to every connection; server.chain gives one chain to every connection; server.chooseChain(address) gives a chain per connection by its address, once, at connect, where null means no chain. Nothing of this is in the description, and TLS is not switched in the middle of a connection.</desc>
+<rect width="980" height="430" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">How a chain is built</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Chosen in your code, made once and shared; a connection holds the state of its layers only while it lives</text>
+<rect x="24" y="80" width="310" height="120" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="40" y="108" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">new Chain( )</text>
+<text xml:space="preserve" x="40" y="130" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  .tls( &quot;app.example.com&quot;, alpn )</text>
+<text xml:space="preserve" x="40" y="152" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  .noiseIK( serverPublic, mySecret )</text>
+<text xml:space="preserve" x="40" y="174" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  .onPeer( key -&gt; known( key ) )</text>
+<line x1="334.0" y1="140.0" x2="376.0" y2="140.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="384.0,140.0 374.0,134.5 374.0,145.5" fill="#8c9198"/>
+<rect x="384" y="80" width="250" height="120" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="509" y="114.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Chain: one for many</text>
+<text xml:space="preserve" x="509" y="131.5" font-size="12" fill="#e8eaed" text-anchor="middle">TLS: the certificate context,</text>
+<text xml:space="preserve" x="509" y="146.5" font-size="12" fill="#9aa0a6" text-anchor="middle">made once, shared by all</text>
+<text xml:space="preserve" x="509" y="161.5" font-size="12" fill="#e8eaed" text-anchor="middle">Noise: the pattern and keys</text>
+<text xml:space="preserve" x="509" y="176.5" font-size="12" fill="#e8eaed" text-anchor="middle">onPeer: who may come in</text>
+<line x1="634.0" y1="140.0" x2="683.8" y2="99.1" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,94.0 678.8,96.1 685.8,104.6" fill="#8c9198"/>
+<rect x="690" y="76" width="266" height="38" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="823" y="98.5" font-size="12" fill="#e8eaed" text-anchor="middle">socket 1: the state of TLS and Noise</text>
+<line x1="634.0" y1="140.0" x2="682.0" y2="140.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,140.0 680.0,134.5 680.0,145.5" fill="#8c9198"/>
+<rect x="690" y="122" width="266" height="38" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="823" y="144.5" font-size="12" fill="#e8eaed" text-anchor="middle">socket 2: the state of TLS and Noise</text>
+<line x1="634.0" y1="140.0" x2="683.8" y2="180.9" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,186.0 685.8,175.4 678.8,183.9" fill="#8c9198"/>
+<rect x="690" y="168" width="266" height="38" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="823" y="190.5" font-size="12" fill="#e8eaed" text-anchor="middle">socket 3: the state of TLS and Noise</text>
+<text xml:space="preserve" x="823" y="230" font-size="11.5" fill="#9aa0a6" text-anchor="middle">from the loop's pool, ≈ 3.7 KB; back at close</text>
+<text xml:space="preserve" x="24" y="278" font-size="13" fill="#e8eaed" font-weight="700">On a server, for each incoming connection</text>
+<rect x="24" y="292" width="300" height="92" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="38" y="318" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">server.key</text>
+<text xml:space="preserve" x="38" y="344" font-size="12" fill="#e8eaed">Noise NK for every connection</text>
+<text xml:space="preserve" x="38" y="362" font-size="12" fill="#9aa0a6">no chain needed</text>
+<rect x="340" y="292" width="300" height="92" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="354" y="318" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">server.chain</text>
+<text xml:space="preserve" x="354" y="344" font-size="12" fill="#e8eaed">one chain for every connection</text>
+<text xml:space="preserve" x="354" y="362" font-size="12" fill="#9aa0a6">TLS, another pattern, onPeer</text>
+<rect x="656" y="292" width="300" height="92" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="318" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">server.chooseChain( address )</text>
+<text xml:space="preserve" x="670" y="344" font-size="12" fill="#e8eaed">a chain per connection, by address,</text>
+<text xml:space="preserve" x="670" y="362" font-size="12" fill="#9aa0a6">once, at connect; null: none</text>
+<text xml:space="preserve" x="24" y="414" font-size="12" fill="#9aa0a6">Nothing of this is in the description: the same generated code runs over any chain. TLS is not switched in the middle of a connection.</text>
+</g>
+</svg>

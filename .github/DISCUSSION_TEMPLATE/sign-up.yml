@@ -1,0 +1,34 @@
+title: "Sign up"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Post this to get your personal UUID. The same post gets it again on a new machine and replaces a lost one.
+        Both questions are optional.
+  - type: checkboxes
+    id: languages
+    attributes:
+      label: Languages you plan to use
+      options:
+        - label: C++
+        - label: Rust
+        - label: C#
+        - label: Java
+        - label: Go
+        - label: TypeScript
+        - label: Swift
+        - label: C
+        - label: Dart
+        - label: Python
+  - type: dropdown
+    id: source
+    attributes:
+      label: Where did you hear about AdHoc?
+      options:
+        - A search engine
+        - GitHub
+        - A friend or a colleague
+        - An article
+        - A video
+        - A forum or a chat
+        - Other

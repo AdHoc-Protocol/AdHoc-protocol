@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 510" width="980" height="510" role="img" aria-labelledby="dev28toolsmap-t dev28toolsmap-d">
+<title id="dev28toolsmap-t">一个系统，每种工具各在其位</title>
+<desc id="dev28toolsmap-d">An example system. A browser page connects over wss:// through Cloudflare to an edge server: TLS as far as Cloudflare, Noise from the page to the edge, sealed through Cloudflare, which comes to the edge with no TLS. An app connects to the edge over TCP with Noise NK, IK or XX. A device sends datagrams to the edge over UDP with a key, every datagram sealed. The edge holds host.key and chooses TLS per connection with chooseChain. The edge talks to a backend of yours with Noise KK. A tunnel runs from the device through the edge to the backend with Noise inside it: the edge forwards it without a key. The backend talks to a partner's service with TLS alone. The backend seals a message with Chain.Pack for an auditor and signs it; a store holds it and passes it on, unable to read or change it.</desc>
+<rect width="980" height="510" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">一个系统，每种工具各在其位</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">运行时提供的工具，各自用在它所属的链路上</text>
+<rect x="30" y="80" width="140" height="50" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="100" y="102" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">浏览器</text>
+<text xml:space="preserve" x="100" y="119" font-size="12" fill="#9aa0a6" text-anchor="middle">一个页面</text>
+<rect x="30" y="185" width="140" height="50" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="100" y="207" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">应用</text>
+<text xml:space="preserve" x="100" y="224" font-size="12" fill="#9aa0a6" text-anchor="middle">你的客户端</text>
+<rect x="30" y="300" width="140" height="50" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="100" y="322" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">设备</text>
+<text xml:space="preserve" x="100" y="339" font-size="12" fill="#9aa0a6" text-anchor="middle">数据报</text>
+<rect x="255" y="66" width="120" height="78" rx="8" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.6"/>
+<text xml:space="preserve" x="315" y="86" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Cloudflare</text>
+<text xml:space="preserve" x="315" y="134" font-size="12" fill="#f2c14e" text-anchor="middle">终结 TLS</text>
+<rect x="450" y="70" width="150" height="300" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="525" y="94" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">边缘服务器</text>
+<text xml:space="preserve" x="525" y="122" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">host.key</text>
+<text xml:space="preserve" x="525" y="140" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">chooseChain</text>
+<rect x="730" y="170" width="150" height="110" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="805" y="196" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">后端</text>
+<text xml:space="preserve" x="805" y="213" font-size="12" fill="#9aa0a6" text-anchor="middle">隧道的远端，</text>
+<text xml:space="preserve" x="805" y="228" font-size="12" fill="#9aa0a6" text-anchor="middle">Chain.Pack 的作者</text>
+<rect x="730" y="60" width="150" height="50" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="805" y="82" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">合作方 API</text>
+<text xml:space="preserve" x="805" y="99" font-size="12" fill="#9aa0a6" text-anchor="middle">别人的服务</text>
+<rect x="600" y="400" width="130" height="50" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="665" y="422" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">存储、队列</text>
+<text xml:space="preserve" x="665" y="439" font-size="12" fill="#9aa0a6" text-anchor="middle">无法读取</text>
+<rect x="830" y="400" width="130" height="50" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="895" y="422" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">审计方</text>
+<text xml:space="preserve" x="895" y="439" font-size="12" fill="#9aa0a6" text-anchor="middle">读者</text>
+<rect x="170" y="97" width="85" height="16" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<line x1="170.0" y1="105.0" x2="440.0" y2="105.0" stroke="#b58cf0" stroke-width="2.6"/>
+<polygon points="450.0,105.0 438.0,98.4 438.0,111.6" fill="#b58cf0"/>
+<rect x="375" y="97" width="75" height="16" fill="none" stroke="#8c9198" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text xml:space="preserve" x="212" y="88" font-size="12" fill="#e8eaed" text-anchor="middle">wss://</text>
+<text xml:space="preserve" x="412" y="88" font-size="12" fill="#9aa0a6" text-anchor="middle">无 TLS</text>
+<text xml:space="preserve" x="315" y="162" font-size="12" fill="#9aa0a6" text-anchor="middle">Noise 密封着穿过 Cloudflare</text>
+<line x1="170.0" y1="210.0" x2="440.0" y2="210.0" stroke="#b58cf0" stroke-width="2.6"/>
+<polygon points="450.0,210.0 438.0,203.4 438.0,216.6" fill="#b58cf0"/>
+<text xml:space="preserve" x="310" y="202" font-size="12" fill="#e8eaed" text-anchor="middle">TCP + Noise NK、IK 或 XX</text>
+<line x1="170.0" y1="315.0" x2="440.0" y2="315.0" stroke="#b58cf0" stroke-width="2.6" stroke-dasharray="3 5"/>
+<polygon points="450.0,315.0 438.0,308.4 438.0,321.6" fill="#b58cf0"/>
+<text xml:space="preserve" x="310" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">UDP + 密钥：每个数据报都密封</text>
+<path d="M170,342 L770,342 L770,290" fill="none" stroke="#b58cf0" stroke-width="2.6" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<polygon points="770.0,280.0 763.4,292.0 776.6,292.0" fill="#b58cf0"/>
+<text xml:space="preserve" x="310" y="362" font-size="12" fill="#e8eaed" text-anchor="middle">隧道内的 Noise：设备到后端</text>
+<text xml:space="preserve" x="525" y="334" font-size="12" fill="#f2c14e" text-anchor="middle">只转发，无密钥</text>
+<line x1="600.0" y1="210.0" x2="720.0" y2="210.0" stroke="#b58cf0" stroke-width="2.6"/>
+<polygon points="730.0,210.0 718.0,203.4 718.0,216.6" fill="#b58cf0"/>
+<text xml:space="preserve" x="665" y="202" font-size="12" fill="#e8eaed" text-anchor="middle">Noise KK</text>
+<text xml:space="preserve" x="665" y="228" font-size="12" fill="#9aa0a6" text-anchor="middle">两台都是你的</text>
+<line x1="840.0" y1="170.0" x2="840.0" y2="120.0" stroke="#6f9fd8" stroke-width="2.6"/>
+<polygon points="840.0,110.0 833.4,122.0 846.6,122.0" fill="#6f9fd8"/>
+<text xml:space="preserve" x="850" y="145" font-size="12" fill="#e8eaed">仅 TLS</text>
+<line x1="745.0" y1="280.0" x2="688.6" y2="392.8" stroke="#f2c14e" stroke-width="1.8"/>
+<polygon points="685.0,400.0 694.4,393.5 684.6,388.6" fill="#f2c14e"/>
+<text xml:space="preserve" x="722" y="378" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">Chain.Pack</text>
+<line x1="730.0" y1="425.0" x2="822.0" y2="425.0" stroke="#f2c14e" stroke-width="1.8"/>
+<polygon points="830.0,425.0 820.0,419.5 820.0,430.5" fill="#f2c14e"/>
+<text xml:space="preserve" x="600" y="472" font-size="12" fill="#9aa0a6">为审计方密封，由后端签名：</text>
+<text xml:space="preserve" x="600" y="489" font-size="12" fill="#9aa0a6">存储保管着它既不能读也不能改的内容</text>
+<rect x="24" y="408" width="34" height="16" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="66" y="421" font-size="12" fill="#e8eaed">TLS</text>
+<line x1="111.8" y1="416.0" x2="145.8" y2="416.0" stroke="#b58cf0" stroke-width="2.6"/>
+<text xml:space="preserve" x="153.8" y="421" font-size="12" fill="#e8eaed">Noise</text>
+<line x1="212.8" y1="416.0" x2="246.8" y2="416.0" stroke="#b58cf0" stroke-width="2.6" stroke-dasharray="7 5"/>
+<text xml:space="preserve" x="254.8" y="421" font-size="12" fill="#e8eaed">隧道内的 Noise</text>
+<text xml:space="preserve" x="24" y="452" font-size="12" fill="#9aa0a6">虚线链路不带 TLS；点线链路承载数据报。</text>
+</g>
+</svg>

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 432" width="960" height="432" role="img" aria-labelledby="title desc">
+<title id="title">An archive of any size, disk to disk, at constant memory</title>
+<desc id="desc">Sender: each file is read from disk in blocks, entry after entry, compressed on the fly by the Zstd stage of the SrcZip flow with its fixed staging buffer, into a fixed send buffer, and onto the wire as length-prefixed chunks closed by 0x0000. Receiver, AdHocAgent receiving generated code: a fixed receive buffer, inverse Zstd, and one re-armed FileEntry, a path and a Stream, whose sink, a FileStream, writes each entry to disk. Between them a chart: the memory held on each side stays flat - buffers and codec contexts - while the archive size grows without limit.</desc>
+<rect width="960" height="432" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="18" fill="#e8eaed" font-weight="700">An archive of any size, disk to disk, at constant memory</text>
+<rect x="24" y="56" width="276" height="310" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="660" y="56" width="276" height="310" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="38" y="78" font-size="13" fill="#9aa0a6" font-weight="700">sender</text>
+<text x="674" y="78" font-size="13" fill="#9aa0a6" font-weight="700">receiver</text>
+<text x="674" y="94" font-size="12" fill="#9aa0a6">AdHocAgent, receiving generated code</text>
+<rect x="64" y="104" width="196" height="46" rx="6" fill="#203d56" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="162" y="124.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">send buffer</text>
+<text x="162" y="139.9" font-size="12" fill="#9aa0a6" text-anchor="middle">fixed size</text>
+<rect x="64" y="203" width="196" height="46" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="162" y="223.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Zstd (SrcZip)</text>
+<text x="162" y="238.9" font-size="12" fill="#9aa0a6" text-anchor="middle">fixed staging buffer</text>
+<rect x="64" y="302" width="196" height="46" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.5"/>
+<text x="174" y="322.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">files on disk</text>
+<text x="174" y="337.9" font-size="12" fill="#9aa0a6" text-anchor="middle">your source</text>
+<path d="M77 317 V333 A9 3.2 0 0 0 95 333 V317" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/><ellipse cx="86" cy="317" rx="9" ry="3.2" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/><path d="M77 325 A9 3.2 0 0 0 95 325" fill="none" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M162 302 L162 257" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M162 249 L166.6 258 L157.4 258 Z" fill="#e8833a"/>
+<text x="172" y="270" font-size="12" fill="#e8eaed">read in blocks,</text>
+<text x="172" y="285" font-size="12" fill="#e8eaed">entry after entry</text>
+<path d="M162 203 L162 158" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M162 150 L166.6 159 L157.4 159 Z" fill="#f2c14e"/>
+<text x="172" y="181" font-size="12" fill="#e8eaed">compressed on the fly</text>
+<rect x="700" y="104" width="196" height="46" rx="6" fill="#203d56" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="798" y="124.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">receive buffer</text>
+<text x="798" y="139.9" font-size="12" fill="#9aa0a6" text-anchor="middle">fixed size</text>
+<rect x="700" y="170" width="196" height="46" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="798" y="198" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">inverse Zstd</text>
+<rect x="700" y="236" width="196" height="46" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="798" y="256.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">FileEntry (re-armed)</text>
+<text x="798" y="271.9" font-size="12" fill="#9aa0a6" text-anchor="middle">path + Stream</text>
+<rect x="700" y="302" width="196" height="46" rx="6" fill="#4a3322" stroke="#e8833a" stroke-width="1.5"/>
+<text x="810" y="322.2" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">FileStream → disk</text>
+<text x="810" y="337.9" font-size="12" fill="#9aa0a6" text-anchor="middle">your sink</text>
+<path d="M713 317 V333 A9 3.2 0 0 0 731 333 V317" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/><ellipse cx="722" cy="317" rx="9" ry="3.2" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/><path d="M713 325 A9 3.2 0 0 0 731 325" fill="none" stroke="#e8833a" stroke-width="1.1"/>
+<path d="M798 150 L798 163" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M798 170 L794 162 L802 162 Z" fill="#4fb3ff"/>
+<path d="M798 216 L798 229" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M798 236 L794 228 L802 228 Z" fill="#f2c14e"/>
+<path d="M798 282 L798 295" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M798 302 L794 294 L802 294 Z" fill="#f2c14e"/>
+<g data-nocheck="1"><path d="M260 125 L691 125" fill="none" stroke="#4fb3ff" stroke-width="2.4" stroke-linejoin="round"/><path d="M700 125 L690 130 L690 120 Z" fill="#4fb3ff"/></g>
+<text x="480" y="104" font-size="12" fill="#9aa0a6" text-anchor="middle">the wire: length-prefixed chunks</text>
+<rect x="310" y="113" width="76" height="24" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="348" y="129.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">[len|data]</text>
+<rect x="392" y="113" width="76" height="24" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="430" y="129.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">[len|data]</text>
+<rect x="474" y="113" width="76" height="24" rx="4" fill="#203d56" stroke="#4fb3ff" stroke-width="1.3"/>
+<text x="512" y="129.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">[len|data]</text>
+<text x="565" y="129" font-size="13" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round">…</text>
+<rect x="580" y="113" width="58" height="24" rx="4" fill="#2e2e2e" stroke="#9aa0a6" stroke-width="1.3"/>
+<text x="609" y="129.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">0x0000</text>
+<path d="M340 336 L620 336" fill="none" stroke="#9aa0a6" stroke-width="1.3" stroke-linejoin="round"/><path d="M626 336 L619 339.4 L619 332.6 Z" fill="#9aa0a6"/>
+<path d="M340 336 L340 190" fill="none" stroke="#9aa0a6" stroke-width="1.3" stroke-linejoin="round"/><path d="M340 184 L343.4 191 L336.6 191 Z" fill="#9aa0a6"/>
+<text x="626" y="354" font-size="12" fill="#9aa0a6" text-anchor="end">archive size →</text>
+<text x="350" y="196" font-size="12" fill="#9aa0a6">bytes held, on each side</text>
+<line x1="342" y1="332" x2="612" y2="210" stroke="#9aa0a6" stroke-width="1.8" stroke-dasharray="6 5"/>
+<text x="566" y="220" font-size="12" fill="#9aa0a6" text-anchor="end">archive size: any</text>
+<line x1="342" y1="306" x2="616" y2="306" stroke="#4fb3ff" stroke-width="2.6"/>
+<text x="616" y="298" font-size="12" fill="#4fb3ff" text-anchor="end" font-weight="600">memory: fixed</text>
+<text x="616" y="324" font-size="12" fill="#9aa0a6" text-anchor="end">buffers + codec contexts</text>
+<text x="480" y="394" font-size="13" fill="#9aa0a6" text-anchor="middle" xml:space="preserve"><tspan fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">FileEntry</tspan><tspan > = path + </tspan><tspan fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[S(0x5_000_000)] Stream</tspan><tspan >: up to 80 MiB per entry, up to 65 535 entries, the cap checked on both sides.</tspan></text>
+<text x="480" y="414" font-size="13" fill="#9aa0a6" text-anchor="middle">AdHoc's own protocol delivers project files this way.</text>
+</g>
+</svg>

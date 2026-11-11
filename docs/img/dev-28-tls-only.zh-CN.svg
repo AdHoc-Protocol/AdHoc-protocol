@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 300" width="980" height="300" role="img" aria-labelledby="dev28tlsonly-t dev28tlsonly-d">
+<title id="dev28tlsonly-t">别人的 TLS 服务：仅 TLS</title>
+<desc id="dev28tlsonly-d">Your client, with your bytes over WebSocket or TCP over TLS 1.3, trusting the system's roots or a function of your own, connects to someone else's service, which has a certificate for api.example.com and no Noise. The name in the certificate is checked. The call is connectTls with the address, the name, the ALPN and no server key. Rust, C, C++, Swift and Dart reach the system's roots on Windows only; elsewhere they need a trust function.</desc>
+<rect width="980" height="300" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">别人的 TLS 服务：仅 TLS</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">网站、标准的 WebSocket 服务器或客户端、API：对端没有 Noise</text>
+<rect x="30" y="80" width="270" height="150" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="165" y="102" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">你的客户端</text>
+<rect x="45" y="114" width="240" height="26" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="165" y="131" font-size="12" fill="#e8eaed" text-anchor="middle">你的字节</text>
+<rect x="45" y="148" width="240" height="26" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="165" y="165" font-size="12" fill="#e8eaed" text-anchor="middle">WebSocket 或 TCP</text>
+<rect x="45" y="182" width="240" height="26" rx="4" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="165" y="199" font-size="12" fill="#e8eaed" text-anchor="middle">TLS 1.3</text>
+<rect x="680" y="80" width="270" height="150" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="815" y="137" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">他们的服务</text>
+<text xml:space="preserve" x="815" y="154" font-size="12" fill="#9aa0a6" text-anchor="middle">证书签发给</text>
+<text xml:space="preserve" x="815" y="169" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">api.example.com</text>
+<text xml:space="preserve" x="815" y="184" font-size="12" fill="#9aa0a6" text-anchor="middle">没有 Noise</text>
+<rect x="300" y="186" width="380" height="18" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="490" y="170" font-size="12" fill="#e8eaed" text-anchor="middle">TLS：检查证书中的名称</text>
+<text xml:space="preserve" x="490" y="236" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">connectTls( address, &quot;api.example.com&quot;, alpn, ms, null, cb )</text>
+<text xml:space="preserve" x="24" y="260" font-size="12" fill="#9aa0a6">信任：系统根证书，或 Chain.trust，即你的函数。Rust、C、C++、Swift 和 Dart 只在 Windows 上能访问系统根证书：</text>
+<text xml:space="preserve" x="24" y="278" font-size="12" fill="#9aa0a6">在其他系统上要给它们一个信任函数，否则它们会拒绝所有服务器。</text>
+</g>
+</svg>

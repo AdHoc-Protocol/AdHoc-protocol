@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 400" width="980" height="400" role="img" aria-labelledby="dev28browser-t dev28browser-d">
+<title id="dev28browser-t">A browser: wss:// outside, Noise inside</title>
+<desc id="dev28browser-d">Left, a page in a browser with its layers: packs, Noise run by the page with the server's key pinned, WebSocket frames, and TLS, which is the browser's own. The TLS goes to a terminator, Cloudflare or nginx, which ends it and comes to the server with no TLS. The Noise line runs from the page to the server, through the terminator, which sees only sealed bytes. The server has packs, Noise with host.key, and WebSocket frames. Below, the direct way: wss:// straight to the server, with the server's own certificate set by tlsServer.</desc>
+<rect width="980" height="400" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">A browser: wss:// outside, Noise inside</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">The browser does TLS, the page does Noise: whoever ends TLS in front of the server carries what it cannot read</text>
+<rect x="30" y="76" width="230" height="230" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="145" y="98" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Browser page</text>
+<rect x="45" y="112" width="200" height="28" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="145" y="130" font-size="12" fill="#e8eaed" text-anchor="middle">packs</text>
+<rect x="45" y="148" width="200" height="28" rx="4" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="145" y="166" font-size="12" fill="#e8eaed" text-anchor="middle">Noise, in the page</text>
+<rect x="45" y="184" width="200" height="28" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="145" y="202" font-size="12" fill="#e8eaed" text-anchor="middle">WebSocket frames</text>
+<rect x="45" y="220" width="200" height="28" rx="4" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="145" y="238" font-size="12" fill="#e8eaed" text-anchor="middle">TLS: the browser's</text>
+<text xml:space="preserve" x="145" y="276" font-size="12" fill="#9aa0a6" text-anchor="middle">pins the server's key</text>
+<text xml:space="preserve" x="145" y="293" font-size="11" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">connect( &quot;wss://…&quot;, ms, key )</text>
+<rect x="390" y="120" width="170" height="186" rx="8" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.6"/>
+<text xml:space="preserve" x="475" y="254" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Cloudflare, nginx</text>
+<text xml:space="preserve" x="475" y="274" font-size="12" fill="#f2c14e" text-anchor="middle">ends TLS;</text>
+<text xml:space="preserve" x="475" y="290" font-size="12" fill="#f2c14e" text-anchor="middle">Noise passes sealed</text>
+<rect x="720" y="76" width="230" height="230" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="835" y="98" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server</text>
+<rect x="735" y="112" width="200" height="28" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="835" y="130" font-size="12" fill="#e8eaed" text-anchor="middle">packs</text>
+<rect x="735" y="148" width="200" height="28" rx="4" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="835" y="166" font-size="12" fill="#e8eaed" text-anchor="middle">Noise: host.key</text>
+<rect x="735" y="184" width="200" height="28" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="835" y="202" font-size="12" fill="#e8eaed" text-anchor="middle">WebSocket frames</text>
+<rect x="735" y="220" width="200" height="28" rx="4" fill="none" stroke="#8c9198" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text xml:space="preserve" x="835" y="238" font-size="12" fill="#e8eaed" text-anchor="middle">no TLS from it</text>
+<rect x="245" y="222" width="145" height="16" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<line x1="560.0" y1="230.0" x2="727.0" y2="230.0" stroke="#8c9198" stroke-width="1.8" stroke-dasharray="5 4"/>
+<polygon points="735.0,230.0 725.0,224.5 725.0,235.5" fill="#8c9198"/>
+<line x1="255.0" y1="162.0" x2="725.0" y2="162.0" stroke="#b58cf0" stroke-width="2.6"/>
+<polygon points="735.0,162.0 723.0,155.4 723.0,168.6" fill="#b58cf0"/>
+<polygon points="245.0,162.0 257.0,168.6 257.0,155.4" fill="#b58cf0"/>
+<text xml:space="preserve" x="475" y="154" font-size="12" fill="#e8eaed" text-anchor="middle">sealed from the page to the server</text>
+<path d="M145,306 L145,340 L835,340 L835,314" fill="none" stroke="#6f9fd8" stroke-width="1.6" stroke-dasharray="6 4" stroke-linejoin="round"/>
+<polygon points="835.0,306.0 829.5,316.0 840.5,316.0" fill="#6f9fd8"/>
+<text xml:space="preserve" x="490" y="358" font-size="12" fill="#9aa0a6" text-anchor="middle">or straight to the server: wss:// with its own certificate, tlsServer( pem, pem )</text>
+<text xml:space="preserve" x="24" y="388" font-size="12" fill="#9aa0a6">A browser has no TCP and no server; its TLS, certificates and KeyUpdate are the browser's concern.</text>
+</g>
+</svg>

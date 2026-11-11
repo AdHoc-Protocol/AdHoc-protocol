@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 400" width="980" height="400" role="img" aria-labelledby="dev28nk-t dev28nk-d">
+<title id="dev28nk-t">Your client, your server: Noise NK</title>
+<desc id="dev28nk-d">Left, once: your key tool calls X25519.keyPair and writes two files: server.key, which only the server reads, and server.pub, which goes into every client. Right: the client, which pins server.pub, connects to the server, which reads server.key at start; message 1 carries the client's one-time key sealed to the server's key, message 2 the server's one-time key, and the server is proved. After that the login, orders and every other pack travel sealed both ways. Someone on the line can neither read them nor answer in the server's place without server.key.</desc>
+<rect width="980" height="400" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Your client, your server: Noise NK</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">No certificate and nothing to renew: one key pair, the secret half on the server, the public half in the clients</text>
+<rect x="20" y="72" width="290" height="280" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="36" y="96" font-size="13" fill="#e8eaed" font-weight="700">Once, on a machine you trust</text>
+<rect x="45" y="110" width="240" height="54" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="165" y="134" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">your key tool</text>
+<text xml:space="preserve" x="165" y="151" font-size="11.5" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">X25519.keyPair( secret, pub )</text>
+<rect x="34" y="210" width="120" height="60" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="94" y="237" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">server.key</text>
+<text xml:space="preserve" x="94" y="254" font-size="12" fill="#9aa0a6" text-anchor="middle">the server only</text>
+<rect x="176" y="210" width="120" height="60" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="236" y="237" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">server.pub</text>
+<text xml:space="preserve" x="236" y="254" font-size="12" fill="#9aa0a6" text-anchor="middle">every client</text>
+<circle cx="56" cy="296" r="5" fill="none" stroke="#f2c14e" stroke-width="1.8"/>
+<path d="M61,296 H73 M69,296 V301 M73,296 V300" stroke="#f2c14e" stroke-width="1.8" fill="none"/>
+<text xml:space="preserve" x="80" y="300" font-size="11.5" fill="#9aa0a6">a secret: never in code or git</text>
+<line x1="120.0" y1="164.0" x2="97.9" y2="203.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="94.0,210.0 103.7,204.0 94.1,198.6" fill="#8c9198"/>
+<line x1="210.0" y1="164.0" x2="232.1" y2="203.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="236.0,210.0 235.9,198.6 226.3,204.0" fill="#8c9198"/>
+<rect x="360" y="100" width="150" height="140" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="435" y="167" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<text xml:space="preserve" x="435" y="184" font-size="12" fill="#9aa0a6" text-anchor="middle">pins server.pub</text>
+<rect x="800" y="100" width="150" height="140" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="875" y="159.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server</text>
+<text xml:space="preserve" x="875" y="176.5" font-size="12" fill="#9aa0a6" text-anchor="middle">server.key,</text>
+<text xml:space="preserve" x="875" y="191.5" font-size="12" fill="#9aa0a6" text-anchor="middle">read at start</text>
+<path d="M296,240 L330,240 L330,170 L350,170" fill="none" stroke="#8c9198" stroke-width="1.6" stroke-dasharray="4 4" stroke-linejoin="round"/>
+<polygon points="358.0,170.0 348.0,164.5 348.0,175.5" fill="#8c9198"/>
+<line x1="510.0" y1="130.0" x2="792.0" y2="130.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="800.0,130.0 790.0,124.5 790.0,135.5" fill="#8c9198"/>
+<text xml:space="preserve" x="655" y="123" font-size="12" fill="#e8eaed" text-anchor="middle">1   one-time key, sealed to the key</text>
+<line x1="800.0" y1="166.0" x2="518.0" y2="166.0" stroke="#8c9198" stroke-width="1.8"/>
+<polygon points="510.0,166.0 520.0,171.5 520.0,160.5" fill="#8c9198"/>
+<text xml:space="preserve" x="655" y="159" font-size="12" fill="#e8eaed" text-anchor="middle">2   one-time key: the server is proved</text>
+<rect x="510" y="196" width="290" height="28" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.4"/>
+<text xml:space="preserve" x="655" y="215" font-size="12" fill="#e8eaed" text-anchor="middle">Login, Order, …   sealed both ways</text>
+<rect x="560" y="290" width="190" height="56" rx="8" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.6"/>
+<text xml:space="preserve" x="655" y="315" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">On the line</text>
+<text xml:space="preserve" x="655" y="332" font-size="12" fill="#9aa0a6" text-anchor="middle">cannot read, cannot answer</text>
+<line x1="655.0" y1="290.0" x2="655.0" y2="238.0" stroke="#e06c6c" stroke-width="1.4" stroke-dasharray="4 4"/>
+<polygon points="655.0,230.0 649.5,240.0 660.5,240.0" fill="#e06c6c"/>
+<text xml:space="preserve" x="668" y="262" font-size="16" fill="#e06c6c" font-weight="700">✗</text>
+<text xml:space="preserve" x="24" y="384" font-size="12" fill="#9aa0a6">The login of a person, an account, a password, a token, goes inside the protocol as ordinary packs, sealed with the rest.</text>
+</g>
+</svg>

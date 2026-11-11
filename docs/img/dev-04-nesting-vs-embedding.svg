@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img">
+<title>Two columns. Left, declaration nesting: class PlayerAction contains the declaration of class StateUpdate; they become two separate packs, PlayerAction with id 1 and PlayerAction.StateUpdate with id 2, and each is sent on its own as its own frame. Right, field embedding: class Order has a field Address ship_to; Order is one pack with id 3 and the Address bytes travel inside the Order frame</title>
+<rect width="960" height="420" rx="10" fill="#2b2b2b"/>
+<line x1="480" y1="24" x2="480" y2="370" stroke="#4a4a4a" stroke-width="1"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+  <text x="32" y="40" font-size="16" font-weight="600" fill="#e8eaed">Declaration nesting: a name</text>
+  <text x="512" y="40" font-size="16" font-weight="600" fill="#e8eaed">Field embedding: data</text>
+</g>
+
+<!-- LEFT: code -->
+<rect x="32" y="56" width="416" height="118" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<g font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13">
+  <text x="48" y="82" fill="#e8eaed">class PlayerAction {</text>
+  <text x="77" y="104" fill="#9aa0a6">byte action_type;</text>
+  <text x="77" y="126" fill="#a06fd0">class StateUpdate { ... }</text>
+  <text x="48" y="148" fill="#e8eaed">}</text>
+</g>
+<!-- LEFT: arrows code -> packs -->
+<line x1="122" y1="174" x2="122" y2="191" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M122 198 L117.5 190 L126.5 190 Z" fill="#9aa0a6"/>
+<line x1="340" y1="174" x2="340" y2="191" stroke="#a06fd0" stroke-width="1.6"/>
+<path d="M340 198 L335.5 190 L344.5 190 Z" fill="#a06fd0"/>
+<!-- LEFT: two packs -->
+<rect x="32" y="198" width="180" height="52" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<rect x="232" y="198" width="216" height="52" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" text-anchor="middle">
+  <text x="122" y="220" font-size="14" fill="#e8eaed">PlayerAction</text>
+  <text x="122" y="239" font-size="12" fill="#e8833a">pack, id 1</text>
+  <text x="340" y="220" font-size="14" fill="#e8eaed">PlayerAction.StateUpdate</text>
+  <text x="340" y="239" font-size="12" fill="#e8833a">pack, id 2</text>
+</g>
+<!-- LEFT: arrows packs -> wire -->
+<line x1="122" y1="250" x2="122" y2="271" stroke="#4fb3ff" stroke-width="1.6"/>
+<path d="M122 278 L117.5 270 L126.5 270 Z" fill="#4fb3ff"/>
+<line x1="340" y1="250" x2="340" y2="271" stroke="#4fb3ff" stroke-width="1.6"/>
+<path d="M340 278 L335.5 270 L344.5 270 Z" fill="#4fb3ff"/>
+<!-- LEFT: two wire frames -->
+<rect x="32" y="278" width="180" height="32" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<line x1="80" y1="278" x2="80" y2="310" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="232" y="278" width="216" height="32" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<line x1="280" y1="278" x2="280" y2="310" stroke="#4fb3ff" stroke-width="1.2"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" text-anchor="middle">
+  <text x="56" y="298" fill="#4fb3ff">id 1</text>
+  <text x="146" y="298" fill="#e8eaed">PlayerAction fields</text>
+  <text x="256" y="298" fill="#4fb3ff">id 2</text>
+  <text x="364" y="298" fill="#e8eaed">StateUpdate fields</text>
+</g>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">
+  <text x="32" y="338">two packs, each sent on its own (when a branch selects it)</text>
+  <text x="32" y="358">StateUpdate is not part of the PlayerAction bytes</text>
+</g>
+
+<!-- RIGHT: code -->
+<rect x="512" y="56" width="416" height="118" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<g font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13">
+  <text x="528" y="78" fill="#e8eaed">class Order {</text>
+  <text x="557" y="98" fill="#9aa0a6">uint</text><text x="614" y="98" fill="#9aa0a6">order_id;</text>
+  <text x="557" y="118" fill="#f2c14e">Address ship_to;</text>
+  <text x="528" y="138" fill="#e8eaed">}</text>
+  <text x="528" y="162" fill="#e8eaed">class Address { ... }</text>
+</g>
+<!-- RIGHT: arrow code -> pack -->
+<line x1="720" y1="174" x2="720" y2="191" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M720 198 L715.5 190 L724.5 190 Z" fill="#9aa0a6"/>
+<!-- RIGHT: one pack containing Address -->
+<rect x="512" y="198" width="416" height="52" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+  <text x="528" y="220" font-size="14" fill="#e8eaed">Order</text>
+  <text x="528" y="239" font-size="12" fill="#e8833a">pack, id 3</text>
+</g>
+<rect x="604" y="206" width="104" height="36" rx="3" fill="#2b2b2b" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="720" y="206" width="196" height="36" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle">
+  <text x="656" y="229" fill="#9aa0a6">order_id</text>
+  <text x="818" y="229" fill="#f2c14e">Address (ship_to)</text>
+</g>
+<!-- RIGHT: arrow pack -> wire -->
+<line x1="720" y1="250" x2="720" y2="271" stroke="#4fb3ff" stroke-width="1.6"/>
+<path d="M720 278 L715.5 270 L724.5 270 Z" fill="#4fb3ff"/>
+<!-- RIGHT: one wire frame -->
+<rect x="512" y="278" width="416" height="32" rx="3" fill="#1f2d3a" stroke="#4fb3ff" stroke-width="1.4"/>
+<rect x="660" y="279" width="267" height="30" fill="#3d3520"/>
+<line x1="560" y1="278" x2="560" y2="310" stroke="#4fb3ff" stroke-width="1.2"/>
+<line x1="660" y1="278" x2="660" y2="310" stroke="#4fb3ff" stroke-width="1.2"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" text-anchor="middle">
+  <text x="536" y="298" fill="#4fb3ff">id 3</text>
+  <text x="610" y="298" fill="#e8eaed">order_id</text>
+  <text x="794" y="298" fill="#f2c14e">ship_to: Address fields</text>
+</g>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">
+  <text x="512" y="338">one pack: the Address bytes travel inside Order</text>
+  <text x="512" y="358">Address needs no id of its own</text>
+</g>
+
+<text x="480" y="400" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Declaring a class inside a pack only names it. Data nests only through a field.</text>
+</svg>

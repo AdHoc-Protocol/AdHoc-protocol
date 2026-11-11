@@ -1,0 +1,298 @@
+name: Process Sign-up Discussion Messages
+
+on:
+  discussion:
+    types: [ created ]
+  schedule:
+    - cron: '*/15 * * * *' # a post left by a failure or an offline server
+  workflow_dispatch:
+
+concurrency:
+  group: "signup-processing"
+  cancel-in-progress: false
+
+env:
+  REPO_POSTS: AdHoc-Protocol
+  ORG: AdHoc-Protocol
+  CATEGORY_SLUG: "sign-up"
+
+jobs:
+  # Job 1: Get the category ID that other jobs will need.
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      category_id: ${{ steps.get_ids.outputs.category_id }}
+    steps:
+      - name: Get Discussion Category ID
+        id: get_ids
+        env:
+          GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+        run: |
+          IDS_JSON=$(gh api graphql -f query='
+            query($owner: String!, $name: String!, $categorySlug: String!) {
+              repository(owner: $owner, name: $name) {
+                discussionCategory(slug: $categorySlug) {
+                  id
+                }
+              }
+            }
+          ' -F owner="$ORG" -F name="$REPO_POSTS" -F categorySlug="$CATEGORY_SLUG")
+          
+          CATEGORY_ID=$(echo "$IDS_JSON" | jq -r '.data.repository.discussionCategory.id')
+          
+          if [[ -z "$CATEGORY_ID" || "$CATEGORY_ID" == "null" ]]; then
+            echo "::error::Category ID not found for slug '${CATEGORY_SLUG}'"
+            exit 1
+          fi
+          
+          echo "category_id=$CATEGORY_ID" >> $GITHUB_OUTPUT
+          echo "✓ Fetched Category ID: $CATEGORY_ID"
+
+  # Job 2: Find all unique users who need to be processed.
+  discover:
+    runs-on: ubuntu-latest
+    needs: setup
+    outputs:
+      users_json: ${{ steps.get_users.outputs.users_json }}
+      user_count: ${{ steps.get_users.outputs.user_count }}
+    steps:
+      - name: Fetch Unique Sign-up Users
+        id: get_users
+        env:
+          GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+          CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
+        run: |
+          RAW=$(gh api graphql -f query='
+            query($owner: String!, $name: String!, $categoryId: ID!) {
+              repository(owner: $owner, name: $name) {
+                discussions(first: 100, categoryId: $categoryId) {
+                  nodes {
+                    id
+                    body
+                    author {
+                      login
+                      ... on User {
+                        databaseId
+                        createdAt
+                        isHireable
+                        bio
+                        followers { totalCount }
+                        repositories( ownerAffiliations: OWNER, privacy: PUBLIC, isFork: false ) { totalCount }
+                        organizations { totalCount }
+                        contributionsCollection { contributionCalendar { totalContributions } }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' -F owner="$ORG" -F name="$REPO_POSTS" -F categoryId="$CATEGORY_ID")
+
+          NODES=$(echo "$RAW" | jq -c '.data.repository.discussions.nodes')
+
+          # Only User accounts sign up. `databaseId` comes from the `... on User` fragment, so an author without it is
+          # an app (Bot), an organization, a mannequin, or a deleted account (author is null). Those never
+          # reach the server: their posts are simply deleted in the next step.
+          # What the server is sent of a user: the account, its numbers, and the answers of the form - of the user's
+          # first post (the form is the same in every post). The bio itself stays here: only whether there is one.
+          USERS_PAYLOAD=$(echo "$NODES" | jq -c '[ .[] | select(.author != null and .author.databaseId != null)
+            | { login: .author.login, databaseId: .author.databaseId, createdAt: .author.createdAt,
+                hireable: (.author.isHireable // false), bio: ((.author.bio // "") != ""),
+                followers: .author.followers.totalCount, repositories: .author.repositories.totalCount,
+                organizations: .author.organizations.totalCount,
+                contributions: .author.contributionsCollection.contributionCalendar.totalContributions,
+                body: (.body // "") } ] | unique_by(.login)')
+          USER_COUNT=$(echo "$USERS_PAYLOAD" | jq 'length')
+          JUNK_IDS=$(echo "$NODES" | jq -r '[ .[] | select(.author == null or .author.databaseId == null) | .id ] | join(" ")')
+
+          if [[ "$USER_COUNT" -eq 0 ]]; then
+            echo "No new sign-up discussions to process."
+          else
+            echo "Found $USER_COUNT unique user(s) to process."
+          fi
+          if [[ -n "$JUNK_IDS" ]]; then
+            echo "Found post(s) by non-User accounts to discard: $JUNK_IDS"
+          fi
+
+          echo "users_json=$USERS_PAYLOAD" >> $GITHUB_OUTPUT
+          echo "user_count=$USER_COUNT" >> $GITHUB_OUTPUT
+          echo "junk_ids=$JUNK_IDS" >> $GITHUB_OUTPUT
+
+      - name: Discard Sign-up Posts by Non-User Accounts
+        if: steps.get_users.outputs.junk_ids != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+          JUNK_IDS: ${{ steps.get_users.outputs.junk_ids }}
+        run: |
+          for id in $JUNK_IDS; do
+            echo "Deleting sign-up post $id: its author is not a User account"
+            gh api graphql -f query='
+              mutation($id: ID!) {
+                deleteDiscussion(input: {id: $id}) { clientMutationId }
+              }' -F id="$id" || echo "::warning::Failed to delete discussion with ID: $id"
+            sleep 1 # Crucial to avoid hitting secondary rate limits.
+          done
+
+  # Job 3: Process the users one at a time: the server takes one request at a time, newest time only.
+  process:
+    runs-on: ubuntu-latest
+    needs: [setup, discover]
+    if: needs.discover.outputs.user_count > 0
+    strategy:
+      fail-fast: false # Allows other users to continue processing even if one fails.
+      max-parallel: 1
+      matrix:
+        user: ${{ fromJson(needs.discover.outputs.users_json) }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github
+
+      - name: Register ${{ matrix.user.login }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+          SIGN_UP_HOST: ${{ secrets.SIGN_UP_HOST }}
+          SIGN_UP_PORT: ${{ secrets.SIGN_UP_PORT }}
+          SIGN_UP_HEADER: ${{ secrets.SIGN_UP_HEADER }}
+          SIGN_UP_KEY: ${{ secrets.SIGN_UP_KEY }}
+          CATEGORY_ID: ${{ needs.setup.outputs.category_id }}
+          USER_LOGIN: ${{ matrix.user.login }}
+          USER_ID: ${{ matrix.user.databaseId }}
+          USER_CREATED_AT: ${{ matrix.user.createdAt }}
+          USER_FOLLOWERS: ${{ matrix.user.followers }}
+          USER_REPOSITORIES: ${{ matrix.user.repositories }}
+          USER_CONTRIBUTIONS: ${{ matrix.user.contributions }}
+          USER_ORGANIZATIONS: ${{ matrix.user.organizations }}
+          USER_HIREABLE: ${{ matrix.user.hireable }}
+          USER_BIO: ${{ matrix.user.bio }}
+          USER_POST: ${{ matrix.user.body }}
+        run: |
+          echo "--- Processing user: $USER_LOGIN ---"
+
+          # 1. Ask the server. No answer leaves the post in place for the next run. The UUID is masked before anything
+          #    can print it, and it stays out of the logs: this repository's run logs are public.
+          #    header 8 | time 8, random 4 | git id 4, created 8, post 11, login | tag 16      -> status 1, UUID 16 or ban text | tag 16
+          #    post: followers 2, repositories 2, contributions 2, organizations 1, flags 1 (1 hireable, 2 bio), languages 2, source 1
+          REPLY_FILE="$RUNNER_TEMP/reply"
+          node - <<'JS'
+          const net = require( "net" ), crypto = require( "crypto" ), fs = require( "fs" ), env = process.env;
+          const bare   = secret => secret.split( '"' ).join( "" ).trim();
+          const header = Buffer.from( bare( env.SIGN_UP_HEADER ).replace( "0x", "" ).replace( "L", "" ), "hex" );
+          const key    = Buffer.from( bare( env.SIGN_UP_KEY ), "hex" );
+          const login  = Buffer.from( env.USER_LOGIN, "utf8" );
+          const nonce  = Buffer.alloc( 12 );
+          nonce.writeBigInt64BE( BigInt( Date.now() ), 0 );
+          crypto.randomFillSync( nonce, 8 );
+          // The answers of the form ( .github/DISCUSSION_TEMPLATE/sign-up.yml ): a section is its `### label` heading and
+          // what follows it. The languages are bits in the order of `Langs`, the source - the place of the answer + 1.
+          const section = label => { const at = env.USER_POST.indexOf( "### " + label ); if( at < 0 ) return ""; const next = env.USER_POST.indexOf( "\n### ", at + 4 ); return env.USER_POST.slice( at + 4 + label.length, next < 0 ? undefined : next ); };
+          const LANGS   = [ "C++", "Rust", "C#", "Java", "Go", "TypeScript", "Swift", "C", "Dart", "Python" ];
+          const SOURCES = [ "A search engine", "GitHub", "A friend or a colleague", "An article", "A video", "A forum or a chat", "Other" ];
+          let langs = 0;
+          for( const line of section( "Languages" ).split( "\n" ) ) { const m = /^- \[[xX]\] (.+)$/.exec( line.trim() ); if( m ) { const i = LANGS.indexOf( m[ 1 ].trim() ); if( 0 <= i ) langs |= 1 << i; } }
+          const answer_line = section( "Where did you hear about AdHoc" ).split( "\n" ).map( s => s.trim() ).find( s => s && !s.endsWith( "?" ) ) || "";
+          const source  = SOURCES.indexOf( answer_line ) + 1;
+          const u16     = v => Math.max( 0, Math.min( 0xFFFF, Number( v ) || 0 ) );
+          const plain   = Buffer.alloc( 23 + login.length );
+          plain.writeInt32BE( Number( env.USER_ID ), 0 );
+          plain.writeBigInt64BE( BigInt( Date.parse( env.USER_CREATED_AT ) ), 4 );
+          plain.writeUInt16BE( u16( env.USER_FOLLOWERS ), 12 );
+          plain.writeUInt16BE( u16( env.USER_REPOSITORIES ), 14 );
+          plain.writeUInt16BE( u16( env.USER_CONTRIBUTIONS ), 16 );
+          plain.writeUInt8( Math.min( 255, u16( env.USER_ORGANIZATIONS ) ), 18 );
+          plain.writeUInt8( ( env.USER_HIREABLE === "true" ? 1 : 0 ) | ( env.USER_BIO === "true" ? 2 : 0 ), 19 );
+          plain.writeUInt16BE( langs, 20 );
+          plain.writeUInt8( source, 22 );
+          login.copy( plain, 23 );
+          const cipher = crypto.createCipheriv( "aes-256-gcm", key, nonce );
+          const body   = Buffer.concat( [ cipher.update( plain ), cipher.final() ] );
+          const socket = net.connect( { host: bare( env.SIGN_UP_HOST ), port: Number( bare( env.SIGN_UP_PORT ) ) } );
+          const parts  = [];
+          socket.setTimeout( 30000, () => socket.destroy( new Error( "the server does not answer" ) ) );
+          socket.on( "connect", () => socket.write( Buffer.concat( [ header, nonce, body, cipher.getAuthTag() ] ) ) );
+          socket.on( "data", part => parts.push( part ) );
+          socket.on( "error", e => { console.log( "::error::" + e.message ); process.exit( 1 ); } );
+          socket.on( "close", () => {
+              const reply = Buffer.concat( parts );
+              if( reply.length < 17 ) { console.log( "::error::The server closed the connection without an answer." ); process.exit( 1 ); }
+              nonce[ 0 ] |= 0x80;
+              const decipher = crypto.createDecipheriv( "aes-256-gcm", key, nonce );
+              decipher.setAuthTag( reply.subarray( reply.length - 16 ) );
+              const answer = Buffer.concat( [ decipher.update( reply.subarray( 0, reply.length - 16 ) ), decipher.final() ] );
+              if( answer[ 0 ] === 0 ) {
+                  const hex  = answer.subarray( 1, 17 ).toString( "hex" );
+                  const uuid = [ hex.slice( 0, 8 ), hex.slice( 8, 12 ), hex.slice( 12, 16 ), hex.slice( 16, 20 ), hex.slice( 20 ) ].join( "-" );
+                  console.log( "::add-mask::" + uuid );
+                  const filled = file => fs.readFileSync( file, "utf8" ).split( "{{UUID}}" ).join( uuid ).split( "{{LOGIN}}" ).join( env.USER_LOGIN ).split( "{{REPOSITORY}}" ).join( "https://github.com/" + env.ORG + "/u" + env.USER_ID );
+                  fs.writeFileSync( env.RUNNER_TEMP + "/reply", filled( ".github/sign-up-readme.md" ) );
+                  fs.writeFileSync( env.RUNNER_TEMP + "/note", filled( ".github/sign-up-mail.md" ) );
+              } else {
+                  const text = "Access is suspended\n\n" + answer.subarray( 1 ).toString( "utf8" ) + "\n";
+                  fs.writeFileSync( env.RUNNER_TEMP + "/reply", "# " + text );
+                  fs.writeFileSync( env.RUNNER_TEMP + "/note", "@" + env.USER_LOGIN + ", " + text );
+              }
+              process.exit( 0 );
+          } );
+          JS
+          echo "✓ The server answered."
+
+          # 2. The user's private repository, named by the id: a login can change, the id cannot.
+          REPO="u$USER_ID"
+          RETURNING=1
+          if ! gh api "repos/$ORG/$REPO" >/dev/null 2>&1; then
+            gh api "orgs/$ORG/repos" -f name="$REPO" -f description="$USER_LOGIN" -F private=true >/dev/null
+            RETURNING=0
+            echo "✓ Created $REPO."
+          fi
+
+          # 3. The README holds the server's last answer: the repository opens on it. A new repository gets it as its first commit.
+          if ! SHA=$(gh api "repos/$ORG/$REPO/contents/README.md" --jq .sha 2>/dev/null); then SHA=""; fi
+          jq -n --rawfile body "$REPLY_FILE" --arg sha "$SHA" '{ message: "The sign-up answer", content: ($body | @base64) } + (if $sha == "" then {} else { sha: $sha } end)' \
+            | gh api -X PUT "repos/$ORG/$REPO/contents/README.md" --input - >/dev/null
+          echo "✓ The answer is in $REPO."
+
+          # 4. A commit sends no mail, so somebody who comes back gets the answer itself by mail, from issue 1. The invitation tells a new user.
+          if [[ "$RETURNING" -eq 1 ]]; then
+            if ! gh api "repos/$ORG/$REPO/issues/1" >/dev/null 2>&1; then
+              gh api "repos/$ORG/$REPO/issues" -f title="Your personal volatile UUID" -F body=@"$RUNNER_TEMP/note" >/dev/null
+            else
+              gh api "repos/$ORG/$REPO/issues/1/comments" -F body=@"$RUNNER_TEMP/note" >/dev/null
+            fi
+          fi
+
+          # 5. Only a warning: failing here would keep the post, and every next run would replace the UUID again.
+          #    The account of the token itself is not invited: triage would cut its own access to the repository, and the
+          #    next run could not write the answer there.
+          if [[ "$USER_LOGIN" == "$(gh api user --jq .login)" ]]; then
+            echo "::notice::$USER_LOGIN is the account of this workflow: not invited to $REPO."
+          else
+            gh api -X PUT "repos/$ORG/$REPO/collaborators/$USER_LOGIN" -f permission=triage >/dev/null || echo "::warning::Could not invite $USER_LOGIN to $REPO."
+          fi
+
+          # 6. This user is done: delete THEIR sign-up post(s) right here. A leg that fails above never gets here, and that
+          #    user's post waits for the next run. A post left behind makes the next run replace the UUID again, so retry.
+          DISCUSSION_IDS=$(gh api graphql -f query='
+            query($owner: String!, $name: String!, $categoryId: ID!) {
+              repository(owner: $owner, name: $name) {
+                discussions(first: 100, categoryId: $categoryId) {
+                  nodes { id author { login } }
+                }
+              }
+            }' -F owner="$ORG" -F name="$REPO_POSTS" -F categoryId="$CATEGORY_ID" \
+            | jq -r --arg login "$USER_LOGIN" '.data.repository.discussions.nodes[] | select(.author.login == $login) | .id')
+
+          for id in $DISCUSSION_IDS; do
+            for attempt in 1 2 3; do
+              if gh api graphql -f query='
+                mutation($id: ID!) {
+                  deleteDiscussion(input: {id: $id}) { clientMutationId }
+                }' -F id="$id" >/dev/null; then
+                break
+              fi
+              echo "::warning::Failed to delete discussion with ID: $id, attempt $attempt"
+              sleep 5
+            done
+            sleep 1 # Crucial to avoid hitting secondary rate limits.
+          done
+          echo "✓ Sign-up post(s) of $USER_LOGIN removed."

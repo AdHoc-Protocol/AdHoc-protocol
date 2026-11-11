@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 490" width="980" height="490" role="img" aria-labelledby="dev28noisekk-t dev28noisekk-d">
+<title id="dev28noisekk-t">Noise KK：双方事先互相认识</title>
+<desc id="dev28noisekk-d">Noise KK, both know each other beforehand. Official notation: -&gt; s    &lt;- s    ...    -&gt; e, es, ss    &lt;- e, ee, se. s: the client's key, pinned by the server beforehand. s: the server's key, pinned by the client beforehand. Message 1, client to server: tokens e, es, ss; 48 bytes: e 32 + tag 16; sealed to the server; made with the pinned client's key. Message 2, server to client: tokens e, ee, se; 48 bytes: e 32 + tag 16; both proved; forward secrecy from here. After the handshake: Server: proved by its key; Client: proved by its key; Forward secrecy: yes, for every pack; Static keys sent: none: both known beforehand; onPeer: not needed: both pinned; In AdHoc: two services of yours; tunnels between known hosts.</desc>
+<rect width="980" height="490" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Noise KK：双方事先互相认识</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">官方记法：   -&gt; s    &lt;- s    ...    -&gt; e, es, ss    &lt;- e, ee, se</text>
+<rect x="60" y="76" width="150" height="40" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="135" y="100.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">客户端</text>
+<rect x="430" y="76" width="150" height="40" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="505" y="100.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">服务器</text>
+<text xml:space="preserve" x="135" y="134" font-size="11.5" fill="#9aa0a6" text-anchor="middle">s、e；固定 S 的密钥</text>
+<text xml:space="preserve" x="505" y="134" font-size="11.5" fill="#9aa0a6" text-anchor="middle">s、e；固定 C 的密钥</text>
+<line x1="135.0" y1="142.0" x2="135.0" y2="448.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="505.0" y1="142.0" x2="505.0" y2="448.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="135.0" y1="162.0" x2="497.0" y2="162.0" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 4"/>
+<polygon points="505.0,162.0 495.0,156.5 495.0,167.5" fill="#f2c14e"/>
+<text xml:space="preserve" x="320" y="157" font-size="11.5" fill="#f2c14e" text-anchor="middle">s：客户端的密钥，服务器事先固定</text>
+<line x1="505.0" y1="186.0" x2="143.0" y2="186.0" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 4"/>
+<polygon points="135.0,186.0 145.0,191.5 145.0,180.5" fill="#f2c14e"/>
+<text xml:space="preserve" x="320" y="181" font-size="11.5" fill="#f2c14e" text-anchor="middle">s：服务器的密钥，客户端事先固定</text>
+<line x1="135.0" y1="252.0" x2="497.0" y2="252.0" stroke="#e8eaed" stroke-width="1.8"/>
+<polygon points="505.0,252.0 495.0,246.5 495.0,257.5" fill="#e8eaed"/>
+<text xml:space="preserve" x="125" y="256" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">1</text>
+<rect x="273" y="227" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="284" y="242" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">e</text>
+<rect x="301" y="227" width="30" height="21" rx="4" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="316" y="242" font-size="13" fill="#6f9fd8" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<rect x="337" y="227" width="30" height="21" rx="4" fill="#232323" stroke="#8c9198" stroke-width="1.4"/>
+<text xml:space="preserve" x="352" y="242" font-size="13" fill="#8c9198" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ss</text>
+<text xml:space="preserve" x="320" y="269" font-size="11.5" fill="#9aa0a6" text-anchor="middle">48 字节：e 32 + 标签 16</text>
+<text xml:space="preserve" x="320" y="285" font-size="11.5" fill="#f2c14e" text-anchor="middle">按服务器密钥密封；用已固定的客户端密钥生成</text>
+<line x1="505.0" y1="328.0" x2="143.0" y2="328.0" stroke="#e8eaed" stroke-width="1.8"/>
+<polygon points="135.0,328.0 145.0,333.5 145.0,322.5" fill="#e8eaed"/>
+<text xml:space="preserve" x="515" y="332" font-size="12" fill="#e8eaed" text-anchor="start" font-weight="700">2</text>
+<rect x="273" y="303" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="284" y="318" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">e</text>
+<rect x="301" y="303" width="30" height="21" rx="4" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="316" y="318" font-size="13" fill="#6fbf7f" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<rect x="337" y="303" width="30" height="21" rx="4" fill="#232323" stroke="#f2a44e" stroke-width="1.4"/>
+<text xml:space="preserve" x="352" y="318" font-size="13" fill="#f2a44e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">se</text>
+<text xml:space="preserve" x="320" y="345" font-size="11.5" fill="#9aa0a6" text-anchor="middle">48 字节：e 32 + 标签 16</text>
+<text xml:space="preserve" x="320" y="361" font-size="11.5" fill="#f2c14e" text-anchor="middle">双方都得到证明；从此有前向保密</text>
+<rect x="610" y="72" width="350" height="376" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="626" y="96" font-size="13" fill="#e8eaed" font-weight="700">握手之后</text>
+<text xml:space="preserve" x="626" y="122" font-size="11.5" fill="#e8eaed" font-weight="700">服务器</text>
+<text xml:space="preserve" x="786" y="122" font-size="11.5" fill="#9aa0a6">由其密钥证明</text>
+<text xml:space="preserve" x="626" y="147" font-size="11.5" fill="#e8eaed" font-weight="700">客户端</text>
+<text xml:space="preserve" x="786" y="147" font-size="11.5" fill="#9aa0a6">由其密钥证明</text>
+<text xml:space="preserve" x="626" y="172" font-size="11.5" fill="#e8eaed" font-weight="700">前向保密</text>
+<text xml:space="preserve" x="786" y="172" font-size="11.5" fill="#9aa0a6">有，对每个 pack</text>
+<text xml:space="preserve" x="626" y="197" font-size="11.5" fill="#e8eaed" font-weight="700">发送的静态密钥</text>
+<text xml:space="preserve" x="786" y="197" font-size="11.5" fill="#9aa0a6">无：双方事先已知</text>
+<text xml:space="preserve" x="626" y="222" font-size="11.5" fill="#e8eaed" font-weight="700">onPeer</text>
+<text xml:space="preserve" x="786" y="222" font-size="11.5" fill="#9aa0a6">不需要：双方都已固定</text>
+<text xml:space="preserve" x="626" y="247" font-size="11.5" fill="#e8eaed" font-weight="700">在 AdHoc 中</text>
+<text xml:space="preserve" x="786" y="247" font-size="11.5" fill="#9aa0a6">你自己的两个服务；</text>
+<text xml:space="preserve" x="786" y="262" font-size="11.5" fill="#9aa0a6">已知主机之间的隧道</text>
+<text xml:space="preserve" x="24" y="474" font-size="11.5" fill="#9aa0a6">AdHoc 不在握手中发送数据：每个 pack 都在握手之后发送，所用密钥包含 ee。在流上每条消息为 [长度 1][消息]。</text>
+</g>
+</svg>

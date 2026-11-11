@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 420" width="980" height="420" role="img" aria-labelledby="dev28chainvariants-t dev28chainvariants-d">
+<title id="dev28chainvariants-t">Common chains</title>
+<desc id="dev28chainvariants-d">Six chains, with their layers, what they give, the bytes they add a record and the handshakes after TCP. Plain TCP: a network you trust, nothing added, no handshake. TCP and Noise: sealed and proved by key, 18 bytes, the Noise handshake. TCP and TLS: someone else's TLS service, 22 bytes, the TLS handshake. ws://: proxies and browsers, nothing sealed, 2 to 14 bytes, the upgrade. wss://: web ports, but a terminator reads all, 24 to 36 bytes, TLS and the upgrade. wss:// with Noise: sealed past any terminator, 42 to 54 bytes, TLS, the upgrade and Noise. Each handshake is about one round trip; a WebSocket frame header is 2 to 14 bytes, 4 of them the mask a client adds.</desc>
+<rect width="980" height="420" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Common chains</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Each layer present costs its handshake once and its bytes on every record; each handshake is about one round trip</text>
+<text xml:space="preserve" x="24" y="92" font-size="12" fill="#e8eaed" font-weight="700">Chain</text>
+<text xml:space="preserve" x="180" y="92" font-size="12" fill="#e8eaed" font-weight="700">Layers</text>
+<text xml:space="preserve" x="400" y="92" font-size="12" fill="#e8eaed" font-weight="700">Gives</text>
+<text xml:space="preserve" x="700" y="92" font-size="12" fill="#e8eaed" font-weight="700">Bytes a record</text>
+<text xml:space="preserve" x="810" y="92" font-size="12" fill="#e8eaed" font-weight="700">Handshakes after TCP</text>
+<line x1="24.0" y1="102.0" x2="956.0" y2="102.0" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="24" y="136" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">plain TCP</text>
+<rect x="180" y="120" width="48" height="24" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="204" y="136" font-size="11.5" fill="#e8eaed" text-anchor="middle">TCP</text>
+<text xml:space="preserve" x="400" y="136" font-size="12" fill="#e8eaed">a network you trust</text>
+<text xml:space="preserve" x="700" y="136" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">0</text>
+<text xml:space="preserve" x="810" y="136" font-size="12" fill="#9aa0a6">-</text>
+<line x1="24.0" y1="152.0" x2="956.0" y2="152.0" stroke="#4a4a4a" stroke-width="0.6"/>
+<text xml:space="preserve" x="24" y="182" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">TCP + Noise</text>
+<rect x="180" y="166" width="48" height="24" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="204" y="182" font-size="11.5" fill="#e8eaed" text-anchor="middle">TCP</text>
+<rect x="232" y="166" width="48" height="24" rx="4" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="256" y="182" font-size="11.5" fill="#e8eaed" text-anchor="middle">Noise</text>
+<text xml:space="preserve" x="400" y="182" font-size="12" fill="#e8eaed">sealed, proved by key</text>
+<text xml:space="preserve" x="700" y="182" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">18</text>
+<text xml:space="preserve" x="810" y="182" font-size="12" fill="#9aa0a6">Noise</text>
+<line x1="24.0" y1="198.0" x2="956.0" y2="198.0" stroke="#4a4a4a" stroke-width="0.6"/>
+<text xml:space="preserve" x="24" y="228" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">TCP + TLS</text>
+<rect x="180" y="212" width="48" height="24" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="204" y="228" font-size="11.5" fill="#e8eaed" text-anchor="middle">TCP</text>
+<rect x="232" y="212" width="48" height="24" rx="4" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="256" y="228" font-size="11.5" fill="#e8eaed" text-anchor="middle">TLS</text>
+<text xml:space="preserve" x="400" y="228" font-size="12" fill="#e8eaed">someone else's TLS service</text>
+<text xml:space="preserve" x="700" y="228" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">22</text>
+<text xml:space="preserve" x="810" y="228" font-size="12" fill="#9aa0a6">TLS</text>
+<line x1="24.0" y1="244.0" x2="956.0" y2="244.0" stroke="#4a4a4a" stroke-width="0.6"/>
+<text xml:space="preserve" x="24" y="274" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">ws://</text>
+<rect x="180" y="258" width="48" height="24" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="204" y="274" font-size="11.5" fill="#e8eaed" text-anchor="middle">TCP</text>
+<rect x="232" y="258" width="48" height="24" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="256" y="274" font-size="11.5" fill="#e8eaed" text-anchor="middle">WS</text>
+<text xml:space="preserve" x="400" y="274" font-size="12" fill="#e8eaed">proxies, browsers; nothing sealed</text>
+<text xml:space="preserve" x="700" y="274" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">2…14</text>
+<text xml:space="preserve" x="810" y="274" font-size="12" fill="#9aa0a6">upgrade</text>
+<line x1="24.0" y1="290.0" x2="956.0" y2="290.0" stroke="#4a4a4a" stroke-width="0.6"/>
+<text xml:space="preserve" x="24" y="320" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">wss://</text>
+<rect x="180" y="304" width="48" height="24" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="204" y="320" font-size="11.5" fill="#e8eaed" text-anchor="middle">TCP</text>
+<rect x="232" y="304" width="48" height="24" rx="4" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="256" y="320" font-size="11.5" fill="#e8eaed" text-anchor="middle">TLS</text>
+<rect x="284" y="304" width="48" height="24" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="308" y="320" font-size="11.5" fill="#e8eaed" text-anchor="middle">WS</text>
+<text xml:space="preserve" x="400" y="320" font-size="12" fill="#f2b8b5">web ports; a terminator reads all</text>
+<text xml:space="preserve" x="700" y="320" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">24…36</text>
+<text xml:space="preserve" x="810" y="320" font-size="12" fill="#9aa0a6">TLS, upgrade</text>
+<line x1="24.0" y1="336.0" x2="956.0" y2="336.0" stroke="#4a4a4a" stroke-width="0.6"/>
+<text xml:space="preserve" x="24" y="366" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">wss:// + Noise</text>
+<rect x="180" y="350" width="48" height="24" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="204" y="366" font-size="11.5" fill="#e8eaed" text-anchor="middle">TCP</text>
+<rect x="232" y="350" width="48" height="24" rx="4" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="256" y="366" font-size="11.5" fill="#e8eaed" text-anchor="middle">TLS</text>
+<rect x="284" y="350" width="48" height="24" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="308" y="366" font-size="11.5" fill="#e8eaed" text-anchor="middle">WS</text>
+<rect x="336" y="350" width="48" height="24" rx="4" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="360" y="366" font-size="11.5" fill="#e8eaed" text-anchor="middle">Noise</text>
+<text xml:space="preserve" x="400" y="366" font-size="12" fill="#e8eaed">sealed past any terminator</text>
+<text xml:space="preserve" x="700" y="366" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">42…54</text>
+<text xml:space="preserve" x="810" y="366" font-size="12" fill="#9aa0a6">TLS, upgrade, Noise</text>
+<line x1="24.0" y1="382.0" x2="956.0" y2="382.0" stroke="#4a4a4a" stroke-width="0.6"/>
+<text xml:space="preserve" x="24" y="404" font-size="12" fill="#9aa0a6">TLS and Noise records of up to 16 KB; a WebSocket frame header is 2…14 bytes, 4 of them the mask a client adds.</text>
+</g>
+</svg>

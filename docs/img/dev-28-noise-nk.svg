@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 490" width="980" height="490" role="img" aria-labelledby="dev28noisenk-t dev28noisenk-d">
+<title id="dev28noisenk-t">Noise NK: the client knows the server's key</title>
+<desc id="dev28noisenk-d">Noise NK, the client knows the server's key. Official notation: &lt;- s    ...    -&gt; e, es    &lt;- e, ee. s: the server's key, pinned by the client beforehand. Message 1, client to server: tokens e, es; 48 bytes: e 32 + tag 16; sealed to the server's key: only the server reads on. Message 2, server to client: tokens e, ee; 48 bytes: e 32 + tag 16; the server is proved; forward secrecy from here. After the handshake: Server: proved by its key; Client: anonymous: its login goes inside the protocol, sealed; Forward secrecy: yes, for every pack; Static keys sent: none; onPeer: not called on the server; In AdHoc: host.key and the server key on connect; UDP with a key.</desc>
+<rect width="980" height="490" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Noise NK: the client knows the server's key</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Official notation:   &lt;- s    ...    -&gt; e, es    &lt;- e, ee</text>
+<rect x="60" y="76" width="150" height="40" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="135" y="100.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<rect x="430" y="76" width="150" height="40" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="505" y="100.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server</text>
+<text xml:space="preserve" x="135" y="134" font-size="11.5" fill="#9aa0a6" text-anchor="middle">one-time e; pins S's key</text>
+<text xml:space="preserve" x="505" y="134" font-size="11.5" fill="#9aa0a6" text-anchor="middle">static s; one-time e</text>
+<line x1="135.0" y1="142.0" x2="135.0" y2="448.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="505.0" y1="142.0" x2="505.0" y2="448.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="505.0" y1="162.0" x2="143.0" y2="162.0" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 4"/>
+<polygon points="135.0,162.0 145.0,167.5 145.0,156.5" fill="#f2c14e"/>
+<text xml:space="preserve" x="320" y="157" font-size="11.5" fill="#f2c14e" text-anchor="middle">s: the server's key, pinned by the client beforehand</text>
+<line x1="135.0" y1="236.0" x2="497.0" y2="236.0" stroke="#e8eaed" stroke-width="1.8"/>
+<polygon points="505.0,236.0 495.0,230.5 495.0,241.5" fill="#e8eaed"/>
+<text xml:space="preserve" x="125" y="240" font-size="12" fill="#e8eaed" text-anchor="end" font-weight="700">1</text>
+<rect x="291" y="211" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="302" y="226" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">e</text>
+<rect x="319" y="211" width="30" height="21" rx="4" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="334" y="226" font-size="13" fill="#6f9fd8" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">es</text>
+<text xml:space="preserve" x="320" y="253" font-size="11.5" fill="#9aa0a6" text-anchor="middle">48 bytes: e 32 + tag 16</text>
+<text xml:space="preserve" x="320" y="269" font-size="11.5" fill="#f2c14e" text-anchor="middle">sealed to the server's key: only the server reads on</text>
+<line x1="505.0" y1="312.0" x2="143.0" y2="312.0" stroke="#e8eaed" stroke-width="1.8"/>
+<polygon points="135.0,312.0 145.0,317.5 145.0,306.5" fill="#e8eaed"/>
+<text xml:space="preserve" x="515" y="316" font-size="12" fill="#e8eaed" text-anchor="start" font-weight="700">2</text>
+<rect x="291" y="287" width="22" height="21" rx="4" fill="#232323" stroke="#e8eaed" stroke-width="1.4"/>
+<text xml:space="preserve" x="302" y="302" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">e</text>
+<rect x="319" y="287" width="30" height="21" rx="4" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="334" y="302" font-size="13" fill="#6fbf7f" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">ee</text>
+<text xml:space="preserve" x="320" y="329" font-size="11.5" fill="#9aa0a6" text-anchor="middle">48 bytes: e 32 + tag 16</text>
+<text xml:space="preserve" x="320" y="345" font-size="11.5" fill="#f2c14e" text-anchor="middle">the server is proved; forward secrecy from here</text>
+<rect x="610" y="72" width="350" height="376" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="626" y="96" font-size="13" fill="#e8eaed" font-weight="700">After the handshake</text>
+<text xml:space="preserve" x="626" y="122" font-size="11.5" fill="#e8eaed" font-weight="700">Server</text>
+<text xml:space="preserve" x="786" y="122" font-size="11.5" fill="#9aa0a6">proved by its key</text>
+<text xml:space="preserve" x="626" y="147" font-size="11.5" fill="#e8eaed" font-weight="700">Client</text>
+<text xml:space="preserve" x="786" y="147" font-size="11.5" fill="#9aa0a6">anonymous: its login goes</text>
+<text xml:space="preserve" x="786" y="162" font-size="11.5" fill="#9aa0a6">inside the protocol, sealed</text>
+<text xml:space="preserve" x="626" y="187" font-size="11.5" fill="#e8eaed" font-weight="700">Forward secrecy</text>
+<text xml:space="preserve" x="786" y="187" font-size="11.5" fill="#9aa0a6">yes, for every pack</text>
+<text xml:space="preserve" x="626" y="212" font-size="11.5" fill="#e8eaed" font-weight="700">Static keys sent</text>
+<text xml:space="preserve" x="786" y="212" font-size="11.5" fill="#9aa0a6">none</text>
+<text xml:space="preserve" x="626" y="237" font-size="11.5" fill="#e8eaed" font-weight="700">onPeer</text>
+<text xml:space="preserve" x="786" y="237" font-size="11.5" fill="#9aa0a6">not called on the server</text>
+<text xml:space="preserve" x="626" y="262" font-size="11.5" fill="#e8eaed" font-weight="700">In AdHoc</text>
+<text xml:space="preserve" x="786" y="262" font-size="11.5" fill="#9aa0a6">host.key and the server key</text>
+<text xml:space="preserve" x="786" y="277" font-size="11.5" fill="#9aa0a6">on connect; UDP with a key</text>
+<text xml:space="preserve" x="24" y="474" font-size="11.5" fill="#9aa0a6">AdHoc sends no data inside the handshake: every pack goes after it, under keys that include ee. On a stream each message is [length 1][message].</text>
+</g>
+</svg>

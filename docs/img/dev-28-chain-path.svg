@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 490" width="980" height="490" role="img" aria-labelledby="dev28chainpath-t dev28chainpath-d">
+<title id="dev28chainpath-t">Sending and receiving through a chain</title>
+<desc id="dev28chainpath-d">Sending: the generated code serializes packs into the buffer past the room left for headers; each layer notes its step - Noise seals records, WebSocket writes the frame header and on a client masks, TLS seals the record; one native call runs the steps in order, in place; one write sends the buffer as it is. Receiving: one read fills the receive buffer; one native call opens the TLS records, cuts the frames, unmasks and opens the Noise records in place; a table says where the pieces of plaintext lie, with no copy to join them; the generated code reads the packs from the pieces. Control frames go to the WebSocket decoder; a record longer than the buffer takes a whole-record buffer of the loop's pool while it lasts; the only bytes moved are those of a Noise record cut by the edge of a frame or a TLS record.</desc>
+<rect width="980" height="490" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Sending and receiving through a chain</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">The layers are chosen in your language; the work on the bytes is one native call a buffer, each way</text>
+<text xml:space="preserve" x="24" y="86" font-size="13" fill="#e8eaed" font-weight="700">Sending</text>
+<rect x="24" y="96" width="210" height="118" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.6"/>
+<text xml:space="preserve" x="129" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1. Serialize</text>
+<text xml:space="preserve" x="38" y="144" font-size="11.5" fill="#e8eaed">generated code writes packs</text>
+<text xml:space="preserve" x="38" y="159" font-size="11.5" fill="#e8eaed">into the buffer, past the</text>
+<text xml:space="preserve" x="38" y="174" font-size="11.5" fill="#e8eaed">room left for headers</text>
+<line x1="234.0" y1="155.0" x2="256.0" y2="155.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="264.0,155.0 254.0,149.5 254.0,160.5" fill="#8c9198"/>
+<rect x="264" y="96" width="210" height="118" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="369" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">2. Note the steps</text>
+<text xml:space="preserve" x="278" y="144" font-size="11.5" fill="#e8eaed">Noise: seal records</text>
+<text xml:space="preserve" x="278" y="159" font-size="11.5" fill="#e8eaed">WebSocket: frame header,</text>
+<text xml:space="preserve" x="278" y="174" font-size="11.5" fill="#e8eaed">  mask on a client</text>
+<text xml:space="preserve" x="278" y="189" font-size="11.5" fill="#e8eaed">TLS: seal the record</text>
+<line x1="474.0" y1="155.0" x2="496.0" y2="155.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="504.0,155.0 494.0,149.5 494.0,160.5" fill="#8c9198"/>
+<rect x="504" y="96" width="210" height="118" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="609" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">3. One native call</text>
+<text xml:space="preserve" x="518" y="144" font-size="11.5" fill="#e8eaed">runs the steps in order,</text>
+<text xml:space="preserve" x="518" y="159" font-size="11.5" fill="#e8eaed">in place, in the buffer</text>
+<line x1="714.0" y1="155.0" x2="736.0" y2="155.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="744.0,155.0 734.0,149.5 734.0,160.5" fill="#8c9198"/>
+<rect x="744" y="96" width="210" height="118" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="849" y="120" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">4. One write</text>
+<text xml:space="preserve" x="758" y="144" font-size="11.5" fill="#e8eaed">the buffer goes to the</text>
+<text xml:space="preserve" x="758" y="159" font-size="11.5" fill="#e8eaed">socket as it is</text>
+<text xml:space="preserve" x="24" y="260" font-size="13" fill="#e8eaed" font-weight="700">Receiving</text>
+<rect x="24" y="270" width="210" height="118" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="129" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1. One read</text>
+<text xml:space="preserve" x="38" y="318" font-size="11.5" fill="#e8eaed">the socket fills the</text>
+<text xml:space="preserve" x="38" y="333" font-size="11.5" fill="#e8eaed">receive buffer</text>
+<line x1="234.0" y1="329.0" x2="256.0" y2="329.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="264.0,329.0 254.0,323.5 254.0,334.5" fill="#8c9198"/>
+<rect x="264" y="270" width="210" height="118" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="369" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">2. One native call</text>
+<text xml:space="preserve" x="278" y="318" font-size="11.5" fill="#e8eaed">opens TLS records, cuts</text>
+<text xml:space="preserve" x="278" y="333" font-size="11.5" fill="#e8eaed">frames, unmasks, opens</text>
+<text xml:space="preserve" x="278" y="348" font-size="11.5" fill="#e8eaed">Noise records: in place</text>
+<line x1="474.0" y1="329.0" x2="496.0" y2="329.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="504.0,329.0 494.0,323.5 494.0,334.5" fill="#8c9198"/>
+<rect x="504" y="270" width="210" height="118" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="609" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">3. Pieces</text>
+<text xml:space="preserve" x="518" y="318" font-size="11.5" fill="#e8eaed">a table of where the</text>
+<text xml:space="preserve" x="518" y="333" font-size="11.5" fill="#e8eaed">plaintext lies: no copy</text>
+<text xml:space="preserve" x="518" y="348" font-size="11.5" fill="#e8eaed">to join the pieces</text>
+<line x1="714.0" y1="329.0" x2="736.0" y2="329.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="744.0,329.0 734.0,323.5 734.0,334.5" fill="#8c9198"/>
+<rect x="744" y="270" width="210" height="118" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.6"/>
+<text xml:space="preserve" x="849" y="294" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">4. Parse</text>
+<text xml:space="preserve" x="758" y="318" font-size="11.5" fill="#e8eaed">generated code reads the</text>
+<text xml:space="preserve" x="758" y="333" font-size="11.5" fill="#e8eaed">packs from the pieces</text>
+<text xml:space="preserve" x="24" y="414" font-size="12" fill="#9aa0a6">· control frames - ping, close - go to the WebSocket decoder</text>
+<text xml:space="preserve" x="24" y="431" font-size="12" fill="#9aa0a6">· a record longer than the buffer takes a whole-record buffer from the loop's pool while it lasts</text>
+<text xml:space="preserve" x="24" y="448" font-size="12" fill="#9aa0a6">· the only bytes moved: a Noise record cut by the edge of a frame or of a TLS record</text>
+<text xml:space="preserve" x="24" y="474" font-size="11.5" fill="#9aa0a6">Java, C#, Rust, C, C++, Swift, Python, Dart: in adhoc-crypto on BoringSSL.   Go: crypto/tls, one copy more a record.   TypeScript: the platform's TLS, Noise in WebAssembly.</text>
+</g>
+</svg>

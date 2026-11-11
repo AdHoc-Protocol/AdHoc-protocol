@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="310" viewBox="0 0 960 310" role="img" aria-labelledby="title desc">
+<title id="title">The conversation has rules, on both endpoints</title><desc id="desc">Example actor: Client Login advances Start to Working. Both sides may send Data in Working without changing the state. Server Done advances to End, freeing this actor pair. Other actors continue on the connection.</desc>
+<rect width="960" height="310" rx="12" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="32" y="40" font-size="23" fill="#e8eaed" text-anchor="start" font-weight="600">The conversation has rules, on both endpoints</text>
+<rect x="32" y="76" width="208" height="101" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="136" y="110" font-size="23" fill="#e8eaed" text-anchor="middle" font-weight="600">Start</text>
+<text x="136" y="145" font-size="17" fill="#b6bdc8" text-anchor="middle" font-weight="400">Client leads</text>
+<rect x="378" y="76" width="208" height="101" rx="9" fill="#34383f" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="482" y="110" font-size="23" fill="#e8eaed" text-anchor="middle" font-weight="600">Working</text>
+<text x="482" y="145" font-size="17" fill="#b6bdc8" text-anchor="middle" font-weight="400">Server leads</text>
+<rect x="724" y="76" width="204" height="101" rx="9" fill="#34383f" stroke="#ba94e0" stroke-width="1.5"/>
+<text x="826" y="110" font-size="23" fill="#e8eaed" text-anchor="middle" font-weight="600">End</text>
+<text x="826" y="145" font-size="17" fill="#b6bdc8" text-anchor="middle" font-weight="400">Actor pair freed</text>
+<line x1="241" y1="121" x2="377" y2="121" stroke="#f2c14e" stroke-width="2"/>
+<path d="M377 121 L369 116 L369 126 Z" fill="#f2c14e"/>
+<text x="309" y="97" font-size="18" fill="#f2c14e" text-anchor="middle" font-weight="600">Login</text>
+<text x="309" y="154" font-size="15" fill="#b6bdc8" text-anchor="middle" font-weight="400">Client sends</text>
+<line x1="587" y1="121" x2="723" y2="121" stroke="#f2c14e" stroke-width="2"/>
+<path d="M723 121 L715 116 L715 126 Z" fill="#f2c14e"/>
+<text x="655" y="97" font-size="18" fill="#f2c14e" text-anchor="middle" font-weight="600">Done</text>
+<text x="655" y="154" font-size="15" fill="#b6bdc8" text-anchor="middle" font-weight="400">Server sends</text>
+<text x="482" y="206" font-size="17" fill="#e8eaed" text-anchor="middle" font-weight="400">Data from either side keeps this actor in Working.</text>
+<rect x="32" y="233" width="896" height="53" rx="9" fill="#34383f" stroke="#6a717d" stroke-width="1.5"/>
+<text x="480" y="266" font-size="18" fill="#b6bdc8" text-anchor="middle" font-weight="400">Other actors continue independently on the same connection.</text>
+</g></svg>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 450" width="960" height="450" role="img" aria-labelledby="title desc">
+<title id="title">Which edits change the wire</title>
+<desc id="desc">Which edits change the wire. Left, in green, edits after which old and new peers still understand each other: renaming a pack, host, connection, actor or state in the IDE (entities keep their numbers), renaming a field with its type and place kept, reordering declarations, editing a comment, changing a custom attribute, adding a language to a host, moving a primitive field past a string. Right, in orange, edits that change the wire and need both ends regenerated and deployed together: adding or removing a field, changing a field type, range or encoding, swapping two fields of one sequence, changing a transform chain, a branch starting or stopping to send a pack, changing an enum or constant set, changing a connection’s states or branches. Bottom: AdHocAgent .cs~ lists every host an edit reaches before anything is generated; a frozen generation must not be in the list.</desc>
+<rect width="960" height="450" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">Which edits change the wire</text>
+<text x="24" y="58" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan >a pack on the wire = </tspan><tspan fill="#e8eaed">wire id</tspan><tspan > + </tspan><tspan fill="#e8eaed">fields in declaration order</tspan><tspan >   ·   entities have numbers, fields have places</tspan></text>
+<rect x="24" y="72" width="444" height="46" rx="6" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.4"/>
+<text x="38" y="92" font-size="15" fill="#4cc38a" font-weight="600">the wire stays the same</text>
+<text x="38" y="109" font-size="12" fill="#9aa0a6">old and new peers still understand each other</text>
+<rect x="492" y="72" width="444" height="46" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.4"/>
+<text x="506" y="92" font-size="15" fill="#e8833a" font-weight="600">the wire changes</text>
+<text x="506" y="109" font-size="12" fill="#9aa0a6">regenerate and deploy both ends together</text>
+<rect x="24" y="126" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<polyline points="36,141 40.5,145.5 48,136.5" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="58" y="145.5" font-size="13" fill="#e8eaed">rename a pack, host, connection, actor, state</text>
+<text x="456" y="145.5" font-size="12" fill="#9aa0a6" text-anchor="end">in the IDE</text>
+<rect x="24" y="162" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<polyline points="36,177 40.5,181.5 48,172.5" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="58" y="181.5" font-size="13" fill="#e8eaed">rename a field - type and place kept</text>
+<rect x="24" y="198" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<polyline points="36,213 40.5,217.5 48,208.5" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="58" y="217.5" font-size="13" fill="#e8eaed">reorder declarations in the file</text>
+<rect x="24" y="234" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<polyline points="36,249 40.5,253.5 48,244.5" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="58" y="253.5" font-size="13" fill="#e8eaed">edit a comment</text>
+<text x="456" y="253.5" font-size="12" fill="#9aa0a6" text-anchor="end">reaches no host</text>
+<rect x="24" y="270" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<polyline points="36,285 40.5,289.5 48,280.5" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="58" y="289.5" font-size="13" fill="#e8eaed">change a custom attribute</text>
+<text x="456" y="289.5" font-size="12" fill="#9aa0a6" text-anchor="end">a constant in the code</text>
+<rect x="24" y="306" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<polyline points="36,321 40.5,325.5 48,316.5" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="58" y="325.5" font-size="13" fill="#e8eaed">add a language to a host</text>
+<rect x="24" y="342" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<polyline points="36,357 40.5,361.5 48,352.5" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="58" y="361.5" font-size="13" fill="#e8eaed">move a primitive field past a string</text>
+<text x="456" y="361.5" font-size="12" fill="#9aa0a6" text-anchor="end">sequences unchanged</text>
+<rect x="492" y="126" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="511" y="146.5" font-size="17" fill="#e8833a" text-anchor="middle" font-weight="600">≠</text>
+<text x="526" y="145.5" font-size="13" fill="#e8eaed">add or remove a field - at any position</text>
+<rect x="840.8" y="132" width="85.2" height="18" rx="9" fill="#35271c" stroke="#e8833a" stroke-width="1.2"/><text x="883.4" y="145.3" font-size="12" fill="#e8833a" text-anchor="middle">another pack</text>
+<rect x="492" y="162" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="511" y="182.5" font-size="17" fill="#e8833a" text-anchor="middle" font-weight="600">≠</text>
+<text x="526" y="181.5" font-size="13" fill="#e8eaed">change a field’s type, range or encoding</text>
+<rect x="840.8" y="168" width="85.2" height="18" rx="9" fill="#35271c" stroke="#e8833a" stroke-width="1.2"/><text x="883.4" y="181.3" font-size="12" fill="#e8833a" text-anchor="middle">another pack</text>
+<rect x="492" y="198" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="511" y="218.5" font-size="17" fill="#e8833a" text-anchor="middle" font-weight="600">≠</text>
+<text x="526" y="217.5" font-size="13" fill="#e8eaed">swap two fields of one sequence (lat ↔ lon)</text>
+<rect x="840.8" y="204" width="85.2" height="18" rx="9" fill="#35271c" stroke="#e8833a" stroke-width="1.2"/><text x="883.4" y="217.3" font-size="12" fill="#e8833a" text-anchor="middle">another pack</text>
+<rect x="492" y="234" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="511" y="254.5" font-size="17" fill="#e8833a" text-anchor="middle" font-weight="600">≠</text>
+<text x="526" y="253.5" font-size="13" fill="#e8eaed">change the transform chain of a pack</text>
+<rect x="850.1" y="240" width="75.9" height="18" rx="9" fill="#35271c" stroke="#e8833a" stroke-width="1.2"/><text x="888.1" y="253.3" font-size="12" fill="#e8833a" text-anchor="middle">other bytes</text>
+<rect x="492" y="270" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="511" y="290.5" font-size="17" fill="#e8833a" text-anchor="middle" font-weight="600">≠</text>
+<text x="526" y="289.5" font-size="13" fill="#e8eaed">a branch starts or stops sending a pack</text>
+<rect x="837.3" y="276" width="88.7" height="18" rx="9" fill="#35271c" stroke="#e8833a" stroke-width="1.2"/><text x="881.7" y="289.3" font-size="12" fill="#e8833a" text-anchor="middle">other wire ids</text>
+<rect x="492" y="306" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="511" y="326.5" font-size="17" fill="#e8833a" text-anchor="middle" font-weight="600">≠</text>
+<text x="526" y="325.5" font-size="13" fill="#e8eaed">change an enum or a constant set</text>
+<rect x="845.5" y="312" width="80.5" height="18" rx="9" fill="#35271c" stroke="#e8833a" stroke-width="1.2"/><text x="885.8" y="325.3" font-size="12" fill="#e8833a" text-anchor="middle">other values</text>
+<rect x="492" y="342" width="444" height="30" rx="6" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="511" y="362.5" font-size="17" fill="#e8833a" text-anchor="middle" font-weight="600">≠</text>
+<text x="526" y="361.5" font-size="13" fill="#e8eaed">change a connection’s states or branches</text>
+<rect x="856" y="348" width="70" height="18" rx="9" fill="#35271c" stroke="#e8833a" stroke-width="1.2"/><text x="891" y="361.3" font-size="12" fill="#e8833a" text-anchor="middle">other flow</text>
+<rect x="24" y="388" width="912" height="46" rx="6" fill="#1f2f42" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="40" y="416" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#4fb3ff" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">AdHocAgent .\FleetProtocol.cs~</tspan><tspan >   lists every host an edit reaches - before anything is generated</tspan></text>
+<text x="792.5" y="408" font-size="12" fill="#9aa0a6">a frozen generation</text>
+<text x="792.5" y="423" font-size="12" fill="#9aa0a6">must not be in the list</text>
+<path d="M767.5 408 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="#e8833a" stroke-width="1.8"/><rect x="764.5" y="408" width="16" height="11" rx="2" fill="none" stroke="#e8833a" stroke-width="1.8"/><circle cx="772.5" cy="413.5" r="1.6" fill="#e8833a"/>
+</g>
+</svg>

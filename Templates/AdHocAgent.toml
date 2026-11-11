@@ -1,0 +1,29 @@
+# The settings of AdHocAgent. AdHocAgent looks for this file only beside its executable.
+# Each setting is one line: key = "value". A line starting with # is a comment.
+
+# =============================== Your personal volatile UUID ===============================
+# PersonalVolatileUUID - the UUID AdHocAgent logs in with. To store the UUID you received:
+#     AdHocAgent <your volatile UUID>
+# The server replaces it from time to time, and AdHocAgent writes the new one here.
+# Keep this file: it is the only place that holds your current UUID.
+#
+# PreviousVolatileUUID - the UUID the last change replaced. If the server rejects the current one, re-apply it:
+#     AdHocAgent <the PreviousVolatileUUID>
+
+# =============================== Your editor ===============================================
+# A click on a place in the Observer opens your editor there. Uncomment the two lines of your editor and
+# write the path to its executable. In show_code_args, <path to file>, <line number> and <char number>
+# are replaced by the place clicked.
+
+# JetBrains IntelliJ IDEA - Rider and the other JetBrains IDEs take the same arguments: rider64.exe, ...
+# https://www.jetbrains.com/help/idea/opening-files-from-command-line.html
+# macOS: "/Applications/IntelliJ IDEA.app/Contents/MacOS/idea"    Linux: "<IDEA folder>/bin/idea.sh"
+# show_code_exe = "C:/Program Files/JetBrains/IntelliJ IDEA/bin/idea64.exe"
+# show_code_args = "--line <line number> <path to file>"
+
+# VS Code
+# https://code.visualstudio.com/docs/editor/command-line
+# macOS: "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"    Linux: "/usr/bin/code"
+# show_code_exe = "C:/Users/<you>/AppData/Local/Programs/Microsoft VS Code/Code.exe"
+# show_code_args = "--goto <path to file>:<line number>:<char number>"
+

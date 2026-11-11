@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 360" width="980" height="360" role="img" aria-labelledby="dev28packstage-t dev28packstage-d">
+<title id="dev28packstage-t">Only some packs encrypted: the [ChaCha20] stage</title>
+<desc id="dev28packstage-d">Host A and host B on a connection with no transport encryption. Both seat the same key, id, key and nonce, in the keyring with Keyring.seat. Three packs pass: Position in plain bytes, Salary marked [ChaCha20], which carries 12 bytes in clear, the key id and a sequence, then its ciphertext, and Position again in plain bytes. ChaCha20 alone has no tag: a byte changed on the line opens to other bytes, without an error.</desc>
+<rect width="980" height="360" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Only some packs encrypted: the [ChaCha20] stage</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">A connection with no transport encryption; a few packs must not be readable</text>
+<rect x="30" y="84" width="150" height="130" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="105" y="106" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Host A</text>
+<text xml:space="preserve" x="105" y="132" font-size="12" fill="#9aa0a6" text-anchor="middle">keyring</text>
+<text xml:space="preserve" x="105" y="152" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">( id, key, iv )</text>
+<text xml:space="preserve" x="105" y="190" font-size="11" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">Keyring.seat</text>
+<text xml:space="preserve" x="105" y="204" font-size="11" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">( conn, key )</text>
+<rect x="800" y="84" width="150" height="130" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="875" y="106" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Host B</text>
+<text xml:space="preserve" x="875" y="132" font-size="12" fill="#9aa0a6" text-anchor="middle">keyring</text>
+<text xml:space="preserve" x="875" y="152" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">( id, key, iv )</text>
+<text xml:space="preserve" x="875" y="190" font-size="11" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">Keyring.seat</text>
+<text xml:space="preserve" x="875" y="204" font-size="11" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">( conn, key )</text>
+<line x1="180.0" y1="150.0" x2="792.0" y2="150.0" stroke="#8c9198" stroke-width="1.8" stroke-dasharray="5 4"/>
+<polygon points="800.0,150.0 790.0,144.5 790.0,155.5" fill="#8c9198"/>
+<text xml:space="preserve" x="490" y="116" font-size="12" fill="#9aa0a6" text-anchor="middle">no transport encryption</text>
+<rect x="215" y="138" width="110" height="24" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="270" y="155" font-size="12" fill="#e8eaed" text-anchor="middle">Position</text>
+<text xml:space="preserve" x="270" y="184" font-size="12" fill="#9aa0a6" text-anchor="middle">plain</text>
+<rect x="400" y="138" width="44" height="24" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="422" y="155" font-size="11" fill="#e8eaed" text-anchor="middle">12</text>
+<rect x="444" y="138" width="110" height="24" rx="3" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="499" y="155" font-size="12" fill="#e8eaed" text-anchor="middle">Salary</text>
+<text xml:space="preserve" x="477" y="184" font-size="12" fill="#9aa0a6" text-anchor="middle">[ChaCha20]: id + sequence</text>
+<text xml:space="preserve" x="477" y="200" font-size="12" fill="#9aa0a6" text-anchor="middle">in clear, then ciphertext</text>
+<rect x="640" y="138" width="110" height="24" rx="3" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="695" y="155" font-size="12" fill="#e8eaed" text-anchor="middle">Position</text>
+<text xml:space="preserve" x="695" y="184" font-size="12" fill="#9aa0a6" text-anchor="middle">plain</text>
+<rect x="270" y="238" width="440" height="56" rx="8" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.6"/>
+<text xml:space="preserve" x="490" y="262" font-size="12" fill="#e8eaed" text-anchor="middle">ChaCha20 alone has no tag: a byte changed on the line</text>
+<text xml:space="preserve" x="490" y="277" font-size="12" fill="#f2b8b5" text-anchor="middle">opens to other bytes, without an error</text>
+<text xml:space="preserve" x="24" y="326" font-size="12" fill="#9aa0a6">Where an attacker may stand on the line, use a Noise transport: it seals and checks everything, and the stage becomes a second layer.</text>
+<text xml:space="preserve" x="24" y="344" font-size="12" fill="#9aa0a6">The key, the same on both sides: from Crypto.pairKey of two X25519 keys, or any secret the two sides share.</text>
+</g>
+</svg>

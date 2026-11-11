@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 420" width="980" height="420" role="img" aria-labelledby="dev28noisestate-t dev28noisestate-d">
+<title id="dev28noisestate-t">Noise 握手的状态</title>
+<desc id="dev28noisestate-d">Four steps from left to right. Start: the hash h and the chaining key ck are set to the protocol name, the prologue is mixed into h, and so are the static keys known beforehand. Each token: e mixes the one-time key into h; a DH token mixes its result into ck by HKDF and gives the key k; s and the payload are sealed with k, with h as the associated data, and mixed into h; a wrong tag fails the handshake. After the last message: Split derives k1 for client to server and k2 for server to client; AdHoc also derives the key and nonce of the session's packs from ck with the label &quot;AdHoc packs&quot;, the id from the first 4 bytes of h. Then the records are sealed with k1 and k2, the nonce is the record's number, and ck, k and the one-time secrets are wiped.</desc>
+<rect width="980" height="420" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Noise 握手的状态</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">两个值跟随握手的每个字节；握手结束时它们为每个方向给出一个密钥，AdHoc 还为 pack 多推导一个</text>
+<rect x="20" y="80" width="220" height="230" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="130" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">1. 开始</text>
+<text xml:space="preserve" x="34" y="132" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">h = ck = 协议名称</text>
+<text xml:space="preserve" x="34" y="152" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  &quot;Noise_XX_25519_</text>
+<text xml:space="preserve" x="34" y="172" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">    ChaChaPoly_SHA256&quot;</text>
+<text xml:space="preserve" x="34" y="192" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">MixHash( prologue )</text>
+<text xml:space="preserve" x="34" y="212" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">MixHash( 事先已知的</text>
+<text xml:space="preserve" x="34" y="232" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  密钥：&lt;- s )</text>
+<rect x="260" y="80" width="220" height="230" rx="8" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.6"/>
+<text xml:space="preserve" x="370" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">2. 每个令牌</text>
+<text xml:space="preserve" x="274" y="132" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">e   → MixHash( e )</text>
+<text xml:space="preserve" x="274" y="152" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">DH  → ck, k =</text>
+<text xml:space="preserve" x="274" y="172" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">      HKDF( ck, DH )</text>
+<text xml:space="preserve" x="274" y="192" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">s、payload → 用 k 密封，</text>
+<text xml:space="preserve" x="274" y="212" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  AD = h；MixHash</text>
+<text xml:space="preserve" x="274" y="232" font-size="11.5" fill="#f2b8b5">标签错误：握手</text>
+<text xml:space="preserve" x="274" y="252" font-size="11.5" fill="#f2b8b5">立即失败</text>
+<rect x="500" y="80" width="220" height="230" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="610" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">3. 最后一条消息之后</text>
+<text xml:space="preserve" x="514" y="132" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">Split: HKDF( ck ) →</text>
+<text xml:space="preserve" x="514" y="152" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  k1  客户端 → 服务器</text>
+<text xml:space="preserve" x="514" y="172" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  k2  服务器 → 客户端</text>
+<text xml:space="preserve" x="514" y="192" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">HKDF( ck, &quot;AdHoc packs&quot; )</text>
+<text xml:space="preserve" x="514" y="212" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  → pack 的密钥、nonce</text>
+<text xml:space="preserve" x="514" y="232" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">  id = h[0..4]</text>
+<rect x="740" y="80" width="220" height="230" rx="8" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.6"/>
+<text xml:space="preserve" x="850" y="104" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">4. 传输阶段</text>
+<text xml:space="preserve" x="754" y="132" font-size="11.5" fill="#e8eaed">记录用 k1 / k2 密封，</text>
+<text xml:space="preserve" x="754" y="152" font-size="11.5" fill="#e8eaed">nonce = 记录编号</text>
+<text xml:space="preserve" x="754" y="172" font-size="11.5" fill="#e8eaed">ck、k 和一次性私钥：</text>
+<text xml:space="preserve" x="754" y="192" font-size="11.5" fill="#e8eaed">被擦除</text>
+<text xml:space="preserve" x="754" y="212" font-size="11.5" fill="#e8eaed">pack 密钥 → 会话的</text>
+<text xml:space="preserve" x="754" y="232" font-size="11.5" fill="#e8eaed">密钥环（加密算法的密钥）</text>
+<line x1="240.0" y1="195.0" x2="252.0" y2="195.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="260.0,195.0 250.0,189.5 250.0,200.5" fill="#8c9198"/>
+<line x1="480.0" y1="195.0" x2="492.0" y2="195.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="500.0,195.0 490.0,189.5 490.0,200.5" fill="#8c9198"/>
+<line x1="720.0" y1="195.0" x2="732.0" y2="195.0" stroke="#8c9198" stroke-width="2"/>
+<polygon points="740.0,195.0 730.0,189.5 730.0,200.5" fill="#8c9198"/>
+<text xml:space="preserve" x="24" y="346" font-size="12" fill="#9aa0a6">h——收发的每个字节的哈希：双方必须对全部内容一致，否则下一个标签失败</text>
+<text xml:space="preserve" x="24" y="364" font-size="12" fill="#9aa0a6">ck——链接密钥：每次 DH 都混入它        k——密封握手其余部分的密钥</text>
+<text xml:space="preserve" x="24" y="400" font-size="12" fill="#9aa0a6">第 1 至 3 步遵循 Noise 规范第 5.2 和 5.3 节；第 3 步中 pack 的密钥是 AdHoc 自己的。</text>
+</g>
+</svg>

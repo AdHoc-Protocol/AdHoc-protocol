@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" width="980" height="560" role="img" aria-labelledby="dev28chainhandshakes-t dev28chainhandshakes-d">
+<title id="dev28chainhandshakes-t">握手的顺序：wss:// 加 Noise XX</title>
+<desc id="dev28chainhandshakes-d">A client and a server. TCP: SYN, SYN-ACK, ACK. TLS 1.3: ClientHello; ServerHello to Finished; the client's Finished. WebSocket: the GET with Upgrade: websocket; 101 Switching Protocols. Noise XX: messages 1, 2 and 3. Then packs both ways. Each layer starts when the one under it is ready. The server limits TLS, the upgrade and Noise together with handshakeTimeout, 30 seconds by default; after them the connection's ReceiveTimeout applies. Without TLS the TLS steps go, over plain TCP the WebSocket steps go, and NK, IK and KK take two Noise messages.</desc>
+<rect width="980" height="560" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">握手的顺序：wss:// 加 Noise XX</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">每一层在其下层就绪后开始；服务器用 handshakeTimeout 限制所有这些握手</text>
+<rect x="260" y="72" width="140" height="38" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="330" y="95.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">客户端</text>
+<rect x="620" y="72" width="140" height="38" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="690" y="95.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">服务器</text>
+<line x1="330.0" y1="112.0" x2="330.0" y2="500.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="690.0" y1="112.0" x2="690.0" y2="500.0" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="330.0" y1="140.0" x2="682.0" y2="140.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,140.0 680.0,134.5 680.0,145.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="135" font-size="11.5" fill="#e8eaed" text-anchor="middle">SYN</text>
+<line x1="690.0" y1="166.0" x2="338.0" y2="166.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="330.0,166.0 340.0,171.5 340.0,160.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="161" font-size="11.5" fill="#e8eaed" text-anchor="middle">SYN-ACK</text>
+<line x1="330.0" y1="192.0" x2="682.0" y2="192.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,192.0 680.0,186.5 680.0,197.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="187" font-size="11.5" fill="#e8eaed" text-anchor="middle">ACK</text>
+<rect x="24" y="124" width="200" height="78" rx="6" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="124" y="168" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">TCP</text>
+<line x1="330.0" y1="230.0" x2="682.0" y2="230.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,230.0 680.0,224.5 680.0,235.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="225" font-size="11.5" fill="#e8eaed" text-anchor="middle">ClientHello</text>
+<line x1="690.0" y1="256.0" x2="338.0" y2="256.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="330.0,256.0 340.0,261.5 340.0,250.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="251" font-size="11.5" fill="#e8eaed" text-anchor="middle">ServerHello … Finished</text>
+<line x1="330.0" y1="282.0" x2="682.0" y2="282.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,282.0 680.0,276.5 680.0,287.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="277" font-size="11.5" fill="#e8eaed" text-anchor="middle">Finished</text>
+<rect x="24" y="214" width="200" height="78" rx="6" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="124" y="258" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">TLS 1.3</text>
+<line x1="330.0" y1="320.0" x2="682.0" y2="320.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,320.0 680.0,314.5 680.0,325.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="315" font-size="11.5" fill="#e8eaed" text-anchor="middle">GET …  Upgrade: websocket</text>
+<line x1="690.0" y1="346.0" x2="338.0" y2="346.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="330.0,346.0 340.0,351.5 340.0,340.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="341" font-size="11.5" fill="#e8eaed" text-anchor="middle">101 Switching Protocols</text>
+<rect x="24" y="304" width="200" height="52" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="124" y="335" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">WebSocket</text>
+<line x1="330.0" y1="384.0" x2="682.0" y2="384.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,384.0 680.0,378.5 680.0,389.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="379" font-size="11.5" fill="#e8eaed" text-anchor="middle">消息 1</text>
+<line x1="690.0" y1="410.0" x2="338.0" y2="410.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="330.0,410.0 340.0,415.5 340.0,404.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="405" font-size="11.5" fill="#e8eaed" text-anchor="middle">消息 2</text>
+<line x1="330.0" y1="436.0" x2="682.0" y2="436.0" stroke="#8c9198" stroke-width="1.4"/>
+<polygon points="690.0,436.0 680.0,430.5 680.0,441.5" fill="#8c9198"/>
+<text xml:space="preserve" x="510" y="431" font-size="11.5" fill="#e8eaed" text-anchor="middle">消息 3</text>
+<rect x="24" y="368" width="200" height="78" rx="6" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="124" y="412" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">Noise XX</text>
+<line x1="340.0" y1="474.0" x2="680.0" y2="474.0" stroke="#b58cf0" stroke-width="2.6"/>
+<polygon points="690.0,474.0 678.0,467.4 678.0,480.6" fill="#b58cf0"/>
+<polygon points="330.0,474.0 342.0,480.6 342.0,467.4" fill="#b58cf0"/>
+<text xml:space="preserve" x="510" y="468" font-size="12" fill="#e8eaed" text-anchor="middle">pack，已密封</text>
+<rect x="24" y="460" width="200" height="26" rx="6" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="124" y="478" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="700">pack</text>
+<path d="M720,214 H730 V446 H720" fill="none" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/>
+<text xml:space="preserve" x="742" y="322" font-size="12" fill="#f2c14e">handshakeTimeout</text>
+<text xml:space="preserve" x="742" y="337" font-size="12" fill="#f2c14e">默认 30 秒</text>
+<text xml:space="preserve" x="742" y="478" font-size="12" fill="#9aa0a6">之后是 [ReceiveTimeout]</text>
+<text xml:space="preserve" x="24" y="540" font-size="12" fill="#9aa0a6">没有 TLS 时去掉 TLS 步骤；纯 TCP 上去掉 WebSocket 步骤；NK、IK 和 KK 只需两条 Noise 消息。</text>
+</g>
+</svg>

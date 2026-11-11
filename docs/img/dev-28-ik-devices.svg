@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 440" width="980" height="440" role="img" aria-labelledby="dev28ikdevices-t dev28ikdevices-d">
+<title id="dev28ikdevices-t">The server knows each device by its key: Noise IK</title>
+<desc id="dev28ikdevices-d">Devices A and B each prove their own key in the first message of Noise IK; a stranger proves key X. On the server, onPeer looks the key up in the table of device keys: key A belongs to account 42, key B to account 57; key X is not there, and that connection closes before a pack is read. For a known device the login handler takes the proved key from noise.peerKey, finds the account in the table, and calls reclaim(token, 42) or identify(42). No password travels.</desc>
+<rect width="980" height="440" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">The server knows each device by its key: Noise IK</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Each device has a key pair of its own; the server keeps the public halves it lets in</text>
+<rect x="30" y="82" width="150" height="56" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="105" y="107" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Device A</text>
+<text xml:space="preserve" x="105" y="124" font-size="12" fill="#9aa0a6" text-anchor="middle">key A</text>
+<rect x="30" y="176" width="150" height="56" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="105" y="201" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Device B</text>
+<text xml:space="preserve" x="105" y="218" font-size="12" fill="#9aa0a6" text-anchor="middle">key B</text>
+<rect x="30" y="316" width="150" height="56" rx="8" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.6"/>
+<text xml:space="preserve" x="105" y="341" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Stranger</text>
+<text xml:space="preserve" x="105" y="358" font-size="12" fill="#9aa0a6" text-anchor="middle">key X</text>
+<rect x="400" y="72" width="120" height="320" rx="8" fill="#232323" stroke="#f2c14e" stroke-width="1.6"/>
+<text xml:space="preserve" x="460" y="96" font-size="13" fill="#f2c14e" text-anchor="middle" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">onPeer</text>
+<text xml:space="preserve" x="460" y="114" font-size="12" fill="#9aa0a6" text-anchor="middle">in the table?</text>
+<line x1="180.0" y1="110.0" x2="390.0" y2="110.0" stroke="#b58cf0" stroke-width="2.4"/>
+<polygon points="400.0,110.0 388.0,103.4 388.0,116.6" fill="#b58cf0"/>
+<text xml:space="preserve" x="290" y="102" font-size="12" fill="#e8eaed" text-anchor="middle">Noise IK: key A proved</text>
+<line x1="180.0" y1="204.0" x2="390.0" y2="204.0" stroke="#b58cf0" stroke-width="2.4"/>
+<polygon points="400.0,204.0 388.0,197.4 388.0,210.6" fill="#b58cf0"/>
+<text xml:space="preserve" x="290" y="196" font-size="12" fill="#e8eaed" text-anchor="middle">Noise IK: key B proved</text>
+<line x1="180.0" y1="344.0" x2="390.0" y2="344.0" stroke="#e06c6c" stroke-width="2.4"/>
+<polygon points="400.0,344.0 388.0,337.4 388.0,350.6" fill="#e06c6c"/>
+<text xml:space="preserve" x="290" y="336" font-size="12" fill="#f2b8b5" text-anchor="middle">key X</text>
+<text xml:space="preserve" x="460" y="350" font-size="12" fill="#e06c6c" text-anchor="middle" font-weight="700">no:</text>
+<text xml:space="preserve" x="460" y="368" font-size="12" fill="#f2b8b5" text-anchor="middle">closed before</text>
+<text xml:space="preserve" x="460" y="384" font-size="12" fill="#f2b8b5" text-anchor="middle">a pack is read</text>
+<rect x="560" y="72" width="395" height="320" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="757.5" y="96" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server</text>
+<rect x="580" y="112" width="170" height="96" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="592" y="134" font-size="12" fill="#9aa0a6">the table of devices</text>
+<text xml:space="preserve" x="592" y="160" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">key A  →  42</text>
+<text xml:space="preserve" x="592" y="184" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">key B  →  57</text>
+<rect x="580" y="240" width="355" height="132" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="596" y="262" font-size="12" fill="#9aa0a6">the handler of Device.Login</text>
+<text xml:space="preserve" x="596" y="288" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">key     = noise.peerKey</text>
+<text xml:space="preserve" x="596" y="310" font-size="12" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">account = table[ key ]      → 42</text>
+<text xml:space="preserve" x="596" y="332" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">reclaim( token, account )</text>
+<text xml:space="preserve" x="596" y="354" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">  or identify( account )</text>
+<line x1="520.0" y1="160.0" x2="570.0" y2="160.0" stroke="#6fbf7f" stroke-width="1.8"/>
+<polygon points="578.0,160.0 568.0,154.5 568.0,165.5" fill="#6fbf7f"/>
+<text xml:space="preserve" x="549" y="152" font-size="12" fill="#b7e0bf" text-anchor="middle">yes</text>
+<path d="M520,220 L545,220 L545,300 L570,300" fill="none" stroke="#6fbf7f" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon points="578.0,300.0 568.0,294.5 568.0,305.5" fill="#6fbf7f"/>
+<line x1="665.0" y1="238.0" x2="665.0" y2="218.0" stroke="#8c9198" stroke-width="1.2" stroke-dasharray="4 4"/>
+<polygon points="665.0,210.0 659.5,220.0 670.5,220.0" fill="#8c9198"/>
+<text xml:space="preserve" x="676" y="228" font-size="11.5" fill="#9aa0a6">look up</text>
+<text xml:space="preserve" x="24" y="424" font-size="12" fill="#9aa0a6">The device proves its key in the first message: no password to send or to steal, and the session follows the proved key.</text>
+</g>
+</svg>

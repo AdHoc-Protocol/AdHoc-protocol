@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AdHoc protocol diagram</title>
+
+    <!--
+      ========================================================================
+                             EDIT THIS FILE TO CUSTOMISE THE OBSERVER
+      ========================================================================
+
+      This file is the ONE stylesheet for the whole application. Everything
+      below is designed to be tweaked by a user:
+        • Colours and fonts of the UI (sticker editor, tooltips, sidebar)
+        • Light / dark theme palettes
+        • Tooltip look
+        • CKEditor dark-mode colours
+
+      Three consumers read what you put here — do NOT delete rules blindly:
+        (1) DOM chrome       — the main page's UI (sticker editor, popups,
+                               tooltips, sidebar, theme switch).
+        (2) Cytoscape labels — cytoscape reads `font-size` from the container
+                               via getComputedStyle (for em-unit conversion).
+                               The default font-family and weight for canvas
+                               labels are set in src/style.ts, NOT here. So
+                               changing `body { font-family }` below will NOT
+                               change the graph-node label font.
+        (3) Popup windows    — pack_fields.ts and connections.ts COPY EVERY
+                               <style> tag from this document into the popup
+                               document, so the popup's UI chrome inherits
+                               the same look. Look for `mainDocumentStyles =
+                               document.querySelectorAll('style')`.
+
+      How to customise quickly:
+        • To recolour the whole app: edit the CSS variables in section 1.
+        • To change tooltip look: section 7.
+        • To adjust sticker defaults: section 5.
+        • To change the graph label font/weight: edit `src/style.ts` → base
+          node style → `font-family`, `font-weight`, `font-size`.
+
+      If unsure what a class is for, grep the src/ for its name — every class
+      here is referenced from the TypeScript code.
+      ========================================================================
+    -->
+    <style>
+        /* ====================================================================
+         * 1. THEME VARIABLES
+         *    Edit here to recolour the whole app. All other rules refer to
+         *    these via var(--name). `body.dark-theme` overrides them when
+         *    the user toggles dark mode.
+         * ==================================================================== */
+        :root {
+            /* App chrome */
+            --background       : #f0f0f0;
+            --text-color       : #333;
+            --popup-bg         : #ffffff;
+            --popup-border     : #ccc;
+            --header-bg        : #2196F3;
+            --header-text      : #fff;
+            --splitter-bg      : #666;
+
+            /* Form controls */
+            --input-bg         : #fff;
+            --input-text       : #333;
+            --input-border     : #000;
+            --button-bg        : #f0f0f0;
+            --button-text      : #333;
+            --button-border    : #ccc;
+
+            /* Stickers (notes overlayed on the graph) */
+            --sticker-bg           : #ffffe0;
+            --sticker-border       : #d2d2a0;
+            --sticker-header-bg    : #f2f2b0;
+            --sticker-input-bg     : transparent;
+            --sticker-input-border : #ccc;
+
+            /* Inline documentation styling */
+            --doc-title-color       : #0366d6;
+            --doc-title-border      : #eaecef;
+            --doc-param-color       : #e36209;
+            --doc-separator-color   : #6a737d;
+            --code-bg               : rgba(27, 31, 35, 0.05);
+            --code-text             : #24292e;
+            --code-block-bg         : #f6f8fa;
+            --code-block-border     : #e1e4e8;
+
+            /* Status / error banner */
+            --error-bg              : #fffbdd;
+            --error-border          : #ffb900;
+            --error-text            : #333;
+            --validation-banner-bg  : #d32f2f;
+
+            /* Sidebar hover states */
+            --menu-hover-bg   : var(--header-bg);
+            --menu-hover-text : var(--header-text);
+
+            /* Tooltip (C# docs light theme) */
+            --tooltip-bg           : #ffffff;
+            --tooltip-border       : #e1e1e1;
+            --tooltip-text         : #1e1e1e;
+            --tooltip-header-bg    : #f5f5f5;
+            --tooltip-header-text  : #005a9e;
+            --tooltip-shadow       : rgba(0, 0, 0, 0.1);
+
+            /* Composed aliases (used by sidebar + containers) */
+            --background-color-primary   : var(--background);
+            --background-color-secondary : var(--popup-bg);
+            --border-color               : var(--popup-border);
+        }
+
+        body.dark-theme {
+            --background       : #2a2a2a;
+            --text-color       : #e0e0e0;
+            --popup-bg         : #37474f;
+            --popup-border     : #546e7a;
+            --header-bg        : #0d47a1;
+            --splitter-bg      : #ffd700;
+
+            --input-bg         : #424242;
+            --input-text       : #f5f5f5;
+            --input-border     : #616161;
+            --button-bg        : #555;
+            --button-text      : #fff;
+            --button-border    : #777;
+
+            --sticker-bg           : #4a4a4a;
+            --sticker-border       : #666;
+            --sticker-header-bg    : #3a3a3a;
+            --sticker-input-bg     : #2a2a2a;
+            --sticker-input-border : #555;
+
+            --doc-title-color       : #58a6ff;
+            --doc-title-border      : #30363d;
+            --doc-param-color       : #f9826c;
+            --doc-separator-color   : #8b949e;
+            --code-bg               : rgba(110, 118, 129, 0.4);
+            --code-text             : #c9d1d9;
+            --code-block-bg         : #161b22;
+            --code-block-border     : #30363d;
+
+            --error-bg              : #3e3312;
+            --error-border          : #c29400;
+            --error-text            : #e6c883;
+            --validation-banner-bg  : #e53935;
+
+            --menu-hover-bg   : var(--doc-title-color);
+            --menu-hover-text : #ffffff;
+
+            /* Tooltip (C# docs dark theme) */
+            --tooltip-bg           : #2d2d30;
+            --tooltip-border       : #434346;
+            --tooltip-text         : #d4d4d4;
+            --tooltip-header-bg    : #3c3c3c;
+            --tooltip-header-text  : #9cdcfe;
+            --tooltip-shadow       : rgba(0, 0, 0, 0.4);
+
+            /* CKEditor dark-mode overrides.
+               (These use --ck-... names defined by CKEditor itself.) */
+            --ck-color-base-background                 : var(--sticker-bg);
+            --ck-color-base-border                     : var(--sticker-border);
+            --ck-color-text                            : var(--text-color);
+            --ck-color-base-action                     : var(--doc-title-color);
+            --ck-color-focus-border                    : var(--doc-title-color);
+            --ck-custom-background                     : var(--sticker-bg);
+            --ck-color-toolbar-background              : var(--sticker-header-bg);
+            --ck-color-toolbar-border                  : var(--sticker-border);
+            --ck-color-button-default-background       : transparent;
+            --ck-color-button-default-hover-background : rgba(255, 255, 255, 0.1);
+            --ck-color-button-default-active-background: rgba(255, 255, 255, 0.2);
+            --ck-color-button-on-background            : rgba(255, 255, 255, 0.15);
+            --ck-color-button-on-hover-background      : rgba(255, 255, 255, 0.25);
+            --ck-color-button-on-active-background     : rgba(255, 255, 255, 0.3);
+            --ck-color-button-disabled-background      : transparent;
+            --ck-color-button-default-color            : var(--text-color);
+            --ck-color-button-on-color                 : var(--text-color);
+            --ck-color-button-disabled-color           : #999;
+            --ck-icon-color                            : var(--text-color);
+            --ck-color-dropdown-panel-background       : var(--sticker-header-bg);
+            --ck-color-dropdown-panel-border           : var(--sticker-border);
+            --ck-color-input-background                : var(--input-bg);
+            --ck-color-input-border                    : var(--input-border);
+            --ck-color-input-text                      : var(--input-text);
+            --ck-color-editable-background             : var(--sticker-bg);
+            --ck-color-editable-focus-background       : var(--sticker-bg);
+
+            --background-color-primary   : var(--background);
+            --background-color-secondary : var(--popup-bg);
+            --border-color               : var(--popup-border);
+        }
+
+        body.dark-theme .ck-editor__editable_inline { color: var(--text-color); }
+
+        /* ====================================================================
+         * 2. DOCUMENT ROOT
+         *    The body font-family is sans-serif by default. Note: cytoscape
+         *    canvas labels use their OWN font stack set in src/style.ts —
+         *    changing the body font here does NOT affect graph node labels.
+         * ==================================================================== */
+        html, body {
+            height : 100%;
+            margin : 0;
+            padding: 0;
+        }
+
+        body {
+            overflow-y : hidden;
+            font-family: var(--font-ui, sans-serif);
+            background : var(--background);
+            color      : var(--text-color);
+            transition : background-color 0.3s, color 0.3s;
+        }
+
+        .info-popup {
+            display    : none;
+            padding    : 5px;
+            background : var(--popup-bg);
+            border     : 1px solid var(--popup-border);
+            overflow   : hidden;
+            resize     : both;
+            min-width  : 150px;
+            min-height : 100px;
+        }
+
+        /* Hidden placeholder — connections.ts may look this up by id during
+           popup lifecycle; keep the rule (empty or not) so it resolves. */
+        #channels_container { }
+
+        .view-container {
+            position: relative;
+            height  : 100%;
+            width   : 100%;
+        }
+
+        /* ====================================================================
+         * 3. THEME SWITCH — slider control in each sidebar header.
+         *    Appearance tied to --header-bg (checked) + #ccc (unchecked).
+         * ==================================================================== */
+        .theme-switch {
+            position      : absolute;
+            top           : 10px;
+            right         : 10px;
+            z-index       : 1000;
+            display       : inline-block;
+            width         : 60px;
+            height        : 34px;
+            cursor        : pointer;
+        }
+        .theme-switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position        : absolute;
+            inset           : 0;
+            background-color: #ccc;
+            border-radius   : 34px;
+            transition      : background-color 0.4s;
+        }
+        .slider::before {
+            position        : absolute;
+            content         : "";
+            height          : 26px;
+            width           : 26px;
+            left            : 4px;
+            bottom          : 4px;
+            background-color: white;
+            border-radius   : 50%;
+            transition      : transform 0.4s;
+        }
+        .slider svg {
+            position  : absolute;
+            top       : 50%;
+            transform : translateY(-50%);
+            width     : 20px;
+            height    : 20px;
+            transition: opacity 0.3s ease;
+        }
+        .sun-icon  { left: 7px;  opacity: 1; color: #f39c12; }
+        .moon-icon { right: 7px; opacity: 0; color: #f1c40f; }
+
+        input:checked + .slider             { background-color: #2196F3; }
+        input:checked + .slider::before     { transform: translateX(26px); }
+        input:checked + .slider .moon-icon  { opacity: 1; }
+        input:checked + .slider .sun-icon   { opacity: 0; }
+
+        /* Smaller variant inside the sidebar header */
+        .sidebar-header .theme-switch                      { width: 30px; height: 17px; }
+        .sidebar-header .theme-switch .slider              { border-radius: 17px; }
+        .sidebar-header .theme-switch .slider::before      { height: 13px; width: 13px; left: 2px; bottom: 2px; }
+        .sidebar-header .theme-switch input:checked + .slider::before { transform: translateX(13px); }
+        .sidebar-header .theme-switch .slider svg          { width: 10px; height: 10px; }
+        .sidebar-header .theme-switch .sun-icon            { left: 3px; }
+        .sidebar-header .theme-switch .moon-icon           { right: 3px; }
+
+        /* ====================================================================
+         * 4. FORM CONTROLS — inputs, buttons (used in sidebar + popups).
+         * ==================================================================== */
+        input[type="search"] {
+            background-color: var(--input-bg);
+            color           : var(--input-text);
+            border          : 2px solid var(--input-border);
+        }
+
+        button {
+            background-color: var(--button-bg);
+            color           : var(--button-text);
+            border          : 1px solid var(--button-border);
+            padding         : 5px 10px;
+            cursor          : pointer;
+        }
+
+        /* ====================================================================
+         * 5. STICKERS — persistent notes overlayed on the graph (CKEditor).
+         * ==================================================================== */
+        /* The note editor: a dialog over a dimmed view - the name in the header, in the note's colour; the text;
+           Cancel and Save at the foot. */
+        #sticker_editor {
+            display         : flex;
+            flex-direction  : column;
+            resize          : both;
+            overflow        : hidden;
+            min-width       : 420px;
+            min-height      : 280px;
+            box-sizing      : border-box;
+            border-radius   : 8px;
+            background-color: var(--popup-bg);
+            border          : 1px solid var(--popup-border);
+            box-shadow      : 0 12px 40px var(--tooltip-shadow), 0 2px 8px var(--tooltip-shadow);
+            font-family     : var(--font-ui);
+        }
+        #sticker_editor .sticker-header { height: 44px; padding: 0 8px 0 12px; gap: 8px; cursor: move; }
+        #sticker_editor .sticker-name-input {
+            flex          : 1 1 auto;
+            width         : auto;
+            margin        : 0;
+            padding       : 6px 8px;
+            font-size     : 15px;
+            font-family   : var(--font-ui);
+            border        : 1px solid transparent;
+            border-radius : 4px;
+            background    : transparent;
+            color         : inherit;
+            cursor        : text;
+        }
+        #sticker_editor .sticker-name-input:hover { border-color: var(--sticker-border); }
+        #sticker_editor .sticker-name-input:focus { border-color: var(--header-bg); background: var(--input-bg); color: var(--input-text); outline: none; }
+        /* the text fills the dialog, however short it is: the whole area is where one clicks to write */
+        #sticker_editor > .ck.ck-editor { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+        #sticker_editor .ck.ck-editor__main { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+        #sticker_editor .ck.ck-editor__main > .ck-editor__editable { flex: 1 1 auto; min-height: 0; overflow: auto; }
+        #sticker_editor .ck.ck-editor__top .ck-toolbar { border-left: 0; border-right: 0; border-radius: 0; }
+        #sticker_editor .ck.ck-editor__main > .ck-editor__editable {
+            border          : 0 !important;
+            border-radius   : 0 !important;
+            box-shadow      : none !important;
+            background-color: var(--sticker-bg);
+            color           : var(--text-color);
+            padding         : 4px 16px;
+        }
+        .sticker-footer {
+            display         : flex;
+            align-items     : center;
+            gap             : 8px;
+            padding         : 10px 12px;
+            border-top      : 1px solid var(--popup-border);
+            background-color: var(--popup-bg);
+            flex-shrink     : 0;
+        }
+        .sticker-hint { flex: 1 1 auto; font-size: 12px; color: var(--doc-separator-color); }
+        .sticker-footer button, .prompt-box button {
+            padding      : 6px 16px;
+            min-width    : 80px;
+            border-radius: 4px;
+            font-family  : var(--font-ui);
+            font-size    : 13px;
+        }
+        .sticker-save-btn, .prompt-box button.primary {
+            background-color: var(--header-bg);
+            border-color    : var(--header-bg);
+            color           : var(--header-text);
+        }
+        .prompt-box button.danger {
+            background-color: var(--validation-banner-bg);
+            border-color    : var(--validation-banner-bg);
+            color           : #ffffff;
+        }
+        .sticker-save-btn:hover, .prompt-box button.primary:hover, .prompt-box button.danger:hover { filter: brightness(1.1); }
+        #sticker_backdrop {
+            display         : none;
+            position        : fixed;
+            inset           : 0;
+            z-index         : 9999;
+            background-color: rgba(0, 0, 0, 0.25);
+        }
+        #sticker_backdrop.open { display: block; }
+
+        .static-sticker {
+            z-index         : 10;
+            position        : absolute;
+            width           : 250px;
+            height          : 150px;
+            box-shadow      : 0 4px 14px var(--tooltip-shadow);
+            border-radius   : 6px;
+            display         : flex;
+            flex-direction  : column;
+            pointer-events  : all;
+            resize          : both;
+            overflow        : hidden;
+            min-width       : 150px;
+            min-height      : 30px;
+            background-color: var(--sticker-bg);
+            border          : 1px solid var(--sticker-border);
+            color           : var(--text-color);
+        }
+
+        /* a note the view flew to: the same amber glow as an element (cyto/helpers flashNodes) */
+        .static-sticker.highlighted { animation: sticker-glow .55s ease-in-out 3; box-shadow: 0 0 18px 6px #ffb224; }
+        @keyframes sticker-glow {
+            0%, 100% { box-shadow: 0 0 10px 3px #ffb224; }
+            50%      { box-shadow: 0 0 42px 18px #ffb224; }
+        }
+
+        .static-sticker.collapsed .sticker-content {
+            opacity       : 0;
+            padding-top   : 0;
+            padding-bottom: 0;
+            pointer-events: none;
+        }
+        .static-sticker.collapsed { resize: none; }
+
+        .sticker-header {
+            background-color: var(--sticker-header-bg);
+            border-bottom   : 1px solid var(--sticker-border);
+            height          : 30px;
+            cursor          : move;
+            display         : flex;
+            align-items     : center;
+            justify-content : space-between;
+            padding         : 0 5px 0 10px;
+            flex-shrink     : 0;
+        }
+
+        .sticker-name-display,
+        .sticker-editor-title {
+            flex-grow    : 1;
+            font-weight  : normal;
+            overflow     : hidden;
+            text-overflow: ellipsis;
+            white-space  : nowrap;
+        }
+
+        .sticker-controls { display: flex; align-items: center; flex-shrink: 0; }
+        .sticker-controls button {
+            background     : transparent;
+            border         : none;
+            color          : var(--text-color);
+            font-size      : 20px;
+            line-height    : 1;
+            cursor         : pointer;
+            padding        : 0 5px;
+            opacity        : 0.7;
+            font-weight    : normal;
+            width          : 24px;
+            height         : 24px;
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
+        }
+        .sticker-color-btn                          { font-size: 16px !important; }
+        .sticker-controls button:hover              { opacity: 1; }
+        .sticker-delete-btn:hover                   { color: #e53935; }
+        body.dark-theme .sticker-delete-btn:hover   { color: #ef5350; }
+
+        .sticker-name-input {
+            width        : calc(100% - 10px);
+            margin       : 5px;
+            padding      : 4px;
+            border-radius: 3px;
+            border       : 1px solid var(--sticker-input-border);
+            color        : var(--text-color);
+            background   : var(--input-bg);
+            flex-shrink  : 0;
+        }
+        .sticker-name-input.invalid-name { border: 2px solid red !important; outline: none; }
+
+        .sticker-content {
+            flex-grow       : 1;
+            padding         : 10px;
+            overflow-y      : auto;
+            background-color: var(--sticker-bg);
+            color           : var(--text-color);
+            min-height      : 0;
+            word-break      : break-word;
+            transition      : opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+        }
+        .sticker-content img { max-width: 100%; height: auto; }
+        .sticker-content > :first-child { margin-top: 0; }
+        .sticker-content > :last-child  { margin-bottom: 0; }
+
+        .editor-validation-banner {
+            background-color: var(--validation-banner-bg);
+            color           : white;
+            text-align      : center;
+            padding         : 8px;
+            font-size       : 0.9em;
+            font-weight     : normal;
+            display         : none;
+            opacity         : 0;
+            transition      : opacity 0.4s ease-in-out;
+            flex-shrink     : 0;
+        }
+        .editor-validation-banner.show { opacity: 1; }
+
+        #sticker_editor .ckeditor-editor { flex: 1 1 auto; overflow: auto; min-height: 0; }
+
+        .sticker-container {
+            position      : absolute;
+            top           : 0;
+            left          : 0;
+            width         : 100%;
+            height        : 100%;
+            pointer-events: none;
+        }
+
+        /* ====================================================================
+         * 6. SAVE / DELETE CONFIRMATION POPUPS
+         * ==================================================================== */
+        /* A question over the view: the whole window is dimmed, the box stands in the middle of it. */
+        .save-prompt-popup {
+            position        : fixed;
+            inset           : 0;
+            display         : none;
+            background-color: rgba(0, 0, 0, 0.25);
+            font-family     : var(--font-ui);
+        }
+        .prompt-box {
+            width           : 380px;
+            max-width       : calc(100vw - 32px);
+            margin          : 30vh auto 0;
+            padding         : 20px;
+            box-sizing      : border-box;
+            border-radius   : 8px;
+            background-color: var(--popup-bg);
+            color           : var(--text-color);
+            border          : 1px solid var(--popup-border);
+            box-shadow      : 0 12px 40px var(--tooltip-shadow);
+        }
+        .prompt-box .popup-message { margin: 0 0 20px; font-size: 15px; line-height: 1.4; }
+        .prompt-box .popup-buttons { display: flex; justify-content: flex-end; gap: 8px; }
+
+        /* What went wrong, at the top of the window over everything (app/chrome show_error_banner). */
+        #error_banner {
+            position        : fixed;
+            top             : 12px;
+            left            : 50%;
+            transform       : translateX(-50%);
+            max-width       : min(900px, calc(100vw - 32px));
+            z-index         : 20000;
+            padding         : 10px 16px;
+            border-radius   : 6px;
+            border          : 1px solid var(--error-border);
+            background-color: var(--error-bg);
+            color           : var(--error-text);
+            font-family     : var(--font-ui);
+            font-size       : 14px;
+            white-space     : pre-wrap;
+            box-shadow      : 0 6px 20px var(--tooltip-shadow);
+            transition      : opacity .4s;
+        }
+        #error_banner:empty  { display: none; }
+        #error_banner.FadeIn  { opacity: 1; visibility: visible; }
+        #error_banner.FadeOut { opacity: 0; visibility: hidden; }
+
+        /* ====================================================================
+         * 7. TOOLTIP — positioned by the in-code TooltipManager. Content is
+         *    injected as HTML strings from observer.ts (type signatures,
+         *    XML docs, constraint lists). font-family: monospace on the
+         *    content body is deliberate — we render type signatures inside.
+         * ==================================================================== */
+        #tooltip {
+            position        : fixed;
+            display         : none;
+            /* Wide enough for a line of a source comment (~120 characters): documentation keeps its line breaks. */
+            max-width       : min(820px, 92vw);
+            min-width       : 250px;
+            padding         : 0;
+            background-color: var(--tooltip-bg);
+            border          : 1px solid var(--tooltip-border);
+            border-radius   : 6px;
+            box-shadow      : 0 4px 12px var(--tooltip-shadow);
+            z-index         : 10002;
+            /* the pointer may come onto it: to scroll a long one, to select its text (views/interactions) */
+            pointer-events  : auto;
+            font-size       : 14px;
+            line-height     : 1.5;
+            color           : var(--tooltip-text);
+        }
+
+        .tooltip-header {
+            padding                 : 8px 12px;
+            background-color        : var(--tooltip-header-bg);
+            color                   : var(--tooltip-header-text);
+            font-weight             : normal;
+            border-bottom           : 1px solid var(--tooltip-border);
+            border-top-left-radius  : 5px;
+            border-top-right-radius : 5px;
+        }
+        .tooltip-header span[onclick] { cursor: pointer; text-decoration: underline; }
+        /* The symbols an element shows, each with what it means there (model/glyphs). */
+        .tooltip-content .tt-glyphs-title { margin-top: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.65; font-family: var(--font-ui, sans-serif); }
+        .tooltip-content .tt-glyphs { list-style: none; margin: 4px 0 0; padding: 0; font-family: var(--font-ui, sans-serif); white-space: normal; font-size: 12px; }
+        .tooltip-content .tt-glyphs li { display: grid; grid-template-columns: minmax(28px, max-content) 1fr; gap: 10px; align-items: baseline; padding: 2px 0; }
+        .tooltip-content .tt-glyph { font-size: 14px; text-align: center; white-space: nowrap; }
+        /* What the element is — "Pack:", "Actor:" — before its name (views/tooltips.ts). */
+        .tooltip-header .tt-kind { font-weight: normal; opacity: 0.7; }
+
+        .tooltip-content {
+            padding     : 12px;
+            white-space : pre-wrap;
+            font-family : var(--font-ui, sans-serif);
+            max-height  : 400px;
+            overflow-y  : auto;
+        }
+        /* Documentation (model/docs.ts) as its doc comment reads in the IDE: in its frame, line by line, a
+           wrapped line under its own text; and the declaration it documents (model/declaration.ts), coloured
+           as the IDE colours it (design/theme: --ide-*). */
+        .tooltip-content .doc-container {
+            font-family: var(--font-mono, monospace);
+            font-size  : 13px;
+            line-height: 1.45;
+            white-space: normal;
+            color      : var(--ide-comment);
+            margin-bottom: 6px;
+        }
+        /* No bold anywhere: what the facts stress, they stress by colour. */
+        .tooltip-content b, .tooltip-content strong { font-weight: normal; color: var(--tooltip-header-text); }
+        .tooltip-content .doc-container .cl { display: grid; grid-template-columns: 3ch 1fr; }
+        .tooltip-content .doc-container .cs { white-space: pre; }
+        .tooltip-content .doc-container .ct { white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1.45em; }
+        .tooltip-content .doc-container .cm-line { grid-column: 1 / -1; }
+        .tooltip-content .doc-container code { font-family: inherit; color: var(--ide-text); }
+        .tooltip-content .doc-container b, .tooltip-content .doc-container strong { font-weight: normal; color: var(--ide-text); }
+        .tooltip-content .doc-container .doc-tag { color: var(--ide-doc-tag); }
+        .tooltip-content .src-decl { color: var(--ide-text); white-space: pre-wrap; overflow-wrap: anywhere; }
+        .tooltip-content .tk-kw   { color: var(--ide-keyword); }
+        .tooltip-content .tk-num  { color: var(--ide-number); }
+        .tooltip-content .tk-str  { color: var(--ide-string); }
+        .tooltip-content .tk-attr { color: var(--ide-attr); }
+        .tooltip-content .tk-name { color: var(--ide-field); }
+        .tooltip-content .tk-text { color: var(--ide-text); }
+        .tooltip-content .tk-cm   { color: var(--ide-comment); }
+
+        /* ====================================================================
+         * 8. SIDEBAR — slide-out panel on the left of each view.
+         * ==================================================================== */
+        .sidebar-toggle {
+            position        : absolute;
+            top             : 10px;
+            left            : 10px;
+            z-index         : 1001;
+            background-color: var(--background-color-secondary, var(--popup-bg));
+            border          : 1px solid var(--border-color, var(--popup-border));
+            color           : var(--text-color);
+            font-size       : 20px;
+            cursor          : pointer;
+            border-radius   : 4px;
+            width           : 40px;
+            height          : 40px;
+            line-height     : 40px;
+            padding         : 0;
+        }
+
+        .sidebar {
+            position        : absolute;
+            top             : 0;
+            left            : 0;
+            width           : 300px;
+            height          : 100%;
+            background-color: var(--background-color-primary, var(--background));
+            border-right    : 1px solid var(--border-color, var(--popup-border));
+            transform       : translateX(-100%);
+            transition      : transform 0.3s ease-in-out;
+            z-index         : 1000;
+            display         : flex;
+            flex-direction  : column;
+            box-sizing      : border-box;
+        }
+        .sidebar.open { transform: translateX(0); }
+
+        .sidebar-header {
+            position     : relative;
+            padding      : 60px 10px 10px 10px;
+            border-bottom: 1px solid var(--border-color, var(--popup-border));
+        }
+
+        .sidebar-search {
+            width           : 100%;
+            padding         : 8px;
+            border-radius   : 4px;
+            border          : 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color           : var(--input-text);
+            box-sizing      : border-box;
+        }
+
+        .sidebar-content { flex-grow: 1; overflow-y: auto; padding: 10px; }
+
+        .sidebar-controls {
+            padding       : 10px;
+            border-top    : 1px solid var(--border-color, var(--popup-border));
+            display       : flex;
+            flex-direction: column;
+            gap           : 15px;
+        }
+
+        /* Tree view inside sidebar */
+        .tree-view          { list-style: none; padding: 0; margin: 0; }
+        .tree-view ul       { list-style: none; padding-left: 20px; display: none; }
+        .tree-view li .tree-item.expanded + ul { display: block; }
+
+        .tree-view .tree-item {
+            display        : flex;
+            align-items    : center;
+            padding        : 5px;
+            cursor         : pointer;
+            border-radius  : 3px;
+            white-space    : nowrap;
+            overflow       : hidden;
+            text-overflow  : ellipsis;
+        }
+        .tree-view .tree-item:hover {
+            background-color: var(--menu-hover-bg);
+            color           : var(--menu-hover-text);
+        }
+        .tree-view .tree-item.expandable::before {
+            content    : '▸';   /* the fold glyph of the diagrams; model/glyphs TREE.arrow explains it */
+            margin-right: 8px;
+            font-size  : 0.8em;
+            transition : transform 0.2s;
+            flex-shrink: 0;
+        }
+        .tree-view .tree-item.expandable.expanded::before { transform: rotate(90deg); }
+        .tree-view .tree-icon { margin-right: 8px; flex-shrink: 0; }
+
+        .tree-item.unselectable             { opacity: 0.6; cursor: default; }
+        .tree-item.unselectable .tree-label { font-style: italic; }
+
+        /* ====================================================================
+         * 8. ON ITS WAY TO THE WIRE - the foot of a tooltip (views/stream_view):
+         *    the stages one after another, the data at one end, the wire at
+         *    the other; a row per leg a cut names, and one for the others.
+         * ==================================================================== */
+        .st          { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--tooltip-border); font-family: var(--font-ui); }
+        .st-title    { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--doc-separator-color); }
+        .st-route    { margin-top: 8px; overflow-x: auto; }
+        .st-where    { font-size: 12px; margin-bottom: 4px; color: var(--tooltip-text); }
+        .st-where > div + div { padding-left: 22px; }   /* the next connections under the first, after its "On " */
+        .st-on       { color: var(--doc-separator-color); font-size: 11px; }
+        .st-grid     { display: grid; width: max-content; max-width: 100%; row-gap: 3px; font-size: 12px; line-height: 1.35; }
+        .st-group    { font-size: 10px; color: var(--doc-separator-color); border-bottom: 1px dashed var(--tooltip-border); margin: 0 2px 1px; padding-bottom: 1px; }
+        .st-chip     { grid-row: 2; padding: 3px 9px; border: 1px solid; white-space: nowrap; margin-left: -1px; }
+        .st-chip.st-first { border-radius: 5px 0 0 5px; margin-left: 0; }
+        .st-chip.st-last  { border-radius: 0 5px 5px 0; }
+        .st-role     { display: block; font-size: 10px; opacity: .75; }
+        .st-leaf     { background: var(--st-leaf-fill);  border-color: var(--st-leaf-line);  color: var(--st-leaf-text); }
+        .st-zip      { background: var(--st-zip-fill);   border-color: var(--st-zip-line);   color: var(--st-zip-text); }
+        .st-ciph     { background: var(--st-ciph-fill);  border-color: var(--st-ciph-line);  color: var(--st-ciph-text); }
+        .st-plain    { background: var(--st-plain-fill); border-color: var(--st-plain-line); color: var(--st-plain-text); }
+        .st-cut      { background: var(--st-cut-fill);   border-color: var(--st-cut-line);   color: var(--st-cut-text); text-align: center; }
+        .st-cable    { grid-row: 2; display: flex; align-items: center; margin-left: -2px; }   /* the wire: a cable (views/stream_view CABLE) */
+        .st-wire     { background: var(--st-wire-fill);  border-color: var(--st-wire-line);  color: var(--st-wire-text); }
+        .st-leg      { font-size: 11px; margin-top: 4px; color: var(--tooltip-text); }
+        .st-bar      { font-size: 11px; padding: 1px 7px; border: 1px solid; border-radius: 3px; white-space: nowrap; margin-left: -1px; }
+        .st-skip     { border-style: dashed; border-color: var(--st-wire-line); color: var(--doc-separator-color); opacity: .7; }
+        .st-to       { background: var(--st-cut-fill);   border-color: var(--st-cut-line);   color: var(--st-cut-text); }
+        .st-from     { background: var(--st-cut-fill);   border-color: var(--st-cut-line);   color: var(--st-cut-text); }
+        .st-all      { background: var(--st-wire-fill);  border-color: var(--st-wire-line);  color: var(--st-wire-text); }
+    </style>
+</head>
+<body>
+<!--
+  Body markup is minimal — the graph views (HostPacks, PackFields, Connections)
+  and UI state are driven from TypeScript in src/. The templates below are
+  cloned / referenced by name from the code; do not rename class/id without
+  updating the corresponding src/ files.
+-->
+
+<!-- Sticker editor (shown on demand, positioned by StickerEditor.ts) -->
+<div id="sticker_editor" style="visibility: hidden; position: fixed; z-index: 10000;">
+    <div class="sticker-header">
+        <input type="text" class="sticker-name-input" placeholder="Name of the note" spellcheck="false" title="The name of the note: unique in this view">
+        <div class="sticker-controls">
+            <button class="sticker-color-btn" title="Colour of the note">&#127912;</button>
+            <input type="color" class="sticker-color-input" style="position: absolute; visibility: hidden;">
+            <button class="sticker-close-btn" title="Close (Esc)">&times;</button>
+        </div>
+    </div>
+    <div class="editor-validation-banner"></div>
+    <div class="ckeditor-editor"></div>
+    <div class="sticker-footer">
+        <span class="sticker-hint">Ctrl+Enter saves &middot; Esc closes</span>
+        <button class="sticker-cancel-btn">Cancel</button>
+        <button class="sticker-save-btn">Save</button>
+    </div>
+</div>
+
+<!-- Sticker template — cloned per user-created sticker -->
+<div id="sticker" class="static-sticker" style="visibility: hidden;">
+    <div class="sticker-header">
+        <span class="sticker-name-display">Sticker name</span>
+        <div class="sticker-controls">
+            <button class="sticker-color-btn" title="Colour of the note">&#127912;</button>
+            <input type="color" class="sticker-color-input" style="position: absolute; visibility: hidden;">
+            <button class="sticker-expand-btn" title="Fold the note to its name">&#9662;</button>
+            <button class="sticker-delete-btn" title="Delete the note">&times;</button>
+        </div>
+    </div>
+    <div class="sticker-content"></div>
+</div>
+
+<!-- Save / Delete confirmation popups -->
+<div id="save-prompt-template" class="save-prompt-popup">
+    <div class="prompt-box">
+        <p class="popup-message">The note has changes that are not saved.</p>
+        <div class="popup-buttons">
+            <button class="popup-keep-btn">Keep editing</button>
+            <button class="popup-discard-btn">Discard</button>
+            <button class="popup-save-btn primary">Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="delete-prompt-template" class="save-prompt-popup delete-prompt-popup">
+    <div class="prompt-box">
+        <p class="popup-message">Delete this note?</p>
+        <div class="popup-buttons">
+            <button class="popup-cancel-btn">Cancel</button>
+            <button class="popup-delete-btn danger">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Generic tooltip target (positioned by the in-code TooltipManager) -->
+<div id="tooltip">
+    <div class="tooltip-header"></div>
+    <div class="tooltip-content"></div>
+</div>
+
+<!-- Main HostPacks view — fills the viewport -->
+<div id="host_packs_container" class="view-container"
+     style="left: 0; top: 0; height: 100%; width: 100%; position: absolute;">
+    <div id="host_packs_wrapper"
+         style="position: relative; width: 100%; height: 100%; overflow: hidden;">
+        <div id="host_packs"
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+        <div class="sticker-container"></div>
+    </div>
+</div>
+
+<!-- Error banner (server-sent validation errors, e.g. protocol out of date) -->
+<div id="error_banner" class="FadeOut"></div>
+
+<script src="observer.js"></script>
+</body>
+</html>

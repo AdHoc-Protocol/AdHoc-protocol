@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" width="960" height="460" role="img" aria-labelledby="d21g-t d21g-d">
+<title id="d21g-t">新一代就是一个新主机</title>
+<desc id="d21g-d">一个描述中的两代对端。左侧，冻结 — 固件 2.x，灰色绘制并带挂锁：host VehicleLegacy，uid 1，pack PositionV2 含 float lat 和 float lon，connection TelemetryLegacy；已部署、从不编辑，因为这里的修改会到达现场的设备。橙色虚线框表示 AdHocAgent .cs~ 不得列出 VehicleLegacy。右侧，自由 — 固件 3.x：host Vehicle，uid 2，packs Position 和 Alarm，connection Telemetry；可以自由修改。下方，后端 host Fleet，uid 0，有一个端口；其多路复用器 FleetPort（Telemetry 和 TelemetryLegacy 的 Multiplex）读取每个套接字的第一个字节：字节 1 去往 TelemetryLegacy，字节 2 去往 Telemetry。页脚：退役会删除 VehicleLegacy、TelemetryLegacy 和 PositionV2 及其表行，并把 TelemetryLegacy 移出 FleetPort；多路复用器至少列出两条连接。</desc>
+<rect width="960" height="460" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">新一代就是一个新主机</text>
+
+<!-- LEFT: frozen generation -->
+<rect x="24" y="54" width="420" height="200" rx="8" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="432" y="58" font-size="12.5" fill="#e8833a" text-anchor="end" paint-order="stroke" stroke="#2b2b2b" stroke-width="6" stroke-linejoin="round">AdHocAgent .cs~ 不得列出 VehicleLegacy</text>
+
+<path d="M43 75 V71 a4 4 0 0 1 8 0 V75" fill="none" stroke="#9aa0a6" stroke-width="1.8"/>
+<rect x="40" y="74" width="14" height="11" rx="2" fill="#9aa0a6"/>
+<text x="62" y="85" font-size="15" fill="#9aa0a6" font-weight="600">冻结 — 固件 2.x</text>
+
+<rect x="40" y="96" width="388" height="28" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="52" y="115" font-size="14" fill="#9aa0a6"><tspan fill="#7d8288">主机</tspan>  VehicleLegacy</text>
+<text x="416" y="115" font-size="13" fill="#9aa0a6" text-anchor="end">uid 1</text>
+
+<rect x="40" y="132" width="388" height="28" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="52" y="151" font-size="14" fill="#9aa0a6"><tspan fill="#7d8288">pack</tspan>  PositionV2 <tspan font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="13">{ float lat; float lon; }</tspan></text>
+
+<rect x="40" y="168" width="388" height="28" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="52" y="187" font-size="14" fill="#9aa0a6"><tspan fill="#7d8288">连接</tspan>  TelemetryLegacy</text>
+
+<text x="40" y="222" font-size="12.5" fill="#9aa0a6">已部署，从不编辑：</text>
+<text x="40" y="239" font-size="12.5" fill="#9aa0a6">这里的修改会到达现场的设备</text>
+
+<!-- RIGHT: free generation -->
+<text x="532" y="85" font-size="15" fill="#e8833a" font-weight="600">自由 — 固件 3.x</text>
+
+<rect x="532" y="96" width="388" height="28" rx="5" fill="#303236" stroke="#e8833a" stroke-width="1.4"/>
+<text x="544" y="115" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">主机</tspan>  Vehicle</text>
+<text x="908" y="115" font-size="13" fill="#f2c14e" text-anchor="end">uid 2</text>
+
+<rect x="532" y="132" width="388" height="28" rx="5" fill="#303236" stroke="#e8833a" stroke-width="1.4"/>
+<text x="544" y="151" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">packs</tspan>  Position, Alarm</text>
+
+<rect x="532" y="168" width="388" height="28" rx="5" fill="#303236" stroke="#e8833a" stroke-width="1.4"/>
+<text x="544" y="187" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">连接</tspan>  Telemetry</text>
+
+<text x="920" y="222" font-size="12.5" fill="#9aa0a6" text-anchor="end">可自由修改：加字段、改类型、加状态</text>
+
+<!-- arrows into the one port -->
+<path d="M404 196 V270 H466 V278" fill="none" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M466 286 L461.5 278 L470.5 278 Z" fill="#4fb3ff"/>
+<path d="M556 196 V270 H494 V278" fill="none" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M494 286 L489.5 278 L498.5 278 Z" fill="#4fb3ff"/>
+<text x="394" y="291" font-size="13" fill="#4fb3ff" text-anchor="end">字节 1 → TelemetryLegacy</text>
+<text x="566" y="291" font-size="13" fill="#4fb3ff">字节 2 → Telemetry</text>
+
+<!-- Fleet -->
+<rect x="300" y="294" width="360" height="98" rx="6" fill="#2a3542" stroke="#6f9fd8" stroke-width="1.6"/>
+<rect x="452" y="286" width="56" height="16" rx="3" fill="#243447" stroke="#e8833a" stroke-width="1.8"/>
+<text x="316" y="320" font-size="14" fill="#e8eaed"><tspan fill="#9aa0a6">主机</tspan>  Fleet<tspan dx="10" fill="#f2c14e" font-size="13">uid 0</tspan></text>
+<text x="480" y="320" font-size="12" fill="#9aa0a6" text-anchor="middle">一个端口</text>
+<rect x="316" y="330" width="328" height="50" rx="4" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="480" y="351" font-size="13.5" fill="#e8eaed" text-anchor="middle"><tspan fill="#9aa0a6">多路复用器</tspan> FleetPort：读取第一个字节</text>
+<text x="480" y="370" font-size="12" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace">Multiplex&lt;(Telemetry, TelemetryLegacy)&gt;</text>
+
+<!-- footer -->
+<text x="480" y="420" font-size="12.5" fill="#9aa0a6" text-anchor="middle">退役：删除 VehicleLegacy、TelemetryLegacy 和 PositionV2 及其表行，并把 TelemetryLegacy 移出 FleetPort</text>
+<text x="480" y="438" font-size="12.5" fill="#9aa0a6" text-anchor="middle">多路复用器至少列出两条连接：只要设备仍用 uid 字节打开套接字，就在端口上保留第二条</text>
+</g>
+</svg>

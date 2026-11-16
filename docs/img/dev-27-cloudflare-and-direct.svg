@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 410" width="980" height="410" role="img" aria-labelledby="title desc">
+<title id="title">One server, one port: through Cloudflare Tunnel and directly</title>
+<desc id="desc">Two ways from a client to one port of a server. Through Cloudflare Tunnel: wss://cf.example.com carries TLS with Cloudflare's certificate as far as Cloudflare, which ends it and passes the bytes through the tunnel to cloudflared on the server's machine; the machine has no public port for this way, and cloudflared comes to the server over localhost with no TLS. Directly: wss://direct.example.com:8443 carries TLS with the server's own certificate all the way. The server's chooseChain looks at the address of the socket once, at connect: the local address gets null, no TLS; any other address gets the chain with TLS. Noise runs on both ways from the client to the server, through Cloudflare, sealed.</desc>
+<rect width="980" height="410" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">One server, one port, two ways in</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">The server decides for each connection by the address of its socket, once, before a byte is read</text>
+
+<!-- the machine of the server -->
+<rect x="580" y="84" width="380" height="240" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text x="592" y="104" font-size="12" fill="#9aa0a6">The server's machine</text>
+<text x="840" y="106" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server, one port</text>
+
+<!-- the way through Cloudflare Tunnel -->
+<rect x="140" y="126" width="200" height="28" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="240" y="116" font-size="12" fill="#e8eaed" text-anchor="middle">wss://cf.example.com</text>
+<text x="240" y="172" font-size="12" fill="#9aa0a6" text-anchor="middle">TLS, the certificate of Cloudflare</text>
+<rect x="450" y="126" width="142" height="28" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.4"/>
+<text x="515" y="116" font-size="12" fill="#e8eaed" text-anchor="middle">Cloudflare Tunnel</text>
+<text x="515" y="172" font-size="12" fill="#9aa0a6" text-anchor="middle">no public port</text>
+<rect x="682" y="126" width="50" height="28" fill="none" stroke="#8c9198" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="707" y="116" font-size="12" fill="#e8eaed" text-anchor="middle">no TLS</text>
+<text x="707" y="172" font-size="12" fill="#9aa0a6" text-anchor="middle">localhost</text>
+
+<!-- the direct way -->
+<rect x="140" y="266" width="592" height="28" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="360" y="256" font-size="12" fill="#e8eaed" text-anchor="middle">wss://direct.example.com:8443</text>
+<text x="360" y="312" font-size="12" fill="#9aa0a6" text-anchor="middle">TLS, the certificate of the server</text>
+
+<!-- the ends -->
+<rect x="20" y="110" width="120" height="60" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text x="80" y="128" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<rect x="20" y="250" width="120" height="60" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text x="80" y="268" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<rect x="340" y="96" width="110" height="88" rx="8" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.6"/>
+<text x="395" y="118" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Cloudflare</text>
+<text x="395" y="161" font-size="12" fill="#f2c14e" text-anchor="middle">ends TLS,</text>
+<text x="395" y="176" font-size="12" fill="#f2c14e" text-anchor="middle">cannot read</text>
+<rect x="592" y="112" width="90" height="56" rx="6" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.4"/>
+<text x="637" y="129" font-size="12" fill="#e8eaed" text-anchor="middle">cloudflared</text>
+
+<rect x="732" y="118" width="216" height="44" rx="5" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="840" y="136" font-size="12" fill="#e8eaed" text-anchor="middle">the local address</text>
+<text x="840" y="153" font-size="12" fill="#9aa0a6" text-anchor="middle">null: no TLS</text>
+<rect x="732" y="258" width="216" height="44" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="840" y="276" font-size="12" fill="#e8eaed" text-anchor="middle">any other address</text>
+<text x="840" y="293" font-size="12" fill="#9aa0a6" text-anchor="middle">the chain with TLS</text>
+<text x="840" y="206" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">chooseChain( address )</text>
+<text x="840" y="224" font-size="12" fill="#9aa0a6" text-anchor="middle">decided once, at connect</text>
+
+<!-- Noise, end to end, over all of it -->
+<line x1="140" y1="140" x2="724" y2="140" stroke="#b58cf0" stroke-width="2.6"/>
+<polygon points="732,140 722,134.5 722,145.5" fill="#b58cf0"/>
+<line x1="140" y1="280" x2="724" y2="280" stroke="#b58cf0" stroke-width="2.6"/>
+<polygon points="732,280 722,274.5 722,285.5" fill="#b58cf0"/>
+
+<!-- the legend -->
+<rect x="24" y="350" width="34" height="16" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text x="66" y="363" font-size="12" fill="#e8eaed">TLS</text>
+<rect x="100" y="350" width="34" height="16" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.2"/>
+<text x="142" y="363" font-size="12" fill="#e8eaed">Cloudflare Tunnel</text>
+<rect x="258" y="350" width="34" height="16" fill="none" stroke="#8c9198" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="300" y="363" font-size="12" fill="#e8eaed">no TLS</text>
+<line x1="356" y1="358" x2="390" y2="358" stroke="#b58cf0" stroke-width="2.6"/>
+<text x="398" y="363" font-size="12" fill="#e8eaed">Noise: the same on both ways, from the client to the server, pinned by the server's key</text>
+<text x="24" y="390" font-size="12" fill="#9aa0a6">Each connection pays only for what it got: its state comes from a pool when it opens and goes back when it closes</text>
+</g>
+</svg>

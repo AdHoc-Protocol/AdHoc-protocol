@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="title desc">
+<title id="title">A conversation with rules</title>
+<desc id="desc">Left, stateless calls: three requests - POST /job/start, /job/progress and /job/done - each running the same hand-written steps in orange: load the session, check the login, check the phase, then act and save; the same checks are repeated on the client. Right, one AdHoc actor: the device and the server each hold a replica of the same generated state machine, Start, Running and End, where End releases the pair. The Job pack from the server moves both replicas to Running, Progress keeps them there, and Done from the device moves both to End. Two red crosses: a Done sent while the actor is still in Start is refused before it leaves, as DISCARDED_BYSTATE; a late pack from an earlier state carries an old epoch and is dropped by the receiver.</desc>
+<rect width="960" height="420" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="16" y="16" width="408" height="388" rx="8" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="32" y="44" font-size="14" fill="#e8eaed" font-weight="700">stateless calls: every handler checks again</text>
+<rect x="32" y="64" width="376" height="84" rx="6" fill="#303236" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="44" y="84" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">POST /job/start</text>
+<rect x="44" y="96" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="76" y="113.3" font-size="12" fill="#e8eaed" text-anchor="middle">load</text><text x="76" y="129.3" font-size="12" fill="#e8eaed" text-anchor="middle">session</text>
+<rect x="116" y="96" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="148" y="113.3" font-size="12" fill="#e8eaed" text-anchor="middle">check</text><text x="148" y="129.3" font-size="12" fill="#e8eaed" text-anchor="middle">login</text>
+<rect x="188" y="96" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="220" y="113.3" font-size="12" fill="#e8eaed" text-anchor="middle">check</text><text x="220" y="129.3" font-size="12" fill="#e8eaed" text-anchor="middle">phase</text>
+<rect x="260" y="96" width="64" height="42" rx="5" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="292" y="121.3" font-size="12" fill="#e8eaed" text-anchor="middle">act</text>
+<rect x="332" y="96" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="364" y="121.3" font-size="12" fill="#e8eaed" text-anchor="middle">save</text>
+<rect x="32" y="164" width="376" height="84" rx="6" fill="#303236" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="44" y="184" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">POST /job/progress</text>
+<rect x="44" y="196" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="76" y="213.3" font-size="12" fill="#e8eaed" text-anchor="middle">load</text><text x="76" y="229.3" font-size="12" fill="#e8eaed" text-anchor="middle">session</text>
+<rect x="116" y="196" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="148" y="213.3" font-size="12" fill="#e8eaed" text-anchor="middle">check</text><text x="148" y="229.3" font-size="12" fill="#e8eaed" text-anchor="middle">login</text>
+<rect x="188" y="196" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="220" y="213.3" font-size="12" fill="#e8eaed" text-anchor="middle">check</text><text x="220" y="229.3" font-size="12" fill="#e8eaed" text-anchor="middle">phase</text>
+<rect x="260" y="196" width="64" height="42" rx="5" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="292" y="221.3" font-size="12" fill="#e8eaed" text-anchor="middle">act</text>
+<rect x="332" y="196" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="364" y="221.3" font-size="12" fill="#e8eaed" text-anchor="middle">save</text>
+<rect x="32" y="264" width="376" height="84" rx="6" fill="#303236" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="44" y="284" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">POST /job/done</text>
+<rect x="44" y="296" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="76" y="313.3" font-size="12" fill="#e8eaed" text-anchor="middle">load</text><text x="76" y="329.3" font-size="12" fill="#e8eaed" text-anchor="middle">session</text>
+<rect x="116" y="296" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="148" y="313.3" font-size="12" fill="#e8eaed" text-anchor="middle">check</text><text x="148" y="329.3" font-size="12" fill="#e8eaed" text-anchor="middle">login</text>
+<rect x="188" y="296" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="220" y="313.3" font-size="12" fill="#e8eaed" text-anchor="middle">check</text><text x="220" y="329.3" font-size="12" fill="#e8eaed" text-anchor="middle">phase</text>
+<rect x="260" y="296" width="64" height="42" rx="5" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/><text x="292" y="321.3" font-size="12" fill="#e8eaed" text-anchor="middle">act</text>
+<rect x="332" y="296" width="64" height="42" rx="5" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="364" y="321.3" font-size="12" fill="#e8eaed" text-anchor="middle">save</text>
+<text x="32" y="380" font-size="12" fill="#9aa0a6">the same checks, by hand, in every handler -</text>
+<text x="32" y="396" font-size="12" fill="#9aa0a6">and again on the client</text>
+<rect x="440" y="16" width="504" height="388" rx="8" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="456" y="44" font-size="14" fill="#e8eaed" font-weight="700">one AdHoc actor: the rules are generated</text>
+<text x="560" y="76" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Device</text>
+<text x="824" y="76" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Server</text>
+<rect x="500" y="92" width="120" height="34" rx="10" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="560" y="113.7" font-size="13" fill="#e8eaed" text-anchor="middle">Start</text>
+<rect x="500" y="170" width="120" height="34" rx="10" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="560" y="191.7" font-size="13" fill="#e8eaed" text-anchor="middle">Running</text>
+<rect x="500" y="248" width="120" height="34" rx="10" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-dasharray="5 4"/><text x="560" y="269.7" font-size="13" fill="#e8eaed" text-anchor="middle">End</text>
+<text x="560" y="298" font-size="12" fill="#9aa0a6" text-anchor="middle">pair released</text>
+<path d="M560 127 L560 162" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M560 169 L556 161 L564 161 Z" fill="#f2c14e"/>
+<path d="M560 205 L560 240" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M560 247 L556 239 L564 239 Z" fill="#f2c14e"/>
+<rect x="764" y="92" width="120" height="34" rx="10" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="824" y="113.7" font-size="13" fill="#e8eaed" text-anchor="middle">Start</text>
+<rect x="764" y="170" width="120" height="34" rx="10" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="824" y="191.7" font-size="13" fill="#e8eaed" text-anchor="middle">Running</text>
+<rect x="764" y="248" width="120" height="34" rx="10" fill="none" stroke="#f2c14e" stroke-width="1.4" stroke-dasharray="5 4"/><text x="824" y="269.7" font-size="13" fill="#e8eaed" text-anchor="middle">End</text>
+<text x="824" y="298" font-size="12" fill="#9aa0a6" text-anchor="middle">pair released</text>
+<path d="M824 127 L824 162" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M824 169 L820 161 L828 161 Z" fill="#f2c14e"/>
+<path d="M824 205 L824 240" fill="none" stroke="#f2c14e" stroke-width="1.8" stroke-linejoin="round"/><path d="M824 247 L820 239 L828 239 Z" fill="#f2c14e"/>
+<path d="M620 179 L633 179 Q638 179 638 184 L638 191 Q638 196 633 196 L627 196" fill="none" stroke="#f2c14e" stroke-width="1.5" stroke-linejoin="round"/><path d="M621 196 L628 192.4 L628 199.6 Z" fill="#f2c14e"/>
+<path d="M764 179 L751 179 Q746 179 746 184 L746 191 Q746 196 751 196 L757 196" fill="none" stroke="#f2c14e" stroke-width="1.5" stroke-linejoin="round"/><path d="M763 196 L756 199.6 L756 192.4 Z" fill="#f2c14e"/>
+<text x="692" y="192" font-size="12" fill="#e8eaed" text-anchor="middle">Progress</text>
+<path d="M822 148 L571 148" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M563 148 L572 143.4 L572 152.6 Z" fill="#4fb3ff"/>
+<text x="692" y="141" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#4fb3ff" font-weight="700">Job</tspan><tspan fill="#e8eaed"> - both replicas move to Running</tspan></text>
+<path d="M562 226 L813 226" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M821 226 L812 230.6 L812 221.4 Z" fill="#4fb3ff"/>
+<text x="692" y="219" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan fill="#4fb3ff" font-weight="700">Done</tspan><tspan fill="#e8eaed"> - both move to End</tspan></text>
+<line x1="621" y1="109" x2="662" y2="109" stroke="#e06c6c" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M666 104 L676 114 M676 104 L666 114" stroke="#e06c6c" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+<text x="642" y="103" font-size="12" fill="#e06c6c" text-anchor="middle">Done</text>
+<path d="M460 310 L472 322 M472 310 L460 322" stroke="#e06c6c" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+<text x="484" y="320" font-size="13" fill="#e8eaed">Done sent while still in Start - refused before it leaves:</text>
+<text x="484" y="338" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e06c6c" xml:space="preserve">DISCARDED_BYSTATE</text>
+<path d="M460 356 L472 368 M472 356 L460 368" stroke="#e06c6c" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+<text x="484" y="366" font-size="13" fill="#e8eaed">a late pack from an earlier state carries an old epoch -</text>
+<text x="484" y="384" font-size="13" fill="#e8eaed">dropped by the receiver</text>
+</g>
+</svg>

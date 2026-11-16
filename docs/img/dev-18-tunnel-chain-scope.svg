@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 572" width="980" height="572" role="img"><title>Top: chains on the physical legs ViewerToHub and HubToServer, each Zstd and ChaCha20; Viewer, Hub and Server all hold keys and the Hub holds the plaintext between the legs. Bottom: the chain Zstd(6), ChaCha20 on the virtual connection ViewerToServer; only Viewer and Server hold keys, the Hub forwards sealed chunks with no key and no plaintext; the Viewer compresses then encrypts, the Server decrypts then decompresses</title><rect width="980" height="572" rx="10" fill="#2b2b2b"/><g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13"><text x="24" y="40" font-size="18" fill="#e8eaed" font-weight="600">Who can read the payload</text>
+<rect x="16" y="58" width="948" height="192" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="36" y="84" font-size="14" fill="#e8eaed" font-weight="700">chains on the physical legs</text>
+<rect x="60" y="108" width="150" height="84" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="135" y="158" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Viewer</text>
+<g stroke="#f2c14e" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="128" cy="174" r="4.5"/><path d="M132.5 174 H146 M141.5 174 V179 M146 174 V180"/></g>
+<rect x="390" y="108" width="200" height="84" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="490" y="132" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Hub</text>
+<g stroke="#f2c14e" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="405" cy="127" r="4.5"/><path d="M409.5 127 H423 M418.5 127 V132 M423 127 V133"/></g>
+<g stroke="#f2c14e" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="561" cy="127" r="4.5"/><path d="M565.5 127 H579 M574.5 127 V132 M579 127 V133"/></g>
+<rect x="430" y="146" width="120" height="32" rx="4" fill="#4a2e1a" stroke="#e8833a" stroke-width="1.8"/>
+<text x="490" y="167" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">plaintext</text>
+<rect x="770" y="108" width="150" height="84" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="845" y="158" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<g stroke="#f2c14e" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="838" cy="174" r="4.5"/><path d="M842.5 174 H856 M851.5 174 V179 M856 174 V180"/></g>
+<line x1="210" y1="150" x2="381" y2="150" stroke="#4fb3ff" stroke-width="2.5"/><path d="M390 150 L380 144.5 L380 155.5 Z" fill="#4fb3ff"/>
+<text x="300" y="140" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd, ChaCha20]</text>
+<text x="300" y="171" font-size="12" fill="#9aa0a6" text-anchor="middle">sealed on this wire</text>
+<line x1="590" y1="150" x2="761" y2="150" stroke="#4fb3ff" stroke-width="2.5"/><path d="M770 150 L760 144.5 L760 155.5 Z" fill="#4fb3ff"/>
+<text x="680" y="140" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd, ChaCha20]</text>
+<text x="680" y="171" font-size="12" fill="#9aa0a6" text-anchor="middle">sealed on this wire</text>
+<text x="490" y="222" font-size="13" fill="#e8833a" text-anchor="middle">the Hub decrypts one leg and encrypts the next</text>
+<rect x="16" y="266" width="948" height="240" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="36" y="292" font-size="14" fill="#e8eaed" font-weight="700">a chain on the virtual connection</text>
+<text x="490" y="300" font-size="13" fill="#e8833a" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd(6), ChaCha20]</text>
+<text x="490" y="318" font-size="13" fill="#e8833a" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">interface ViewerToServer : VirtuallyConnects&lt;Viewer, Server, Hub&gt;</text>
+<path d="M135 376 C135 334 845 334 845 368" fill="none" stroke="#e8833a" stroke-width="2.2" stroke-dasharray="7 5"/>
+<path d="M845 376 L840 367 L850 367 Z" fill="#e8833a"/>
+<rect x="60" y="376" width="150" height="80" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="135" y="412" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Viewer</text>
+<g stroke="#f2c14e" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="128" cy="432" r="4.5"/><path d="M132.5 432 H146 M141.5 432 V437 M146 432 V438"/></g>
+<rect x="390" y="376" width="200" height="80" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="490" y="400" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Hub</text>
+<text x="490" y="424" font-size="13" fill="#4fb3ff" text-anchor="middle">sealed chunks</text>
+<text x="490" y="442" font-size="13" fill="#4fb3ff" text-anchor="middle">no key, no plaintext</text>
+<rect x="770" y="376" width="150" height="80" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="845" y="412" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<g stroke="#f2c14e" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="838" cy="432" r="4.5"/><path d="M842.5 432 H856 M851.5 432 V437 M856 432 V438"/></g>
+<line x1="210" y1="430" x2="381" y2="430" stroke="#4fb3ff" stroke-width="2"/><path d="M390 430 L380 424.5 L380 435.5 Z" fill="#4fb3ff"/>
+<text x="300" y="418" font-size="12" fill="#9aa0a6" text-anchor="middle">ViewerToHub</text>
+<rect x="256" y="439" width="14" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="293" y="439" width="14" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="330" y="439" width="14" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<line x1="590" y1="430" x2="761" y2="430" stroke="#4fb3ff" stroke-width="2"/><path d="M770 430 L760 424.5 L760 435.5 Z" fill="#4fb3ff"/>
+<text x="680" y="418" font-size="12" fill="#9aa0a6" text-anchor="middle">HubToServer</text>
+<rect x="636" y="439" width="14" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="673" y="439" width="14" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<rect x="710" y="439" width="14" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="135" y="478" font-size="13" fill="#e8eaed" text-anchor="middle">compress, then encrypt</text>
+<text x="135" y="495" font-size="12" fill="#9aa0a6" text-anchor="middle">(the sender)</text>
+<text x="845" y="478" font-size="13" fill="#e8eaed" text-anchor="middle">decrypt, then decompress</text>
+<text x="845" y="495" font-size="12" fill="#9aa0a6" text-anchor="middle">(the receiver)</text>
+<text x="24" y="532" font-size="13" fill="#9aa0a6">Per-hop chains protect the links; a tunnel chain protects the conversation; the two stack.</text>
+<text x="24" y="552" font-size="13" fill="#9aa0a6">ChaCha20 hides the content but does not detect tampering - integrity needs a MAC stage.</text></g></svg>

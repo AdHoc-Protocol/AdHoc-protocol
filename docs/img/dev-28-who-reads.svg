@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" role="img" aria-labelledby="dev28whoreads-t dev28whoreads-d">
+<title id="dev28whoreads-t">Who reads what on the way</title>
+<desc id="dev28whoreads-d">Five parties from left to right: the client, the line (Wi-Fi, a provider), a TLS terminator such as Cloudflare or nginx, a relay host of a virtual connection, and the far host, the other end. Under them three spans: TLS runs from the client to the terminator and is proved by a certificate; Noise runs from the client past the terminator to the relay, and again from the relay to the far host, proved by key; Noise in the tunnel runs from the client to the far host, and the relay forwards its records without a key. A grid below shows, for plain TCP, TLS, Noise, TLS plus Noise, and Noise also in the tunnel, whether the line, the terminator and the relay read everything or see sealed bytes: plain TCP is read by all; TLS is sealed on the line only; Noise is sealed on the line and at the terminator but read by the relay; Noise in the tunnel is sealed everywhere between the ends. No layer hides addresses, ports, timing or rough sizes; every handshake makes one-time keys, so a secret stolen later opens nothing recorded before.</desc>
+<rect width="980" height="520" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Who reads what on the way</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Each layer is sealed between different parties. The grid shows what each configuration leaves to the parties between the two ends</text>
+<line x1="160.0" y1="103.0" x2="790.0" y2="103.0" stroke="#4a4a4a" stroke-width="1.4"/>
+<rect x="30" y="76" width="130" height="54" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="95" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Client</text>
+<text xml:space="preserve" x="95" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">your host</text>
+<rect x="205" y="76" width="150" height="54" rx="8" fill="none" stroke="#8c9198" stroke-width="1.6" stroke-dasharray="5 4"/>
+<text xml:space="preserve" x="280" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">The line</text>
+<text xml:space="preserve" x="280" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">Wi-Fi, provider</text>
+<rect x="400" y="76" width="150" height="54" rx="8" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.6"/>
+<text xml:space="preserve" x="475" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Terminator</text>
+<text xml:space="preserve" x="475" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">Cloudflare, nginx</text>
+<rect x="595" y="76" width="150" height="54" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="670" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Relay host</text>
+<text xml:space="preserve" x="670" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">on the path</text>
+<rect x="790" y="76" width="160" height="54" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="870" y="100" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Far host</text>
+<text xml:space="preserve" x="870" y="117" font-size="12" fill="#9aa0a6" text-anchor="middle">the other end</text>
+<rect x="95" y="150" width="380" height="24" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.2"/>
+<text xml:space="preserve" x="105" y="166" font-size="12" fill="#e8eaed">TLS: up to whoever ends it, proved by a certificate</text>
+<rect x="95" y="186" width="575" height="24" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="105" y="202" font-size="12" fill="#e8eaed">Noise: past the terminator, proved by the key of the relay host</text>
+<rect x="670" y="186" width="200" height="24" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="680" y="202" font-size="12" fill="#e8eaed">Noise, the next hop</text>
+<rect x="95" y="222" width="775" height="24" fill="none" stroke="#b58cf0" stroke-width="2" stroke-dasharray="7 5"/>
+<text xml:space="preserve" x="105" y="238" font-size="12" fill="#e8eaed">Noise in the tunnel: from end to end; the relay forwards its records without a key</text>
+<line x1="95.0" y1="130.0" x2="95.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="280.0" y1="130.0" x2="280.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="475.0" y1="130.0" x2="475.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="670.0" y1="130.0" x2="670.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<line x1="870.0" y1="130.0" x2="870.0" y2="254.0" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="2 4"/>
+<text xml:space="preserve" x="24" y="284" font-size="13" fill="#e8eaed" font-weight="700">What a configuration leaves to the parties between the ends</text>
+<text xml:space="preserve" x="30" y="317" font-size="12" fill="#e8eaed">plain TCP</text>
+<rect x="210" y="300" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="316" font-size="12" fill="#f2b8b5" text-anchor="middle">reads all</text>
+<rect x="405" y="300" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="316" font-size="12" fill="#f2b8b5" text-anchor="middle">reads all</text>
+<rect x="600" y="300" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="316" font-size="12" fill="#f2b8b5" text-anchor="middle">reads all</text>
+<rect x="800" y="300" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="316" font-size="12" fill="#9aa0a6" text-anchor="middle">reads: it is the end</text>
+<text xml:space="preserve" x="30" y="349" font-size="12" fill="#e8eaed">TLS</text>
+<rect x="210" y="332" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="348" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="405" y="332" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="348" font-size="12" fill="#f2b8b5" text-anchor="middle">reads all</text>
+<rect x="600" y="332" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="348" font-size="12" fill="#f2b8b5" text-anchor="middle">reads all</text>
+<rect x="800" y="332" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="348" font-size="12" fill="#9aa0a6" text-anchor="middle">reads: it is the end</text>
+<text xml:space="preserve" x="30" y="381" font-size="12" fill="#e8eaed">Noise</text>
+<rect x="210" y="364" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="380" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="405" y="364" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="380" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="600" y="364" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="380" font-size="12" fill="#f2b8b5" text-anchor="middle">reads all</text>
+<rect x="800" y="364" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="380" font-size="12" fill="#9aa0a6" text-anchor="middle">reads: it is the end</text>
+<text xml:space="preserve" x="30" y="413" font-size="12" fill="#e8eaed">TLS + Noise</text>
+<rect x="210" y="396" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="412" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="405" y="396" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="412" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="600" y="396" width="140" height="24" rx="4" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="412" font-size="12" fill="#f2b8b5" text-anchor="middle">reads all</text>
+<rect x="800" y="396" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="412" font-size="12" fill="#9aa0a6" text-anchor="middle">reads: it is the end</text>
+<text xml:space="preserve" x="30" y="445" font-size="12" fill="#e8eaed">Noise, also in the tunnel</text>
+<rect x="210" y="428" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="280" y="444" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="405" y="428" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="475" y="444" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="600" y="428" width="140" height="24" rx="4" fill="#26382c" stroke="#6fbf7f" stroke-width="1.2"/>
+<text xml:space="preserve" x="670" y="444" font-size="12" fill="#b7e0bf" text-anchor="middle">sealed</text>
+<rect x="800" y="428" width="140" height="24" rx="4" fill="#30343a" stroke="#4a4a4a" stroke-width="1"/>
+<text xml:space="preserve" x="870" y="444" font-size="12" fill="#9aa0a6" text-anchor="middle">reads: it is the end</text>
+<text xml:space="preserve" x="24" y="480" font-size="12" fill="#9aa0a6">No layer hides addresses, ports, timing or rough sizes; over TLS the name in the certificate travels in clear.</text>
+<text xml:space="preserve" x="24" y="498" font-size="12" fill="#9aa0a6">Every handshake makes one-time keys: a secret stolen later opens nothing recorded before.</text>
+</g>
+</svg>

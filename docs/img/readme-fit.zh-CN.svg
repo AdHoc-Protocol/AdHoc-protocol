@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 404" width="960" height="404" role="img" aria-labelledby="title desc">
+<title id="title">AdHoc 适用与不适用</title>
+<desc id="desc">Where AdHoc fits, as two cards. Left, AdHoc fits: peers you deploy and can list - services, devices, apps, consoles; high message rates where bytes and CPU count; large or live payloads - files, media, streams; conversations with phases and pushes from both sides; middle tiers that must route or store without the schema; one protocol in several languages - C++, Rust, C#, Java, Go, TypeScript, Swift, C, Dart, Python. Right, text request/response fits better: open public APIs for clients you will never meet; peers that evolve independently forever, with no bound on their generations; traffic read by eye or parsed by generic intermediaries; rare, small calls where bytes do not matter. Strip: AdHoc carries generations as separate hosts - right for a population you know, wrong for an ecosystem without bounds.</desc>
+<rect width="960" height="404" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">AdHoc 适用与不适用</text>
+<rect x="24" y="58" width="444" height="274" rx="8" fill="#303236" stroke="#4cc38a" stroke-width="1.5"/>
+<path d="M24.75 98 V66 a7.25 7.25 0 0 1 7.25 -7.25 H460 a7.25 7.25 0 0 1 7.25 7.25 V98 Z" fill="#1f3a2e"/>
+<line x1="24" y1="98" x2="468" y2="98" stroke="#4cc38a" stroke-width="1"/>
+<polyline points="37,78 41.7,82.7 49.6,73.3" fill="none" stroke="#4cc38a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="66" y="84" font-size="16" fill="#4cc38a" font-weight="600">AdHoc 适用</text>
+<circle cx="44" cy="119.5" r="4" fill="#4cc38a"/>
+<text x="58" y="124" font-size="13" fill="#e8eaed">由你部署、可逐一列举的对端</text>
+<text x="58" y="140" font-size="12" fill="#9aa0a6">服务、设备、应用、控制台</text>
+<circle cx="44" cy="155.9" r="4" fill="#4cc38a"/>
+<text x="58" y="160.4" font-size="13" fill="#e8eaed">高消息频率</text>
+<text x="58" y="176.4" font-size="12" fill="#9aa0a6">字节和 CPU 都要省</text>
+<circle cx="44" cy="192.3" r="4" fill="#4cc38a"/>
+<text x="58" y="196.8" font-size="13" fill="#e8eaed">大负载或实时负载</text>
+<text x="58" y="212.8" font-size="12" fill="#9aa0a6">文件、媒体、流</text>
+<circle cx="44" cy="228.7" r="4" fill="#4cc38a"/>
+<text x="58" y="233.2" font-size="13" fill="#e8eaed">分阶段的会话</text>
+<text x="58" y="249.2" font-size="12" fill="#9aa0a6">双向推送</text>
+<circle cx="44" cy="265.1" r="4" fill="#4cc38a"/>
+<text x="58" y="269.6" font-size="13" fill="#e8eaed">不允许读取内容的中间层</text>
+<text x="58" y="285.6" font-size="12" fill="#9aa0a6">没有描述文件也能路由或存储</text>
+<circle cx="44" cy="301.5" r="4" fill="#4cc38a"/>
+<text x="58" y="306" font-size="13" fill="#e8eaed">一个协议,多种语言</text>
+<text x="58" y="322" font-size="12" fill="#9aa0a6">C++、Rust、C#、Java、Go、TypeScript、Swift、C、Dart、Python</text>
+<rect x="492" y="58" width="444" height="274" rx="8" fill="#303236" stroke="#9aa0a6" stroke-width="1.5"/>
+<path d="M492.75 98 V66 a7.25 7.25 0 0 1 7.25 -7.25 H928 a7.25 7.25 0 0 1 7.25 7.25 V98 Z" fill="#262626"/>
+<line x1="492" y1="98" x2="936" y2="98" stroke="#9aa0a6" stroke-width="1"/>
+<rect x="505" y="69" width="14" height="18" rx="2" fill="none" stroke="#e8eaed" stroke-width="1.4"/>
+<line x1="508" y1="74" x2="516" y2="74" stroke="#e8eaed" stroke-width="1.2"/>
+<line x1="508" y1="78" x2="516" y2="78" stroke="#e8eaed" stroke-width="1.2"/>
+<line x1="508" y1="82" x2="516" y2="82" stroke="#e8eaed" stroke-width="1.2"/>
+<text x="534" y="84" font-size="16" fill="#e8eaed" font-weight="600">文本请求/响应更合适</text>
+<circle cx="512" cy="119.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="124" font-size="13" fill="#e8eaed">开放的公共 API</text>
+<text x="526" y="140" font-size="12" fill="#9aa0a6">你永远接触不到的客户端</text>
+<circle cx="512" cy="157.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="162" font-size="13" fill="#e8eaed">永远独立演进的对端</text>
+<text x="526" y="178" font-size="12" fill="#9aa0a6">代际数量没有上限</text>
+<circle cx="512" cy="195.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="200" font-size="13" fill="#e8eaed">需要肉眼阅读的流量</text>
+<text x="526" y="216" font-size="12" fill="#9aa0a6">或由通用中间件解析</text>
+<circle cx="512" cy="233.5" r="4" fill="#9aa0a6"/>
+<text x="526" y="238" font-size="13" fill="#e8eaed">稀少的小调用</text>
+<text x="526" y="254" font-size="12" fill="#9aa0a6">字节数无所谓</text>
+<rect x="24" y="346" width="912" height="40" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="371" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>AdHoc 把不同代际作为独立主机承载</tspan><tspan fill="#9aa0a6">——适合已知的设备群体,不适合无边界生态</tspan></text>
+</g>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 360" width="940" height="360" role="img">
+<title>The doc comment written above a pack in the C# description flows into AdHocAgent, which escapes and renders it once per target language: as javadoc with a paragraph tag and code tags for Java, as JSDoc with backticks for TypeScript, and as XML documentation with summary, remarks and c tags for C#. Each rendering is placed above the generated class JoinRoom. Doc blocks with a language marker and the numbers table are configuration, not documentation</title>
+<rect width="940" height="360" rx="10" fill="#2b2b2b"/>
+<rect x="20" y="96" width="356" height="116" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="32" y="120" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#e8eaed">description (.cs)</text>
+<text x="32" y="148" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12"><tspan fill="#9aa0a6">/// &lt;summary&gt;A player's request&lt;/summary&gt;</tspan></text>
+<text x="32" y="170" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12"><tspan fill="#9aa0a6">/// &lt;remarks&gt;Answer: </tspan><tspan fill="#f2c14e">&lt;c&gt;JoinReply&lt;/c&gt;</tspan><tspan fill="#9aa0a6">&lt;/remarks&gt;</tspan></text>
+<text x="32" y="194" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12"><tspan fill="#e8eaed">public class JoinRoom { ... }</tspan></text>
+<text x="20" y="238" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">not documentation, never copied:</text>
+<text x="20" y="258" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6">doc blocks with &lt;see cref="InCS"/&gt; ..., the numbers table</text>
+<line x1="376" y1="154" x2="396" y2="154" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M404 154 L395 149.5 L395 158.5 Z" fill="#9aa0a6"/>
+<rect x="404" y="116" width="160" height="76" rx="4" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="484" y="142" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#e8eaed" text-anchor="middle">AdHocAgent</text>
+<text x="484" y="162" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle">escape + render</text>
+<text x="484" y="180" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle">per language</text>
+<line x1="564" y1="154" x2="582" y2="154" stroke="#9aa0a6" stroke-width="1.6"/>
+<line x1="582" y1="58" x2="582" y2="261" stroke="#9aa0a6" stroke-width="1.6"/>
+<line x1="582" y1="58" x2="596" y2="58" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M604 58 L595 53.5 L595 62.5 Z" fill="#9aa0a6"/>
+<rect x="604" y="16" width="320" height="84" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="616" y="38" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#e8eaed">Java</text>
+<text x="616" y="60" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12"><tspan fill="#9aa0a6">/** ... </tspan><tspan fill="#e8eaed">&lt;p&gt;</tspan><tspan fill="#9aa0a6"> ... </tspan><tspan fill="#f2c14e">&lt;code&gt;JoinReply&lt;/code&gt;</tspan><tspan fill="#9aa0a6"> */</tspan></text>
+<text x="616" y="88" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">above the generated class JoinRoom</text>
+<line x1="582" y1="154" x2="596" y2="154" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M604 154 L595 149.5 L595 158.5 Z" fill="#9aa0a6"/>
+<rect x="604" y="112" width="320" height="84" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="616" y="134" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#e8eaed">TypeScript</text>
+<text x="616" y="156" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12"><tspan fill="#9aa0a6">/** ... </tspan><tspan fill="#f2c14e">`JoinReply`</tspan><tspan fill="#9aa0a6"> */</tspan></text>
+<text x="616" y="184" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">above the generated class JoinRoom</text>
+<line x1="582" y1="261" x2="596" y2="261" stroke="#9aa0a6" stroke-width="1.6"/>
+<path d="M604 261 L595 256.5 L595 265.5 Z" fill="#9aa0a6"/>
+<rect x="604" y="208" width="320" height="106" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="616" y="230" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#e8eaed">C#</text>
+<text x="616" y="252" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12"><tspan fill="#9aa0a6">/// </tspan><tspan fill="#e8eaed">&lt;summary&gt;</tspan><tspan fill="#9aa0a6"> ...</tspan></text>
+<text x="616" y="272" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12"><tspan fill="#9aa0a6">/// </tspan><tspan fill="#e8eaed">&lt;remarks&gt;</tspan><tspan fill="#9aa0a6"> ... </tspan><tspan fill="#f2c14e">&lt;c&gt;JoinReply&lt;/c&gt;</tspan></text>
+<text x="616" y="302" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6">above the generated class JoinRoom</text>
+<text x="20" y="342" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed">Written once as C# comments; each language gets its own comment syntax, escaped for that language.</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" role="img" aria-labelledby="d20tl-t d20tl-d">
+<title id="d20tl-t">One line of each numbers table</title>
+<desc id="d20tl-d">A line of the packs table, &lt;see cref='Root'/&gt;ÿ, then the decimal 0 in a column of its own, then common | base, split into four labelled parts: the cref says which pack and is renamed by the IDE together with the pack; the base256 character ÿ is the pack's number, its identity, which never changes; the decimal 0 is the wire id, present only while a branch sends the pack; common | base are the tags, which are yours and are read by the KeepDoc and SkipDoc filters. Below, a line of the project table, &lt;see cref='MyProject'/&gt;ǍŦƈŗč ū: ǍŦƈŗč is the project's own number, milliseconds since 2024-10-14 08:42:55.710 UTC; ū is one slot per imported project, the zig-zag of the own number minus the imported number. An inset explains base256: each character is one byte plus U+00FF, least significant byte first, so ÿ is 0, Ā 1, ā 2, Ă 3, ă 4 and ĊĀ is 11 + 1 × 256 = 267.</desc>
+<rect width="960" height="380" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="40" y="40" font-size="18" fill="#e8833a" font-weight="600">One line of each numbers table</text>
+
+<!-- packs table line -->
+<text x="40" y="74" font-size="13" fill="#9aa0a6">packs table</text>
+<g font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18">
+<text x="40" y="104" fill="#e8eaed">&lt;see cref='Root'/&gt;</text>
+<text x="220" y="104" fill="#f2c14e">ÿ</text>
+<text x="630" y="104" fill="#4fb3ff">0</text>
+<text x="660" y="104" fill="#a06fd0">common | base</text>
+</g>
+
+<line x1="240" y1="99" x2="618" y2="99" stroke="#4a4a4a" stroke-width="1.4" stroke-dasharray="2 6"/>
+<g fill="none" stroke="#6b6f75" stroke-width="1.4">
+<path d="M40 114 V120 H217 V114"/>
+<path d="M219 114 V120 H231 V114"/>
+<path d="M628 114 V120 H642 V114"/>
+<path d="M660 114 V120 H789 V114"/>
+<path d="M225 120 V138"/>
+<path d="M635 120 V176"/>
+</g>
+
+<text x="40" y="144" font-size="13.5" fill="#e8eaed">which pack</text>
+<text x="40" y="161" font-size="13" fill="#9aa0a6">the IDE renames it</text>
+<text x="40" y="178" font-size="13" fill="#9aa0a6">together with the pack</text>
+
+<text x="233" y="144" font-size="13.5" fill="#f2c14e">number: the identity</text>
+<text x="233" y="161" font-size="13" fill="#9aa0a6">never changes</text>
+<text x="233" y="178" font-size="13" fill="#9aa0a6">base256, see below</text>
+
+<text x="626" y="144" font-size="13.5" fill="#4fb3ff" text-anchor="end">wire id</text>
+<text x="626" y="161" font-size="13" fill="#9aa0a6" text-anchor="end">only while a branch</text>
+<text x="626" y="178" font-size="13" fill="#9aa0a6" text-anchor="end">sends the pack; compact</text>
+
+<text x="660" y="144" font-size="13.5" fill="#a06fd0">tags: yours</text>
+<text x="660" y="161" font-size="13" fill="#9aa0a6">KeepDoc and SkipDoc</text>
+<text x="660" y="178" font-size="13" fill="#9aa0a6">filters read them</text>
+
+<!-- project table line -->
+<text x="40" y="220" font-size="13" fill="#9aa0a6">project table</text>
+<g font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="18">
+<text x="40" y="250" fill="#e8eaed">&lt;see cref='MyProject'/&gt;</text>
+<text x="269" y="250" fill="#f2c14e">ǍŦƈŗč</text>
+<text x="330" y="250" fill="#f2c14e">ū</text>
+</g>
+
+<g fill="none" stroke="#6b6f75" stroke-width="1.4">
+<path d="M268 260 V266 H320 V260"/>
+<path d="M294 266 V282"/>
+<path d="M343 244 H376"/>
+</g>
+
+<text x="302" y="290" font-size="13.5" fill="#f2c14e">own number<tspan fill="#9aa0a6" font-size="13">: milliseconds since</tspan></text>
+<text x="302" y="307" font-size="13" fill="#9aa0a6">2024-10-14 08:42:55.710 UTC</text>
+
+<text x="384" y="240" font-size="13.5" fill="#f2c14e">one slot per imported project</text>
+<text x="384" y="257" font-size="13" fill="#9aa0a6">zig-zag of (own number - imported number)</text>
+
+<!-- base256 inset -->
+<rect x="40" y="326" width="880" height="36" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="56" y="349" font-size="13" fill="#9aa0a6">base256: each character = one byte + U+00FF, low byte first:<tspan dx="18" fill="#f2c14e">ÿ</tspan> = 0<tspan dx="18" fill="#f2c14e">Ā</tspan> = 1<tspan dx="18" fill="#f2c14e">ā</tspan> = 2<tspan dx="18" fill="#f2c14e">Ă</tspan> = 3<tspan dx="18" fill="#f2c14e">ă</tspan> = 4<tspan dx="18" fill="#f2c14e">ĊĀ</tspan> = 11 + 1 × 256 = 267</text>
+</g>
+</svg>

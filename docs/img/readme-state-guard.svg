@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 524" width="960" height="524" role="img" aria-labelledby="title desc">
+<title id="title">One generated state machine on both hosts</title>
+<desc id="desc">The Upload actor, Start, Sending, Review, End, drawn as a sequence between a Client and a Server lifeline, each showing its state and epoch. 1: Begin moves both replicas from Start, epoch 0, to Sending, epoch 1. 2: a Chunk stay pack, the state stays. 3: the Server, which leads Sending, sends Done and moves to Review, epoch 2, while a Chunk stamped epoch 1 crosses it and is dropped on arrival as stale. 4: in Review the Client tries to send a Chunk, and the generated code refuses it before it leaves, as DISCARDED_BYSTATE.</desc>
+<rect width="960" height="524" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="24" y="24" width="420" height="160" rx="8" fill="#242424" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="40" y="50" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8eaed">interface Upload : Actor {</tspan></text>
+<text x="40" y="70" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8eaed">  int Actor.MaxActiveInstances =&gt; 4;</tspan></text>
+<text x="40" y="90" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8eaed">  </tspan><tspan fill="#f2c14e">[L____________&lt;Sending, Begin&gt;]</tspan><tspan fill="#e8eaed">  struct Start   { }</tspan></text>
+<text x="40" y="110" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8eaed">  </tspan><tspan fill="#f2c14e">[l____________&lt;Chunk&gt;]</tspan></text>
+<text x="40" y="130" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8eaed">  </tspan><tspan fill="#f2c14e">[____________R&lt;Review, Done&gt;]</tspan><tspan fill="#e8eaed">    struct Sending { }</tspan></text>
+<text x="40" y="150" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8eaed">  </tspan><tspan fill="#f2c14e">[L____________&lt;End, Accept&gt;]</tspan><tspan fill="#e8eaed">     struct Review  { }</tspan></text>
+<text x="40" y="170" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan fill="#e8eaed">}</tspan></text>
+<path d="M480 44 L519 44" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M526 44 L518 48 L518 40 Z" fill="#4fb3ff"/>
+<text x="572" y="48" font-size="12" fill="#e8eaed">pack delivered</text>
+<path d="M497.5 64.5 L508.5 75.5 M508.5 64.5 L497.5 75.5" stroke="#e06c6c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+<text x="572" y="74" font-size="12" fill="#e8eaed">refused or dropped</text>
+<rect x="474" y="89" width="86" height="18" rx="9" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="517" y="102.3" font-size="12" fill="#e8eaed" text-anchor="middle">state · epoch</text>
+<text x="572" y="102" font-size="12" fill="#e8eaed">the Upload instance's replica on that host</text>
+<text x="480" y="140" font-size="12" fill="#9aa0a6" xml:space="preserve">Who leads:  Start - the Client,  Sending - the Server,  Review - the Client</text>
+<text x="480" y="160" font-size="12" fill="#9aa0a6">An actor with instances keeps a 4-bit epoch; every transition increments it,</text>
+<text x="480" y="176" font-size="12" fill="#9aa0a6">and every pack carries it.</text>
+<rect x="190" y="196" width="120" height="28" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="250" y="215" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Client</text>
+<rect x="650" y="196" width="120" height="28" rx="8" fill="#3a5a80" stroke="#6f9fd8" stroke-width="1.5"/>
+<text x="710" y="215" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Server</text>
+<g data-nocheck="1"><line x1="250" y1="224" x2="250" y2="482" stroke="#4a4a4a" stroke-width="1.6" stroke-dasharray="5 5"/></g>
+<g data-nocheck="1"><line x1="710" y1="224" x2="710" y2="482" stroke="#4a4a4a" stroke-width="1.6" stroke-dasharray="5 5"/></g>
+<rect x="204" y="233" width="92" height="18" rx="9" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="250" y="246.3" font-size="12" fill="#e8eaed" text-anchor="middle">Start · 0</text>
+<rect x="664" y="233" width="92" height="18" rx="9" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="710" y="246.3" font-size="12" fill="#e8eaed" text-anchor="middle">Start · 0</text>
+<circle cx="40" cy="268" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="40" y="272.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">1</text>
+<text x="58" y="272" font-size="12" fill="#9aa0a6">a transition</text>
+<path d="M250 268 L702 268" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M710 268 L701 272.6 L701 263.4 Z" fill="#4fb3ff"/>
+<text x="480" y="262" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Begin</text>
+<text x="480" y="284" font-size="12" fill="#9aa0a6" text-anchor="middle">the Client leads Start: both replicas move to Sending</text>
+<rect x="204" y="295" width="92" height="18" rx="9" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="250" y="308.3" font-size="12" fill="#e8eaed" text-anchor="middle">Sending · 1</text>
+<rect x="664" y="295" width="92" height="18" rx="9" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="710" y="308.3" font-size="12" fill="#e8eaed" text-anchor="middle">Sending · 1</text>
+<circle cx="40" cy="330" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="40" y="334.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">2</text>
+<text x="58" y="334" font-size="12" fill="#9aa0a6">a stay pack</text>
+<path d="M250 330 L702 330" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M710 330 L701 334.6 L701 325.4 Z" fill="#4fb3ff"/>
+<text x="480" y="324" font-size="13" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan font-weight="600">Chunk</tspan><tspan fill="#9aa0a6">  (stay: the state stays)</tspan></text>
+<circle cx="40" cy="382" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="40" y="386.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">3</text>
+<text x="58" y="386" font-size="12" fill="#9aa0a6">a race</text>
+<path d="M710 360 L258 405.2" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M250 406 L258.5 400.5 L259.4 409.7 Z" fill="#4fb3ff"/>
+<text x="698" y="350" font-size="12" fill="#e8eaed" text-anchor="end" xml:space="preserve"><tspan fill="#e8eaed" font-weight="600">Done</tspan><tspan fill="#9aa0a6">  - the Server leads Sending</tspan></text>
+<line x1="250" y1="362" x2="702" y2="401.3" stroke="#4fb3ff" stroke-width="2"/>
+<path d="M704 396 L716 408 M716 396 L704 408" stroke="#e06c6c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+<text x="262" y="350" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed" font-weight="600">Chunk</tspan><tspan fill="#e06c6c">, epoch 1</tspan></text>
+<rect x="664" y="368" width="92" height="18" rx="9" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="710" y="381.3" font-size="12" fill="#e8eaed" text-anchor="middle">Review · 2</text>
+<text x="724" y="405" font-size="12" fill="#e06c6c">epoch 1 differs from 2:</text>
+<text x="724" y="421" font-size="12" fill="#e06c6c">dropped as stale</text>
+<text x="724" y="437" font-size="12" fill="#e06c6c">(Epoch mismatch hook)</text>
+<rect x="204" y="416" width="92" height="18" rx="9" fill="#46401f" stroke="#f2c14e" stroke-width="1.3"/><text x="250" y="429.3" font-size="12" fill="#e8eaed" text-anchor="middle">Review · 2</text>
+<circle cx="40" cy="458" r="11" fill="#e8833a" stroke="#2b2b2b" stroke-width="2"/><text data-ok="1" x="40" y="462.5" font-size="13" fill="#1e1e1e" text-anchor="middle" font-weight="700">4</text>
+<text x="58" y="462" font-size="12" fill="#9aa0a6">a guard</text>
+<line x1="250" y1="458" x2="290" y2="458" stroke="#e06c6c" stroke-width="2"/>
+<path d="M292 452 L304 464 M304 452 L292 464" stroke="#e06c6c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+<text x="316" y="455" font-size="12" fill="#e06c6c">send(Chunk) in Review: refused before it leaves</text>
+<text x="316" y="471" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e06c6c" xml:space="preserve">DISCARDED_BYSTATE</text>
+<text x="480" y="505" font-size="13" fill="#9aa0a6" text-anchor="middle">Only the side that leads a state can move it, so transitions never race. Both ends run one machine, generated from one description.</text>
+</g>
+</svg>

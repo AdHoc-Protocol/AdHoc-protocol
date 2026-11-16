@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 440" width="1000" height="440" role="img"><title>Camera to Recorder and Recorder to Viewer, each connection drawn as two legs. On the leg named by IfSendingFrom&lt;Camera, CameraToRecorder&gt; (ToStream) the Camera holds a typed Snapshot and the Recorder raw bytes; on the leg named by IfSendingFrom&lt;Recorder, RecorderToViewer&gt; (FromStream) the Recorder holds raw bytes and the Viewer a typed Snapshot; the reverse legs are not named and carry a typed Snapshot on both ends; the bytes on the wire are the same on every leg</title><rect width="1000" height="440" rx="10" fill="#2b2b2b"/><g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13"><text x="24" y="40" font-size="18" fill="#e8eaed" font-weight="600">A trim names one leg: a sending host over one connection</text>
+<rect x="24" y="64" width="96" height="204" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="72" y="162" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Camera</text>
+<text x="72" y="182" font-size="13" fill="#9aa0a6" text-anchor="middle">produces</text>
+<rect x="452" y="64" width="96" height="204" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="500" y="162" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Recorder</text>
+<text x="500" y="182" font-size="13" fill="#9aa0a6" text-anchor="middle">stores</text>
+<rect x="880" y="64" width="96" height="204" rx="6" fill="#35383d" stroke="#4a4a4a" stroke-width="1.6"/>
+<text x="928" y="162" font-size="16" fill="#e8eaed" text-anchor="middle" font-weight="600">Viewer</text>
+<text x="928" y="182" font-size="13" fill="#9aa0a6" text-anchor="middle">displays</text>
+<text x="286" y="106" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">IfSendingFrom&lt;Camera, CameraToRecorder&gt;</text>
+<line x1="120" y1="126" x2="443" y2="126" stroke="#e8833a" stroke-width="2.5"/><path d="M452 126 L442 120.5 L442 131.5 Z" fill="#e8833a"/>
+<rect x="128" y="115" width="80" height="22" rx="11" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/><text x="168" y="130.5" font-size="13" fill="#f2c14e" text-anchor="middle">Snapshot</text>
+<rect x="358" y="115" width="82" height="22" rx="11" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.4"/><text x="399" y="130.5" font-size="13" fill="#4fb3ff" text-anchor="middle">raw bytes</text>
+<text x="286" y="156" font-size="13" fill="#e8833a" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[ToStream&lt;…&gt;]</text>
+<rect x="238" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="258" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="278" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="298" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="318" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="286" y="203" font-size="13" fill="#9aa0a6" text-anchor="middle">reverse leg - not named</text>
+<line x1="452" y1="222" x2="129" y2="222" stroke="#9aa0a6" stroke-width="2"/><path d="M120 222 L130 216.5 L130 227.5 Z" fill="#9aa0a6"/>
+<rect x="134" y="211" width="80" height="22" rx="11" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/><text x="174" y="226.5" font-size="13" fill="#f2c14e" text-anchor="middle">Snapshot</text>
+<rect x="364" y="211" width="80" height="22" rx="11" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/><text x="404" y="226.5" font-size="13" fill="#f2c14e" text-anchor="middle">Snapshot</text>
+<rect x="238" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="258" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="278" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="298" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="318" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="714" y="106" font-size="13" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">IfSendingFrom&lt;Recorder, RecorderToViewer&gt;</text>
+<line x1="548" y1="126" x2="871" y2="126" stroke="#e8833a" stroke-width="2.5"/><path d="M880 126 L870 120.5 L870 131.5 Z" fill="#e8833a"/>
+<rect x="556" y="115" width="82" height="22" rx="11" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.4"/><text x="597" y="130.5" font-size="13" fill="#4fb3ff" text-anchor="middle">raw bytes</text>
+<rect x="788" y="115" width="80" height="22" rx="11" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/><text x="828" y="130.5" font-size="13" fill="#f2c14e" text-anchor="middle">Snapshot</text>
+<text x="714" y="156" font-size="13" fill="#e8833a" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[FromStream&lt;…&gt;]</text>
+<rect x="666" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="686" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="706" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="726" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="746" y="166" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="714" y="203" font-size="13" fill="#9aa0a6" text-anchor="middle">reverse leg - not named</text>
+<line x1="880" y1="222" x2="557" y2="222" stroke="#9aa0a6" stroke-width="2"/><path d="M548 222 L558 216.5 L558 227.5 Z" fill="#9aa0a6"/>
+<rect x="562" y="211" width="80" height="22" rx="11" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/><text x="602" y="226.5" font-size="13" fill="#f2c14e" text-anchor="middle">Snapshot</text>
+<rect x="792" y="211" width="80" height="22" rx="11" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/><text x="832" y="226.5" font-size="13" fill="#f2c14e" text-anchor="middle">Snapshot</text>
+<rect x="666" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="686" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="706" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="726" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="746" y="238" width="16" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="500" y="292" font-size="13" fill="#9aa0a6" text-anchor="middle">stores and replays bytes it never parses</text>
+<text x="500" y="310" font-size="13" fill="#9aa0a6" text-anchor="middle">needs no Snapshot code unless it uses a reverse leg</text>
+<rect x="336" y="337" width="12" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="351" y="337" width="12" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="366" y="337" width="12" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="381" y="337" width="12" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/><rect x="396" y="337" width="12" height="10" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="418" y="346" font-size="13" fill="#4fb3ff">the same bytes on the wire on every leg</text>
+<rect x="24" y="375" width="12" height="12" rx="2" fill="#4a3d1c" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="44" y="386" font-size="13" fill="#e8eaed">typed object</text>
+<rect x="146" y="375" width="12" height="12" rx="2" fill="#1f3a52" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="166" y="386" font-size="13" fill="#e8eaed">raw bytes</text>
+<line x1="254" y1="381" x2="284" y2="381" stroke="#e8833a" stroke-width="2.5"/>
+<text x="292" y="386" font-size="13" fill="#e8eaed">leg the trim names</text>
+<line x1="428" y1="381" x2="458" y2="381" stroke="#9aa0a6" stroke-width="2"/>
+<text x="466" y="386" font-size="13" fill="#e8eaed">leg it does not name</text>
+<text x="24" y="418" font-size="13" fill="#9aa0a6">A trimmed string is the exception: on its cut leg it travels as UTF-8.</text></g></svg>

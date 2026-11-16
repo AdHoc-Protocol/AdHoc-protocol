@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" role="img" aria-labelledby="title desc">
+<title id="title">One place to change</title>
+<desc id="desc">One protocol change, two ways. Left, by hand: the change becomes edits in three repositories - device firmware in C#, a Java backend, a TypeScript browser client, each with its own encoder, decoder and states; two are edited, the third is missed and marked in red, and older devices already in the field are broken by the edit. Right, with AdHoc: one edit of MyProtocol.cs; AdHocAgent MyProtocol.cs~ reports the hosts that have to be updated - Device and Server - and those not reached - Browser and the frozen DeviceV1 - on a page and as JSON that a CI gate can use to refuse the edit; one regeneration produces code for Device and Server only, DeviceV1 stays untouched, and deployment keeps your code through smart merge after making a backup. Renaming or moving declarations changes nothing on the wire, because identities live in the numbers tables.</desc>
+<rect width="960" height="380" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<rect x="16" y="16" width="424" height="348" rx="8" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="32" y="44" font-size="14" fill="#e8eaed" font-weight="700">by hand: one change, three edits</text>
+<rect x="40" y="64" width="260" height="52" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="52" y="86" font-size="13" fill="#e8eaed">device firmware · C#</text>
+<text x="52" y="104" font-size="12" fill="#9aa0a6">encoder · decoder · states</text>
+<text x="316" y="95" font-size="13" fill="#e8833a">edited</text>
+<rect x="40" y="130" width="260" height="52" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="52" y="152" font-size="13" fill="#e8eaed">backend · Java</text>
+<text x="52" y="170" font-size="12" fill="#9aa0a6">encoder · decoder · states</text>
+<text x="316" y="161" font-size="13" fill="#e8833a">edited</text>
+<rect x="40" y="196" width="260" height="52" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.4"/>
+<text x="52" y="218" font-size="13" fill="#e8eaed">browser client · TypeScript</text>
+<text x="52" y="236" font-size="12" fill="#9aa0a6">encoder · decoder · states</text>
+<path d="M317 217 L327 227 M327 217 L317 227" stroke="#e06c6c" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+<text x="334" y="227" font-size="13" fill="#e06c6c" font-weight="700">missed</text>
+<rect x="40" y="262" width="260" height="52" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="52" y="284" font-size="13" fill="#c9ccd1">older devices in the field</text>
+<text x="52" y="302" font-size="12" fill="#9aa0a6">already shipped, not updated</text>
+<text x="316" y="285" font-size="13" fill="#e06c6c" font-weight="700">broken by</text>
+<text x="316" y="302" font-size="13" fill="#e06c6c" font-weight="700">the edit</text>
+<text x="32" y="344" font-size="12" fill="#9aa0a6">+ a search to make sure none was missed</text>
+<rect x="456" y="16" width="488" height="348" rx="8" fill="#262626" stroke="#5a5a5a" stroke-width="1.4"/>
+<text x="472" y="44" font-size="14" fill="#e8eaed" font-weight="700">with AdHoc: one edit</text>
+<rect x="472" y="62" width="140" height="44" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.4"/><text x="542" y="80.3" font-size="12" fill="#e8eaed" text-anchor="middle">edit</text><text x="542" y="96.3" font-size="12" fill="#e8eaed" text-anchor="middle">MyProtocol.cs</text>
+<path d="M613 84 L628 84" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M635 84 L627 88.2 L627 79.8 Z" fill="#4fb3ff"/>
+<rect x="636" y="62" width="140" height="44" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/><text x="706" y="80.3" font-size="12" fill="#e8eaed" text-anchor="middle">AdHocAgent</text><text x="706" y="96.3" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve">MyProtocol.cs~</text>
+<path d="M777 84 L792 84" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M799 84 L791 88.2 L791 79.8 Z" fill="#4fb3ff"/>
+<rect x="800" y="62" width="130" height="44" rx="6" fill="#342a42" stroke="#a06fd0" stroke-width="1.4"/><text x="865" y="88.7" font-size="13" fill="#e8eaed" text-anchor="middle">regenerate</text>
+<path d="M706 107 L706 117" fill="none" stroke="#8c9198" stroke-width="1.4" stroke-linejoin="round"/><path d="M706 123 L702.4 116 L709.6 116 Z" fill="#8c9198"/>
+<rect x="472" y="124" width="304" height="76" rx="6" fill="#2a2a2a" stroke="#8c9198" stroke-width="1.4"/>
+<text x="484" y="146" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed">have to be updated: </tspan><tspan fill="#f2c14e" font-weight="700">Device, Server</tspan></text>
+<text x="484" y="166" font-size="12" fill="#9aa0a6">not reached: Browser, DeviceV1 (frozen)</text>
+<path d="M755 161 V158.5 a3 3 0 0 1 6 0 V161" fill="none" stroke="#9aa0a6" stroke-width="1.6"/><rect x="752" y="161" width="12" height="8" rx="1.5" fill="#9aa0a6"/>
+<text x="484" y="186" font-size="12" fill="#9aa0a6">page + JSON: a CI gate can refuse it</text>
+<path d="M865 107 L865 227" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M865 235 L860.4 226 L869.6 226 Z" fill="#f2c14e"/>
+<path d="M865 214 L720 214 Q714 214 714 220 L714 227" fill="none" stroke="#f2c14e" stroke-width="2" stroke-linejoin="round"/><path d="M714 235 L709.4 226 L718.6 226 Z" fill="#f2c14e"/>
+<rect x="472" y="236" width="156" height="36" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="536" y="259" font-size="13" fill="#9aa0a6" text-anchor="middle">DeviceV1</text>
+<path d="M577 253 V250.5 a3 3 0 0 1 6 0 V253" fill="none" stroke="#9aa0a6" stroke-width="1.6"/><rect x="574" y="253" width="12" height="8" rx="1.5" fill="#9aa0a6"/>
+<rect x="640" y="236" width="148" height="36" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="714" y="258.7" font-size="13" fill="#e8eaed" text-anchor="middle">Device · C#</text>
+<rect x="800" y="236" width="130" height="36" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/><text x="865" y="258.7" font-size="13" fill="#e8eaed" text-anchor="middle">Server · Java</text>
+<text x="472" y="292" font-size="12" fill="#e8eaed">deploy: smart merge keeps your code; a backup is made first</text>
+<text x="472" y="330" font-size="12" fill="#9aa0a6">renaming or moving declarations changes nothing on the wire:</text>
+<text x="472" y="348" font-size="12" fill="#9aa0a6">identities live in the numbers tables</text>
+</g>
+</svg>

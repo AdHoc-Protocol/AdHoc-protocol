@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470" role="img" aria-labelledby="title desc">
+<title id="title">One pack, many recipients, no copies</title>
+<desc id="desc">Your code fills one Tick object once and sends it on every subscriber connection. Each of four connections holds only a reference to that one object in a slot of its sending queue (dashed yellow lines back to the object); its transmitter writes the object into its own send buffer with its own cursor, each at a different point, and on to Viewer 1 to Viewer 4. The object is never copied. Notes: send puts a reference in a queue and serializes nothing yet; keep the object unchanged until every connection has reached OnSerialized; a Value Pack is a number, so each queue slot gets its own copy.</desc>
+<rect width="960" height="470" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">One pack, many recipients, no copies</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">send queues a reference; every connection writes the same object with its own cursor</text>
+<rect x="16" y="84" width="230" height="120" rx="8" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="30" y="106" font-size="12" fill="#e8833a" font-weight="700">your code</text>
+<text x="30" y="132" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">Tick tick = new Tick();</text>
+<text x="30" y="154" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#9aa0a6" xml:space="preserve">for each subscriber:</text>
+<text x="30" y="176" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">  send( tick, conn, w );</text>
+<rect x="300" y="210" width="170" height="96" rx="8" fill="#3d3520" stroke="#f2c14e" stroke-width="2"/>
+<text x="385" y="236" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="700">one Tick object</text>
+<rect x="314" y="254" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<text x="336" y="274" font-size="12" fill="#e8eaed" text-anchor="middle">seq</text>
+<rect x="364" y="254" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<text x="386" y="274" font-size="12" fill="#e8eaed" text-anchor="middle">at</text>
+<rect x="414" y="254" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1"/>
+<text x="436" y="274" font-size="12" fill="#e8eaed" text-anchor="middle">values</text>
+<text x="385" y="300" font-size="12" fill="#9aa0a6" text-anchor="middle">never copied</text>
+<path d="M131 204 L131 250 Q131 258 139 258 L292 258" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M300 258 L291 262.6 L291 253.4 Z" fill="#e8833a"/>
+<text x="140" y="250" font-size="12" fill="#e8833a">filled once</text>
+<text x="540" y="96" font-size="12" fill="#9aa0a6">connection 1 - queue</text>
+<rect x="540" y="104" width="20" height="24" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<rect x="562" y="104" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="584" y="104" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="606" y="104" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="628" y="104" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<path d="M540 116 L481.2 250.7" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M478 258 L477.4 247.9 L485.8 251.6 Z" fill="#f2c14e"/>
+<rect x="676" y="100" width="120" height="32" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="678" y="102" width="99" height="28" rx="3" fill="#26384d" stroke="none" stroke-width="1.4"/>
+<line x1="777" y1="98" x2="777" y2="134" stroke="#4fb3ff" stroke-width="2"/>
+<text x="736" y="150" font-size="12" fill="#9aa0a6" text-anchor="middle">its own cursor</text>
+<path d="M796 116 L824 116" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M832 116 L823 120.6 L823 111.4 Z" fill="#4fb3ff"/>
+<rect x="834" y="100" width="110" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="889" y="121" font-size="12.5" fill="#e8eaed" text-anchor="middle">Viewer 1</text>
+<text x="540" y="182" font-size="12" fill="#9aa0a6">connection 2 - queue</text>
+<rect x="540" y="190" width="20" height="24" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<rect x="562" y="190" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="584" y="190" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="606" y="190" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="628" y="190" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<path d="M540 202 L483.9 252.6" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M478 258 L481.6 248.6 L487.8 255.4 Z" fill="#f2c14e"/>
+<rect x="676" y="186" width="120" height="32" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="678" y="188" width="41" height="28" rx="3" fill="#26384d" stroke="none" stroke-width="1.4"/>
+<line x1="719" y1="184" x2="719" y2="220" stroke="#4fb3ff" stroke-width="2"/>
+<text x="736" y="236" font-size="12" fill="#9aa0a6" text-anchor="middle">its own cursor</text>
+<path d="M796 202 L824 202" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M832 202 L823 206.6 L823 197.4 Z" fill="#4fb3ff"/>
+<rect x="834" y="186" width="110" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="889" y="207" font-size="12.5" fill="#e8eaed" text-anchor="middle">Viewer 2</text>
+<text x="540" y="268" font-size="12" fill="#9aa0a6">connection 3 - queue</text>
+<rect x="540" y="276" width="20" height="24" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<rect x="562" y="276" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="584" y="276" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="606" y="276" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="628" y="276" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<path d="M540 288 L485.2 261.5" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M478 258 L488.1 257.8 L484.1 266.1 Z" fill="#f2c14e"/>
+<rect x="676" y="272" width="120" height="32" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="678" y="274" width="70" height="28" rx="3" fill="#26384d" stroke="none" stroke-width="1.4"/>
+<line x1="748" y1="270" x2="748" y2="306" stroke="#4fb3ff" stroke-width="2"/>
+<text x="736" y="322" font-size="12" fill="#9aa0a6" text-anchor="middle">its own cursor</text>
+<path d="M796 288 L824 288" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M832 288 L823 292.6 L823 283.4 Z" fill="#4fb3ff"/>
+<rect x="834" y="272" width="110" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="889" y="293" font-size="12.5" fill="#e8eaed" text-anchor="middle">Viewer 3</text>
+<text x="540" y="354" font-size="12" fill="#9aa0a6">connection 4 - queue</text>
+<rect x="540" y="362" width="20" height="24" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<rect x="562" y="362" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="584" y="362" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="606" y="362" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<rect x="628" y="362" width="20" height="24" rx="3" fill="#2b2b2b" stroke="#5a5f66" stroke-width="1"/>
+<path d="M540 374 L481.8 265.1" fill="none" stroke="#f2c14e" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M478 258 L486.3 263.8 L478.2 268.1 Z" fill="#f2c14e"/>
+<rect x="676" y="358" width="120" height="32" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<rect x="678" y="360" width="12" height="28" rx="3" fill="#26384d" stroke="none" stroke-width="1.4"/>
+<line x1="690" y1="356" x2="690" y2="392" stroke="#4fb3ff" stroke-width="2"/>
+<text x="736" y="408" font-size="12" fill="#9aa0a6" text-anchor="middle">its own cursor</text>
+<path d="M796 374 L824 374" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M832 374 L823 378.6 L823 369.4 Z" fill="#4fb3ff"/>
+<rect x="834" y="358" width="110" height="32" rx="5" fill="#2f4560" stroke="#6f9fd8" stroke-width="1.4"/>
+<text x="889" y="379" font-size="12.5" fill="#e8eaed" text-anchor="middle">Viewer 4</text>
+<rect x="16" y="412" width="300" height="46" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="30" y="431" font-size="12.5" fill="#e8eaed" font-weight="700">send</text>
+<text x="30" y="449" font-size="12" fill="#9aa0a6">a reference in a queue - nothing serialized yet</text>
+<rect x="328" y="412" width="300" height="46" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="342" y="431" font-size="12.5" fill="#e8eaed" font-weight="700">keep it unchanged</text>
+<text x="342" y="449" font-size="12" fill="#9aa0a6">until every connection reached OnSerialized</text>
+<rect x="640" y="412" width="300" height="46" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="654" y="431" font-size="12.5" fill="#e8eaed" font-weight="700">a Value Pack</text>
+<text x="654" y="449" font-size="12" fill="#9aa0a6">is a number: each queue slot gets its own copy</text>
+</g>
+</svg>

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 576" width="980" height="576" role="img" aria-labelledby="title desc">
+<title id="title">What a field costs on the wire</title>
+<desc id="desc">Sixteen cards, each a kind of field value with its declaration and its cost on the wire: flag, number in a range, optional value, enum, text, fixed-size raw bytes, list, map and set, nested pack, one of several, event, moment, moment in a range, duration, a stream of any size, and constants and attributes that never travel.</desc>
+<rect width="980" height="576" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="700">What a field costs on the wire</text>
+<text x="956" y="34" font-size="12" fill="#9aa0a6" text-anchor="end">every size has a declared maximum</text>
+<rect x="16" y="50" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="30" y="74" font-size="14" fill="#e8eaed" font-weight="700">flag</text>
+<text x="30" y="97" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">bool on;</text>
+<text x="30" y="118" font-size="12" fill="#9aa0a6">bool? takes 2 bits</text>
+<text x="30" y="146" font-size="14" fill="#4fb3ff">1 bit</text>
+<rect x="256" y="50" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="270" y="74" font-size="14" fill="#e8eaed" font-weight="700">number in a range</text>
+<text x="270" y="97" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[MinMax(-40, 125)] short t;</text>
+<text x="270" y="118" font-size="12" fill="#9aa0a6">-40 … 125: 166 values</text>
+<text x="270" y="146" font-size="14" fill="#4fb3ff">1 byte</text>
+<rect x="496" y="50" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="510" y="74" font-size="14" fill="#e8eaed" font-weight="700">optional value</text>
+<text x="510" y="97" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">uint? retries;</text>
+<text x="510" y="118" font-size="12" fill="#9aa0a6">present: the bit + 4 bytes</text>
+<text x="510" y="146" font-size="14" fill="#4fb3ff">absent: 1 bit</text>
+<rect x="736" y="50" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="750" y="74" font-size="14" fill="#e8eaed" font-weight="700">enum</text>
+<text x="750" y="97" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">Payment payment;</text>
+<text x="750" y="118" font-size="12" fill="#9aa0a6">Card, Cash, Voucher</text>
+<text x="750" y="146" font-size="14" fill="#4fb3ff">2-bit code</text>
+<rect x="16" y="172" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="30" y="196" font-size="14" fill="#e8eaed" font-weight="700">text</text>
+<text x="30" y="219" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[D(+64)] string note;</text>
+<text x="30" y="240" font-size="12" fill="#9aa0a6">UTF-16 code units</text>
+<text x="30" y="268" font-size="14" fill="#4fb3ff">count + 1-3 B per char</text>
+<rect x="164" y="181" width="70" height="20" rx="10" fill="#3a2c20" stroke="#e8833a" stroke-width="1.3"/><text x="199" y="195.3" font-size="12" fill="#e8833a" text-anchor="middle">≤ 64 chars</text>
+<rect x="256" y="172" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="270" y="196" font-size="14" fill="#e8eaed" font-weight="700">raw bytes, fixed size</text>
+<text x="270" y="219" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[D(32)] Binary[] signature;</text>
+<text x="270" y="240" font-size="12" fill="#9aa0a6">constant length</text>
+<text x="270" y="268" font-size="14" fill="#4fb3ff">32 bytes, no length</text>
+<rect x="496" y="172" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="510" y="196" font-size="14" fill="#e8eaed" font-weight="700">list</text>
+<text x="510" y="219" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[D(100)] Item[,,] items;</text>
+<text x="510" y="240" font-size="12" fill="#9aa0a6">packs as items</text>
+<text x="510" y="268" font-size="14" fill="#4fb3ff">1-byte length + items</text>
+<rect x="668" y="181" width="46" height="20" rx="10" fill="#3a2c20" stroke="#e8833a" stroke-width="1.3"/><text x="691" y="195.3" font-size="12" fill="#e8833a" text-anchor="middle">≤ 100</text>
+<rect x="736" y="172" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="750" y="196" font-size="14" fill="#e8eaed" font-weight="700">map, set</text>
+<text x="750" y="219" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[D(+16)] Set&lt;uint&gt; ids;</text>
+<text x="750" y="240" font-size="12" fill="#9aa0a6">Map&lt;K, V&gt; the same</text>
+<text x="750" y="268" font-size="14" fill="#4fb3ff">count + items</text>
+<rect x="914" y="181" width="40" height="20" rx="10" fill="#3a2c20" stroke="#e8833a" stroke-width="1.3"/><text x="934" y="195.3" font-size="12" fill="#e8833a" text-anchor="middle">≤ 16</text>
+<rect x="16" y="294" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="30" y="318" font-size="14" fill="#e8eaed" font-weight="700">nested pack</text>
+<text x="30" y="341" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">Item item;</text>
+<text x="30" y="362" font-size="12" fill="#9aa0a6">a pack as a field</text>
+<text x="30" y="390" font-size="14" fill="#4fb3ff">in place, no pack id</text>
+<rect x="256" y="294" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="270" y="318" font-size="14" fill="#e8eaed" font-weight="700">one of several</text>
+<text x="270" y="341" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">string? text; ulong? amount;</text>
+<text x="270" y="362" font-size="12" fill="#9aa0a6">a pack of optional fields</text>
+<text x="270" y="390" font-size="14" fill="#4fb3ff">1 bit per unset one</text>
+<rect x="496" y="294" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="510" y="318" font-size="14" fill="#e8eaed" font-weight="700">event</text>
+<text x="510" y="341" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">class Shipped { }</text>
+<text x="510" y="362" font-size="12" fill="#9aa0a6">an empty pack a branch sends</text>
+<text x="510" y="390" font-size="14" fill="#4fb3ff">only the pack id</text>
+<rect x="736" y="294" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="750" y="318" font-size="14" fill="#e8eaed" font-weight="700">moment</text>
+<text x="750" y="341" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">DateTime placed;</text>
+<text x="750" y="362" font-size="12" fill="#9aa0a6">ms since 1970</text>
+<text x="750" y="390" font-size="14" fill="#4fb3ff">6 bytes</text>
+<rect x="16" y="416" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="30" y="440" font-size="14" fill="#e8eaed" font-weight="700">moment in a range</text>
+<text x="30" y="463" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">Seconds50Years joined;</text>
+<text x="30" y="484" font-size="12" fill="#9aa0a6">DateTimeDef: 2000-2050, 1 s</text>
+<text x="30" y="512" font-size="14" fill="#4fb3ff">4 bytes</text>
+<rect x="256" y="416" width="228" height="112" rx="8" fill="#333436" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="270" y="440" font-size="14" fill="#e8eaed" font-weight="700">duration</text>
+<text x="270" y="463" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">RequestLatency latency;</text>
+<text x="270" y="484" font-size="12" fill="#9aa0a6">Duration: ≤ 30 000 × 19 ms</text>
+<text x="270" y="512" font-size="14" fill="#4fb3ff">2 bytes</text>
+<rect x="496" y="416" width="228" height="112" rx="8" fill="#333436" stroke="#a06fd0" stroke-width="1.6"/>
+<text x="510" y="440" font-size="14" fill="#e8eaed" font-weight="700">bytes of any size</text>
+<text x="510" y="463" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[S(500_000_000)] Stream v;</text>
+<text x="510" y="484" font-size="12" fill="#9aa0a6">chunked, ends when the source does</text>
+<text x="510" y="512" font-size="14" fill="#4fb3ff">constant memory</text>
+<rect x="624" y="425" width="90" height="20" rx="10" fill="#3a2c20" stroke="#e8833a" stroke-width="1.3"/><text x="669" y="439.3" font-size="12" fill="#e8833a" text-anchor="middle">cap, both sides</text>
+<rect x="736" y="416" width="228" height="112" rx="8" fill="#2e2f30" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="750" y="440" font-size="14" fill="#e8eaed" font-weight="700">never on the wire</text>
+<text x="750" y="463" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">const byte MAX = 100;</text>
+<text x="750" y="482" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">[Retention(30)]</text>
+<text x="750" y="512" font-size="14" fill="#9aa0a6">0 bytes: compiled in</text>
+<rect x="910" y="425" width="44" height="20" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text data-ok="1" x="932" y="439.3" font-size="12" fill="#4fb3ff" text-anchor="middle">wire</text>
+<g data-nocheck="1"><line x1="907" y1="442" x2="957" y2="428" stroke="#e8833a" stroke-width="1.8"/></g>
+<text x="24" y="556" font-size="12" fill="#4fb3ff">1 byte</text>
+<text x="66" y="556" font-size="12" fill="#9aa0a6">what travels</text>
+<rect x="154" y="545" width="26" height="14" rx="7" fill="#3a2c20" stroke="#e8833a" stroke-width="1.3"/>
+<text x="186" y="556" font-size="12" fill="#9aa0a6">declared maximum</text>
+<rect x="311" y="545" width="26" height="14" rx="3" fill="none" stroke="#9aa0a6" stroke-width="1.3" stroke-dasharray="4 3"/>
+<text x="343" y="556" font-size="12" fill="#9aa0a6">never travels: compiled into every host</text>
+<rect x="571" y="545" width="26" height="14" rx="3" fill="#333436" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="603" y="556" font-size="12" fill="#9aa0a6">a conduit: bytes pass through, never held</text>
+</g>
+</svg>

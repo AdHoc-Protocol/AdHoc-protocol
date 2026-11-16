@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="960" height="480" role="img" aria-labelledby="d22m-t d22m-d">
+<title id="d22m-t">Fields merge, attributes replace</title>
+<desc id="d22m-d">Three project layers, each importing the one below: Library declares class Trace with the fields origin and hops and the attribute [Zstd]; Middle : Library has a modifier of Trace that adds one field and declares [Zstd(3)]; MyProject : Middle has a modifier of Trace that declares [Zstd(9)] and no fields. On the left, in blue, fields merge: the contributions of all layers flow into Trace fields - origin, hops and the field Middle added. On the right, in orange, attributes replace: [Zstd] and [Zstd(3)] are struck through, and only [Zstd(9)] reaches Trace attributes - the topmost layer wins. Far right, two projects A and B side by side, neither importing the other, both replace the attributes of Trace with Modify of Trace, [Zstd(3)] and [Zstd(6)]; a red cross marks it refused: composition order would decide, and the run stops with exit code 2. Footer: branch attributes never take part; [ClearAttributes] replaces the set with an empty one; the attributes move, and the modifier keeps none of its own.</desc>
+<rect width="960" height="480" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">One target, three layers</text>
+
+<text x="136" y="72" font-size="16" fill="#4fb3ff" font-weight="600" text-anchor="middle">fields merge</text>
+<text x="346" y="72" font-size="12" fill="#9aa0a6" text-anchor="middle">each layer imports the one below</text>
+<text x="531" y="72" font-size="16" fill="#e8833a" font-weight="600" text-anchor="middle">attributes replace</text>
+
+<!-- layers -->
+<rect x="236" y="88" width="220" height="56" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.4"/>
+<text x="346" y="111" font-size="14" fill="#e8eaed" text-anchor="middle">MyProject : Middle</text>
+<text x="346" y="130" font-size="12" fill="#9aa0a6" text-anchor="middle">a modifier of Trace</text>
+
+<rect x="236" y="160" width="220" height="56" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.4"/>
+<text x="346" y="183" font-size="14" fill="#e8eaed" text-anchor="middle">Middle : Library</text>
+<text x="346" y="202" font-size="12" fill="#9aa0a6" text-anchor="middle">a modifier of Trace</text>
+
+<rect x="236" y="232" width="220" height="56" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.4"/>
+<text x="346" y="255" font-size="14" fill="#e8eaed" text-anchor="middle">Library</text>
+<text x="346" y="274" font-size="12" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd] class Trace</text>
+
+<!-- fields: contributions -->
+<rect x="56" y="101" width="160" height="30" rx="5" fill="none" stroke="#6b6f75" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="136" y="121" font-size="13" fill="#9aa0a6" text-anchor="middle">no fields</text>
+<rect x="56" y="173" width="160" height="30" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="136" y="193" font-size="13" fill="#e8eaed" text-anchor="middle">+ one field</text>
+<rect x="56" y="245" width="160" height="30" rx="5" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="136" y="265" font-size="13.5" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">origin, hops</text>
+
+<g stroke="#6b6f75" stroke-width="1.2">
+<line x1="216" y1="116" x2="236" y2="116"/>
+<line x1="216" y1="188" x2="236" y2="188"/>
+<line x1="216" y1="260" x2="236" y2="260"/>
+<line x1="456" y1="116" x2="476" y2="116"/>
+<line x1="456" y1="188" x2="476" y2="188"/>
+<line x1="456" y1="260" x2="476" y2="260"/>
+</g>
+
+<line x1="36" y1="116" x2="56" y2="116" stroke="#4fb3ff" stroke-width="1.6" stroke-dasharray="3 3"/>
+<line x1="36" y1="188" x2="56" y2="188" stroke="#4fb3ff" stroke-width="1.8"/>
+<line x1="36" y1="260" x2="56" y2="260" stroke="#4fb3ff" stroke-width="1.8"/>
+<line x1="36" y1="116" x2="36" y2="322" stroke="#4fb3ff" stroke-width="1.8"/>
+<path d="M36 330 L31.5 322 L40.5 322 Z" fill="#4fb3ff"/>
+
+<rect x="24" y="330" width="306" height="56" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.6"/>
+<text x="40" y="352" font-size="14" fill="#4fb3ff" font-weight="600">Trace fields</text>
+<text x="40" y="373" font-size="13" fill="#e8eaed"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">origin, hops</tspan> + the field Middle added</text>
+
+<!-- attributes: sets -->
+<rect x="476" y="101" width="110" height="30" rx="5" fill="#45301f" stroke="#e8833a" stroke-width="1.4"/>
+<text x="531" y="121" font-size="13.5" fill="#e8833a" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd(9)]</text>
+<rect x="476" y="173" width="110" height="30" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="531" y="193" font-size="13.5" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd(3)]</text>
+<line x1="490" y1="188.5" x2="572" y2="188.5" stroke="#9aa0a6" stroke-width="1.6"/>
+<rect x="476" y="245" width="110" height="30" rx="5" fill="#262626" stroke="#4a4a4a" stroke-width="1.4"/>
+<text x="531" y="265" font-size="13.5" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd]</text>
+<line x1="502" y1="260.5" x2="560" y2="260.5" stroke="#9aa0a6" stroke-width="1.6"/>
+
+<path d="M586 116 H612 V322" fill="none" stroke="#e8833a" stroke-width="1.8"/>
+<path d="M612 330 L607.5 322 L616.5 322 Z" fill="#e8833a"/>
+
+<rect x="380" y="330" width="260" height="56" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.6"/>
+<text x="396" y="352" font-size="14" fill="#e8833a" font-weight="600">Trace attributes</text>
+<text x="396" y="373" font-size="13" fill="#e8eaed"><tspan fill="#e8833a" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd(9)]</tspan>: the topmost layer wins</text>
+
+<!-- siblings -->
+<line x1="664" y1="56" x2="664" y2="396" stroke="#4a4a4a" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="814" y="72" font-size="14" fill="#e8eaed" text-anchor="middle">two projects side by side</text>
+
+<rect x="684" y="92" width="120" height="68" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.4"/>
+<text x="744" y="114" font-size="13.5" fill="#e8eaed" text-anchor="middle">project A</text>
+<text x="744" y="133" font-size="12.5" fill="#e8833a" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd(3)]</text>
+<text x="744" y="151" font-size="12" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Modify&lt;Trace&gt;</text>
+
+<rect x="824" y="92" width="120" height="68" rx="6" fill="#303236" stroke="#6b6f75" stroke-width="1.4"/>
+<text x="884" y="114" font-size="13.5" fill="#e8eaed" text-anchor="middle">project B</text>
+<text x="884" y="133" font-size="12.5" fill="#e8833a" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[Zstd(6)]</text>
+<text x="884" y="151" font-size="12" fill="#9aa0a6" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Modify&lt;Trace&gt;</text>
+
+<line x1="748" y1="160" x2="791" y2="239" stroke="#9aa0a6" stroke-width="1.8"/>
+<path d="M795 246 L786.6 240.9 L794.5 236.6 Z" fill="#9aa0a6"/>
+<line x1="880" y1="160" x2="837" y2="239" stroke="#9aa0a6" stroke-width="1.8"/>
+<path d="M833 246 L833.5 236.6 L841.4 240.9 Z" fill="#9aa0a6"/>
+
+<path d="M803 190 L825 212 M825 190 L803 212" stroke="#e5534b" stroke-width="3.2" stroke-linecap="round"/>
+
+<rect x="764" y="246" width="100" height="30" rx="5" fill="#303236" stroke="#6b6f75" stroke-width="1.4"/>
+<text x="814" y="266" font-size="14" fill="#e8eaed" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">Trace</text>
+
+<text x="814" y="302" font-size="13.5" fill="#e5534b" text-anchor="middle">refused: neither imports the other</text>
+<text x="814" y="320" font-size="12" fill="#9aa0a6" text-anchor="middle">composition order would decide;</text>
+<text x="814" y="336" font-size="12" fill="#9aa0a6" text-anchor="middle">the run stops, exit code 2</text>
+
+<!-- footer -->
+<text x="480" y="428" font-size="12.5" fill="#9aa0a6" text-anchor="middle">branch attributes never take part;  [ClearAttributes] replaces the set with an empty one</text>
+<text x="480" y="446" font-size="12.5" fill="#9aa0a6" text-anchor="middle">the attributes move: the modifier keeps none of its own</text>
+</g>
+</svg>

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" role="img"><rect width="1000" height="600" rx="10" fill="#2b2b2b"/><title>The five routing attributes: the letter position names the sender, the letter case says whether the sender leads and moves the state</title>
+<text x="24" y="40" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="18" fill="#e8eaed" text-anchor="start" font-weight="600">Routing attributes: who sends, and whether the state moves</text>
+<text x="306" y="80" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8833a" text-anchor="middle" font-weight="600">Left host sends</text>
+<text x="306" y="98" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">first host of Connects&lt;L, R&gt;</text>
+<text x="576" y="80" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#4fb3ff" text-anchor="middle" font-weight="600">Right host sends</text>
+<text x="576" y="98" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">second host</text>
+<text x="846" y="80" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#a06fd0" text-anchor="middle" font-weight="600">Either host sends</text>
+<text x="846" y="98" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="middle">Left or Right</text>
+<text x="24" y="150" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="start" font-weight="600">UPPER case</text>
+<text x="24" y="169" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="start">= transitional</text>
+<text x="24" y="192" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">the sender leads</text>
+<text x="24" y="207" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">the state</text>
+<text x="24" y="356" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="15" fill="#e8eaed" text-anchor="start" font-weight="600">lower case</text>
+<text x="24" y="375" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="start">= stay</text>
+<text x="24" y="398" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">the state does</text>
+<text x="24" y="413" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">not change</text>
+<rect x="176" y="112" width="260" height="196" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="446" y="112" width="260" height="196" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="716" y="112" width="260" height="196" rx="6" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-dasharray="6 5"/>
+<rect x="176" y="318" width="260" height="158" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="446" y="318" width="260" height="158" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="716" y="318" width="260" height="158" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="306" y="144" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8833a" text-anchor="middle" xml:space="preserve" style="white-space:pre">[L____________&lt;Target, PACKS&gt;]</text>
+<rect x="186" y="156" width="130" height="140" rx="6" fill="none" stroke="#e8833a" stroke-width="1.4"/>
+<text x="194" y="170" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#e8833a" text-anchor="start" font-weight="600">L host</text>
+<rect x="196" y="176" width="110" height="112" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="204" y="189" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">Actor</text>
+<rect x="215" y="196" width="72" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="251" y="216" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">State</text>
+<path d="M316 211 L418 211" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M426 211 L417 215.5 L417 206.5 Z" fill="#e8833a"/>
+<text x="371" y="203" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8833a" text-anchor="middle">Left sends a pack</text>
+<path d="M251 226 L251 242" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M251 250 L246.5 241 L255.5 241 Z" fill="#c9ccd1"/>
+<text x="259" y="242" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">moves</text>
+<rect x="215" y="250" width="72" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="251" y="270" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Target</text>
+<text x="576" y="144" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#4fb3ff" text-anchor="middle" xml:space="preserve" style="white-space:pre">[____________R&lt;Target, PACKS&gt;]</text>
+<rect x="566" y="156" width="130" height="140" rx="6" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="574" y="170" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#4fb3ff" text-anchor="start" font-weight="600">R host</text>
+<rect x="576" y="176" width="110" height="112" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="584" y="189" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">Actor</text>
+<rect x="595" y="196" width="72" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="631" y="216" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">State</text>
+<path d="M566 211 L464 211" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M456 211 L465 206.5 L465 215.5 Z" fill="#4fb3ff"/>
+<text x="511" y="203" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#4fb3ff" text-anchor="middle">Right sends a pack</text>
+<path d="M631 226 L631 242" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M631 250 L626.5 241 L635.5 241 Z" fill="#c9ccd1"/>
+<text x="623" y="242" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="end">moves</text>
+<rect x="595" y="250" width="72" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="631" y="270" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">Target</text>
+<text x="846" y="144" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#6f747a" text-anchor="middle" xml:space="preserve" style="white-space:pre">[_____LR_____&lt;Target, PACKS&gt;]</text>
+<line x1="738.325" y1="139" x2="953.675" y2="139" stroke="#9aa0a6" stroke-width="1.6"/>
+<text x="846" y="216" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">no transitional form:</text>
+<text x="846" y="234" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">a transition always</text>
+<text x="846" y="252" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="middle">belongs to one side</text>
+<text x="306" y="350" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8833a" text-anchor="middle" xml:space="preserve" style="white-space:pre">[l____________&lt;PACKS&gt;]</text>
+<rect x="186" y="362" width="130" height="104" rx="6" fill="none" stroke="#e8833a" stroke-width="1.4"/>
+<text x="194" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#e8833a" text-anchor="start" font-weight="600">L host</text>
+<rect x="196" y="382" width="110" height="76" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="204" y="395" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">Actor</text>
+<rect x="215" y="402" width="72" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="251" y="422" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">State</text>
+<path d="M316 417 L418 417" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M426 417 L417 421.5 L417 412.5 Z" fill="#e8833a"/>
+<text x="371" y="409" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8833a" text-anchor="middle">Left sends a pack</text>
+<path d="M241 432 L241 448 L261 448 L261 440" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M261 432 L265.5 441 L256.5 441 Z" fill="#c9ccd1"/>
+<text x="269" y="445" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">stays</text>
+<text x="576" y="350" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#4fb3ff" text-anchor="middle" xml:space="preserve" style="white-space:pre">[____________r&lt;PACKS&gt;]</text>
+<rect x="566" y="362" width="130" height="104" rx="6" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="574" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#4fb3ff" text-anchor="start" font-weight="600">R host</text>
+<rect x="576" y="382" width="110" height="76" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="584" y="395" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">Actor</text>
+<rect x="595" y="402" width="72" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="631" y="422" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">State</text>
+<path d="M566 417 L464 417" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M456 417 L465 412.5 L465 421.5 Z" fill="#4fb3ff"/>
+<text x="511" y="409" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#4fb3ff" text-anchor="middle">Right sends a pack</text>
+<path d="M621 432 L621 448 L641 448 L641 440" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M641 432 L645.5 441 L636.5 441 Z" fill="#c9ccd1"/>
+<text x="613" y="445" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="end">stays</text>
+<text x="846" y="350" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#a06fd0" text-anchor="middle" xml:space="preserve" style="white-space:pre">[_____lr_____&lt;PACKS&gt;]</text>
+<rect x="722" y="362" width="96" height="104" rx="6" fill="none" stroke="#e8833a" stroke-width="1.4"/>
+<text x="730" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#e8833a" text-anchor="start" font-weight="600">L host</text>
+<rect x="732" y="382" width="76" height="76" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="740" y="395" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">Actor</text>
+<rect x="740" y="402" width="60" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="770" y="422" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">State</text>
+<path d="M760 432 L760 448 L780 448 L780 440" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M780 432 L784.5 441 L775.5 441 Z" fill="#c9ccd1"/>
+<rect x="874" y="362" width="96" height="104" rx="6" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="882" y="376" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#4fb3ff" text-anchor="start" font-weight="600">R host</text>
+<rect x="884" y="382" width="76" height="76" rx="5" fill="none" stroke="#5f6670" stroke-width="1.2"/>
+<text x="892" y="395" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="11" fill="#9aa0a6" text-anchor="start">Actor</text>
+<rect x="892" y="402" width="60" height="30" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/><text x="922" y="422" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="middle">State</text>
+<path d="M912 432 L912 448 L932 448 L932 440" fill="none" stroke="#c9ccd1" stroke-width="2" stroke-linejoin="round"/><path d="M932 432 L936.5 441 L927.5 441 Z" fill="#c9ccd1"/>
+<path d="M818 410 L866 410" fill="none" stroke="#a06fd0" stroke-width="2" stroke-linejoin="round"/><path d="M874 410 L865 414.5 L865 405.5 Z" fill="#a06fd0"/>
+<path d="M874 424 L826 424" fill="none" stroke="#a06fd0" stroke-width="2" stroke-linejoin="round"/><path d="M818 424 L827 419.5 L827 428.5 Z" fill="#a06fd0"/>
+<rect x="24" y="492" width="952" height="92" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="518" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#e8eaed" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan fill="#e8eaed" font-weight="600">letter position</tspan><tspan fill="#9aa0a6"> = sender</tspan><tspan fill="#9aa0a6">      ·      </tspan><tspan fill="#e8eaed" font-weight="600">letter case</tspan><tspan fill="#9aa0a6"> = authority</tspan></text>
+<text x="40" y="542" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan >every form also exists without </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">&lt;PACKS&gt;</tspan><tspan > and takes </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">(KeepDoc, SkipDoc, KeepName, SkipName)</tspan></text>
+<text x="40" y="569" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="14" fill="#f2c14e" text-anchor="start" xml:space="preserve" style="white-space:pre"><tspan >One state, one leading side: </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">L____________</tspan><tspan > and </tspan><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">____________R</tspan><tspan > on the same state is an error.</tspan></text>
+</svg>

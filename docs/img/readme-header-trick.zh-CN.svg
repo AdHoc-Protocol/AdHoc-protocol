@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" width="960" height="430" role="img" aria-labelledby="title desc">
+<title id="title">超过 64 位:带头部的空 pack</title>
+<desc id="desc">Two rows. Top, an ordinary pack Point3 with three floats: the sender makes new Point3(), an object per message, the queue holds a reference, the wire carries the pack id and x, y, z, and the receiver makes another new Point3() before the handler. Bottom, an empty pack Position with the header XYZ : HeaderFor&lt;Position&gt; holding float x, y, z: send(x, y, z, ...) passes three numbers, the queue holds the values, the wire carries the same bytes - the pack id and 12 bytes - and the receiver gives the handler an XYZ header view over the receive buffer, from which it reads x(), y() and z(). Facts: no object on either side; header fields are single non-nullable primitives, MinMax allowed; read the values in the handler, the next pack overwrites the view.</desc>
+<rect width="960" height="430" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Noto Sans CJK SC,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">超过 64 位:带头部的空 pack</text>
+<text x="24" y="56" font-size="12" fill="#9aa0a6">x、y、z —— 12 字节,Value Pack 装不下 —— 两端都不建对象地收发</text>
+<text x="24" y="92" font-size="12.5" fill="#e8eaed" font-weight="700">普通 pack:class Point3 { float x, y, z; }</text>
+<rect x="24" y="106" width="150" height="50" rx="6" fill="#4a2626" stroke="#e06c6c" stroke-width="1.6"/>
+<text x="99" y="128" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">new Point3()</text>
+<text x="99" y="146" font-size="12" fill="#e06c6c" text-anchor="middle">每条消息一个对象</text>
+<path d="M174 131 L204 131" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M212 131 L203 135.6 L203 126.4 Z" fill="#9aa0a6"/>
+<rect x="214" y="116" width="120" height="30" rx="4" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text x="274" y="136" font-size="12" fill="#e8eaed" text-anchor="middle">队列:一个引用</text>
+<path d="M334 131 L364 131" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M372 131 L363 135.6 L363 126.4 Z" fill="#4fb3ff"/>
+<rect x="374" y="116" width="30" height="30" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="389" y="136" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">id</text>
+<rect x="406" y="116" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="428" y="136" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">x</text>
+<rect x="452" y="116" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="474" y="136" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">y</text>
+<rect x="498" y="116" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="520" y="136" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">z</text>
+<path d="M548 131 L576 131" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M584 131 L575 135.6 L575 126.4 Z" fill="#4fb3ff"/>
+<rect x="586" y="106" width="150" height="50" rx="6" fill="#4a2626" stroke="#e06c6c" stroke-width="1.6"/>
+<text x="661" y="128" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">new Point3()</text>
+<text x="661" y="146" font-size="12" fill="#e06c6c" text-anchor="middle">每条消息一个对象</text>
+<path d="M736 131 L762 131" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M770 131 L761 135.6 L761 126.4 Z" fill="#9aa0a6"/>
+<text x="774" y="136" font-size="12.5" fill="#e8eaed">处理器</text>
+<text x="24" y="222" font-size="12.5" fill="#e8eaed" font-weight="700">带头部的空 pack:class Position { } + class XYZ : HeaderFor&lt;Position&gt; { float x, y, z; }</text>
+<rect x="24" y="236" width="150" height="50" rx="6" fill="#3a2c20" stroke="#e8833a" stroke-width="1.6"/>
+<text x="99" y="258" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">send( x, y, z, … )</text>
+<text x="99" y="276" font-size="12" fill="#9aa0a6" text-anchor="middle">三个数字</text>
+<path d="M174 261 L204 261" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M212 261 L203 265.6 L203 256.4 Z" fill="#9aa0a6"/>
+<rect x="214" y="246" width="120" height="30" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/>
+<text x="274" y="266" font-size="12" fill="#e8eaed" text-anchor="middle">队列:x y z 的值</text>
+<path d="M334 261 L364 261" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M372 261 L363 265.6 L363 256.4 Z" fill="#4fb3ff"/>
+<rect x="374" y="246" width="30" height="30" rx="2" fill="#1f3b52" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="389" y="266" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">id</text>
+<rect x="406" y="246" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="428" y="266" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">x</text>
+<rect x="452" y="246" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="474" y="266" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">y</text>
+<rect x="498" y="246" width="44" height="30" rx="2" fill="#26384d" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="520" y="266" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" text-anchor="middle" xml:space="preserve">z</text>
+<path d="M548 261 L576 261" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M584 261 L575 265.6 L575 256.4 Z" fill="#4fb3ff"/>
+<rect x="586" y="236" width="150" height="50" rx="6" fill="#3d3520" stroke="#f2c14e" stroke-width="1.6"/>
+<text x="661" y="255" font-size="12.5" fill="#e8eaed" text-anchor="middle">XYZ 头部视图</text>
+<text x="661" y="273" font-size="12" fill="#9aa0a6" text-anchor="middle">覆于接收缓冲区上</text>
+<path d="M736 261 L762 261" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/><path d="M770 261 L761 265.6 L761 256.4 Z" fill="#9aa0a6"/>
+<text x="774" y="258" font-size="12.5" fill="#e8eaed">处理器读取</text>
+<text x="774" y="276" font-family="Consolas,Microsoft YaHei,DejaVu Sans Mono,Menlo,monospace" font-size="12.5" fill="#e8eaed" xml:space="preserve">x() y() z()</text>
+<text x="461" y="308" font-size="12" fill="#4fb3ff" text-anchor="middle">线上字节相同:pack id 加 12 字节</text>
+<rect x="16" y="340" width="300" height="62" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="30" y="364" font-size="12.5" fill="#e8eaed" font-weight="700">无对象</text>
+<text x="30" y="386" font-size="12" fill="#9aa0a6">发送端和接收端都没有</text>
+<rect x="328" y="340" width="300" height="62" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="342" y="364" font-size="12.5" fill="#e8eaed" font-weight="700">头部字段</text>
+<text x="342" y="386" font-size="12" fill="#9aa0a6">单个不可为空的基元类型,可用 [MinMax]</text>
+<rect x="640" y="340" width="300" height="62" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="654" y="364" font-size="12.5" fill="#e8eaed" font-weight="700">在处理器中读取</text>
+<text x="654" y="386" font-size="12" fill="#9aa0a6">下一个 pack 覆盖该视图</text>
+</g>
+</svg>

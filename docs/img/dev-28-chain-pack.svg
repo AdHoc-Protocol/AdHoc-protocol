@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 440" width="980" height="440" role="img" aria-labelledby="dev28chainpack-t dev28chainpack-d">
+<title id="dev28chainpack-t">A message sealed for one reader: Chain.Pack</title>
+<desc id="dev28chainpack-d">Top, the bytes of a sealed message: an id of 4 bytes and a number of 8, in clear but covered by the tag; your bytes; a signature of 64 bytes when signedBy is chosen; a tag of 16 bytes when pair is chosen. Everything after the number is sealed by the pair. Bottom: the author seals with pair(mySecret, readerPublic, &quot;invoice A→B&quot;) and signedBy(signingSecret); a store, a queue or mail holds the message and passes it on, unable to read it, and a change is caught; the reader opens it with pair(readerSecret, authorPublic, &quot;invoice A→B&quot;) and signerOf(authorSigningPublic), and gets the length, or -1 when it is forged. A stored copy opens again: keep the last number per author. Use one purpose per direction.</desc>
+<rect width="980" height="440" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">A message sealed for one reader: Chain.Pack</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">No connection and no handshake: one buffer, sealed in place, opened in place</text>
+<rect x="90" y="92" width="70" height="40" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text xml:space="preserve" x="125" y="117" font-size="12" fill="#e8eaed" text-anchor="middle">id  4</text>
+<rect x="160" y="92" width="110" height="40" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<text xml:space="preserve" x="215" y="117" font-size="12" fill="#e8eaed" text-anchor="middle">number  8</text>
+<rect x="270" y="92" width="370" height="40" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.4"/>
+<text xml:space="preserve" x="455" y="117" font-size="12" fill="#e8eaed" text-anchor="middle">your bytes</text>
+<rect x="640" y="92" width="150" height="40" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.4"/>
+<text xml:space="preserve" x="715" y="117" font-size="12" fill="#e8eaed" text-anchor="middle">signature  64</text>
+<rect x="790" y="92" width="100" height="40" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.4"/>
+<text xml:space="preserve" x="840" y="117" font-size="12" fill="#e8eaed" text-anchor="middle">tag  16</text>
+<text xml:space="preserve" x="715" y="84" font-size="11.5" fill="#f2c14e" text-anchor="middle">with signedBy</text>
+<text xml:space="preserve" x="840" y="84" font-size="11.5" fill="#f2c14e" text-anchor="middle">with pair</text>
+<path d="M90,140 V148 H270 V140" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/>
+<text xml:space="preserve" x="180" y="166" font-size="12" fill="#9aa0a6" text-anchor="middle">in clear, covered by the tag</text>
+<path d="M270,140 V148 H890 V140" fill="none" stroke="#b58cf0" stroke-width="1.4" stroke-linejoin="round"/>
+<text xml:space="preserve" x="580" y="166" font-size="12" fill="#b58cf0" text-anchor="middle">sealed by pair( … )</text>
+<rect x="30" y="196" width="290" height="120" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="42" y="218" font-size="13" fill="#e8eaed" font-weight="700">Author</text>
+<text xml:space="preserve" x="42" y="235" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">pair( mySecret, readerPublic,</text>
+<text xml:space="preserve" x="42" y="250" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">      &quot;invoice A→B&quot; )</text>
+<text xml:space="preserve" x="42" y="265" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">.signedBy( signingSecret )</text>
+<text xml:space="preserve" x="42" y="280" font-size="11.5" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">seal( buf, 0, length ) → total</text>
+<rect x="385" y="216" width="210" height="80" rx="8" fill="#30343a" stroke="#8c9198" stroke-width="1.6"/>
+<text xml:space="preserve" x="490" y="245.5" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Store, queue, mail</text>
+<text xml:space="preserve" x="490" y="262.5" font-size="12" fill="#9aa0a6" text-anchor="middle">holds what it cannot read;</text>
+<text xml:space="preserve" x="490" y="277.5" font-size="12" fill="#9aa0a6" text-anchor="middle">a change is caught</text>
+<rect x="660" y="196" width="300" height="120" rx="8" fill="#26382c" stroke="#6fbf7f" stroke-width="1.6"/>
+<text xml:space="preserve" x="672" y="218" font-size="13" fill="#e8eaed" font-weight="700">Reader</text>
+<text xml:space="preserve" x="672" y="235" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">pair( readerSecret, authorPublic,</text>
+<text xml:space="preserve" x="672" y="250" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">      &quot;invoice A→B&quot; )</text>
+<text xml:space="preserve" x="672" y="265" font-size="11.5" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,monospace">.signerOf( authorSigningPublic )</text>
+<text xml:space="preserve" x="672" y="280" font-size="11.5" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">open( buf, 0, total ) → n, -1 forged</text>
+<line x1="320.0" y1="256.0" x2="377.0" y2="256.0" stroke="#f2c14e" stroke-width="2"/>
+<polygon points="385.0,256.0 375.0,250.5 375.0,261.5" fill="#f2c14e"/>
+<line x1="595.0" y1="256.0" x2="652.0" y2="256.0" stroke="#f2c14e" stroke-width="2"/>
+<polygon points="660.0,256.0 650.0,250.5 650.0,261.5" fill="#f2c14e"/>
+<rect x="30" y="340" width="450" height="52" rx="8" fill="#4a2a2a" stroke="#e06c6c" stroke-width="1.6"/>
+<text xml:space="preserve" x="255" y="362" font-size="12" fill="#e8eaed" text-anchor="middle">A stored copy opens again: where it matters,</text>
+<text xml:space="preserve" x="255" y="377" font-size="12" fill="#f2b8b5" text-anchor="middle">keep the last number per author, refuse what is not newer</text>
+<rect x="500" y="340" width="460" height="52" rx="8" fill="#4a3a26" stroke="#f2a44e" stroke-width="1.6"/>
+<text xml:space="preserve" x="730" y="362" font-size="12" fill="#e8eaed" text-anchor="middle">One purpose per direction:</text>
+<text xml:space="preserve" x="730" y="377" font-size="12" fill="#f2c14e" text-anchor="middle" font-family="Consolas,DejaVu Sans Mono,monospace">&quot;invoice A→B&quot; and &quot;invoice B→A&quot;</text>
+<text xml:space="preserve" x="24" y="420" font-size="12" fill="#9aa0a6">No handshake, so no forward secrecy: whoever later gets a secret of the pair opens every message of that pair.</text>
+</g>
+</svg>

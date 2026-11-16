@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 526" width="1000" height="526" role="img"><rect width="1000" height="526" rx="10" fill="#2b2b2b"/><title>The leading host sends Go and moves from A to B, its epoch going from 2 to 3; the follower, not knowing yet, sends a stay pack Note with epoch 2; Go arrives with a matching epoch and moves the follower, Note arrives with epoch 2 against 3 and is dropped</title>
+<text x="24" y="40" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="18" fill="#e8eaed" text-anchor="start" font-weight="600">The epoch: a late pack of the previous state is dropped</text>
+<rect x="170" y="62" width="220" height="34" rx="6" fill="none" stroke="#e8833a" stroke-width="1.4"/>
+<text x="280" y="84" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#e8833a" text-anchor="middle" font-weight="600">L host · leads state A</text>
+<line x1="280" y1="96" x2="280" y2="400" stroke="#4a4a4a" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="610" y="62" width="220" height="34" rx="6" fill="none" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="720" y="84" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#4fb3ff" text-anchor="middle" font-weight="600">R host · follower in A</text>
+<line x1="720" y1="96" x2="720" y2="400" stroke="#4a4a4a" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="225" y="112" width="110" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="280" y="130" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">A · epoch 2</text>
+<rect x="665" y="112" width="110" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="720" y="130" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">A · epoch 2</text>
+<path d="M280 166 L712.3 287.8" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M720 290 L710.1 291.9 L712.6 283.2 Z" fill="#e8833a"/>
+<text x="420" y="178" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8833a" text-anchor="middle">Go · epoch 2</text>
+<text x="266" y="170" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8833a" text-anchor="end">sends Go: A → B</text>
+<text x="266" y="186" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="end">epoch 2 → 3</text>
+<rect x="225" y="200" width="110" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="280" y="218" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">B · epoch 3</text>
+<path d="M720 180 L287.5 337.3" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M280 340 L286.9 332.7 L290 341.2 Z" fill="#4fb3ff"/>
+<text x="640" y="240" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#4fb3ff" text-anchor="middle">Note · epoch 2</text>
+<text x="734" y="184" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#4fb3ff" text-anchor="start">sends Note, a stay pack of A,</text>
+<text x="734" y="200" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">not knowing that L has moved on</text>
+<rect x="665" y="300" width="110" height="26" rx="6" fill="#46401f" stroke="#f2c14e" stroke-width="1.6"/><text x="720" y="318" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="middle" font-weight="600">B · epoch 3</text>
+<text x="790" y="310" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e8eaed" text-anchor="start">Go, epoch 2 = 2: taken,</text>
+<text x="790" y="326" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="start">R moves to B, epoch 3</text>
+<path d="M273 333 L287 347 M287 333 L273 347" stroke="#e5534b" stroke-width="2.4"/>
+<text x="264" y="344" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#e5534b" text-anchor="end">Note, epoch 2 ≠ 3: dropped</text>
+<text x="264" y="360" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="12" fill="#9aa0a6" text-anchor="end">injection point Epoch mismatch</text>
+<rect x="24" y="420" width="952" height="90" rx="6" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="446" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">Every transition changes the epoch of the instance; every pack carries the epoch of its sender.</text>
+<text x="40" y="470" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">The receiver drops a pack whose epoch differs from its own: a pack of the previous state is not taken for one of the new state.</text>
+<text x="40" y="494" font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif" font-size="13" fill="#9aa0a6" text-anchor="start">Only the leader moves a state, so the follower can be late but never race it. Actor0 and function groups have no epoch.</text>
+</svg>

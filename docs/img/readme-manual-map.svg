@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 444" width="960" height="444" role="img" aria-labelledby="title desc">
+<title id="title">Where to read about what in MANUAL.md</title>
+<desc id="desc">A map of MANUAL.md. Across the top, the pipeline as six boxes left to right, each with the chapters that explain it: description 3 and 23, AdHocAgent 24, generator 1 and 24, code per host 10, deployment 25, runtime 1 and 13. Below, the model as a stack of bands from project down to bytes, each with its chapters: project - 3 description file, 20 numbers tables, 21 evolving, 22 reuse; host - 10 hosts, languages; connection - 11 connections, 14 sessions and UDP, 18 virtual connections, 19 multiplexing; actor, state, branch - 12 actors, states, branches, 13 actor kinds; pack - 4 packs, 8 building packs, 9 Pack Sets, 17 trims; field - 5 fields and types, 6 constants and enums; bytes - 7 values to bytes, 15 streams, 16 transform chains. On the right, start here: 1 How AdHoc works and 2 Getting started, then the part you need; to look up: 23 Attributes, the glossary in 1, every AdHocAgent option in 24.</desc>
+<rect width="960" height="444" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">Where to read about what in MANUAL.md</text>
+<text x="24" y="62" font-size="12" fill="#9aa0a6">the pipeline</text>
+<rect x="24" y="70" width="136" height="58" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="92" y="93" font-size="13" fill="#e8eaed" text-anchor="middle">description</text>
+<rect x="65.4" y="103" width="22" height="17" rx="8.5" fill="#3a321d"/>
+<text x="76.4" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">3</text>
+<rect x="93.4" y="103" width="25.3" height="17" rx="8.5" fill="#3a321d"/>
+<text x="106" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">23</text>
+<path d="M162 99 L173 99" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M179 99 L172 103 L172 95 Z" fill="#4fb3ff"/>
+<rect x="180" y="70" width="136" height="58" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="248" y="93" font-size="13" fill="#e8eaed" text-anchor="middle">AdHocAgent</text>
+<rect x="235.4" y="103" width="25.3" height="17" rx="8.5" fill="#3a321d"/>
+<text x="248" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">24</text>
+<path d="M318 99 L329 99" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M335 99 L328 103 L328 95 Z" fill="#4fb3ff"/>
+<rect x="336" y="70" width="136" height="58" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="404" y="93" font-size="13" fill="#e8eaed" text-anchor="middle">generator</text>
+<rect x="377.4" y="103" width="22" height="17" rx="8.5" fill="#3a321d"/>
+<text x="388.4" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">1</text>
+<rect x="405.4" y="103" width="25.3" height="17" rx="8.5" fill="#3a321d"/>
+<text x="418" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">24</text>
+<path d="M474 99 L485 99" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M491 99 L484 103 L484 95 Z" fill="#4fb3ff"/>
+<rect x="492" y="70" width="136" height="58" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="560" y="93" font-size="13" fill="#e8eaed" text-anchor="middle">code per host</text>
+<rect x="547.4" y="103" width="25.3" height="17" rx="8.5" fill="#3a321d"/>
+<text x="560" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">10</text>
+<path d="M630 99 L641 99" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M647 99 L640 103 L640 95 Z" fill="#4fb3ff"/>
+<rect x="648" y="70" width="136" height="58" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="716" y="93" font-size="13" fill="#e8eaed" text-anchor="middle">deployment</text>
+<rect x="703.4" y="103" width="25.3" height="17" rx="8.5" fill="#3a321d"/>
+<text x="716" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">25</text>
+<path d="M786 99 L797 99" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M803 99 L796 103 L796 95 Z" fill="#4fb3ff"/>
+<rect x="804" y="70" width="136" height="58" rx="6" fill="#26384d" stroke="#4fb3ff" stroke-width="1.4"/>
+<text x="872" y="93" font-size="13" fill="#e8eaed" text-anchor="middle">runtime</text>
+<rect x="845.4" y="103" width="22" height="17" rx="8.5" fill="#3a321d"/>
+<text x="856.4" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">1</text>
+<rect x="873.4" y="103" width="25.3" height="17" rx="8.5" fill="#3a321d"/>
+<text x="886" y="115.5" font-size="12" fill="#f2c14e" text-anchor="middle" font-weight="600">13</text>
+<text x="24" y="156" font-size="12" fill="#9aa0a6">the model, from the project down to the bytes</text>
+<rect x="24" y="166" width="676" height="32" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="186.5" font-size="13" fill="#e8eaed">project</text>
+<rect x="182" y="171" width="110.8" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="190" y="186.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">3</tspan><tspan> description file</tspan></text>
+<rect x="298.8" y="171" width="124.5" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="306.8" y="186.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">20</tspan><tspan> numbers tables</tspan></text>
+<rect x="429.3" y="171" width="81.5" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="437.3" y="186.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">21</tspan><tspan> evolving</tspan></text>
+<rect x="516.8" y="171" width="64.6" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="524.8" y="186.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">22</tspan><tspan> reuse</tspan></text>
+<rect x="24" y="203" width="666" height="32" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="223.5" font-size="13" fill="#e8eaed">host</text>
+<rect x="182" y="208" width="133.3" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="190" y="223.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">10</tspan><tspan> hosts, languages</tspan></text>
+<rect x="24" y="240" width="656" height="32" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="260.5" font-size="13" fill="#e8eaed">connection</text>
+<rect x="182" y="245" width="102.6" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="190" y="260.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">11</tspan><tspan> connections</tspan></text>
+<rect x="290.6" y="245" width="115.5" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="298.6" y="260.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">14</tspan><tspan> sessions, UDP</tspan></text>
+<rect x="412.1" y="245" width="145.2" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="420.1" y="260.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">18</tspan><tspan> virtual connections</tspan></text>
+<rect x="563.3" y="245" width="105.3" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="571.3" y="260.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">19</tspan><tspan> multiplexing</tspan></text>
+<rect x="24" y="277" width="646" height="32" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="297.5" font-size="13" fill="#e8eaed">actor · state · branch</text>
+<rect x="182" y="282" width="176.1" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="190" y="297.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">12</tspan><tspan> actors, states, branches</tspan></text>
+<rect x="364.1" y="282" width="97.9" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="372.1" y="297.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">13</tspan><tspan> actor kinds</tspan></text>
+<rect x="24" y="314" width="636" height="32" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="334.5" font-size="13" fill="#e8eaed">pack</text>
+<rect x="182" y="319" width="57" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="190" y="334.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">4</tspan><tspan> packs</tspan></text>
+<rect x="245" y="319" width="108.7" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="253" y="334.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">8</tspan><tspan> building packs</tspan></text>
+<rect x="359.7" y="319" width="80.8" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="367.7" y="334.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">9</tspan><tspan> Pack Sets</tspan></text>
+<rect x="446.5" y="319" width="62.4" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="454.5" y="334.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">17</tspan><tspan> trims</tspan></text>
+<rect x="24" y="351" width="626" height="32" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="371.5" font-size="13" fill="#e8eaed">field</text>
+<rect x="182" y="356" width="117.8" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="190" y="371.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">5</tspan><tspan> fields and types</tspan></text>
+<rect x="305.8" y="356" width="129.5" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="313.8" y="371.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">6</tspan><tspan> constants, enums</tspan></text>
+<rect x="24" y="388" width="616" height="32" rx="4" fill="#303236" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="408.5" font-size="13" fill="#e8eaed">bytes</text>
+<rect x="182" y="393" width="114.2" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="190" y="408.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">7</tspan><tspan> values to bytes</tspan></text>
+<rect x="302.2" y="393" width="79.7" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="310.2" y="408.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">15</tspan><tspan> streams</tspan></text>
+<rect x="387.9" y="393" width="132.7" height="22" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="395.9" y="408.5" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">16</tspan><tspan> transform chains</tspan></text>
+<rect x="724" y="166" width="212" height="254" rx="8" fill="#45301f" stroke="#e8833a" stroke-width="1.5"/>
+<text x="740" y="194" font-size="15" fill="#e8833a" font-weight="600">start here</text>
+<text x="740" y="224" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">1</tspan><tspan>  How AdHoc works</tspan></text>
+<text x="740" y="248" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">2</tspan><tspan>  Getting started</tspan></text>
+<text x="740" y="274" font-size="12" fill="#9aa0a6">then the part you need</text>
+<line x1="740" y1="294" x2="920" y2="294" stroke="#6a4a30" stroke-width="1"/>
+<text x="740" y="318" font-size="12" fill="#9aa0a6">look up</text>
+<text x="740" y="342" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">23</tspan><tspan>  Attributes - the catalog</tspan></text>
+<text x="740" y="364" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">1</tspan><tspan>  Glossary of AdHoc terms</tspan></text>
+<text x="740" y="386" font-size="12" fill="#e8eaed" xml:space="preserve"><tspan fill="#f2c14e" font-weight="600">24</tspan><tspan>  every AdHocAgent option</tspan></text>
+</g>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="404" viewBox="0 0 960 404" role="img" aria-labelledby="title desc">
+<title id="title">Bytes flow through; a whole-pack byte array is unnecessary</title><desc id="desc">Sending and receiving are incremental. Each endpoint reuses a socket buffer. A stream or event-driven consumer can avoid materializing the payload. An opaque relay forwards tunnel chunks without decoding endpoint messages. Objects, journals and codec state consume additional memory.</desc>
+<rect width="960" height="404" rx="12" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="32" y="40" font-size="23" fill="#e8eaed" text-anchor="start" font-weight="600">Bytes flow through; a whole-pack byte array is unnecessary</text>
+<rect x="32" y="76" width="152" height="111" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="108" y="107" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Source</text>
+<text x="108" y="141" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Fields or</text>
+<text x="108" y="165" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">live bytes</text>
+<rect x="228" y="76" width="156" height="111" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="306" y="107" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Sender</text>
+<text x="306" y="141" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Reusable</text>
+<text x="306" y="165" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">socket buffer</text>
+<rect x="428" y="76" width="104" height="111" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="480" y="107" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Wire</text>
+<text x="480" y="141" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Chunk</text>
+<text x="480" y="165" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">by chunk</text>
+<rect x="576" y="76" width="156" height="111" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="654" y="107" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Receiver</text>
+<text x="654" y="141" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Reusable</text>
+<text x="654" y="165" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">socket buffer</text>
+<rect x="776" y="76" width="152" height="111" rx="9" fill="#34383f" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="852" y="107" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Consumer</text>
+<text x="852" y="141" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Object or</text>
+<text x="852" y="165" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">event / sink</text>
+<line x1="185" y1="132" x2="227" y2="132" stroke="#f2c14e" stroke-width="2"/>
+<path d="M227 132 L219 127 L219 137 Z" fill="#f2c14e"/>
+<line x1="385" y1="132" x2="427" y2="132" stroke="#f2c14e" stroke-width="2"/>
+<path d="M427 132 L419 127 L419 137 Z" fill="#f2c14e"/>
+<line x1="533" y1="132" x2="575" y2="132" stroke="#f2c14e" stroke-width="2"/>
+<path d="M575 132 L567 127 L567 137 Z" fill="#f2c14e"/>
+<line x1="733" y1="132" x2="775" y2="132" stroke="#f2c14e" stroke-width="2"/>
+<path d="M775 132 L767 127 L767 137 Z" fill="#f2c14e"/>
+<text x="480" y="219" font-size="18" fill="#f2c14e" text-anchor="middle" font-weight="400">The buffer size stays fixed as the payload grows.</text>
+<text x="32" y="258" font-size="15" fill="#ba94e0" text-anchor="start" font-weight="600">THE SAME STREAMING CORE CARRIES TUNNELS</text>
+<rect x="32" y="273" width="228" height="67" rx="9" fill="#34383f" stroke="#ba94e0" stroke-width="1.5"/>
+<text x="146" y="300" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Endpoint A</text>
+<text x="146" y="326" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Owns the conversation</text>
+<rect x="366" y="273" width="228" height="67" rx="9" fill="#34383f" stroke="#ba94e0" stroke-width="1.5"/>
+<text x="480" y="300" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Relay</text>
+<text x="480" y="326" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Forwards opaque chunks</text>
+<rect x="700" y="273" width="228" height="67" rx="9" fill="#34383f" stroke="#ba94e0" stroke-width="1.5"/>
+<text x="814" y="300" font-size="19" fill="#e8eaed" text-anchor="middle" font-weight="600">Endpoint B</text>
+<text x="814" y="326" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Owns the conversation</text>
+<line x1="261" y1="306" x2="365" y2="306" stroke="#ba94e0" stroke-width="2"/>
+<path d="M365 306 L357 301 L357 311 Z" fill="#ba94e0"/>
+<line x1="595" y1="306" x2="699" y2="306" stroke="#ba94e0" stroke-width="2"/>
+<path d="M699 306 L691 301 L691 311 Z" fill="#ba94e0"/>
+<text x="480" y="375" font-size="17" fill="#b6bdc8" text-anchor="middle" font-weight="400">No payload schema is needed at the relay.</text>
+<text x="480" y="397" font-size="16" fill="#b6bdc8" text-anchor="middle" font-weight="400">Objects, replay journals and codec contexts use additional memory.</text>
+</g></svg>

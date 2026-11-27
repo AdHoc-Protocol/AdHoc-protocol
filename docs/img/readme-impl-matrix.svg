@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 448" width="980" height="448" role="img" aria-labelledby="title desc">
+<title id="title">Who holds the data</title>
+<desc id="desc">A matrix over the pack Frame and its fields timestamp, channel and samples. Broker in Java, configured --, sends Frame: every cell purple, read through getters from its own objects. Router in C# receives Frame: a generated object stores timestamp and channel, while samples is handed to your code as it arrives. Dashboard in TypeScript receives Frame: every cell a plain generated object. One wire strip of Frame below: the same bytes for every row.</desc>
+<rect width="980" height="448" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="700">Who holds the data of one pack, host by host</text>
+<text x="24" y="64" font-size="12" fill="#9aa0a6">host · language · role</text>
+<text x="430" y="64" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">Frame (pack)</text>
+<text x="575" y="64" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">timestamp</text>
+<text x="715" y="64" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">channel</text>
+<text x="860" y="64" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="700">samples ≤ 1 000 000</text>
+<rect x="16" y="90" width="918" height="70" rx="8" fill="#303133"/>
+<text x="28" y="112" font-size="14" fill="#e8eaed" font-weight="700">Broker · Java · sends Frame</text>
+<text x="28" y="131" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">&lt;see cref='InJAVA'/&gt;--</text>
+<rect x="364" y="98" width="132" height="54" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="430" y="121.3" font-size="12" fill="#e8eaed" text-anchor="middle">interface over</text>
+<text x="430" y="137.3" font-size="12" fill="#e8eaed" text-anchor="middle">your object</text>
+<rect x="514" y="98" width="122" height="54" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="575" y="129.3" font-size="12" fill="#e8eaed" text-anchor="middle">getter</text>
+<rect x="654" y="98" width="122" height="54" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="715" y="129.3" font-size="12" fill="#e8eaed" text-anchor="middle">getter</text>
+<rect x="794" y="98" width="132" height="54" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="860" y="121.3" font-size="12" fill="#e8eaed" text-anchor="middle">getter: items</text>
+<text x="860" y="137.3" font-size="12" fill="#e8eaed" text-anchor="middle">from your log</text>
+<rect x="16" y="170" width="918" height="80" rx="8" fill="#303133"/>
+<text x="28" y="192" font-size="14" fill="#e8eaed" font-weight="700">Router · C# · receives Frame</text>
+<text x="28" y="211" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">&lt;see cref='InCS'/&gt;</text>
+<text x="28" y="226" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">&lt;see cref='InCS'/&gt;-</text>
+<text x="28" y="241" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">&lt;see cref='Frame.samples'/&gt;</text>
+<rect x="364" y="178" width="132" height="64" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="430" y="214.3" font-size="12" fill="#e8eaed" text-anchor="middle">generated object</text>
+<rect x="514" y="178" width="122" height="64" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="575" y="214.3" font-size="12" fill="#e8eaed" text-anchor="middle">stored</text>
+<rect x="654" y="178" width="122" height="64" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="715" y="214.3" font-size="12" fill="#e8eaed" text-anchor="middle">stored</text>
+<rect x="794" y="178" width="132" height="64" rx="7" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="860" y="206.3" font-size="12" fill="#e8eaed" text-anchor="middle">handed to your code</text>
+<text x="860" y="222.3" font-size="12" fill="#e8eaed" text-anchor="middle">as it arrives</text>
+<rect x="16" y="260" width="918" height="70" rx="8" fill="#303133"/>
+<text x="28" y="282" font-size="14" fill="#e8eaed" font-weight="700">Dashboard · TypeScript · receives Frame</text>
+<text x="28" y="301" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">&lt;see cref='InTS'/&gt;</text>
+<text x="156.8" y="301" font-size="12" fill="#9aa0a6">(default ++)</text>
+<rect x="364" y="268" width="132" height="54" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="430" y="299.3" font-size="12" fill="#e8eaed" text-anchor="middle">generated object</text>
+<rect x="514" y="268" width="122" height="54" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="575" y="299.3" font-size="12" fill="#e8eaed" text-anchor="middle">stored</text>
+<rect x="654" y="268" width="122" height="54" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="715" y="299.3" font-size="12" fill="#e8eaed" text-anchor="middle">stored</text>
+<rect x="794" y="268" width="132" height="54" rx="7" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="860" y="299.3" font-size="12" fill="#e8eaed" text-anchor="middle">stored</text>
+<path d="M936 92 L944 92 L944 328 L936 328" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M944 328 L944 350" fill="none" stroke="#4fb3ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M944 356 L940.4 349 L947.6 349 Z" fill="#4fb3ff"/>
+<text x="934" y="347" font-size="13" fill="#4fb3ff" text-anchor="end">the same bytes for every row</text>
+<text x="24" y="379" font-size="13" fill="#e8eaed">Frame on the wire</text>
+<rect x="360" y="356" width="592" height="36" rx="4" fill="#26384d"/>
+<rect x="360" y="356" width="44" height="36" rx="0" fill="#24476a"/>
+<text x="382" y="378" font-size="12" fill="#e8eaed" text-anchor="middle">id</text>
+<line x1="404" y1="356" x2="404" y2="392" stroke="#3f6f99" stroke-width="1"/>
+<text x="460" y="378" font-size="12" fill="#e8eaed" text-anchor="middle">timestamp 8 B</text>
+<line x1="516" y1="356" x2="516" y2="392" stroke="#3f6f99" stroke-width="1"/>
+<text x="566" y="378" font-size="12" fill="#e8eaed" text-anchor="middle">channel 4 B</text>
+<line x1="616" y1="356" x2="616" y2="392" stroke="#3f6f99" stroke-width="1"/>
+<text x="652" y="378" font-size="12" fill="#e8eaed" text-anchor="middle">null bits</text>
+<line x1="688" y1="356" x2="688" y2="392" stroke="#3f6f99" stroke-width="1"/>
+<text x="820" y="378" font-size="12" fill="#e8eaed" text-anchor="middle">samples: 3-byte length + 4 B per item</text>
+<rect x="360" y="356" width="592" height="36" rx="4" fill="none" stroke="#4fb3ff" stroke-width="1.5"/>
+<rect x="24" y="413" width="14" height="14" rx="3" fill="#3d3520" stroke="#f2c14e" stroke-width="1.5"/>
+<text x="46" y="424" font-size="12" fill="#9aa0a6" xml:space="preserve">+  the generated object holds the data</text>
+<rect x="282" y="413" width="14" height="14" rx="3" fill="#32293e" stroke="#a06fd0" stroke-width="1.5"/>
+<text x="304" y="424" font-size="12" fill="#9aa0a6" xml:space="preserve">-  your code holds it</text>
+<text x="952" y="424" font-size="12" fill="#9aa0a6" text-anchor="end">field rule &gt; pack rule &gt; host default · a second + or - turns equality and hash on or off</text>
+</g>
+</svg>

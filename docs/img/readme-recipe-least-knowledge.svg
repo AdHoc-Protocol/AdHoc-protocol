@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" role="img" aria-labelledby="title desc">
+<title id="title">Least-knowledge hosts: what a role may not send or parse is not in its generated code</title>
+<desc id="desc">Centre: a matrix of hosts and packs. Rows are Guest in TypeScript, Staff in C# and Shop in Java; columns are Item, Price, Margin marked with a padlock, Browse, Login, Welcome and Denied, SetPrice. Filled cells mean the pack is generated in that host, dark cells mean it is not in its code: Guest has only Item, Price and Browse; Staff has everything except Browse; Shop has all of them. A purple funnel, SkipDoc with the padlock, keeps Margin off the guest link and points at the empty Guest Margin cell. Left: the states of StaffLink, Connects of Staff and Shop - Start allows only Login from Staff, Authorizing answers Welcome or Denied from Shop, Denied leads to Close, Welcome to Working, where Staff sends SetPrice and Shop sends the catalogue; a crossed-out SetPrice in Start is refused before it leaves, reported as DISCARDED_BYSTATE. Right: four guard rails - a pack the state does not allow is refused and reported; an unknown pack id drops the channel; one instance over MaxActiveInstances aborts the connection; a conduit above its S(N) cap raises an exception.</desc>
+<rect width="960" height="520" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="34" font-size="16" fill="#e8eaed" font-weight="600">What a role may not send or parse is not in its code</text>
+<rect x="24" y="56" width="266" height="400" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="40" y="80" font-size="14" fill="#e8eaed" font-weight="600">StaffLink states</text>
+<text x="40" y="97" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">Connects&lt;Staff, Shop&gt;</text>
+<rect x="40" y="112" width="120" height="44" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="100" y="131" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Start</text>
+<text x="100" y="148" font-size="12" fill="#9aa0a6" text-anchor="middle">Login only</text>
+<rect x="40" y="236" width="120" height="44" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="100" y="255" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Authorizing</text>
+<text x="100" y="272" font-size="12" fill="#9aa0a6" text-anchor="middle">Welcome | Denied</text>
+<rect x="40" y="352" width="120" height="44" rx="6" fill="#363a40" stroke="#7d858f" stroke-width="1.6"/>
+<text x="100" y="379" font-size="14" fill="#e8eaed" text-anchor="middle" font-weight="600">Working</text>
+<path d="M160 134 L268 134" fill="none" stroke="#e5534b" stroke-width="2" stroke-dasharray="5 3" stroke-linejoin="round"/><path d="M276 134 L267 138.6 L267 129.4 Z" fill="#e5534b"/>
+<g data-nocheck="1"><line x1="226" y1="128" x2="238" y2="140" stroke="#e5534b" stroke-width="2.6" stroke-linecap="round"/><line x1="226" y1="140" x2="238" y2="128" stroke="#e5534b" stroke-width="2.6" stroke-linecap="round"/></g>
+<text x="170" y="126" font-size="12" fill="#e5534b" font-weight="600">SetPrice</text>
+<text x="170" y="158" font-size="12" fill="#e5534b">refused before</text>
+<text x="170" y="173" font-size="12" fill="#e5534b">it leaves:</text>
+<text x="170" y="190" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e5534b" xml:space="preserve">DISCARDED_BYSTATE</text>
+<path d="M100 156 L100 228" fill="none" stroke="#e8833a" stroke-width="2" stroke-linejoin="round"/><path d="M100 236 L95.4 227 L104.6 227 Z" fill="#e8833a"/>
+<text x="108" y="206" font-size="12" fill="#e8833a">Login</text>
+<path d="M100 280 L100 344" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M100 352 L95.4 343 L104.6 343 Z" fill="#4fb3ff"/>
+<text x="108" y="324" font-size="12" fill="#4fb3ff">Welcome</text>
+<path d="M160 258 L206 258" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M214 258 L205 262.6 L205 253.4 Z" fill="#4fb3ff"/>
+<text x="188" y="250" font-size="12" fill="#4fb3ff" text-anchor="middle">Denied</text>
+<rect x="214" y="243" width="62" height="30" rx="15" fill="#363a40" stroke="#7d858f" stroke-width="1.4"/>
+<text x="245" y="263" font-size="13" fill="#e8eaed" text-anchor="middle" font-weight="600">Close</text>
+<path d="M160 361 C194 353 194 377 165.9 372" fill="none" stroke="#e8833a" stroke-width="1.8" stroke-linejoin="round"/><path d="M160 371 L167.6 368.5 L166.2 376 Z" fill="#e8833a"/>
+<text x="200" y="370" font-size="12" fill="#e8833a">SetPrice</text>
+<path d="M160 379 C194 373 194 397 165.9 391.2" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M160 390 L167.6 387.7 L166.1 395.1 Z" fill="#4fb3ff"/>
+<text x="200" y="392" font-size="12" fill="#4fb3ff">catalogue</text>
+<text x="40" y="424" font-size="12" fill="#9aa0a6">both hosts run these states;</text>
+<text x="40" y="440" font-size="12" fill="#9aa0a6">every pack is checked against them</text>
+<rect x="302" y="56" width="476" height="400" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="318" y="80" font-size="14" fill="#e8eaed" font-weight="600">Packs in each host's generated code</text>
+<text x="423" y="150" font-size="12" fill="#e8eaed" text-anchor="middle">Item</text>
+<text x="475" y="150" font-size="12" fill="#e8eaed" text-anchor="middle">Price</text>
+<text x="527" y="150" font-size="12" fill="#e8eaed" text-anchor="middle">Margin</text>
+<text x="579" y="150" font-size="12" fill="#e8eaed" text-anchor="middle">Browse</text>
+<text x="631" y="150" font-size="12" fill="#e8eaed" text-anchor="middle">Login</text>
+<text x="683" y="136" font-size="12" fill="#e8eaed" text-anchor="middle">Welcome</text>
+<text x="683" y="150" font-size="12" fill="#e8eaed" text-anchor="middle">Denied</text>
+<text x="735" y="150" font-size="12" fill="#e8eaed" text-anchor="middle">SetPrice</text>
+<g data-nocheck="1"><path d="M523.7 127.2 L523.7 125.5 A3.3 3.3 0 0 1 530.3 125.5 L530.3 127.2" fill="none" stroke="#f2c14e" stroke-width="1.6"/><rect x="521.5" y="127.2" width="10.9" height="7.8" rx="1.2" fill="#f2c14e"/><circle cx="527" cy="130.7" r="1" fill="#2b2b2b"/></g>
+<text x="318" y="217" font-size="13" fill="#e8eaed" font-weight="700">Guest</text>
+<text x="318" y="233" font-size="12" fill="#9aa0a6">TypeScript</text>
+<rect x="400" y="200" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="452" y="200" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="504" y="200" width="46" height="40" rx="4" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="556" y="200" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="608" y="200" width="46" height="40" rx="4" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="660" y="200" width="46" height="40" rx="4" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="712" y="200" width="46" height="40" rx="4" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="318" y="265" font-size="13" fill="#e8eaed" font-weight="700">Staff</text>
+<text x="318" y="281" font-size="12" fill="#9aa0a6">C#</text>
+<rect x="400" y="248" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="452" y="248" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="504" y="248" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="556" y="248" width="46" height="40" rx="4" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="608" y="248" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="660" y="248" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="712" y="248" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<text x="318" y="313" font-size="13" fill="#e8eaed" font-weight="700">Shop</text>
+<text x="318" y="329" font-size="12" fill="#9aa0a6">Java</text>
+<rect x="400" y="296" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="452" y="296" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="504" y="296" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="556" y="296" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="608" y="296" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="660" y="296" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<rect x="712" y="296" width="46" height="40" rx="4" fill="#3d3520" stroke="#f2c14e" stroke-width="1.4"/>
+<path data-nocheck="1" d="M514 160 L540 160 L530.4 172.1 L530.4 182 L523.6 178.9 L523.6 172.1 Z" fill="#32293e" stroke="#a06fd0" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M527 182 L527 193" fill="none" stroke="#a06fd0" stroke-width="1.8" stroke-linejoin="round"/><path d="M527 199 L523.2 192 L530.8 192 Z" fill="#a06fd0"/>
+<g data-nocheck="1"><line x1="520" y1="213" x2="534" y2="227" stroke="#a06fd0" stroke-width="2" stroke-linecap="round"/><line x1="520" y1="227" x2="534" y2="213" stroke="#a06fd0" stroke-width="2" stroke-linecap="round"/></g>
+<text x="549" y="177" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#a06fd0" xml:space="preserve">SkipDoc(</text>
+<g data-nocheck="1"><path d="M605 171.7 L605 170.2 A3 3 0 0 1 611 170.2 L611 171.7" fill="none" stroke="#a06fd0" stroke-width="1.4"/><rect x="602.9" y="171.7" width="10.1" height="7.3" rx="1.1" fill="#a06fd0"/><circle cx="608" cy="175" r="0.9" fill="#2b2b2b"/></g>
+<text x="615" y="177" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#a06fd0" xml:space="preserve">)</text>
+<text x="627" y="177" font-size="12" fill="#a06fd0">- off the guest link</text>
+<rect x="318" y="360" width="12" height="12" rx="2" fill="#3d3520" stroke="#f2c14e" stroke-width="1.2"/><text x="336" y="370" font-size="12" fill="#e8eaed">generated in this host</text>
+<rect x="498" y="360" width="12" height="12" rx="2" fill="#242424" stroke="#4a4a4a" stroke-width="1.2"/><text x="516" y="370" font-size="12" fill="#e8eaed">not in its code</text>
+<text x="318" y="408" font-size="12" fill="#9aa0a6">A new Catalog pack tagged with the padlock stays off</text>
+<text x="318" y="424" font-size="12" fill="#9aa0a6">the guest link by itself; Staff sees the whole catalogue.</text>
+<rect x="790" y="56" width="146" height="400" rx="8" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="806" y="80" font-size="14" fill="#e8eaed" font-weight="600">guard rails</text>
+<path data-nocheck="1" d="M804 94 L922 94 Q928 94 928 100 L928 160 L863 172 L798 160 L798 100 Q798 94 804 94 Z" fill="#32293e" stroke="#a06fd0" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="863" y="116" font-size="12" fill="#e8eaed" text-anchor="middle">pack the state</text>
+<text x="863" y="131" font-size="12" fill="#e8eaed" text-anchor="middle">does not allow</text>
+<text x="863" y="146" font-size="12" fill="#e5534b" text-anchor="middle">→ refused, reported</text>
+<path data-nocheck="1" d="M804 182 L922 182 Q928 182 928 188 L928 248 L863 260 L798 248 L798 188 Q798 182 804 182 Z" fill="#32293e" stroke="#a06fd0" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="863" y="211.5" font-size="12" fill="#e8eaed" text-anchor="middle">unknown pack id</text>
+<text x="863" y="226.5" font-size="12" fill="#e5534b" text-anchor="middle">→ channel dropped</text>
+<path data-nocheck="1" d="M804 270 L922 270 Q928 270 928 276 L928 336 L863 348 L798 336 L798 276 Q798 270 804 270 Z" fill="#32293e" stroke="#a06fd0" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="863" y="292" font-size="12" fill="#e8eaed" text-anchor="middle">one instance over</text>
+<text x="863" y="307" font-size="12" fill="#e8eaed" text-anchor="middle">MaxActiveInstances</text>
+<text x="863" y="322" font-size="12" fill="#e5534b" text-anchor="middle">→ connection aborted</text>
+<path data-nocheck="1" d="M804 358 L922 358 Q928 358 928 364 L928 424 L863 436 L798 424 L798 364 Q798 358 804 358 Z" fill="#32293e" stroke="#a06fd0" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="863" y="387.5" font-size="12" fill="#e8eaed" text-anchor="middle" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace">[S(N)]</tspan><tspan > exceeded</tspan></text>
+<text x="863" y="402.5" font-size="12" fill="#e5534b" text-anchor="middle">→ exception</text>
+<text x="480" y="486" font-size="12" fill="#9aa0a6" text-anchor="middle">least privilege by construction - protocol order is enforced by the generated state machines of both hosts</text>
+</g>
+</svg>

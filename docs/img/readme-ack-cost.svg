@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" width="960" height="280" role="img" aria-labelledby="title desc">
+<title id="title">The cost of confirmation</title>
+<desc id="desc">The cost of confirming 64 KiB of guaranteed 15-byte packs, 4 369 packs, as two bars on one scale of 1 px per 160 bytes. Request/response: 4 369 replies of at least 27 bytes each, 117 963 bytes in all. AdHoc: one Confirm_ service pack, the pack id alone, 1 byte with a one-byte id, about 0.002 percent - too thin to see at this scale. The service packs are generated for the project; nothing is declared for them. The packs themselves carry nothing for the guarantee, and a connection without Resumable carries nothing of it; the sender keeps a journal, the newest bytes in memory and the rest in 4 MB files, up to resumable_megabytes, 100 MB by default.</desc>
+<rect width="960" height="280" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">Confirming 64 KiB of guaranteed 15-byte packs (4 369 packs)</text>
+<text x="24" y="92" font-size="13" fill="#e8eaed">request/response</text>
+<text x="24" y="108" font-size="12" fill="#9aa0a6">a reply to every request</text>
+<rect x="180" y="76" width="737" height="36" rx="3" fill="#3a3a3a" stroke="#8a8a8a" stroke-width="1.4"/>
+<line x1="348.75" y1="79" x2="348.75" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="517.5" y1="79" x2="517.5" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="686.25" y1="79" x2="686.25" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<line x1="855" y1="79" x2="855" y2="109" stroke="#5a5a5a" stroke-width="1"/>
+<text x="548.5" y="99" font-size="13" fill="#e8eaed" text-anchor="middle" paint-order="stroke" stroke="#3a3a3a" stroke-width="4" stroke-linejoin="round">4 369 replies × 27 B (minimal) = 117 963 B</text>
+<text x="917" y="128" font-size="12" fill="#9aa0a6" text-anchor="end">1 px = 160 bytes · a tick = 1 000 replies</text>
+<text x="24" y="162" font-size="13" fill="#e8eaed">AdHoc</text>
+<text x="24" y="178" font-size="12" fill="#9aa0a6">one Confirm_ per 64 KiB</text>
+<rect x="180" y="146" width="1.2" height="36" rx="0" fill="#f2c14e"/>
+<text x="192" y="169" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan fill="#e8eaed">1 service pack Confirm_: the pack id alone = </tspan><tspan fill="#f2c14e" font-weight="700">1 B</tspan><tspan fill="#9aa0a6"> (~0.002 %, thinner than a pixel here)</tspan></text>
+<text x="24" y="206" font-size="12" fill="#9aa0a6">Confirm_ and the other service packs are generated for the project: you declare none of them.</text>
+<text x="24" y="226" font-size="12" fill="#9aa0a6">The packs themselves carry nothing for the guarantee; a connection without Resumable carries nothing of it.</text>
+<text x="24" y="246" font-size="12" fill="#9aa0a6">The sender keeps a journal: newest bytes in memory, the rest in 4 MB files, up to resumable_megabytes (100 MB by default).</text>
+</g>
+</svg>

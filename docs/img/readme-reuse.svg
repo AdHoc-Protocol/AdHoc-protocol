@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500" role="img" aria-labelledby="title desc">
+<title id="title">Build on a description without forking it</title>
+<desc id="desc">Build on a description without forking it. Bottom left: Library.cs, someone else’s description, whose declarations are not edited: hosts Server uid 0 and Client uid 1, connection Link, packs Hello id 0, Stamp id 1, Info id 2 and Trace with Zstd. A thick arrow up, extends: everything comes in with its numbers and wire ids, to MyProject.cs, interface MyProject : Library: a new host Metrics uid 2, a new pack Sample id 3, a new connection ServerToMetrics from Server to Metrics, and two modifiers, TraceCut : Modify&lt;Trace&gt; removing hops and TraceChain : Modify&lt;Trace&gt; declaring Zstd(9). Right: the composed project as generated - hosts Server, Client, Metrics; connections Link, ServerToMetrics; packs Hello 0, Stamp 1, Info 2, Sample 3; Trace with origin only and Zstd(9) for every host, Library’s own Client and Server too. Fields merge, attributes replace, the topmost layer wins. Legend: : Library extends a whole project, _&lt;X&gt; imports one connection or broadcasts an enum or constant set, Modify&lt;T&gt; edits an imported pack, enum, constant set or host.</desc>
+<rect width="960" height="500" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">Build on a description without forking it</text>
+<rect x="24" y="62" width="536" height="178" rx="8" fill="#35271c" stroke="#e8833a" stroke-width="1.5"/>
+<text x="40" y="86" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8833a" xml:space="preserve">interface MyProject : Library</text>
+<text x="544" y="86" font-size="12" fill="#9aa0a6" text-anchor="end">MyProject.cs - yours</text>
+<rect x="40" y="100" width="155.7" height="28" rx="6" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="53" y="118.5" font-size="14" fill="#4cc38a" text-anchor="middle" font-weight="700">+</text><text x="64" y="118.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>host Metrics · uid 2</tspan></text>
+<rect x="203.7" y="100" width="152.1" height="28" rx="6" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="216.7" y="118.5" font-size="14" fill="#4cc38a" text-anchor="middle" font-weight="700">+</text><text x="227.7" y="118.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>pack Sample · id 3</tspan></text>
+<rect x="40" y="134" width="331.2" height="28" rx="6" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="53" y="152.5" font-size="14" fill="#4cc38a" text-anchor="middle" font-weight="700">+</text><text x="64" y="152.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>connection ServerToMetrics: Server → Metrics</tspan></text>
+<rect x="40" y="168" width="283.5" height="28" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.2"/><text x="50" y="186.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12">TraceCut : Modify&lt;Trace&gt;</tspan><tspan fill="#9aa0a6" font-size="12">  hops removed</tspan></text>
+<rect x="40" y="202" width="283.5" height="28" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.2"/><text x="50" y="220.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12">TraceChain : Modify&lt;Trace&gt;</tspan><tspan fill="#9aa0a6" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12">  [Zstd(9)]</tspan></text>
+<rect x="24" y="306" width="536" height="122" rx="8" fill="#303236" stroke="#4a4a4a" stroke-width="1.5"/>
+<text x="40" y="330" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="14" fill="#e8eaed" xml:space="preserve">interface Library</text>
+<text x="544" y="330" font-size="12" fill="#9aa0a6" text-anchor="end">Library.cs - someone else’s; its declarations are not edited</text>
+<text x="40" y="364.5" font-size="12" fill="#9aa0a6">hosts</text>
+<rect x="80.1" y="346" width="104.7" height="28" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/><text x="89.1" y="364.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>Server · uid 0</tspan></text>
+<rect x="191.8" y="346" width="98.9" height="28" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/><text x="200.8" y="364.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>Client · uid 1</tspan></text>
+<text x="309.7" y="364.5" font-size="12" fill="#9aa0a6">connection</text>
+<rect x="382.7" y="346" width="41.7" height="28" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/><text x="391.7" y="364.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>Link</tspan></text>
+<text x="40" y="400.5" font-size="12" fill="#9aa0a6">packs</text>
+<rect x="82.3" y="382" width="85.9" height="28" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/><text x="91.3" y="400.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>Hello · id 0</tspan></text>
+<rect x="175.2" y="382" width="95.9" height="28" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/><text x="184.2" y="400.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>Stamp · id 1</tspan></text>
+<rect x="278.1" y="382" width="79.5" height="28" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/><text x="287.1" y="400.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>Info · id 2</tspan></text>
+<rect x="364.6" y="382" width="101.9" height="28" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/><text x="373.6" y="400.6" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan>Trace  </tspan><tspan fill="#9aa0a6" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12">[Zstd]</tspan></text>
+<path d="M292 305 L292 252" fill="none" stroke="#4fb3ff" stroke-width="3" stroke-linejoin="round"/><path d="M292 241 L299 253 L285 253 Z" fill="#4fb3ff"/>
+<text x="308" y="262" font-size="13" fill="#4fb3ff">extends: everything comes in</text>
+<text x="308" y="278" font-size="12" fill="#9aa0a6">hosts, connections, packs, enums -</text>
+<text x="308" y="293" font-size="12" fill="#9aa0a6">with their numbers and wire ids</text>
+<rect x="596" y="62" width="340" height="366" rx="8" fill="#26384d" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="612" y="88" font-size="15" fill="#4fb3ff" font-weight="600">the composed project, as generated</text>
+<text x="612" y="118" font-size="12" fill="#9aa0a6">hosts</text>
+<text x="689.3" y="118" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan >Server · Client · </tspan><tspan fill="#4cc38a">Metrics</tspan></text>
+<text x="612" y="142" font-size="12" fill="#9aa0a6">connections</text>
+<text x="689.3" y="142" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan >Link · </tspan><tspan fill="#4cc38a">ServerToMetrics</tspan></text>
+<text x="612" y="166" font-size="12" fill="#9aa0a6">packs</text>
+<text x="689.3" y="166" font-size="13" fill="#e8eaed" xml:space="preserve"><tspan >Hello 0 · Stamp 1 · Info 2 · </tspan><tspan fill="#4cc38a">Sample 3</tspan></text>
+<rect x="612" y="186" width="308" height="90" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.5"/>
+<text x="626" y="212" font-size="13" fill="#e8eaed" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" xml:space="preserve"><tspan>Trace { origin </tspan><tspan fill="#9aa0a6" text-decoration="line-through">hops</tspan><tspan> }</tspan></text>
+<text x="906" y="212" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8833a" text-anchor="end" xml:space="preserve">[Zstd(9)]</text>
+<text x="626" y="238" font-size="12" fill="#9aa0a6" xml:space="preserve"><tspan fill="#e8eaed">for every host</tspan><tspan > - Library’s own</tspan></text>
+<text x="626" y="256" font-size="12" fill="#9aa0a6">Client and Server too</text>
+<text x="612" y="310" font-size="12" fill="#9aa0a6">fields merge · attributes replace</text>
+<text x="612" y="327" font-size="12" fill="#9aa0a6">the topmost layer wins</text>
+<text x="612" y="372" font-size="12" fill="#9aa0a6">AdHocAgent logs every replacement:</text>
+<text x="612" y="390" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">[&quot;Zstd&quot;] -&gt; [&quot;Zstd(9)&quot;]</text>
+<path d="M327.5 182 C473.5 182 502 216 603 216" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M611 216 L602 220.5 L602 211.5 Z" fill="#e8833a"/>
+<path d="M327.5 216 C473.5 216 502 246 603 246" fill="none" stroke="#e8833a" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/><path d="M611 246 L602 250.5 L602 241.5 Z" fill="#e8833a"/>
+<text x="544" y="160" font-size="12" fill="#e8833a" text-anchor="end">Modify&lt;&gt; edits in place</text>
+<rect x="24" y="442" width="163" height="44" rx="12" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="36" y="461" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#4fb3ff" xml:space="preserve">: Library</text>
+<text x="36" y="478" font-size="12" fill="#9aa0a6">extend a whole project</text>
+<rect x="199" y="442" width="396" height="44" rx="12" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="211" y="461" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">_&lt;X&gt;</text>
+<text x="211" y="478" font-size="12" fill="#9aa0a6">import one connection, or broadcast an enum or constant set</text>
+<rect x="607.1" y="442" width="328.9" height="44" rx="12" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="619.1" y="461" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8833a" xml:space="preserve">Modify&lt;T&gt;</text>
+<text x="619.1" y="478" font-size="12" fill="#9aa0a6">edit an imported pack, enum, constant set or host</text>
+</g>
+</svg>

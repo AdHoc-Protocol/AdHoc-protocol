@@ -1,0 +1,14 @@
+# Generator sources of the documentation diagrams (docs/img/*.svg): kept locally, not distributed
+docs/img/dev-src/
+
+# Working notes of the documentation rewrite: kept locally, not distributed
+DOC.md
+DOC-DISCREPANCIES.md
+
+# Kept locally, not distributed: benchmarks, tools of AI.md, the Observer's working data, editor settings,
+# the native libraries the runtime's deployment brings, which the agent neither builds against nor loads
+bench/
+docs/ai-src/
+unsaved/
+.vscode/
+protocol/lib/native/

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 380" width="980" height="380" role="img" aria-labelledby="dev28noisename-t dev28noisename-d">
+<title id="dev28noisename-t">What the name of a Noise protocol says</title>
+<desc id="dev28noisename-d">The name Noise_NK_25519_ChaChaPoly_SHA256 split into its parts. NK is the handshake pattern: who knows whose key beforehand, which keys go out and which Diffie-Hellman agreements are made in which message; NK, IK, XX and KK are the four AdHoc uses (Noise specification, section 7). 25519 is X25519 key agreement with 32-byte keys (RFC 7748). ChaChaPoly is ChaCha20-Poly1305, which seals the keys sent in the handshake and every record after it, with a 16-byte tag (RFC 8439). SHA256 is SHA-256 with HMAC and HKDF: the hash of everything sent, and the derivation of every key (FIPS 180-4, RFC 5869). The prologue &quot;AdHoc stream 1&quot; is mixed into the hash first, so a handshake of another protocol or version cannot pass for this one.</desc>
+<rect width="980" height="380" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">What the name of a Noise protocol says</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Every handshake of AdHoc is one of four protocols of the Noise Protocol Framework, revision 34; the name lists its parts</text>
+<text xml:space="preserve" x="261.2" y="116" font-size="26" fill="#9aa0a6" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">Noise_</text>
+<text xml:space="preserve" x="347" y="116" font-size="26" fill="#b58cf0" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">NK</text>
+<text xml:space="preserve" x="375.6" y="116" font-size="26" fill="#6f9fd8" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">_25519</text>
+<text xml:space="preserve" x="461.40000000000003" y="116" font-size="26" fill="#6fbf7f" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">_ChaChaPoly</text>
+<text xml:space="preserve" x="618.7" y="116" font-size="26" fill="#f2a44e" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">_SHA256</text>
+<line x1="361.3" y1="124.0" x2="134.0" y2="176.0" stroke="#b58cf0" stroke-width="1.4"/>
+<rect x="24" y="176" width="220" height="124" rx="8" fill="#232323" stroke="#b58cf0" stroke-width="1.4"/>
+<text xml:space="preserve" x="38" y="198" font-size="13" fill="#b58cf0" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">NK · IK · XX · KK</text>
+<text xml:space="preserve" x="38" y="218" font-size="12" fill="#e8eaed" font-weight="700">handshake pattern</text>
+<text xml:space="preserve" x="38" y="238" font-size="11.5" fill="#9aa0a6">who knows whose key beforehand;</text>
+<text xml:space="preserve" x="38" y="253" font-size="11.5" fill="#9aa0a6">which keys go out, which DH,</text>
+<text xml:space="preserve" x="38" y="268" font-size="11.5" fill="#9aa0a6">in which message</text>
+<text xml:space="preserve" x="38" y="290" font-size="11.5" fill="#f2c14e">noiseprotocol.org, section 7</text>
+<line x1="425.6" y1="124.0" x2="370.0" y2="176.0" stroke="#6f9fd8" stroke-width="1.4"/>
+<rect x="260" y="176" width="220" height="124" rx="8" fill="#232323" stroke="#6f9fd8" stroke-width="1.4"/>
+<text xml:space="preserve" x="274" y="198" font-size="13" fill="#6f9fd8" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">25519</text>
+<text xml:space="preserve" x="274" y="218" font-size="12" fill="#e8eaed" font-weight="700">X25519 key agreement</text>
+<text xml:space="preserve" x="274" y="238" font-size="11.5" fill="#9aa0a6">keys of 32 bytes; every</text>
+<text xml:space="preserve" x="274" y="253" font-size="11.5" fill="#9aa0a6">Diffie-Hellman of the handshake</text>
+<text xml:space="preserve" x="274" y="290" font-size="11.5" fill="#f2c14e">RFC 7748</text>
+<line x1="547.2" y1="124.0" x2="606.0" y2="176.0" stroke="#6fbf7f" stroke-width="1.4"/>
+<rect x="496" y="176" width="220" height="124" rx="8" fill="#232323" stroke="#6fbf7f" stroke-width="1.4"/>
+<text xml:space="preserve" x="510" y="198" font-size="13" fill="#6fbf7f" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">ChaChaPoly</text>
+<text xml:space="preserve" x="510" y="218" font-size="12" fill="#e8eaed" font-weight="700">ChaCha20-Poly1305</text>
+<text xml:space="preserve" x="510" y="238" font-size="11.5" fill="#9aa0a6">seals the keys sent in the</text>
+<text xml:space="preserve" x="510" y="253" font-size="11.5" fill="#9aa0a6">handshake, then every record;</text>
+<text xml:space="preserve" x="510" y="268" font-size="11.5" fill="#9aa0a6">a tag of 16 bytes</text>
+<text xml:space="preserve" x="510" y="290" font-size="11.5" fill="#f2c14e">RFC 8439</text>
+<line x1="675.9" y1="124.0" x2="842.0" y2="176.0" stroke="#f2a44e" stroke-width="1.4"/>
+<rect x="732" y="176" width="220" height="124" rx="8" fill="#232323" stroke="#f2a44e" stroke-width="1.4"/>
+<text xml:space="preserve" x="746" y="198" font-size="13" fill="#f2a44e" font-weight="700" font-family="Consolas,DejaVu Sans Mono,monospace">SHA256</text>
+<text xml:space="preserve" x="746" y="218" font-size="12" fill="#e8eaed" font-weight="700">SHA-256, HMAC, HKDF</text>
+<text xml:space="preserve" x="746" y="238" font-size="11.5" fill="#9aa0a6">the hash of all that was sent;</text>
+<text xml:space="preserve" x="746" y="253" font-size="11.5" fill="#9aa0a6">HKDF derives every key</text>
+<text xml:space="preserve" x="746" y="290" font-size="11.5" fill="#f2c14e">FIPS 180-4, RFC 2104, RFC 5869</text>
+<rect x="24" y="318" width="932" height="44" rx="6" fill="#232323" stroke="#f2c14e" stroke-width="1.2"/>
+<text xml:space="preserve" x="40" y="345" font-size="12" fill="#f2c14e" font-family="Consolas,DejaVu Sans Mono,monospace">prologue</text>
+<text xml:space="preserve" x="120" y="345" font-size="11.5" fill="#e8eaed">&quot;AdHoc stream 1&quot; is mixed into the hash before anything else: a handshake of another protocol or version cannot pass for this one</text>
+</g>
+</svg>

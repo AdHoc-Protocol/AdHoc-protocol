@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 360" width="980" height="360" role="img" aria-labelledby="dev28noiserecords-t dev28noiserecords-d">
+<title id="dev28noiserecords-t">After the handshake: records and datagrams</title>
+<desc id="dev28noiserecords-d">On a stream, TCP, a WebSocket or a tunnel, the two or three handshake messages go first, each as a length byte and the message; then records, each a 2-byte little-endian length, the ciphertext of at most 16 KB of plaintext and a 16-byte tag. The nonce is the number of the record in its direction, from 0, not on the wire: the stream keeps the order; the associated data is the 2 length bytes. A record that does not open, forged, damaged, replayed, dropped or reordered, ends the stream. On UDP the INITIAL and the ACCEPT carry the handshake messages; then each datagram, a 9-byte header, the sealed payload and a 16-byte tag, is opened on its own, and one that does not open is dropped while the connection goes on.</desc>
+<rect width="980" height="360" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text xml:space="preserve" x="24" y="36" font-size="16" fill="#e8eaed" font-weight="700">After the handshake: records and datagrams</text>
+<text xml:space="preserve" x="24" y="56" font-size="12" fill="#9aa0a6">Each side seals with its own key; the other side opens and checks every record before a byte of it reaches your code</text>
+<text xml:space="preserve" x="24" y="96" font-size="12" fill="#e8eaed" font-weight="700">On a stream: TCP, a WebSocket, a tunnel</text>
+<rect x="24" y="108" width="28" height="34" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="38" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">1</text>
+<rect x="52" y="108" width="110" height="34" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="107" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">message 1</text>
+<rect x="172" y="108" width="28" height="34" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="186" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">1</text>
+<rect x="200" y="108" width="110" height="34" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="255" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">message 2</text>
+<rect x="328" y="108" width="28" height="34" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="342" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">2</text>
+<rect x="356" y="108" width="220" height="34" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="466" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">ciphertext, ≤ 16 KB</text>
+<rect x="576" y="108" width="40" height="34" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="596" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">16</text>
+<rect x="626" y="108" width="28" height="34" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="640" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">2</text>
+<rect x="654" y="108" width="140" height="34" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="724" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">ciphertext</text>
+<rect x="794" y="108" width="40" height="34" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="814" y="130" font-size="11.5" fill="#e8eaed" text-anchor="middle">16</text>
+<text xml:space="preserve" x="848" y="130" font-size="16" fill="#e8eaed">…</text>
+<path d="M24,150 V158 H310 V150" fill="none" stroke="#9aa0a6" stroke-width="1.2" stroke-linejoin="round"/>
+<text xml:space="preserve" x="167" y="174" font-size="11.5" fill="#9aa0a6" text-anchor="middle">handshake: [length 1][message]</text>
+<path d="M328,150 V158 H616 V150" fill="none" stroke="#b58cf0" stroke-width="1.2" stroke-linejoin="round"/>
+<text xml:space="preserve" x="472" y="174" font-size="11.5" fill="#b58cf0" text-anchor="middle">record: [length 2, little-endian][ciphertext][tag 16]</text>
+<text xml:space="preserve" x="24" y="204" font-size="12" fill="#9aa0a6">nonce = the number of the record in its direction, from 0: not on the wire, the stream keeps the order</text>
+<text xml:space="preserve" x="24" y="222" font-size="12" fill="#9aa0a6">associated data = the 2 length bytes; at most 16 KB of plaintext a record</text>
+<text xml:space="preserve" x="24" y="246" font-size="12" fill="#f2b8b5">A record that does not open - forged, damaged, replayed, dropped, reordered - ends the stream: a stream has no record to skip.</text>
+<text xml:space="preserve" x="24" y="284" font-size="12" fill="#e8eaed" font-weight="700">On UDP</text>
+<rect x="24" y="296" width="170" height="34" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="109" y="318" font-size="11.5" fill="#e8eaed" text-anchor="middle">INITIAL: message 1</text>
+<rect x="204" y="296" width="170" height="34" fill="#30343a" stroke="#8c9198" stroke-width="1.2"/>
+<text xml:space="preserve" x="289" y="318" font-size="11.5" fill="#e8eaed" text-anchor="middle">ACCEPT: message 2</text>
+<rect x="392" y="296" width="70" height="34" fill="#232323" stroke="#4a4a4a" stroke-width="1.2"/>
+<text xml:space="preserve" x="427" y="318" font-size="11.5" fill="#e8eaed" text-anchor="middle">header 9</text>
+<rect x="462" y="296" width="200" height="34" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="562" y="318" font-size="11.5" fill="#e8eaed" text-anchor="middle">sealed payload</text>
+<rect x="662" y="296" width="40" height="34" fill="#3a2f4d" stroke="#b58cf0" stroke-width="1.2"/>
+<text xml:space="preserve" x="682" y="318" font-size="11.5" fill="#e8eaed" text-anchor="middle">16</text>
+<text xml:space="preserve" x="718" y="308" font-size="11.5" fill="#9aa0a6">opened on its own; one that does not</text>
+<text xml:space="preserve" x="718" y="323" font-size="11.5" fill="#9aa0a6">open is dropped, the connection goes on</text>
+</g>
+</svg>

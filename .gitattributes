@@ -1,0 +1,2 @@
+# the shell scripts run on Linux and macOS: LF there, whatever the checkout
+*.sh text eol=lf

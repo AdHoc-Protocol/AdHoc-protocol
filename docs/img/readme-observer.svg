@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 500" width="980" height="500" role="img" aria-labelledby="title desc">
+<title id="title">AdHoc Observer</title>
+<desc id="desc">The AdHoc Observer at work. On the left, the description file MyProtocol.cs with its imports, and the command AdHocAgent .\MyProtocol.cs? with three badges: local, nothing uploaded, no UUID. A double arrow labeled WebSocket - AdHoc packs joins it to a browser window at localhost:4321; an orange arrow from the file to the browser reads save, redraw, and a blue arrow back reads open in your IDE. In the window: a sidebar with a search field, a tree of hosts, packs and connections, and a Save Diagram button; a canvas with the hosts Vehicle (C#), Fleet (Java) and VehicleLegacy (C#) as boxes listing their packs, joined by the connections Telemetry and TelemetryLegacy; a pop-up &quot;right-click a connection: its state machine&quot; showing the state Start with a loop labeled l: Position, Alarm; a pop-up &quot;left-click a pack: its fields&quot; listing Position: double lat, double lon, float speed; and a yellow sticker note. Three callouts below: save the file and the diagram follows, parse errors shown in the page; jump to the source, your IDE opens at line and character, set by show_code_exe and show_code_args; the output folder keeps the layout and the stickers, keyed by entity numbers, so renames keep the layout.</desc>
+<rect width="980" height="500" rx="10" fill="#2b2b2b"/>
+<g font-family="Segoe UI,DejaVu Sans,Helvetica,Arial,sans-serif">
+<text x="24" y="36" font-size="18" fill="#e8833a" font-weight="600">AdHoc Observer: the description as live diagrams</text>
+<rect x="52" y="60" width="150" height="80" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.4"/>
+<rect x="40" y="70" width="150" height="80" rx="6" fill="#45301f" stroke="#e8833a" stroke-width="1.4"/>
+<text x="115" y="104" font-size="14" fill="#e8eaed" text-anchor="middle">MyProtocol.cs</text>
+<text x="115" y="124" font-size="12" fill="#9aa0a6" text-anchor="middle">+ imports</text>
+<rect x="24" y="196" width="232" height="40" rx="6" fill="#1c1c1c" stroke="#4a4a4a" stroke-width="1.2"/>
+<text x="33" y="221" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="13" fill="#e8eaed" xml:space="preserve">AdHocAgent .\MyProtocol.cs?</text>
+<rect x="24" y="248" width="40.5" height="18" rx="9" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="44.3" y="261.3" font-size="12" fill="#4cc38a" text-anchor="middle">local</text>
+<rect x="70.5" y="248" width="111" height="18" rx="9" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="126" y="261.3" font-size="12" fill="#4cc38a" text-anchor="middle">nothing uploaded</text>
+<rect x="187.5" y="248" width="61.2" height="18" rx="9" fill="#1f3a2e" stroke="#4cc38a" stroke-width="1.2"/><text x="218.1" y="261.3" font-size="12" fill="#4cc38a" text-anchor="middle">no UUID</text>
+<text x="24" y="306" font-size="12" fill="#9aa0a6">the browser receives the parsed</text>
+<text x="24" y="322" font-size="12" fill="#9aa0a6">model: the same Project pack</text>
+<text x="24" y="338" font-size="12" fill="#9aa0a6">the generator gets</text>
+<rect x="340" y="56" width="616" height="330" rx="8" fill="#232323" stroke="#4a4a4a" stroke-width="1.4"/>
+<path d="M340.7 84 V64 a7.3 7.3 0 0 1 7.3 -7.3 H948 a7.3 7.3 0 0 1 7.3 7.3 V84 Z" fill="#303236"/>
+<line x1="340" y1="84" x2="956" y2="84" stroke="#4a4a4a" stroke-width="1"/>
+<circle cx="356" cy="70" r="4" fill="#9aa0a6"/>
+<circle cx="369" cy="70" r="4" fill="#9aa0a6"/>
+<circle cx="382" cy="70" r="4" fill="#9aa0a6"/>
+<rect x="404" y="61" width="220" height="18" rx="9" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="418" y="74.5" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">localhost:4321</text>
+<path d="M257 216 L331 216" fill="none" stroke="#4fb3ff" stroke-width="2" stroke-linejoin="round"/><path d="M339 216 L330 220.6 L330 211.4 Z" fill="#4fb3ff"/><path d="M257 216 L266 211.4 L266 220.6 Z" fill="#4fb3ff"/>
+<text x="298.5" y="207" font-size="12" fill="#4fb3ff" text-anchor="middle">WebSocket</text>
+<text x="298.5" y="233" font-size="12" fill="#9aa0a6" text-anchor="middle">AdHoc packs</text>
+<path d="M191 92 L331 92" fill="none" stroke="#e8833a" stroke-width="1.8" stroke-linejoin="round"/><path d="M339 92 L330 96.6 L330 87.4 Z" fill="#e8833a"/>
+<text x="265" y="85" font-size="12" fill="#e8833a" text-anchor="middle">save → redraw</text>
+<path d="M339 132 L199 132" fill="none" stroke="#4fb3ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M191 132 L200 127.4 L200 136.6 Z" fill="#4fb3ff"/>
+<text x="265" y="150" font-size="12" fill="#4fb3ff" text-anchor="middle">open in your IDE</text>
+<rect x="352" y="96" width="132" height="278" rx="4" fill="#262626"/>
+<rect x="360" y="104" width="116" height="22" rx="4" fill="#232323" stroke="#4a4a4a" stroke-width="1"/>
+<text x="368" y="119" font-size="12" fill="#9aa0a6">search…</text>
+<text x="362" y="146" font-size="12" fill="#9aa0a6">▾ hosts</text>
+<text x="376" y="162" font-size="12" fill="#e8eaed">Fleet</text>
+<text x="376" y="178" font-size="12" fill="#e8eaed">Vehicle</text>
+<text x="376" y="194" font-size="12" fill="#e8eaed">VehicleLegacy</text>
+<text x="362" y="218" font-size="12" fill="#9aa0a6">▾ packs</text>
+<text x="376" y="234" font-size="12" fill="#e8eaed">Position</text>
+<text x="376" y="250" font-size="12" fill="#e8eaed">PositionV2</text>
+<text x="376" y="266" font-size="12" fill="#e8eaed">Alarm</text>
+<text x="362" y="290" font-size="12" fill="#9aa0a6">▾ connections</text>
+<text x="376" y="306" font-size="12" fill="#e8eaed">Telemetry</text>
+<text x="376" y="322" font-size="12" fill="#e8eaed">TelemetryLegacy</text>
+<rect x="360" y="342" width="116" height="22" rx="4" fill="#303236" stroke="#4fb3ff" stroke-width="1.2"/>
+<text x="418" y="357" font-size="12" fill="#4fb3ff" text-anchor="middle">Save Diagram</text>
+<rect x="500" y="108" width="118" height="84" rx="6" fill="#303236" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="510" y="127" font-size="13" fill="#e8eaed" font-weight="600">Vehicle</text>
+<rect x="583.8" y="115" width="26.2" height="17" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="596.9" y="127.5" font-size="12" fill="#9aa0a6" text-anchor="middle">C#</text>
+<rect x="510" y="138" width="98" height="18" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="518" y="151" font-size="12" fill="#e8eaed">Position</text>
+<rect x="510" y="162" width="98" height="18" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="518" y="175" font-size="12" fill="#e8eaed">Alarm</text>
+<rect x="806" y="108" width="130" height="108" rx="6" fill="#303236" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="816" y="127" font-size="13" fill="#e8eaed" font-weight="600">Fleet</text>
+<rect x="893.3" y="115" width="34.7" height="17" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="910.7" y="127.5" font-size="12" fill="#9aa0a6" text-anchor="middle">Java</text>
+<rect x="816" y="138" width="110" height="18" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="824" y="151" font-size="12" fill="#e8eaed">PositionV2</text>
+<rect x="816" y="162" width="110" height="18" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="824" y="175" font-size="12" fill="#e8eaed">Position</text>
+<rect x="816" y="186" width="110" height="18" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="824" y="199" font-size="12" fill="#e8eaed">Alarm</text>
+<rect x="500" y="300" width="162" height="60" rx="6" fill="#303236" stroke="#9aa0a6" stroke-width="1.4"/>
+<text x="510" y="319" font-size="13" fill="#e8eaed" font-weight="600">VehicleLegacy</text>
+<rect x="627.8" y="307" width="26.2" height="17" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="640.9" y="319.5" font-size="12" fill="#9aa0a6" text-anchor="middle">C#</text>
+<rect x="510" y="330" width="142" height="18" rx="4" fill="#262626" stroke="#4a4a4a" stroke-width="1"/>
+<text x="518" y="343" font-size="12" fill="#e8eaed">PositionV2</text>
+<line x1="618" y1="124" x2="806" y2="124" stroke="#9aa0a6" stroke-width="2"/>
+<text x="712" y="117" font-size="12" fill="#f2c14e" text-anchor="middle">Telemetry</text>
+<path d="M662 320 H797 V202 H806" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linejoin="round"/>
+<text x="729.5" y="313" font-size="12" fill="#f2c14e" text-anchor="middle">TelemetryLegacy</text>
+<rect x="628" y="138" width="160" height="112" rx="6" fill="#2b2b2b" stroke="#e8833a" stroke-width="1.5"/>
+<text x="638" y="156" font-size="12" fill="#e8833a">right-click a connection:</text>
+<text x="638" y="171" font-size="12" fill="#e8833a">its state machine</text>
+<ellipse cx="680" cy="208" rx="30" ry="13" fill="#303236" stroke="#e8eaed" stroke-width="1.4"/>
+<text x="680" y="212.3" font-size="12" fill="#e8eaed" text-anchor="middle">Start</text>
+<path d="M694 196.5 C704 172 742 190 715.4 202.1" fill="none" stroke="#9aa0a6" stroke-width="1.4" stroke-linejoin="round"/><path d="M709 205 L714.6 198 L717.9 205.3 Z" fill="#9aa0a6"/>
+<text x="638" y="240" font-size="12" fill="#9aa0a6">l: Position, Alarm</text>
+<rect x="806" y="226" width="130" height="116" rx="6" fill="#2b2b2b" stroke="#4fb3ff" stroke-width="1.5"/>
+<text x="816" y="244" font-size="12" fill="#4fb3ff">left-click a pack:</text>
+<text x="816" y="259" font-size="12" fill="#4fb3ff">its fields</text>
+<text x="816" y="280" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#e8eaed" xml:space="preserve">Position</text>
+<text x="824" y="296" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">double lat</text>
+<text x="824" y="312" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">double lon</text>
+<text x="824" y="328" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">float speed</text>
+<path d="M908 168 l0 14 l3.6 -3.4 l2.6 5.6 l2.4 -1.1 l-2.6 -5.4 l5 0 Z" fill="#e8eaed" stroke="#2b2b2b" stroke-width="1" stroke-linejoin="round"/>
+<path d="M754 121 l0 14 l3.6 -3.4 l2.6 5.6 l2.4 -1.1 l-2.6 -5.4 l5 0 Z" fill="#e8eaed" stroke="#2b2b2b" stroke-width="1" stroke-linejoin="round"/>
+<g transform="rotate(3 560 244)"><rect x="504" y="212" width="112" height="60" rx="2" fill="#f2c14e"/><text x="513" y="231" font-size="12" fill="#2b2b2b" font-weight="600">sticker:</text><text x="513" y="247" font-size="12" fill="#2b2b2b">double-click</text><text x="513" y="263" font-size="12" fill="#2b2b2b">the background</text></g>
+<rect x="24" y="404" width="300" height="72" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="25" y="414" width="3" height="52" rx="1.5" fill="#e8833a"/>
+<text x="40" y="427" font-size="13" fill="#e8eaed">save the file → the diagram follows</text>
+<text x="40" y="444" font-size="12" fill="#9aa0a6">the page asks, AdHocAgent re-reads the files</text>
+<text x="40" y="461" font-size="12" fill="#9aa0a6">parse errors are shown in the page</text>
+<rect x="340" y="404" width="300" height="72" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="341" y="414" width="3" height="52" rx="1.5" fill="#4fb3ff"/>
+<text x="356" y="427" font-size="13" fill="#e8eaed">jump to the source</text>
+<text x="356" y="444" font-size="12" fill="#9aa0a6">your IDE opens at line and character</text>
+<text x="356" y="461" font-family="Consolas,DejaVu Sans Mono,Menlo,monospace" font-size="12" fill="#9aa0a6" xml:space="preserve">show_code_exe · show_code_args</text>
+<rect x="656" y="404" width="300" height="72" rx="6" fill="#262626" stroke="#4a4a4a" stroke-width="1.2"/>
+<rect x="657" y="414" width="3" height="52" rx="1.5" fill="#f2c14e"/>
+<text x="702" y="427" font-size="13" fill="#e8eaed">output folder: layout + stickers</text>
+<text x="672" y="444" font-size="12" fill="#9aa0a6">keyed by entity numbers -</text>
+<text x="672" y="461" font-size="12" fill="#9aa0a6">renames keep the layout</text>
+<path d="M672 418 h8.4 l2 3 h11.6 v10 h-22 Z" fill="none" stroke="#f2c14e" stroke-width="1.6" stroke-linejoin="round"/><path d="M672 421 h22" stroke="#f2c14e" stroke-width="1.2"/>
+</g>
+</svg>
